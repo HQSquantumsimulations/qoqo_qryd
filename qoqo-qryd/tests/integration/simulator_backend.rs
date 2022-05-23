@@ -23,7 +23,7 @@ use qoqo_qryd::simulator_backend::{convert_into_backend, SimulatorBackendWrapper
 use roqoqo::measurements::{ClassicalRegister, PauliZProduct, PauliZProductInput};
 use roqoqo::operations;
 use roqoqo::Circuit;
-use roqoqo_qryd::{SimulatorBackend, FirstDevice, QRydDevice};
+use roqoqo_qryd::{FirstDevice, QRydDevice, SimulatorBackend};
 
 #[test]
 fn test_creating_backend() {

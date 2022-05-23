@@ -28,7 +28,6 @@ pub struct QrydEmuSquareDeviceWrapper {
 
 #[pymethods]
 impl QrydEmuSquareDeviceWrapper {
-
     /// Create new QrydEmuSquareDevice device
     ///
     /// # Arguments
@@ -37,20 +36,10 @@ impl QrydEmuSquareDeviceWrapper {
     /// * `seed` - Seed, if not provided will be set to 0 per default (not recommended!)
     /// * 'pcz_theta' - Phase angle for the basis gate 'PhaseShiftedControllZ'. If not provided will be set to 0.0.
     #[new]
-    pub fn new(
-        localcomp: bool,
-        seed: Option<usize>,
-        pcz_theta: f64,
-    ) -> PyResult<Self> {
-
+    pub fn new(localcomp: bool, seed: Option<usize>, pcz_theta: f64) -> PyResult<Self> {
         Ok(Self {
-            internal: QrydEmuSquareDevice::new(
-                localcomp,
-                seed,
-                pcz_theta,
-
-            )
-            .map_err(|err| PyValueError::new_err(format!("{:?}", err)))?,
+            internal: QrydEmuSquareDevice::new(localcomp, seed, pcz_theta)
+                .map_err(|err| PyValueError::new_err(format!("{:?}", err)))?,
         })
     }
 
@@ -231,8 +220,6 @@ pub struct QrydEmuTriangularDeviceWrapper {
 
 #[pymethods]
 impl QrydEmuTriangularDeviceWrapper {
-
-
     /// Create new QrydEmuSquareDevice device
     ///
     /// # Arguments
@@ -241,18 +228,10 @@ impl QrydEmuTriangularDeviceWrapper {
     /// * `seed` - Seed, if not provided will be set to 0 per default (not recommended!)
     /// * `pcz_theta` - The phase shift in the native PhaseShiftedControlledZ gate
     #[new]
-    pub fn new(
-        localcomp: bool,
-        seed: Option<usize>,
-        pcz_theta: f64,
-    ) -> PyResult<Self> {
+    pub fn new(localcomp: bool, seed: Option<usize>, pcz_theta: f64) -> PyResult<Self> {
         Ok(Self {
-            internal: QrydEmuTriangularDevice::new(
-                localcomp,
-                seed,
-                pcz_theta,
-            )
-            .map_err(|err| PyValueError::new_err(format!("{:?}", err)))?,
+            internal: QrydEmuTriangularDevice::new(localcomp, seed, pcz_theta)
+                .map_err(|err| PyValueError::new_err(format!("{:?}", err)))?,
         })
     }
 

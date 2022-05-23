@@ -228,6 +228,22 @@ impl APIBackend {
         // Prepare data that need to be passed to the WebAPI client
         let seed_param: usize = self.device.seed(); // seed.unwrap_or(0);
         let theta_param: f64 = self.device.pcz_theta(); // pcz_theta.unwrap_or(0.0);
+        match &quantumprogram {
+            QuantumProgram::ClassicalRegister { measurement, .. } => {
+                if measurement.circuits.len() != 1 {
+                    return Err(RoqoqoBackendError::GenericError { msg: "QRyd API Backend only supports posting ClassicalRegister with one circuit".to_string() });
+                }
+                if measurement.circuits[0].is_parametrized() {
+                    return Err(RoqoqoBackendError::GenericError { msg: "Qoqo circuit contains symbolic parameters. The QrydWebAPI does not support symbolic parameters.".to_string() });
+                }
+            }
+            _ => {
+                return Err(RoqoqoBackendError::GenericError {
+                    msg: "QRyd API Backend only supports posting ClassicalRegister QuantumPrograms"
+                        .to_string(),
+                })
+            }
+        }
         let data = QRydRunData {
             backend: self.device.qrydbackend(),
             seed: seed_param,
@@ -235,6 +251,7 @@ impl APIBackend {
             pcz_theta: theta_param,
             program: quantumprogram,
         };
+
         // Prepare WebAPI client
         let client = reqwest::blocking::Client::builder()
             .https_only(true)
@@ -579,7 +596,7 @@ impl EvaluatingBackend for APIBackend {
         let mut test_counter = 0;
         let mut status = "".to_string();
         let mut job_result = QRydJobResult::default();
-        let fifteen = time::Duration::from_secs(30);
+        let fifteen = time::Duration::from_millis(200);
         dbg!(&status);
         while test_counter < self.timeout && status != "completed" {
             test_counter += 1;

@@ -60,7 +60,7 @@ fn api_backend() {
             .unwrap();
         println!("Job location {}", job_loc.clone());
 
-        let fifteen = time::Duration::from_secs(14);
+        let fifteen = time::Duration::from_secs(1);
 
         let mut test_counter = 0;
         let mut status = "".to_string();
@@ -120,7 +120,7 @@ fn api_triangular() {
             .unwrap();
         println!("Job location {}", job_loc.clone());
 
-        let fifteen = time::Duration::from_secs(14);
+        let fifteen = time::Duration::from_secs(1);
 
         let mut test_counter = 0;
         let mut status = "".to_string();

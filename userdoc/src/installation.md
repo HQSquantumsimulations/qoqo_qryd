@@ -1,8 +1,5 @@
 # Installation
 
-The QRydHQS project has two end user components the `qryd-compiler` and the `qoqo-qryd` extention to [qoqo](https://github.com/HQSquantumsimulations/qoqo).
-
-The `qryd-compiler` component depends on the `qoqo-qryd`, so please follow the qoqo-qryd installation instruction before installing the qryd-compiler.
 
 ## Installing qoqo-qryd
 
