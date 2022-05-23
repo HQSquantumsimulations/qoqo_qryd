@@ -34,7 +34,7 @@ from qoqo_pyquest import (
 )
 
 def test():
-    device = QrydEmuSquareDevice(localcomp=True, pcz_theta=0.23, seed=1)
+    device = QrydEmuSquareDevice(pcz_theta=0.23, seed=1)
     backend = APIBackend(device=device, timeout=20)
     circuit = Circuit()
   

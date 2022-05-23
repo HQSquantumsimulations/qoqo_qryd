@@ -32,13 +32,12 @@ impl QrydEmuSquareDeviceWrapper {
     ///
     /// # Arguments
     ///
-    /// * `localcomp` - Use the localcomp backend (true) or the cloudcomp backend (false)
     /// * `seed` - Seed, if not provided will be set to 0 per default (not recommended!)
     /// * 'pcz_theta' - Phase angle for the basis gate 'PhaseShiftedControllZ'. If not provided will be set to 0.0.
     #[new]
-    pub fn new(localcomp: bool, seed: Option<usize>, pcz_theta: f64) -> PyResult<Self> {
+    pub fn new(seed: Option<usize>, pcz_theta: f64) -> PyResult<Self> {
         Ok(Self {
-            internal: QrydEmuSquareDevice::new(localcomp, seed, pcz_theta)
+            internal: QrydEmuSquareDevice::new(seed, pcz_theta)
                 .map_err(|err| PyValueError::new_err(format!("{:?}", err)))?,
         })
     }
@@ -224,13 +223,12 @@ impl QrydEmuTriangularDeviceWrapper {
     ///
     /// # Arguments
     ///
-    /// * `localcomp` - Use the localcomp backend (true) or the cloudcomp backend (false)
     /// * `seed` - Seed, if not provided will be set to 0 per default (not recommended!)
     /// * `pcz_theta` - The phase shift in the native PhaseShiftedControlledZ gate
     #[new]
-    pub fn new(localcomp: bool, seed: Option<usize>, pcz_theta: f64) -> PyResult<Self> {
+    pub fn new(seed: Option<usize>, pcz_theta: f64) -> PyResult<Self> {
         Ok(Self {
-            internal: QrydEmuTriangularDevice::new(localcomp, seed, pcz_theta)
+            internal: QrydEmuTriangularDevice::new(seed, pcz_theta)
                 .map_err(|err| PyValueError::new_err(format!("{:?}", err)))?,
         })
     }
