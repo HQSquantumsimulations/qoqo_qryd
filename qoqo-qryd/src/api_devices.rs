@@ -37,7 +37,7 @@ impl QrydEmuSquareDeviceWrapper {
     #[new]
     pub fn new(seed: Option<usize>, pcz_theta: f64) -> PyResult<Self> {
         Ok(Self {
-            internal: QrydEmuSquareDevice::new(false, seed, pcz_theta)
+            internal: QrydEmuSquareDevice::new(seed, pcz_theta)
                 .map_err(|err| PyValueError::new_err(format!("{:?}", err)))?,
         })
     }
@@ -228,7 +228,7 @@ impl QrydEmuTriangularDeviceWrapper {
     #[new]
     pub fn new(seed: Option<usize>, pcz_theta: f64) -> PyResult<Self> {
         Ok(Self {
-            internal: QrydEmuTriangularDevice::new(false, seed, pcz_theta)
+            internal: QrydEmuTriangularDevice::new(seed, pcz_theta)
                 .map_err(|err| PyValueError::new_err(format!("{:?}", err)))?,
         })
     }

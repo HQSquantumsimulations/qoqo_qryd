@@ -243,17 +243,15 @@ impl QrydEmuSquareDevice {
     ///
     /// # Arguments
     ///
-    /// * `localcomp` - Use the localcomp backend (true) or the cloudcomp backend (false)
     /// * `seed` - Seed, if not provided will be set to 0 per default (not recommended!)
     /// * 'pcz_theta' - Phase angle for the basis gate 'PhaseShiftedControllZ'. If not provided will be set to 0.0.
 
     pub fn new(
-        localcomp: bool,
         seed: Option<usize>,
         pcz_theta: f64,
     ) -> Result<Self, RoqoqoBackendError> {
         let return_self = Self {
-            local: localcomp,
+            local: false,
             seed: seed.unwrap_or_default(),
             pcz_theta,
         };
@@ -483,16 +481,14 @@ impl QrydEmuTriangularDevice {
     ///
     /// # Arguments
     ///
-    /// * `localcomp` - Use the localcomp backend (true) or the cloudcomp backend (false)
     /// * `seed` - Seed, if not provided will be set to 0 per default (not recommended!)
     /// * `pcz_theta` - The phase shift in the native PhaseShiftedControlledZ gate
     pub fn new(
-        localcomp: bool,
         seed: Option<usize>,
         pcz_theta: f64,
     ) -> Result<Self, RoqoqoBackendError> {
         let return_self = Self {
-            local: localcomp,
+            local: false,
             seed: seed.unwrap_or_default(),
             pcz_theta,
         };
