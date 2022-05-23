@@ -452,5 +452,6 @@ pub fn convert_into_device(input: &PyAny) -> Result<QRydAPIDevice, QoqoBackendEr
 #[pymodule]
 pub fn api_devices(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_class::<QrydEmuSquareDeviceWrapper>()?;
+    m.add_class::<QrydEmuTriangularDeviceWrapper>()?;
     Ok(())
 }

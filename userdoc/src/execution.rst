@@ -80,7 +80,7 @@ As an example we will use the quantum program from :doc:`introduction` and the `
    # Run the program with  0.1 substituting `angle`
    expecation_values = program.run(backend, [0.1])
 
-The QuantumProgram can be run in the same way with the qoqo_qryd ``SimulatorBackend`` when all quantum operations are replaced by sequences of operations directly supported by the QRyd hardware. The circuits can be automatically translated using the qryd-compiler package :doc:`compilation`. 
+The QuantumProgram can be run in the same way with the qoqo_qryd ``SimulatorBackend`` when all quantum operations are replaced by sequences of operations directly supported by the QRyd hardware.
 To distinguish between a command returning expectation values and a program returning register the comman ``run_registers`` is used here.
 
 .. code-block:: python

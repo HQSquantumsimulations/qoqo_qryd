@@ -15,7 +15,7 @@
 import numpy as np
 from qoqo import Circuit
 import qoqo.operations as ops
-from qoqo_qryd import devices, SimulatorBackend
+from qoqo_qryd import qryd_devices, SimulatorBackend
 from qoqo_qryd import pragma_operations as qrydops
 
 
@@ -31,7 +31,7 @@ from qoqo_qryd import pragma_operations as qrydops
 #   0 --- 1
 #   2 --- 3
 #
-device = devices.FirstDevice(
+device = qryd_devices.FirstDevice(
     number_rows=2,
     number_columns=4,
     qubits_per_row=[2, 2],
