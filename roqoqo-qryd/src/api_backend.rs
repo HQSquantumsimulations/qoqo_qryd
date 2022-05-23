@@ -186,7 +186,7 @@ impl APIBackend {
     ///                     At the moment limited to the QRyd emulator.
     /// * `access_token` - An access_token is required to access QRYD hardware and emulators.
     ///                                 The access_token can either be given as an argument here
-    ///                                 or set via the environmental variable `$QRYD_ACCESS_TOKEN`
+    ///                                 or set via the environmental variable `$QRYD_API_TOKEN`
     /// * `timeout` - Timeout for synchronous EvaluatingBackend trait. In the evaluating trait.
     ///               In synchronous operation the WebAPI is queried every 30 seconds until it has
     ///               been queried `timeout` times.
@@ -197,7 +197,7 @@ impl APIBackend {
     ) -> Result<Self, RoqoqoBackendError> {
         let access_token_internal: String = match access_token {
             Some(s) => s,
-            None => env::var("QRYD_ACCESS_TOKEN").map_err(|_| {
+            None => env::var("QRYD_API_TOKEN").map_err(|_| {
                 RoqoqoBackendError::MissingAuthentification {
                     msg: "QRYD access token is missing".to_string(),
                 }

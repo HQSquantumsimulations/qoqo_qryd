@@ -13,7 +13,6 @@
 //! Provides QRyd WebAPI Backend.
 
 use crate::api_devices::convert_into_device;
-use crate::simulator_backend::Registers;
 use bincode::{deserialize, serialize};
 use pyo3::exceptions::{PyRuntimeError, PyTypeError, PyValueError};
 use pyo3::prelude::*;
@@ -43,6 +42,13 @@ pub struct APIBackendWrapper {
     pub internal: APIBackend,
 }
 
+/// Type of registers returned from a run of a Circuit.
+pub type Registers = (
+    HashMap<String, BitOutputRegister>,
+    HashMap<String, FloatOutputRegister>,
+    HashMap<String, ComplexOutputRegister>,
+);
+
 #[pymethods]
 impl APIBackendWrapper {
     /// Create a new QRyd APIBackend.
@@ -50,7 +56,7 @@ impl APIBackendWrapper {
     /// Args:
     ///     device (Device): QRydAPIDevice providing information about the endpoint running Circuits.
     ///     access_token (Optional[str]): Optional access token to QRyd endpoints.
-    ///                                   When None access token is read from QRYD_ACCESS_TOKEN environmental variable.
+    ///                                   When None access token is read from QRYD_API_TOKEN environmental variable.
     ///     timeout (Optional[int]) - Timeout for synchronous EvaluatingBackend trait. In the evaluating trait.
     ///               In synchronous operation the WebAPI is queried every 30 seconds until it has
     ///               been queried `timeout` times.
