@@ -566,20 +566,17 @@ impl EvaluatingBackend for APIBackend {
         let mut number_qubits = 0;
 
         for op in new_circ.iter() {
-            match op {
-                Operation::DefinitionBit(x) => {
-                    let new_readout = x.name().clone();
-                    if readout == "".to_string() {
-                        readout = new_readout;
-                        number_qubits = *x.length();
-                    } else {
-                        return Err(RoqoqoBackendError::GenericError {
-                            msg: "QRydAPIBAckend does not support more than one readout register"
-                                .to_string(),
-                        });
-                    }
+            if let Operation::DefinitionBit(x) = op {
+                let new_readout = x.name().clone();
+                if readout == *"" {
+                    readout = new_readout;
+                    number_qubits = *x.length();
+                } else {
+                    return Err(RoqoqoBackendError::GenericError {
+                        msg: "QRydAPIBAckend does not support more than one readout register"
+                            .to_string(),
+                    });
                 }
-                _ => (),
             }
         }
 
@@ -603,7 +600,7 @@ impl EvaluatingBackend for APIBackend {
             let job_status = self.get_job_status(job_loc.clone()).unwrap();
             status = job_status.status.clone();
             thread::sleep(fifteen);
-            if status == "completed".to_string() {
+            if status == *"completed" {
                 job_result = self.get_job_result(job_loc.clone()).unwrap();
             }
         }

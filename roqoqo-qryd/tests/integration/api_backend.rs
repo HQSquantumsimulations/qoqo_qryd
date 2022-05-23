@@ -58,7 +58,7 @@ fn api_backend() {
                 program,
             )
             .unwrap();
-        println!("Job location {}", job_loc.clone());
+        println!("Job location {}", job_loc);
 
         let fifteen = time::Duration::from_secs(1);
 
@@ -72,7 +72,7 @@ fn api_backend() {
             thread::sleep(fifteen);
 
             println!("Job status {:?}", job_status);
-            if status == "completed".to_string() {
+            if status == *"completed" {
                 job_result = api_backend_new.get_job_result(job_loc.clone()).unwrap();
                 println!("Job result {:?}", job_result.clone());
             }
@@ -118,7 +118,7 @@ fn api_triangular() {
                 program,
             )
             .unwrap();
-        println!("Job location {}", job_loc.clone());
+        println!("Job location {}", job_loc);
 
         let fifteen = time::Duration::from_secs(1);
 
@@ -132,7 +132,7 @@ fn api_triangular() {
             thread::sleep(fifteen);
 
             println!("Job status {:?}", job_status);
-            if status == "completed".to_string() {
+            if status == *"completed" {
                 job_result = api_backend_new.get_job_result(job_loc.clone()).unwrap();
                 println!("Job result {:?}", job_result.clone());
             }
@@ -180,7 +180,7 @@ fn evaluating_backend() {
             measurement,
             input_parameter_names: vec![],
         };
-        let program_result = program.run(api_backend_new, &vec![]).unwrap().unwrap();
+        let program_result = program.run(api_backend_new, &[]).unwrap().unwrap();
         println!("{:?}", program_result);
         assert_eq!(program_result.get("test"), Some(&-3.0));
     }
@@ -217,7 +217,7 @@ fn api_delete() {
                 program,
             )
             .unwrap();
-        println!("Job location {}", job_loc.clone());
+        println!("Job location {}", job_loc);
         api_backend_new.delete_job(job_loc).unwrap();
     }
 }

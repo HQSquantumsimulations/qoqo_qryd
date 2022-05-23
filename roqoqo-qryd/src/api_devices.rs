@@ -343,12 +343,7 @@ impl Device for QrydEmuSquareDevice {
         let smaller = target.min(control);
         let larger = target.max(control);
 
-        if larger - smaller == 1 && smaller % 5 != 4 {
-            match hqslang {
-                "PhaseShiftedControlledZ" => Some(1e-6),
-                _ => None,
-            }
-        } else if larger - smaller == 5 {
+        if (larger - smaller == 1 && smaller % 5 != 4) || (larger - smaller == 5) {
             match hqslang {
                 "PhaseShiftedControlledZ" => Some(1e-6),
                 _ => None,
@@ -456,14 +451,12 @@ impl Device for QrydEmuSquareDevice {
     ///
     fn change_device(
         &mut self,
-        hqslang: &str,
+        _hqslang: &str,
         _operation: &[u8],
     ) -> Result<(), RoqoqoBackendError> {
-        match hqslang {
-            _ => Err(RoqoqoBackendError::GenericError {
-                msg: "Wrapped operation not supported in QRydAPIDevice".to_string(),
-            }),
-        }
+        Err(RoqoqoBackendError::GenericError {
+            msg: "Wrapped operation not supported in QRydAPIDevice".to_string(),
+        })
     }
 }
 
@@ -591,33 +584,21 @@ impl Device for QrydEmuTriangularDevice {
         let larger = target.max(control);
 
         if smaller % 10 < 5 {
-            if larger - smaller == 5 {
-                match hqslang {
-                    "PhaseShiftedControlledZ" => Some(1e-6),
-                    _ => None,
-                }
-            } else if larger - smaller == 6 && smaller % 5 != 4 {
+            if (larger - smaller == 5) || (larger - smaller == 6 && smaller % 5 != 4) {
                 match hqslang {
                     "PhaseShiftedControlledZ" => Some(1e-6),
                     _ => None,
                 }
             } else {
                 None
+            }
+        } else if (larger - smaller == 5) || (larger - smaller == 4 && smaller % 5 != 0) {
+            match hqslang {
+                "PhaseShiftedControlledZ" => Some(1e-6),
+                _ => None,
             }
         } else {
-            if larger - smaller == 5 {
-                match hqslang {
-                    "PhaseShiftedControlledZ" => Some(1e-6),
-                    _ => None,
-                }
-            } else if larger - smaller == 4 && smaller % 5 != 0 {
-                match hqslang {
-                    "PhaseShiftedControlledZ" => Some(1e-6),
-                    _ => None,
-                }
-            } else {
-                None
-            }
+            None
         }
     }
 
@@ -719,13 +700,11 @@ impl Device for QrydEmuTriangularDevice {
     ///
     fn change_device(
         &mut self,
-        hqslang: &str,
+        _hqslang: &str,
         _operation: &[u8],
     ) -> Result<(), RoqoqoBackendError> {
-        match hqslang {
-            _ => Err(RoqoqoBackendError::GenericError {
-                msg: "Wrapped operation not supported in QRydAPIDevice".to_string(),
-            }),
-        }
+        Err(RoqoqoBackendError::GenericError {
+            msg: "Wrapped operation not supported in QRydAPIDevice".to_string(),
+        })
     }
 }
