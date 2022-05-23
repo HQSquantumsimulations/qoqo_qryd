@@ -14,7 +14,7 @@
 import numpy as np
 from qoqo import Circuit
 import qoqo.operations as ops
-from qoqo_qryd import devices, Backend
+from qoqo_qryd import devices, SimulatorBackend
 from qoqo_qryd import pragma_operations as qrydops
 
 # --------------------- The set-up of the device ----------------------- #
@@ -41,7 +41,7 @@ device = devices.FirstDevice(
         [0.0, 1.0, 2.0, 3.0],
         [0.0, 1.0, 2.0, 3.0]]))
 
-backend = Backend(device)
+backend = SimulatorBackend(device)
 
 # ---------------- Multi Qubit Circuits that will fail ---------------------- #
 
