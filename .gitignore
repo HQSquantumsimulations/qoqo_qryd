@@ -1,5 +1,5 @@
 *_build*
-*/target/*
+*target*
 untracked/*
 *__pycache__*
 *.mypy_cache*
