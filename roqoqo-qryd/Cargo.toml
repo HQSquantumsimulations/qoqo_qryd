@@ -1,6 +1,6 @@
 [package]
 name = "roqoqo-qryd"
-version = "0.5.0"
+version = "0.5.0-alpha.1"
 authors = ["HQS Quantum Simulations <info@quantumsimulations.de>"]
 edition = "2021"
 license = "Apache-2.0"
@@ -11,7 +11,7 @@ repository = "https://github.com/HQSquantumsimulations/qoqo_qryd"
 documentation = "https://github.com/HQSquantumsimulations/qoqo_qryd/"
 homepage = "https://github.com/HQSquantumsimulations/qoqo_qryd"
 description = "QRyd interface for roqoqo rust quantum computing toolkit"
-include = ["src/*", "Cargo.toml"]
+include = ["src/*", "Cargo.toml", "README.md", "LICENSE"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
