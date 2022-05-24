@@ -14,8 +14,6 @@ The qoqo-qryd package project provides three components:
 
 To learn more about the general approach to create quantum programs and executing them see :doc:`src/introduction` and :doc:`src/execution`.
 
-:doc:`src/compilation` details the possible compilation steps that can be applied for a quantum program and :doc:`src/qrydspecifics` discusses details of devices and operations available for QRyd.
-
 A collection of example python programs can be found in :doc:`src/examples`.
 
 .. toctree::
@@ -24,11 +22,9 @@ A collection of example python programs can be found in :doc:`src/examples`.
 
    src/installation.md
    src/introduction
-   src/compilation
    src/execution
    src/qrydspecifics
    src/examples
-   src/compiler_api
    src/qoqo_qryd_api
 
 

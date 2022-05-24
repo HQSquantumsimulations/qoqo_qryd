@@ -114,7 +114,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt install texlive-latex-base texlive-latex-recommended texlive-latex-extra latexmk make
-        pip install ./qoqo-qryd/qoqo-qryd
+        pip install ./qoqo-qryd
         python -m pip install -r ./userdoc/requirements.txt
     - name: build
       run: |

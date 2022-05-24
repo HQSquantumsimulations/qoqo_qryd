@@ -1,5 +1,4 @@
 numpy
-qryd_compiler 
 qoqo_qryd
 sphinx >= 2.1
 nbsphinx

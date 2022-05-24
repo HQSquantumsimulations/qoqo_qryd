@@ -186,7 +186,7 @@ impl APIBackend {
     ///                     At the moment limited to the QRyd emulator.
     /// * `access_token` - An access_token is required to access QRYD hardware and emulators.
     ///                                 The access_token can either be given as an argument here
-    ///                                 or set via the environmental variable `$QRYD_ACCESS_TOKEN`
+    ///                                 or set via the environmental variable `$QRYD_API_TOKEN`
     /// * `timeout` - Timeout for synchronous EvaluatingBackend trait. In the evaluating trait.
     ///               In synchronous operation the WebAPI is queried every 30 seconds until it has
     ///               been queried `timeout` times.
@@ -197,7 +197,7 @@ impl APIBackend {
     ) -> Result<Self, RoqoqoBackendError> {
         let access_token_internal: String = match access_token {
             Some(s) => s,
-            None => env::var("QRYD_ACCESS_TOKEN").map_err(|_| {
+            None => env::var("QRYD_API_TOKEN").map_err(|_| {
                 RoqoqoBackendError::MissingAuthentification {
                     msg: "QRYD access token is missing".to_string(),
                 }
@@ -228,6 +228,22 @@ impl APIBackend {
         // Prepare data that need to be passed to the WebAPI client
         let seed_param: usize = self.device.seed(); // seed.unwrap_or(0);
         let theta_param: f64 = self.device.pcz_theta(); // pcz_theta.unwrap_or(0.0);
+        match &quantumprogram {
+            QuantumProgram::ClassicalRegister { measurement, .. } => {
+                if measurement.circuits.len() != 1 {
+                    return Err(RoqoqoBackendError::GenericError { msg: "QRyd API Backend only supports posting ClassicalRegister with one circuit".to_string() });
+                }
+                if measurement.circuits[0].is_parametrized() {
+                    return Err(RoqoqoBackendError::GenericError { msg: "Qoqo circuit contains symbolic parameters. The QrydWebAPI does not support symbolic parameters.".to_string() });
+                }
+            }
+            _ => {
+                return Err(RoqoqoBackendError::GenericError {
+                    msg: "QRyd API Backend only supports posting ClassicalRegister QuantumPrograms"
+                        .to_string(),
+                })
+            }
+        }
         let data = QRydRunData {
             backend: self.device.qrydbackend(),
             seed: seed_param,
@@ -235,6 +251,7 @@ impl APIBackend {
             pcz_theta: theta_param,
             program: quantumprogram,
         };
+
         // Prepare WebAPI client
         let client = reqwest::blocking::Client::builder()
             .https_only(true)
@@ -549,20 +566,17 @@ impl EvaluatingBackend for APIBackend {
         let mut number_qubits = 0;
 
         for op in new_circ.iter() {
-            match op {
-                Operation::DefinitionBit(x) => {
-                    let new_readout = x.name().clone();
-                    if readout == "".to_string() {
-                        readout = new_readout;
-                        number_qubits = *x.length();
-                    } else {
-                        return Err(RoqoqoBackendError::GenericError {
-                            msg: "QRydAPIBAckend does not support more than one readout register"
-                                .to_string(),
-                        });
-                    }
+            if let Operation::DefinitionBit(x) = op {
+                let new_readout = x.name().clone();
+                if readout == *"" {
+                    readout = new_readout;
+                    number_qubits = *x.length();
+                } else {
+                    return Err(RoqoqoBackendError::GenericError {
+                        msg: "QRydAPIBAckend does not support more than one readout register"
+                            .to_string(),
+                    });
                 }
-                _ => (),
             }
         }
 
@@ -579,19 +593,28 @@ impl EvaluatingBackend for APIBackend {
         let mut test_counter = 0;
         let mut status = "".to_string();
         let mut job_result = QRydJobResult::default();
-        let fifteen = time::Duration::from_secs(30);
+        let fifteen = time::Duration::from_millis(200);
         dbg!(&status);
         while test_counter < self.timeout && status != "completed" {
             test_counter += 1;
             let job_status = self.get_job_status(job_loc.clone()).unwrap();
             status = job_status.status.clone();
             thread::sleep(fifteen);
-            if status == "completed".to_string() {
+            if status == *"completed" {
                 job_result = self.get_job_result(job_loc.clone()).unwrap();
             }
         }
+
         if status == "completed" {
             APIBackend::counts_to_result(job_result.data, readout, number_qubits)
+        } else if status == "error" {
+            Err(RoqoqoBackendError::GenericError {
+                msg: format!("WebAPI returned an error status for the job {}.", job_loc),
+            })
+        } else if status == "cancelled" {
+            Err(RoqoqoBackendError::GenericError {
+                msg: format!("Job {} got cancelled.", job_loc),
+            })
         } else {
             Err(RoqoqoBackendError::GenericError {
                 msg: format!(

@@ -27,12 +27,12 @@ use std::{env, thread, time};
 #[test]
 
 fn api_backend() {
-    if env::var("QRYD_ACCESS_TOKEN").is_ok() {
+    if env::var("QRYD_API_TOKEN").is_ok() {
         let number_qubits = 6;
-        let device = QrydEmuSquareDevice::new(true, Some(2), 0.23).unwrap();
+        let device = QrydEmuSquareDevice::new(Some(2), 0.23).unwrap();
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
         let api_backend_new = APIBackend::new(qryd_device, None, None).unwrap();
-        // // CAUTION: environment variable QRYD_ACCESS_TOKEN needs to be set on the terminal to pass this test!
+        // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
         let qubit_mapping: HashMap<usize, usize> =
             (0..number_qubits).into_iter().map(|x| (x, x)).collect();
         let mut circuit = Circuit::new();
@@ -58,9 +58,9 @@ fn api_backend() {
                 program,
             )
             .unwrap();
-        println!("Job location {}", job_loc.clone());
+        println!("Job location {}", job_loc);
 
-        let fifteen = time::Duration::from_secs(14);
+        let fifteen = time::Duration::from_secs(1);
 
         let mut test_counter = 0;
         let mut status = "".to_string();
@@ -72,7 +72,7 @@ fn api_backend() {
             thread::sleep(fifteen);
 
             println!("Job status {:?}", job_status);
-            if status == "completed".to_string() {
+            if status == *"completed" {
                 job_result = api_backend_new.get_job_result(job_loc.clone()).unwrap();
                 println!("Job result {:?}", job_result.clone());
             }
@@ -87,12 +87,12 @@ fn api_backend() {
 
 #[test]
 fn api_triangular() {
-    if env::var("QRYD_ACCESS_TOKEN").is_ok() {
+    if env::var("QRYD_API_TOKEN").is_ok() {
         let number_qubits = 6;
-        let device = QrydEmuTriangularDevice::new(true, Some(2), 0.23).unwrap();
+        let device = QrydEmuTriangularDevice::new(Some(2), 0.23).unwrap();
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
         let api_backend_new = APIBackend::new(qryd_device, None, None).unwrap();
-        // // CAUTION: environment variable QRYD_ACCESS_TOKEN needs to be set on the terminal to pass this test!
+        // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
         let qubit_mapping: HashMap<usize, usize> =
             (0..number_qubits).into_iter().map(|x| (x, x)).collect();
         let mut circuit = Circuit::new();
@@ -118,9 +118,9 @@ fn api_triangular() {
                 program,
             )
             .unwrap();
-        println!("Job location {}", job_loc.clone());
+        println!("Job location {}", job_loc);
 
-        let fifteen = time::Duration::from_secs(14);
+        let fifteen = time::Duration::from_secs(1);
 
         let mut test_counter = 0;
         let mut status = "".to_string();
@@ -132,7 +132,7 @@ fn api_triangular() {
             thread::sleep(fifteen);
 
             println!("Job status {:?}", job_status);
-            if status == "completed".to_string() {
+            if status == *"completed" {
                 job_result = api_backend_new.get_job_result(job_loc.clone()).unwrap();
                 println!("Job result {:?}", job_result.clone());
             }
@@ -147,12 +147,12 @@ fn api_triangular() {
 
 #[test]
 fn evaluating_backend() {
-    if env::var("QRYD_ACCESS_TOKEN").is_ok() {
+    if env::var("QRYD_API_TOKEN").is_ok() {
         let number_qubits = 6;
-        let device = QrydEmuSquareDevice::new(true, Some(2), 0.23).unwrap();
+        let device = QrydEmuSquareDevice::new(Some(2), 0.23).unwrap();
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
         let api_backend_new = APIBackend::new(qryd_device, None, Some(20)).unwrap();
-        // // CAUTION: environment variable QRYD_ACCESS_TOKEN needs to be set on the terminal to pass this test!
+        // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
         let qubit_mapping: HashMap<usize, usize> =
             (0..number_qubits).into_iter().map(|x| (x, x)).collect();
         let mut circuit = Circuit::new();
@@ -180,7 +180,7 @@ fn evaluating_backend() {
             measurement,
             input_parameter_names: vec![],
         };
-        let program_result = program.run(api_backend_new, &vec![]).unwrap().unwrap();
+        let program_result = program.run(api_backend_new, &[]).unwrap().unwrap();
         println!("{:?}", program_result);
         assert_eq!(program_result.get("test"), Some(&-3.0));
     }
@@ -188,11 +188,11 @@ fn evaluating_backend() {
 
 #[test]
 fn api_delete() {
-    if env::var("QRYD_ACCESS_TOKEN").is_ok() {
-        let device = QrydEmuSquareDevice::new(true, Some(1), 0.23).unwrap();
+    if env::var("QRYD_API_TOKEN").is_ok() {
+        let device = QrydEmuSquareDevice::new(Some(1), 0.23).unwrap();
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
         let api_backend_new = APIBackend::new(qryd_device, None, None).unwrap();
-        // // CAUTION: environment variable QRYD_ACCESS_TOKEN needs to be set on the terminal to pass this test!
+        // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
         let qubit_mapping: HashMap<usize, usize> = (0..6).into_iter().map(|x| (x, x)).collect();
         let mut circuit = Circuit::new();
         circuit += operations::DefinitionBit::new("ro".to_string(), 6, true);
@@ -217,7 +217,7 @@ fn api_delete() {
                 program,
             )
             .unwrap();
-        println!("Job location {}", job_loc.clone());
+        println!("Job location {}", job_loc);
         api_backend_new.delete_job(job_loc).unwrap();
     }
 }

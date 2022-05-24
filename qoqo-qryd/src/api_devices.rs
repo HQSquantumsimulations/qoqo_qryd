@@ -28,29 +28,17 @@ pub struct QrydEmuSquareDeviceWrapper {
 
 #[pymethods]
 impl QrydEmuSquareDeviceWrapper {
-
     /// Create new QrydEmuSquareDevice device
     ///
     /// # Arguments
     ///
-    /// * `localcomp` - Use the localcomp backend (true) or the cloudcomp backend (false)
     /// * `seed` - Seed, if not provided will be set to 0 per default (not recommended!)
     /// * 'pcz_theta' - Phase angle for the basis gate 'PhaseShiftedControllZ'. If not provided will be set to 0.0.
     #[new]
-    pub fn new(
-        localcomp: bool,
-        seed: Option<usize>,
-        pcz_theta: f64,
-    ) -> PyResult<Self> {
-
+    pub fn new(seed: Option<usize>, pcz_theta: f64) -> PyResult<Self> {
         Ok(Self {
-            internal: QrydEmuSquareDevice::new(
-                localcomp,
-                seed,
-                pcz_theta,
-
-            )
-            .map_err(|err| PyValueError::new_err(format!("{:?}", err)))?,
+            internal: QrydEmuSquareDevice::new(seed, pcz_theta)
+                .map_err(|err| PyValueError::new_err(format!("{:?}", err)))?,
         })
     }
 
@@ -78,7 +66,7 @@ impl QrydEmuSquareDeviceWrapper {
     /// Raises:
     ///     ValueError: Cannot serialize QrydEmuSquareDevice to bytes.
     pub fn to_bincode(&self) -> PyResult<Py<PyByteArray>> {
-        let serialized = serialize(&self.internal)
+        let serialized = bincode::serialize(&self.internal)
             .map_err(|_| PyValueError::new_err("Cannot serialize QrydEmuSquareDevice to bytes"))?;
         let b: Py<PyByteArray> = Python::with_gil(|py| -> Py<PyByteArray> {
             PyByteArray::new(py, &serialized[..]).into()
@@ -104,7 +92,7 @@ impl QrydEmuSquareDeviceWrapper {
             .map_err(|_| PyTypeError::new_err("Input cannot be converted to byte array"))?;
 
         Ok(QrydEmuSquareDeviceWrapper {
-            internal: deserialize(&bytes[..]).map_err(|_| {
+            internal: bincode::deserialize(&bytes[..]).map_err(|_| {
                 PyValueError::new_err("Input cannot be deserialized to QrydEmuSquareDevice")
             })?,
         })
@@ -162,7 +150,7 @@ impl QrydEmuSquareDeviceWrapper {
     ///     ValueError: Cannot serialize Device to bytes.
     pub fn _enum_to_bincode(&self) -> PyResult<Py<PyByteArray>> {
         let qryd_enum: QRydAPIDevice = (&self.internal).into();
-        let serialized = serialize(&qryd_enum)
+        let serialized = bincode::serialize(&qryd_enum)
             .map_err(|_| PyValueError::new_err("Cannot serialize QrydEmuSquareDevice to bytes"))?;
         let b: Py<PyByteArray> = Python::with_gil(|py| -> Py<PyByteArray> {
             PyByteArray::new(py, &serialized[..]).into()
@@ -231,28 +219,17 @@ pub struct QrydEmuTriangularDeviceWrapper {
 
 #[pymethods]
 impl QrydEmuTriangularDeviceWrapper {
-
-
     /// Create new QrydEmuSquareDevice device
     ///
     /// # Arguments
     ///
-    /// * `localcomp` - Use the localcomp backend (true) or the cloudcomp backend (false)
     /// * `seed` - Seed, if not provided will be set to 0 per default (not recommended!)
     /// * `pcz_theta` - The phase shift in the native PhaseShiftedControlledZ gate
     #[new]
-    pub fn new(
-        localcomp: bool,
-        seed: Option<usize>,
-        pcz_theta: f64,
-    ) -> PyResult<Self> {
+    pub fn new(seed: Option<usize>, pcz_theta: f64) -> PyResult<Self> {
         Ok(Self {
-            internal: QrydEmuTriangularDevice::new(
-                localcomp,
-                seed,
-                pcz_theta,
-            )
-            .map_err(|err| PyValueError::new_err(format!("{:?}", err)))?,
+            internal: QrydEmuTriangularDevice::new(seed, pcz_theta)
+                .map_err(|err| PyValueError::new_err(format!("{:?}", err)))?,
         })
     }
 
@@ -280,7 +257,7 @@ impl QrydEmuTriangularDeviceWrapper {
     /// Raises:
     ///     ValueError: Cannot serialize QrydEmuTriangularDevice to bytes.
     pub fn to_bincode(&self) -> PyResult<Py<PyByteArray>> {
-        let serialized = serialize(&self.internal).map_err(|_| {
+        let serialized = bincode::serialize(&self.internal).map_err(|_| {
             PyValueError::new_err("Cannot serialize QrydEmuTriangularDevice to bytes")
         })?;
         let b: Py<PyByteArray> = Python::with_gil(|py| -> Py<PyByteArray> {
@@ -307,7 +284,7 @@ impl QrydEmuTriangularDeviceWrapper {
             .map_err(|_| PyTypeError::new_err("Input cannot be converted to byte array"))?;
 
         Ok(QrydEmuTriangularDeviceWrapper {
-            internal: deserialize(&bytes[..]).map_err(|_| {
+            internal: bincode::deserialize(&bytes[..]).map_err(|_| {
                 PyValueError::new_err("Input cannot be deserialized to QrydEmuTriangularDevice")
             })?,
         })
@@ -366,7 +343,7 @@ impl QrydEmuTriangularDeviceWrapper {
     ///     ValueError: Cannot serialize Device to bytes.
     pub fn _enum_to_bincode(&self) -> PyResult<Py<PyByteArray>> {
         let qryd_enum: QRydAPIDevice = (&self.internal).into();
-        let serialized = serialize(&qryd_enum).map_err(|_| {
+        let serialized = bincode::serialize(&qryd_enum).map_err(|_| {
             PyValueError::new_err("Cannot serialize QrydEmuTriangularDevice to bytes")
         })?;
         let b: Py<PyByteArray> = Python::with_gil(|py| -> Py<PyByteArray> {
@@ -436,7 +413,7 @@ pub fn convert_into_device(input: &PyAny) -> Result<QRydAPIDevice, QoqoBackendEr
     let bytes = get_bytes
         .extract::<Vec<u8>>()
         .map_err(|_| QoqoBackendError::CannotExtractObject)?;
-    deserialize(&bytes[..]).map_err(|_| QoqoBackendError::CannotExtractObject)
+    bincode::deserialize(&bytes[..]).map_err(|_| QoqoBackendError::CannotExtractObject)
 }
 
 /// QRyd WebAPI Devices.
@@ -452,5 +429,6 @@ pub fn convert_into_device(input: &PyAny) -> Result<QRydAPIDevice, QoqoBackendEr
 #[pymodule]
 pub fn api_devices(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_class::<QrydEmuSquareDeviceWrapper>()?;
+    m.add_class::<QrydEmuTriangularDeviceWrapper>()?;
     Ok(())
 }

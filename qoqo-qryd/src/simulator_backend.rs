@@ -132,8 +132,9 @@ impl SimulatorBackendWrapper {
             .map_err(|_| PyTypeError::new_err("Input cannot be converted to byte array"))?;
 
         Ok(SimulatorBackendWrapper {
-            internal: deserialize(&bytes[..])
-                .map_err(|_| PyValueError::new_err("Input cannot be deserialized to SimulatorBackend"))?,
+            internal: deserialize(&bytes[..]).map_err(|_| {
+                PyValueError::new_err("Input cannot be deserialized to SimulatorBackend")
+            })?,
         })
     }
 
@@ -164,8 +165,9 @@ impl SimulatorBackendWrapper {
     #[classmethod]
     fn from_json(_cls: &PyType, input: &str) -> PyResult<SimulatorBackendWrapper> {
         Ok(SimulatorBackendWrapper {
-            internal: serde_json::from_str(input)
-                .map_err(|_| PyValueError::new_err("Input cannot be deserialized to SimulatorBackend"))?,
+            internal: serde_json::from_str(input).map_err(|_| {
+                PyValueError::new_err("Input cannot be deserialized to SimulatorBackend")
+            })?,
         })
     }
 

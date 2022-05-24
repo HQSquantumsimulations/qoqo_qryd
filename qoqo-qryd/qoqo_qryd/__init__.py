@@ -21,7 +21,7 @@ The qoqo-qryd/roqoqo-qryd packages provide three components:
 .. autosummary::
     :toctree: generated/
 
-    devices
+    qryd_devices
     api_devices
     pragma_operations
     SimulatorBackend

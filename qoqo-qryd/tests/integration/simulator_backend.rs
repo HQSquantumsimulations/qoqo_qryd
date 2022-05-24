@@ -23,7 +23,7 @@ use qoqo_qryd::simulator_backend::{convert_into_backend, SimulatorBackendWrapper
 use roqoqo::measurements::{ClassicalRegister, PauliZProduct, PauliZProductInput};
 use roqoqo::operations;
 use roqoqo::Circuit;
-use roqoqo_qryd::{SimulatorBackend, FirstDevice, QRydDevice};
+use roqoqo_qryd::{FirstDevice, QRydDevice, SimulatorBackend};
 
 #[test]
 fn test_creating_backend() {
@@ -487,7 +487,6 @@ fn test_convert_to_device() {
                 vec![1, 1],
                 1.0,
                 array![[0.0, 1.0], [0.0, 1.0]].to_pyarray(py),
-                1.0,
             ))
             .unwrap()
             .cast_as::<PyCell<FirstDeviceWrapper>>()
@@ -562,7 +561,7 @@ fn test_pyo3_new_change_layout() {
     let check_2: &str = check_str.split("qubit_positions").collect::<Vec<&str>>()[1]
         .split(")}")
         .collect::<Vec<&str>>()[1];
-    let comp_str = format!("SimulatorBackendWrapper {{ internal: SimulatorBackend {{ device: FirstDevice(FirstDevice {{ number_rows: 2, number_columns: 2, qubit_positions: {{0: (0, 0), 1: (1, 0)}}, row_distance: 1.0, layout_register: {{0: {:?}}}, current_layout: 0, cutoff: 1.0 }}) }} }}", layout);
+    let comp_str = format!("SimulatorBackendWrapper {{ internal: SimulatorBackend {{ device: FirstDevice(FirstDevice {{ number_rows: 2, number_columns: 2, qubit_positions: {{0: (0, 0), 1: (1, 0)}}, row_distance: 1.0, layout_register: {{0: {:?}}}, current_layout: 0, cutoff: 1.0, controlled_z_phase: 0.7853981633974483 }}) }} }}", layout);
     let comp_1: &str = comp_str.split("qubit_positions").collect::<Vec<&str>>()[0];
     let comp_2: &str = comp_str.split("qubit_positions").collect::<Vec<&str>>()[1]
         .split(")}")
