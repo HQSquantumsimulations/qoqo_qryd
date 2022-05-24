@@ -27,3 +27,6 @@ pub use simulator_backend::*;
 #[cfg(test)]
 mod api_backend;
 pub use api_backend::*;
+
+mod api_devices;
+pub use api_devices::*;

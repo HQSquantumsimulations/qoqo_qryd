@@ -609,7 +609,7 @@ impl EvaluatingBackend for APIBackend {
             APIBackend::counts_to_result(job_result.data, readout, number_qubits)
         } else if status == "error" {
             Err(RoqoqoBackendError::GenericError {
-                msg: format!("WebAPI returned an error status for the job {}.",  job_loc),
+                msg: format!("WebAPI returned an error status for the job {}.", job_loc),
             })
         } else if status == "cancelled" {
             Err(RoqoqoBackendError::GenericError {
