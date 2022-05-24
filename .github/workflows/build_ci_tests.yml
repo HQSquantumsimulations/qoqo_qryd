@@ -37,7 +37,6 @@ jobs:
         command-arguments: ""
 
   build_maturin_builds_linux:
-    needs: deploy_cratesio
     name: maturin_build-${{ matrix.combinations.runs_on }}
     runs-on: ${{ matrix.combinations.runs_on }}
     strategy:
