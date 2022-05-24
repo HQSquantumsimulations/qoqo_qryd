@@ -15,3 +15,4 @@ doc/generated*
 *.vscode*
 *generated*
 tmp*
+*.ipynb_checkpoints*
