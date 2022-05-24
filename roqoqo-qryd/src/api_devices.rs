@@ -246,10 +246,7 @@ impl QrydEmuSquareDevice {
     /// * `seed` - Seed, if not provided will be set to 0 per default (not recommended!)
     /// * 'pcz_theta' - Phase angle for the basis gate 'PhaseShiftedControllZ'. If not provided will be set to 0.0.
 
-    pub fn new(
-        seed: Option<usize>,
-        pcz_theta: f64,
-    ) -> Result<Self, RoqoqoBackendError> {
+    pub fn new(seed: Option<usize>, pcz_theta: f64) -> Result<Self, RoqoqoBackendError> {
         let return_self = Self {
             local: false,
             seed: seed.unwrap_or_default(),
@@ -483,10 +480,7 @@ impl QrydEmuTriangularDevice {
     ///
     /// * `seed` - Seed, if not provided will be set to 0 per default (not recommended!)
     /// * `pcz_theta` - The phase shift in the native PhaseShiftedControlledZ gate
-    pub fn new(
-        seed: Option<usize>,
-        pcz_theta: f64,
-    ) -> Result<Self, RoqoqoBackendError> {
+    pub fn new(seed: Option<usize>, pcz_theta: f64) -> Result<Self, RoqoqoBackendError> {
         let return_self = Self {
             local: false,
             seed: seed.unwrap_or_default(),

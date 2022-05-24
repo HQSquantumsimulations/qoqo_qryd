@@ -604,8 +604,17 @@ impl EvaluatingBackend for APIBackend {
                 job_result = self.get_job_result(job_loc.clone()).unwrap();
             }
         }
+
         if status == "completed" {
             APIBackend::counts_to_result(job_result.data, readout, number_qubits)
+        } else if status == "error" {
+            Err(RoqoqoBackendError::GenericError {
+                msg: format!("WebAPI returned an error status for the job {}.",  job_loc),
+            })
+        } else if status == "cancelled" {
+            Err(RoqoqoBackendError::GenericError {
+                msg: format!("Job {} got cancelled.", job_loc),
+            })
         } else {
             Err(RoqoqoBackendError::GenericError {
                 msg: format!(
