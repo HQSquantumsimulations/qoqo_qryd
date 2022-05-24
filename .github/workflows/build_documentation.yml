@@ -60,10 +60,10 @@ jobs:
       run: |
         python -m pip install --upgrade pip maturin
         pip install ./qoqo-qryd
-        python -m pip install -r qoqo_qryd/userdoc/requirements.txt
+        python -m pip install -r ./userdoc/requirements.txt
     - name: build
       run: |
-        cd qoqo_qryd/userdoc
+        cd ./userdoc
         python -m sphinx -T -E -b html . _build/html
         cd ../../
     - name: publish
@@ -71,4 +71,4 @@ jobs:
       if: ${{ github.ref == 'refs/heads/main' }}
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./qoqo_qryd/userdoc/_build/html/
+        publish_dir: ./userdoc/_build/html/
