@@ -15,6 +15,10 @@ mod qryd_devices;
 pub use qryd_devices::*;
 
 #[cfg(test)]
+mod api_devices;
+pub use api_devices::*;
+
+#[cfg(test)]
 mod operations;
 pub use operations::*;
 
