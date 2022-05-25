@@ -35,6 +35,47 @@ jobs:
         command: check
         arguments: --all-features
         command-arguments: ""
+
+  build_maturin_builds_linux:
+    name: maturin_build-${{ matrix.combinations.runs_on }}
+    runs-on: ${{ matrix.combinations.runs_on }}
+    strategy:
+      matrix:
+        combinations: [
+          { runs_on: 'ubuntu-latest',  rust: "x86_64-unknown-linux-gnu" },
+        ]
+        python: [
+            {py: '3.7', interpreter: "python3.7"},
+            {py: '3.8', interpreter: "python3.8"},
+            {py: '3.9', interpreter: "python3.9"},
+            {py: '3.10', interpreter: "python3.10"}
+        ]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          target: ${{ matrix.combinations.rust }}
+          default: true
+      - uses: actions/setup-python@v3.1.2
+        with:
+          python-version: ${{ matrix.python.py }}
+      - name: linux wheels
+        uses: messense/maturin-action@v1
+        with:
+          maturin-version: latest
+          command: build
+          manylinux: 2_24
+          args: -i python${{ matrix.python.py }} --out wheels --no-sdist -m qoqo-qryd/Cargo.toml --release --cargo-extra-args="--locked"
+      - name: test install
+        run: |
+          pip install wheels/* --force-reinstall
+      - name: store artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: py_wheels
+          path: wheels
   
   unittests_check_linux:
     name: unittests_check-${{ matrix.combinations.runs_on }}

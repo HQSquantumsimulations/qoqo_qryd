@@ -1,6 +1,6 @@
 [package]
 name = "qoqo-qryd"
-version = "0.5.0-alpha.1"
+version = "0.5.0-alpha.3"
 authors = ["HQS Quantum Simulations <info@quantumsimulations.de>"]
 edition = "2021"
 license = "Apache-2.0"
@@ -37,7 +37,7 @@ qoqo = {version="1.0.0-alpha.1", default-features=false}
 roqoqo = {version="1.0.0-alpha.1", features = ["serialize"]}
 
 ndarray = "0.15"
-roqoqo-qryd = {version="0.5.0-alpha.1", path="../roqoqo-qryd", default-features=false, features = ["serialize"]}
+roqoqo-qryd = {version="0.5.0-alpha.3", path="../roqoqo-qryd", default-features=false, features = ["serialize"]}
 bincode = "1.3"
 serde_json = "1.0"
 

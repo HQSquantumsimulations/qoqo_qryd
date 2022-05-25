@@ -573,7 +573,10 @@ impl Device for QrydEmuTriangularDevice {
         let larger = target.max(control);
 
         if smaller % 10 < 5 {
-            if (larger - smaller == 5) || (larger - smaller == 6 && smaller % 5 != 4) {
+            if (larger - smaller == 5)
+                || (larger - smaller == 6 && smaller % 5 != 4)
+                || (larger - smaller == 1 && larger % 5 != 0)
+            {
                 match hqslang {
                     "PhaseShiftedControlledZ" => Some(1e-6),
                     _ => None,
@@ -581,7 +584,10 @@ impl Device for QrydEmuTriangularDevice {
             } else {
                 None
             }
-        } else if (larger - smaller == 5) || (larger - smaller == 4 && smaller % 5 != 0) {
+        } else if (larger - smaller == 5)
+            || (larger - smaller == 4 && smaller % 5 != 0)
+            || (larger - smaller == 1 && larger % 5 != 0)
+        {
             match hqslang {
                 "PhaseShiftedControlledZ" => Some(1e-6),
                 _ => None,

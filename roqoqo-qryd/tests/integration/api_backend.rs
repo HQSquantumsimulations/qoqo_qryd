@@ -73,12 +73,14 @@ fn api_backend() {
 
             println!("Job status {:?}", job_status);
             if status == *"completed" {
+                assert_eq!(job_status.status, "completed");
                 job_result = api_backend_new.get_job_result(job_loc.clone()).unwrap();
                 println!("Job result {:?}", job_result.clone());
             }
         }
         let (bits, _, _) =
             APIBackend::counts_to_result(job_result.data, "ro".to_string(), number_qubits).unwrap();
+        assert!(!bits.is_empty());
         for line in bits["ro"].iter() {
             println!("{:?}", line);
         }
@@ -119,6 +121,7 @@ fn api_triangular() {
             )
             .unwrap();
         println!("Job location {}", job_loc);
+        assert!(!job_loc.is_empty());
 
         let fifteen = time::Duration::from_secs(1);
 
@@ -130,15 +133,18 @@ fn api_triangular() {
             let job_status = api_backend_new.get_job_status(job_loc.clone()).unwrap();
             status = job_status.status.clone();
             thread::sleep(fifteen);
+            assert!(!job_status.status.clone().is_empty());
 
             println!("Job status {:?}", job_status);
             if status == *"completed" {
+                assert_eq!(job_status.status, "completed");
                 job_result = api_backend_new.get_job_result(job_loc.clone()).unwrap();
                 println!("Job result {:?}", job_result.clone());
             }
         }
         let (bits, _, _) =
             APIBackend::counts_to_result(job_result.data, "ro".to_string(), number_qubits).unwrap();
+        assert!(!bits.is_empty());
         for line in bits["ro"].iter() {
             println!("{:?}", line);
         }
@@ -218,6 +224,7 @@ fn api_delete() {
             )
             .unwrap();
         println!("Job location {}", job_loc);
-        api_backend_new.delete_job(job_loc).unwrap();
+        let delete_job = api_backend_new.delete_job(job_loc);
+        assert!(delete_job.is_ok());
     }
 }
