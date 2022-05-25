@@ -64,3 +64,28 @@ fn test_new_square() {
         });
     }
 }
+
+// Test to create a new backend
+#[test]
+fn test_new_triangle() {
+    if env::var("QRYD_API_TOKEN").is_ok() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let seed: Option<usize> = Some(11);
+            let pcz_theta: f64 = PI / 4.0;
+            let device_type = py.get_type::<QrydEmuTriangularDeviceWrapper>();
+            let device: &PyCell<QrydEmuTriangularDeviceWrapper> = device_type
+                .call1((seed, pcz_theta))
+                .unwrap()
+                .cast_as::<PyCell<QrydEmuTriangularDeviceWrapper>>()
+                .unwrap();
+
+            let backend_type: &PyType = py.get_type::<APIBackendWrapper>();
+            let backend = backend_type
+                .call1((device,))
+                .unwrap()
+                .cast_as::<PyCell<APIBackendWrapper>>();
+            assert!(backend.is_ok());
+        });
+    }
+}
