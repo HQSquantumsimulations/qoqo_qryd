@@ -13,8 +13,8 @@
 use roqoqo::devices::Device;
 use roqoqo_qryd::api_devices::{QRydAPIDevice, QrydEmuSquareDevice, QrydEmuTriangularDevice};
 
+use ndarray::Array2;
 use std::f64::consts::PI;
-// use std::f64::EPSILON;
 
 // Test the new function of the square device emulator
 #[test]
@@ -44,11 +44,26 @@ fn test_new_triangular() {
 
 // Test the functions from device trait of the square device emulator
 #[test]
-fn test_device_square() {
+fn test_numberqubits_square() {
     let device = QrydEmuSquareDevice::new(None, PI).unwrap();
     let apidevice = QRydAPIDevice::from(&device);
     assert_eq!(device.number_qubits(), 30);
     assert_eq!(apidevice.number_qubits(), device.number_qubits());
+}
+
+// Test the functions from device trait of the square device emulator
+#[test]
+fn test_decoherencerates_square() {
+    let device = QrydEmuSquareDevice::new(None, PI).unwrap();
+    let apidevice = QRydAPIDevice::from(&device);
+    assert_eq!(
+        device.qubit_decoherence_rates(&0),
+        Some(Array2::zeros((3, 3).to_owned()))
+    );
+    assert_eq!(
+        apidevice.qubit_decoherence_rates(&0),
+        device.qubit_decoherence_rates(&0)
+    );
 }
 
 // Test the functions from device trait of the triangular device emulator
@@ -62,48 +77,256 @@ fn test_numberqubits_triangular() {
 
 // Test the functions from device trait of the triangular device emulator
 #[test]
+fn test_decoherencerates_triangular() {
+    let device = QrydEmuTriangularDevice::new(None, PI).unwrap();
+    let apidevice = QRydAPIDevice::from(&device);
+    assert_eq!(
+        device.qubit_decoherence_rates(&0),
+        Some(Array2::zeros((3, 3).to_owned()))
+    );
+    assert_eq!(
+        apidevice.qubit_decoherence_rates(&0),
+        device.qubit_decoherence_rates(&0)
+    );
+}
+
+// Test the functions from device trait of the square device emulator
+#[test]
+fn test_gatetimes_square() {
+    let device = QrydEmuSquareDevice::new(None, PI).unwrap();
+    let apidevice = QRydAPIDevice::from(&device);
+    // single qubit gates
+    assert_eq!(device.single_qubit_gate_time("RotateXY", &0), Some(1e-6));
+    assert_eq!(
+        apidevice.single_qubit_gate_time("RotateXY", &0),
+        device.single_qubit_gate_time("RotateXY", &0)
+    );
+    assert_eq!(device.single_qubit_gate_time("RotateXY", &31), None);
+    assert_eq!(
+        apidevice.single_qubit_gate_time("RotateXY", &31),
+        device.single_qubit_gate_time("RotateXY", &31)
+    );
+    assert_eq!(device.single_qubit_gate_time("Hadamard", &0), None);
+    assert_eq!(
+        apidevice.single_qubit_gate_time("Hadamard", &0),
+        device.single_qubit_gate_time("Hadamard", &0)
+    );
+    assert_eq!(device.single_qubit_gate_time("RotateX", &0), Some(1e-6));
+    assert_eq!(
+        apidevice.single_qubit_gate_time("RotateX", &0),
+        device.single_qubit_gate_time("RotateX", &0)
+    );
+    assert_eq!(device.single_qubit_gate_time("RotateY", &0), Some(1e-6));
+    assert_eq!(
+        apidevice.single_qubit_gate_time("RotateY", &0),
+        device.single_qubit_gate_time("RotateY", &0)
+    );
+    assert_eq!(
+        device.single_qubit_gate_time("PhaseShiftState1", &0),
+        Some(1e-6)
+    );
+    assert_eq!(
+        apidevice.single_qubit_gate_time("PhaseShiftState1", &0),
+        device.single_qubit_gate_time("PhaseShiftState1", &0)
+    );
+    assert_eq!(device.single_qubit_gate_time("PhaseShiftState2", &0), None);
+    assert_eq!(
+        apidevice.single_qubit_gate_time("PhaseShiftState2", &0),
+        device.single_qubit_gate_time("PhaseShiftState2", &0)
+    );
+    // two qubit gates
+    // assert_eq!(device.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &1), Some(1e-6));
+    // assert_eq!(apidevice.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &1), device.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &1));
+    assert_eq!(
+        device.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &5),
+        Some(1e-6)
+    );
+    assert_eq!(
+        apidevice.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &5),
+        device.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &5)
+    );
+    assert_eq!(
+        device.two_qubit_gate_time("PhaseShiftedControlledZ", &5, &0),
+        Some(1e-6)
+    );
+    assert_eq!(
+        apidevice.two_qubit_gate_time("PhaseShiftedControlledZ", &5, &0),
+        device.two_qubit_gate_time("PhaseShiftedControlledZ", &5, &0)
+    );
+    assert_eq!(
+        device.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &0),
+        None
+    );
+    assert_eq!(
+        apidevice.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &0),
+        device.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &0)
+    );
+    assert_eq!(
+        device.two_qubit_gate_time("PhaseShiftedControlledZ", &29, &30),
+        None
+    );
+    assert_eq!(
+        apidevice.two_qubit_gate_time("PhaseShiftedControlledZ", &29, &30),
+        device.two_qubit_gate_time("PhaseShiftedControlledZ", &29, &30)
+    );
+    assert_eq!(
+        device.two_qubit_gate_time("PhaseShiftedControlledZ", &30, &31),
+        None
+    );
+    assert_eq!(
+        apidevice.two_qubit_gate_time("PhaseShiftedControlledZ", &30, &31),
+        device.two_qubit_gate_time("PhaseShiftedControlledZ", &30, &31)
+    );
+    assert_eq!(
+        device.two_qubit_gate_time("PhaseShiftedControlledZ", &30, &29),
+        None
+    );
+    assert_eq!(
+        apidevice.two_qubit_gate_time("PhaseShiftedControlledZ", &30, &29),
+        device.two_qubit_gate_time("PhaseShiftedControlledZ", &30, &29)
+    );
+    assert_eq!(device.two_qubit_gate_time("CNOT", &0, &5), None);
+    assert_eq!(
+        apidevice.two_qubit_gate_time("CNOT", &0, &5),
+        device.two_qubit_gate_time("CNOT", &0, &5)
+    );
+    // multi qubit gates
+    assert_eq!(device.multi_qubit_gate_time("MultiQubitMS", &[0, 1]), None);
+    assert_eq!(
+        device.multi_qubit_gate_time("MultiQubitMS", &[0, 1]),
+        apidevice.multi_qubit_gate_time("MultiQubitMS", &[0, 1])
+    );
+}
+
+// Test the functions from device trait of the triangular device emulator
+#[test]
 fn test_gatetimes_triangular() {
     let device = QrydEmuTriangularDevice::new(None, PI).unwrap();
     let apidevice = QRydAPIDevice::from(&device);
     // single qubit gates
     assert_eq!(device.single_qubit_gate_time("RotateXY", &0), Some(1e-6));
-    assert_eq!(apidevice.single_qubit_gate_time("RotateXY", &0), device.single_qubit_gate_time("RotateXY", &0));
+    assert_eq!(
+        apidevice.single_qubit_gate_time("RotateXY", &0),
+        device.single_qubit_gate_time("RotateXY", &0)
+    );
     assert_eq!(device.single_qubit_gate_time("RotateXY", &31), None);
-    assert_eq!(apidevice.single_qubit_gate_time("RotateXY", &31), device.single_qubit_gate_time("RotateXY", &31));
+    assert_eq!(
+        apidevice.single_qubit_gate_time("RotateXY", &31),
+        device.single_qubit_gate_time("RotateXY", &31)
+    );
     assert_eq!(device.single_qubit_gate_time("Hadamard", &0), None);
-    assert_eq!(apidevice.single_qubit_gate_time("Hadamard", &0), device.single_qubit_gate_time("Hadamard", &0));
+    assert_eq!(
+        apidevice.single_qubit_gate_time("Hadamard", &0),
+        device.single_qubit_gate_time("Hadamard", &0)
+    );
     assert_eq!(device.single_qubit_gate_time("RotateX", &0), Some(1e-6));
-    assert_eq!(apidevice.single_qubit_gate_time("RotateX", &0), device.single_qubit_gate_time("RotateX", &0));
+    assert_eq!(
+        apidevice.single_qubit_gate_time("RotateX", &0),
+        device.single_qubit_gate_time("RotateX", &0)
+    );
     assert_eq!(device.single_qubit_gate_time("RotateY", &0), Some(1e-6));
-    assert_eq!(apidevice.single_qubit_gate_time("RotateY", &0), device.single_qubit_gate_time("RotateY", &0));
-    assert_eq!(device.single_qubit_gate_time("PhaseShiftState1", &0), Some(1e-6));
-    assert_eq!(apidevice.single_qubit_gate_time("PhaseShiftState1", &0), device.single_qubit_gate_time("PhaseShiftState1", &0));
+    assert_eq!(
+        apidevice.single_qubit_gate_time("RotateY", &0),
+        device.single_qubit_gate_time("RotateY", &0)
+    );
+    assert_eq!(
+        device.single_qubit_gate_time("PhaseShiftState1", &0),
+        Some(1e-6)
+    );
+    assert_eq!(
+        apidevice.single_qubit_gate_time("PhaseShiftState1", &0),
+        device.single_qubit_gate_time("PhaseShiftState1", &0)
+    );
     assert_eq!(device.single_qubit_gate_time("PhaseShiftState2", &0), None);
-    assert_eq!(apidevice.single_qubit_gate_time("PhaseShiftState2", &0), device.single_qubit_gate_time("PhaseShiftState2", &0));
+    assert_eq!(
+        apidevice.single_qubit_gate_time("PhaseShiftState2", &0),
+        device.single_qubit_gate_time("PhaseShiftState2", &0)
+    );
     // two qubit gates
     // assert_eq!(device.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &1), Some(1e-6));
     // assert_eq!(apidevice.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &1), device.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &1));
-    assert_eq!(device.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &5), Some(1e-6));
-    assert_eq!(apidevice.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &5), device.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &5));
-    assert_eq!(device.two_qubit_gate_time("PhaseShiftedControlledZ", &5, &0), Some(1e-6));
-    assert_eq!(apidevice.two_qubit_gate_time("PhaseShiftedControlledZ", &5, &0), device.two_qubit_gate_time("PhaseShiftedControlledZ", &5, &0));
+    assert_eq!(
+        device.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &5),
+        Some(1e-6)
+    );
+    assert_eq!(
+        apidevice.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &5),
+        device.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &5)
+    );
+    assert_eq!(
+        device.two_qubit_gate_time("PhaseShiftedControlledZ", &5, &0),
+        Some(1e-6)
+    );
+    assert_eq!(
+        apidevice.two_qubit_gate_time("PhaseShiftedControlledZ", &5, &0),
+        device.two_qubit_gate_time("PhaseShiftedControlledZ", &5, &0)
+    );
     // -- this combination of qubits is allowed only for the triangular device
-    assert_eq!(device.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &6), Some(1e-6));
-    assert_eq!(apidevice.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &6), device.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &6));
+    assert_eq!(
+        device.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &6),
+        Some(1e-6)
+    );
+    assert_eq!(
+        apidevice.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &6),
+        device.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &6)
+    );
     // --
-    assert_eq!(device.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &0), None);
-    assert_eq!(apidevice.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &0), device.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &0));
-    assert_eq!(device.two_qubit_gate_time("PhaseShiftedControlledZ", &29, &30), None);
-    assert_eq!(apidevice.two_qubit_gate_time("PhaseShiftedControlledZ", &29, &30), device.two_qubit_gate_time("PhaseShiftedControlledZ", &29, &30));
-    assert_eq!(device.two_qubit_gate_time("PhaseShiftedControlledZ", &30, &31), None);
-    assert_eq!(apidevice.two_qubit_gate_time("PhaseShiftedControlledZ", &30, &31), device.two_qubit_gate_time("PhaseShiftedControlledZ", &30, &31));
-    assert_eq!(device.two_qubit_gate_time("PhaseShiftedControlledZ", &30, &29), None);
-    assert_eq!(apidevice.two_qubit_gate_time("PhaseShiftedControlledZ", &30, &29), device.two_qubit_gate_time("PhaseShiftedControlledZ", &30, &29));
+    assert_eq!(
+        device.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &0),
+        None
+    );
+    assert_eq!(
+        apidevice.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &0),
+        device.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &0)
+    );
+    assert_eq!(
+        device.two_qubit_gate_time("PhaseShiftedControlledZ", &29, &30),
+        None
+    );
+    assert_eq!(
+        apidevice.two_qubit_gate_time("PhaseShiftedControlledZ", &29, &30),
+        device.two_qubit_gate_time("PhaseShiftedControlledZ", &29, &30)
+    );
+    assert_eq!(
+        device.two_qubit_gate_time("PhaseShiftedControlledZ", &30, &31),
+        None
+    );
+    assert_eq!(
+        apidevice.two_qubit_gate_time("PhaseShiftedControlledZ", &30, &31),
+        device.two_qubit_gate_time("PhaseShiftedControlledZ", &30, &31)
+    );
+    assert_eq!(
+        device.two_qubit_gate_time("PhaseShiftedControlledZ", &30, &29),
+        None
+    );
+    assert_eq!(
+        apidevice.two_qubit_gate_time("PhaseShiftedControlledZ", &30, &29),
+        device.two_qubit_gate_time("PhaseShiftedControlledZ", &30, &29)
+    );
     assert_eq!(device.two_qubit_gate_time("CNOT", &0, &5), None);
-    assert_eq!(apidevice.two_qubit_gate_time("CNOT", &0, &5), device.two_qubit_gate_time("CNOT", &0, &5));
+    assert_eq!(
+        apidevice.two_qubit_gate_time("CNOT", &0, &5),
+        device.two_qubit_gate_time("CNOT", &0, &5)
+    );
     // multi qubit gates
     assert_eq!(device.multi_qubit_gate_time("MultiQubitMS", &[0, 1]), None);
-    assert_eq!(device.multi_qubit_gate_time("MultiQubitMS", &[0, 1]), apidevice.multi_qubit_gate_time("MultiQubitMS", &[0, 1]));
+    assert_eq!(
+        device.multi_qubit_gate_time("MultiQubitMS", &[0, 1]),
+        apidevice.multi_qubit_gate_time("MultiQubitMS", &[0, 1])
+    );
+}
+
+// Test the functions from device trait of the triangular device emulator
+// Changing the device is not allowed for the WebAPI emulators in the current version
+#[test]
+fn test_changedevice_square() {
+    let mut device = QrydEmuSquareDevice::new(None, PI).unwrap();
+    let mut apidevice = QRydAPIDevice::from(&device);
+    assert!(device.change_device("", &[]).is_err());
+    assert_eq!(
+        apidevice.change_device("", &[]),
+        device.change_device("", &[])
+    );
 }
 
 // Test the functions from device trait of the triangular device emulator
@@ -113,7 +336,70 @@ fn test_changedevice_triangular() {
     let mut device = QrydEmuTriangularDevice::new(None, PI).unwrap();
     let mut apidevice = QRydAPIDevice::from(&device);
     assert!(device.change_device("", &[]).is_err());
-    assert_eq!(apidevice.change_device("", &[]), device.change_device("", &[]));
+    assert_eq!(
+        apidevice.change_device("", &[]),
+        device.change_device("", &[])
+    );
+}
+
+// Test the functions from device trait of the sqare device emulator
+#[test]
+fn test_twoqubitedges_square() {
+    let device = QrydEmuSquareDevice::new(None, PI).unwrap();
+    let apidevice = QRydAPIDevice::from(&device);
+    let two_qubit_edges: Vec<(usize, usize)> = vec![
+        (0, 1),
+        (0, 5),
+        (1, 2),
+        (1, 6),
+        (2, 3),
+        (2, 7),
+        (3, 4),
+        (3, 8),
+        (4, 9),
+        (5, 6),
+        (5, 10),
+        (6, 7),
+        (6, 11),
+        (7, 8),
+        (7, 12),
+        (8, 9),
+        (8, 13),
+        (9, 14),
+        (10, 11),
+        (10, 15),
+        (11, 12),
+        (11, 16),
+        (12, 13),
+        (12, 17),
+        (13, 14),
+        (13, 18),
+        (14, 19),
+        (15, 16),
+        (15, 20),
+        (16, 17),
+        (16, 21),
+        (17, 18),
+        (17, 22),
+        (18, 19),
+        (18, 23),
+        (19, 24),
+        (20, 21),
+        (20, 25),
+        (21, 22),
+        (21, 26),
+        (22, 23),
+        (22, 27),
+        (23, 24),
+        (23, 28),
+        (24, 29),
+        (25, 26),
+        (26, 27),
+        (27, 28),
+        (28, 29),
+    ];
+    assert_eq!(device.two_qubit_edges(), two_qubit_edges);
+    assert_eq!(apidevice.two_qubit_edges(), device.two_qubit_edges());
 }
 
 // // Test the functions from device trait of the triangular device emulator
@@ -125,13 +411,3 @@ fn test_changedevice_triangular() {
 //     assert_eq!(device.two_qubit_edges(), two_qubit_edges);
 //     assert_eq!(apidevice.two_qubit_edges(), device.two_qubit_edges());
 // }
-
-// Test the functions from device trait of the sqare device emulator
-#[test]
-fn test_twoqubitedges_square() {
-    let device = QrydEmuSquareDevice::new(None, PI).unwrap();
-    let apidevice = QRydAPIDevice::from(&device);
-    let two_qubit_edges: Vec<(usize, usize)> = vec![(0, 1), (0, 5), (1, 2), (1, 6), (2, 3), (2, 7), (3, 4), (3, 8), (4, 9), (5, 6), (5, 10), (6, 7), (6, 11), (7, 8), (7, 12), (8, 9), (8, 13), (9, 14),(10, 11), (10, 15), (11, 12), (11, 16), (12, 13), (12, 17), (13, 14), (13, 18), (14, 19), (15, 16), (15, 20), (16, 17), (16, 21), (17, 18), (17, 22), (18, 19), (18, 23), (19, 24), (20, 21), (20, 25), (21, 22), (21, 26), (22, 23), (22, 27), (23, 24), (23, 28), (24, 29), (25, 26), (26, 27), (27, 28), (28, 29)];
-    assert_eq!(device.two_qubit_edges(), two_qubit_edges);
-    assert_eq!(apidevice.two_qubit_edges(), device.two_qubit_edges());
-}
