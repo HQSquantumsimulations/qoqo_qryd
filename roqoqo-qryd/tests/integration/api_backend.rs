@@ -224,7 +224,7 @@ fn api_delete() {
             )
             .unwrap();
         println!("Job location {}", job_loc);
-        let delete_job = api_backend_new.delete_job(job_loc.clone());
+        let delete_job = api_backend_new.delete_job(job_loc);
         assert!(delete_job.is_ok());
     }
 }
