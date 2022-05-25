@@ -19,6 +19,10 @@ mod api_devices;
 pub use api_devices::*;
 
 #[cfg(test)]
+mod api_backend;
+pub use api_backend::*;
+
+#[cfg(test)]
 mod operations;
 pub use operations::*;
 

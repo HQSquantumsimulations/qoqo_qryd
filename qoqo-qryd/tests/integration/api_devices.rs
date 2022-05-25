@@ -10,14 +10,13 @@
 // express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Integration test for public API of QRyd devices
-
-use std::usize;
+//! Integration test for public API of QRyd WebAPI devices
 
 use pyo3::prelude::*;
 use pyo3::Python;
 use qoqo_qryd::api_devices::{QrydEmuSquareDeviceWrapper, QrydEmuTriangularDeviceWrapper};
 use std::f64::consts::PI;
+use std::usize;
 
 // Helper function to create a python object of square device
 fn create_square_device(py: Python) -> &PyCell<QrydEmuSquareDeviceWrapper> {
