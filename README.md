@@ -21,7 +21,7 @@ The `/qoqo-qryd` folder is there to provide a python interface for the implement
 To use the API Backend, a QRydDemo API token is required. The token can be obtained via our [online registration form](https://thequantumlaend.de/get-access/).
 
 
-## Installation - TO BE REFACTORED
+## Installation
 
 For the python package we recommend checking out the latest tagged version from github installing it via pip. The pip installation requires rust and cmake to be installed locally. We recommend using [rustup](https://rustup.rs) to set up a rust toolchain. The pip should also automatically install  [maturin](https://github.com/PyO3/maturin) tool to build a python package locally and install it.
 Maturin needs an installed rust toolchain.
