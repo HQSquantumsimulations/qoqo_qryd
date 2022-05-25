@@ -21,7 +21,7 @@ use std::f64::consts::PI;
 use std::{env, usize};
 
 // Helper function to create a python object of square device
-fn create_backend_with_square_device(py: Python) -> &PyCell<APIBackendWrapper> {
+fn _create_backend_with_square_device(py: Python) -> &PyCell<APIBackendWrapper> {
     let seed: Option<usize> = Some(11);
     let pcz_theta: f64 = PI / 4.0;
     let device_type = py.get_type::<QrydEmuSquareDeviceWrapper>();

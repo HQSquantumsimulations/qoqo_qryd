@@ -58,7 +58,7 @@ fn test_numberqubits_square() {
             .unwrap()
             .extract::<usize>()
             .unwrap();
-        assert_eq!(number_qubits_get, 30 as usize);
+        assert_eq!(number_qubits_get, 30_usize);
     });
 }
 
@@ -285,7 +285,7 @@ fn test_numberqubits_triangular() {
             .unwrap()
             .extract::<usize>()
             .unwrap();
-        assert_eq!(number_qubits_get, 30 as usize);
+        assert_eq!(number_qubits_get, 30_usize);
     });
 }
 
