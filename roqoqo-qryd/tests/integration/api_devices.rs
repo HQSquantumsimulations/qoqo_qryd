@@ -135,8 +135,14 @@ fn test_gatetimes_square() {
         device.single_qubit_gate_time("PhaseShiftState2", &0)
     );
     // two qubit gates
-    // assert_eq!(device.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &1), Some(1e-6));
-    // assert_eq!(apidevice.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &1), device.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &1));
+    assert_eq!(
+        device.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &1),
+        Some(1e-6)
+    );
+    assert_eq!(
+        apidevice.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &1),
+        device.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &1)
+    );
     assert_eq!(
         device.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &5),
         Some(1e-6)
@@ -243,8 +249,14 @@ fn test_gatetimes_triangular() {
         device.single_qubit_gate_time("PhaseShiftState2", &0)
     );
     // two qubit gates
-    // assert_eq!(device.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &1), Some(1e-6));
-    // assert_eq!(apidevice.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &1), device.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &1));
+    assert_eq!(
+        device.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &1),
+        Some(1e-6)
+    );
+    assert_eq!(
+        apidevice.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &1),
+        device.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &1)
+    );
     assert_eq!(
         device.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &5),
         Some(1e-6)
@@ -402,12 +414,82 @@ fn test_twoqubitedges_square() {
     assert_eq!(apidevice.two_qubit_edges(), device.two_qubit_edges());
 }
 
-// // Test the functions from device trait of the triangular device emulator
-// #[test]
-// fn test_twoqubitedges_triangular() {
-//     let device = QrydEmuTriangularDevice::new(None, PI).unwrap();
-//     let apidevice = QRydAPIDevice::from(&device);
-//     let two_qubit_edges: Vec<(usize, usize)> = vec![(0, 1), (0, 5), (0, 6), (1, 2), (1, 6), (1, 7), (2, 3), (2, 7), (2, 8), (3, 4), (3, 8), (3, 9), (4, 9), (5, 6), (5, 10), (6, 7), (6, 10), (6, 11), (7, 8), (7, 11), (7, 12), (8, 9), (8, 12), (8, 13), (9, 13), (9, 14),(10, 11), (10, 15), (10, 16), (11, 12), (11, 16), (11, 17), (12, 13), (12, 17), (12, 18), (13, 14), (13, 18), (13, 19), (14, 19), (15, 16), (15, 20), (16, 17), (16, 20), (16, 21), (17, 18), (17, 21), (17, 22), (18, 19), (18, 22), (18, 23), (19, 23), (19, 24), (20, 21), (20, 25), (20, 26), (21, 22), (21, 26), (21, 27), (22, 23), (22, 27), (22, 28), (23, 24), (23, 28), (23, 29), (24, 29), (25, 26), (26, 27), (27, 28), (28, 29)];
-//     assert_eq!(device.two_qubit_edges(), two_qubit_edges);
-//     assert_eq!(apidevice.two_qubit_edges(), device.two_qubit_edges());
-// }
+// Test the functions from device trait of the triangular device emulator
+#[test]
+fn test_twoqubitedges_triangular() {
+    let device = QrydEmuTriangularDevice::new(None, PI).unwrap();
+    let apidevice = QRydAPIDevice::from(&device);
+    let two_qubit_edges: Vec<(usize, usize)> = vec![
+        (0, 1),
+        (0, 5),
+        (0, 6),
+        (1, 2),
+        (1, 6),
+        (1, 7),
+        (2, 3),
+        (2, 7),
+        (2, 8),
+        (3, 4),
+        (3, 8),
+        (3, 9),
+        (4, 9),
+        (5, 6),
+        (5, 10),
+        (6, 7),
+        (6, 10),
+        (6, 11),
+        (7, 8),
+        (7, 11),
+        (7, 12),
+        (8, 9),
+        (8, 12),
+        (8, 13),
+        (9, 13),
+        (9, 14),
+        (10, 11),
+        (10, 15),
+        (10, 16),
+        (11, 12),
+        (11, 16),
+        (11, 17),
+        (12, 13),
+        (12, 17),
+        (12, 18),
+        (13, 14),
+        (13, 18),
+        (13, 19),
+        (14, 19),
+        (15, 16),
+        (15, 20),
+        (16, 17),
+        (16, 20),
+        (16, 21),
+        (17, 18),
+        (17, 21),
+        (17, 22),
+        (18, 19),
+        (18, 22),
+        (18, 23),
+        (19, 23),
+        (19, 24),
+        (20, 21),
+        (20, 25),
+        (20, 26),
+        (21, 22),
+        (21, 26),
+        (21, 27),
+        (22, 23),
+        (22, 27),
+        (22, 28),
+        (23, 24),
+        (23, 28),
+        (23, 29),
+        (24, 29),
+        (25, 26),
+        (26, 27),
+        (27, 28),
+        (28, 29),
+    ];
+    assert_eq!(device.two_qubit_edges(), two_qubit_edges);
+    assert_eq!(apidevice.two_qubit_edges(), device.two_qubit_edges());
+}
