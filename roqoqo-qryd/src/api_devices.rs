@@ -586,7 +586,7 @@ impl Device for QrydEmuTriangularDevice {
             }
         } else if (larger - smaller == 5)
             || (larger - smaller == 4 && smaller % 5 != 0)
-            || (larger - smaller == 1 && larger % 5 != 4)
+            || (larger - smaller == 1 && larger % 5 != 0)
         {
             match hqslang {
                 "PhaseShiftedControlledZ" => Some(1e-6),
