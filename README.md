@@ -1,17 +1,27 @@
 # qoqo-qryd
 
-Components for the qoqo/roqoqo quantum toolkit by [HQS Quantum Simulations](https://quantumsimulations.de) that support QRyd quantum computers.
+This software package is designed to support the [QRydDemo](https://thequantumlaend.de/qryddemo/) proejct on Quantum computing with Rydberg atoms. It provides components to support QRydDemo quantum computers based on the [qoqo](https://github.com/HQSquantumsimulations/qoqo) quantum toolkit by [HQS Quantum Simulations](https://quantumsimulations.de) used to represent quantum circuits.
 
-The qoqo-qryd/roqoqo-qryd packages provide three components:
+This repository contains two components:
 
-* Backends that execute a compiled qoqo QuantumProgram on QRyd hardware or simulators,
-* A set of specific operations only available on QRyd hardware,
-* A collection of devices, representations of the Hardware devices available in Qryd.
+* roqoqo-qryd: the core rust library that builds on the roqoqo rust library.
+* qoqo-qryd: the python interface for roqoqo-qryd that uses the qoqo python interface.
+
+The qoqo-qryd/roqoqo-qryd packages provide three modules:
+
+* Backends that execute a compiled qoqo QuantumProgram on QRydDemo hardware or simulators,
+* A set of specific operations only available on QRydDemo hardware,
+* A collection of devices, representations of the Hardware devices available in the QrydDemo project.
 
 The `/qoqo-qryd` folder is there to provide a python interface for the implemented functionalities in `/roqoqo-qryd` (in rust).
 
 
-## Installation
+## Accessing QRydDemo WebAPI
+
+To use the API Backend, a QRydDemo API token is required. The token can be obtained via our [online registration form](https://thequantumlaend.de/get-access/).
+
+
+## Installation - TO BE REFACTORED
 
 For the python package we recommend checking out the latest tagged version from github installing it via pip. The pip installation requires rust and cmake to be installed locally. We recommend using [rustup](https://rustup.rs) to set up a rust toolchain. The pip should also automatically install  [maturin](https://github.com/PyO3/maturin) tool to build a python package locally and install it.
 Maturin needs an installed rust toolchain.
