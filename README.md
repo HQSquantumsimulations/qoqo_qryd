@@ -25,7 +25,7 @@ The installation instructions are provided within the individual repositories. T
 
 ## Documentation
 
-A user documentation is provided in the folder `/userdoc`. Although the code snippets in the documentation are provided for the python users, there is a lot of general information, e.g. "QRydDemo devices and operations" that the user might refert to. 
+A user documentation is provided in the folder `/userdoc`. Although the code snippets in the documentation are provided for the python users, the general information on the design principles and the structure of the project also applies to `roqoqo-qryd`, e.g. "QRydDemo devices and operations" that the user might refer to.
 
 Additionally, API documentation generated from the source code can be build for the rust part. The instructions are given in `/roqoqo-qryd`.
 

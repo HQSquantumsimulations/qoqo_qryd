@@ -1,4 +1,10 @@
-# qoqo-qryd
+# qoqo-
+
+[![GitHub Workflow Status](https://github.com/HQSquantumsimulations/qoqo_qryd/workflows/ci_tests/badge.svg)](https://github.com/HQSquantumsimulations/qoqo-qryd/actions)
+[![PyPI](https://img.shields.io/pypi/v/qoqo-qryd)](https://pypi.org/project/qoqo-qryd/)
+[![PyPI - Format](https://img.shields.io/pypi/format/qoqo-qryd)](https://pypi.org/project/qoqo-qryd/)
+[![Crates.io](https://img.shields.io/crates/v/qoqo-qryd)](https://crates.io/crates/qoqo-qryd)
+![Crates.io](https://img.shields.io/crates/l/qoqo-qryd)
 
 The `/qoqo-qryd` folder is there to provide a python interface for the implemented functionalities in `/roqoqo-qryd` (in rust) for the QRydDemo project.
 
@@ -12,7 +18,8 @@ pip install qoqo-qryd
 
 ## Documentation
 
-A user documentation is provided in the folder `/userdoc`. 
+A user documentation is provided in the folder `/userdoc`.
+The API-documentation for qoqo-qryd is provided can be found as an appendix of the user documentation or built separately with sphinx.
 
 ## Examples
 

@@ -1,4 +1,8 @@
 # roqoqo-qryd
+[![Crates.io](https://img.shields.io/crates/v/roqoqo-qryd)](https://crates.io/crates/roqoqo-qryd)
+[![GitHub Workflow Status](https://github.com/HQSquantumsimulations/qoqo_qryd/workflows/ci_tests/badge.svg)](https://github.com/HQSquantumsimulations/qoqo/actions)
+[![docs.rs](https://img.shields.io/docsrs/roqoqo-qryd)](https://docs.rs/roqoqo-qryd/)
+![Crates.io](https://img.shields.io/crates/l/roqoqo-qryd)
 
 The `/roqoqo-qryd` folder is there to provide the core rust library that builds on the roqoqo rust library for the QRydDemo project.
 
@@ -14,14 +18,9 @@ to the `[dependencies]` section of your Cargo.toml.
 
 ## Documentation
 
-Although the code snippets in the user documentation are provided for the python users, the rust user might refer to the [user documentation](https://github.com/HQSquantumsimulations/qoqo_qryd/tree/main/userdoc) to find some general information, e.g. on "QRydDemo devices and operations. 
+Although the code snippets in the user documentation are provided for the python users, the rust user might refer to the [user documentation](https://github.com/HQSquantumsimulations/qoqo_qryd/tree/main/userdoc) to find some general information, e.g. on "QRydDemo devices and operations.
 
-To create the API documentation for the roqoqo-qryd rust package run:
-
-```bash
-cd roqoqo-qryd/
-cargo doc --package=roqoqo-qryd --open
-```
+To create the API documentation for the roqoqo-qryd rust package can be found here: [API-documentation](https://docs.rs/roqoqo-qryd/)
 
 ## Examples
 
