@@ -851,12 +851,13 @@ dependencies = [
 
 [[package]]
 name = "qoqo-qryd"
-version = "0.5.0-alpha.3"
+version = "0.5.0-alpha.4"
 dependencies = [
  "bincode",
  "ndarray",
  "numpy",
  "pyo3",
+ "pyo3-build-config",
  "qoqo",
  "qoqo_calculator",
  "qoqo_calculator_pyo3",
@@ -1049,7 +1050,7 @@ dependencies = [
 
 [[package]]
 name = "roqoqo-qryd"
-version = "0.5.0-alpha.3"
+version = "0.5.0-alpha.4"
 dependencies = [
  "bincode",
  "bitvec",

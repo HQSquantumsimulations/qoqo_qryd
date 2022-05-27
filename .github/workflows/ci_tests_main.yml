@@ -1,7 +1,7 @@
-name: ci_tests_pull_request
+name: ci_tests_main
 
 on:
-  pull_request:
+  push:
     branches: [main]
 
 jobs:

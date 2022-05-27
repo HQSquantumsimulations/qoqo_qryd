@@ -42,12 +42,3 @@ roqoqo-qryd = {version="0.1", path="...", features=["simulator"]}
 ```
 
 to the `[dependencies]` section of your Cargo.toml.
-
-## Installing the qryd-compiler
-
-The QRyd compiler is a standard python package and can be installed with the pip command after cloning the repository.
-
-```bash
-# cd to HQSQRyd base directory
-pip install ./qryd-compiler
-```

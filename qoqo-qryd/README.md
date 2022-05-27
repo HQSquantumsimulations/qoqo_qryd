@@ -1,74 +1,37 @@
-# qoqo-qryd
+# qoqo-
 
-Components for the qoqo/roqoqo quantum toolkit by [HQS Quantum Simulations](https://quantumsimulations.de) that support QRyd quantum computers.
+[![GitHub Workflow Status](https://github.com/HQSquantumsimulations/qoqo_qryd/workflows/ci_tests_main/badge.svg)](https://github.com/HQSquantumsimulations/qoqo-qryd/actions)
+[![PyPI](https://img.shields.io/pypi/v/qoqo-qryd)](https://pypi.org/project/qoqo-qryd/)
+[![PyPI - Format](https://img.shields.io/pypi/format/qoqo-qryd)](https://pypi.org/project/qoqo-qryd/)
+[![Crates.io](https://img.shields.io/crates/v/qoqo-qryd)](https://crates.io/crates/qoqo-qryd)
+![Crates.io](https://img.shields.io/crates/l/qoqo-qryd)
 
-The qoqo-qryd/roqoqo-qryd packages provide three components:
-
-* Backends that execute a compiled qoqo QuantumProgram on QRyd hardware or simulators,
-* A set of specific operations only available on QRyd hardware,
-* A collection of devices, representations of the Hardware devices available in Qryd.
-
-The `/qoqo-qryd` folder is there to provide a python interface for the implemented functionalities in `/roqoqo-qryd` (in rust).
-
+The `/qoqo-qryd` folder is there to provide a python interface for the implemented functionalities in `/roqoqo-qryd` (in rust) for the QRydDemo project.
 
 ## Installation
 
-For the python package we recommend checking out the latest tagged version from github installing it via pip. The pip installation requires rust and cmake to be installed locally. We recommend using [rustup](https://rustup.rs) to set up a rust toolchain. The pip should also automatically install  [maturin](https://github.com/PyO3/maturin) tool to build a python package locally and install it.
-Maturin needs an installed rust toolchain.
-
-For a quick installation you can also use:
-
-```shell
-pip install ./qoqo-qryd/qoqo-qryd/
-```
-
-Specifically for macOS on Apple Silicon the following build command should be used:
-
-```shell
-RUSTFLAGS="-C link-arg=-undefined -C link-arg=dynamic_lookup" pip install ./qoqo-qryd/qoqo-qryd/
-```
-
-For a quick installation of the dependencies you can also use:
-
-```shell
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-pip install maturin
-```
-
-The user can also first build a python package with maturin and install it manually. Please note that the package should be built from the top level directory of the workspace selecting the qoqo package with the `-m qoqo/Cargo.toml` option.
-A typical build and run command is:
-
-```shell
-maturin build -m qoqo-qryd/Cargo.toml --release
-pip install target/wheels/$NAME_OF_WHEEL
-```
-
-### Using roqoqo-qryd in rust code
-
-For using roqoqo-qryd in rust code including the optional simulator simply add
-
-```toml
-roqoqo-qryd = {version="0.1", path="...", features=["simulator"]}
-```
-
-to the `[dependencies]` section of your Cargo.toml.
-
-## Building rust documentation
-
-To create the API documentation for the roqoqo-qryd rust package run:
+The `qoqo_qryd` package is a standard python package and can be installed with the pip command.
 
 ```bash
-cd qoqo-qryd/
-cargo doc --package=roqoqo-qryd --open
+pip install qoqo-qryd
 ```
 
-## Code coverage
+## Documentation
 
-In this project unit tests are written to cover a large percentage of the statements in the source code. To generate a code coverage report for qoqo-qryd please install [cargo llvm-cov](https://github.com/taiki-e/cargo-llvm-cov) and use:
+A user documentation is provided in the folder `/userdoc`.
+The API-documentation for qoqo-qryd is provided can be found as an appendix of the user documentation or built separately with sphinx.
 
-```bash
-cargo llvm-cov --package=roqoqo-qryd --open
-```
+## Examples
+
+A small collection of example python programs for the QRydDemo project is located in `/examples`. The folder includes
+
+* `howto_webapi_qoqo.ipynb` provides an example accessing the QRydDemo's emulator with Qoqo.
+* `switch_layout_example.py` shows how to construct a QRydDemo device and using the PragmaChangeQrydLayout operation to switch between layouts in a quantum Circuit.
+* `shift_qubits_example.py` shows how to construct a QRydDemo device and using the PragmaShiftQrydQubit operation to shift qubits between tweezer positions in a quantum Circuit.
+* `multi_qubit_example.py` shows how to use multi-qubit-operations.
+* `serialisation_example.py` demonstrates how to serialize a QuantumProgram to json.
+
+## OpenSSL
 
 Acknowledgments related to using OpenSSL for http requests
 

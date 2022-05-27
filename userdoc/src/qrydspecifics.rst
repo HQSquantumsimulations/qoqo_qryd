@@ -1,7 +1,7 @@
 QRyd devices and operations
 ===========================
 
-Due to the nature of the QRyd hardware based on Rydberg atoms, QRyd quantum computing devices have special capabilities that are 'not' present in all universal quantum computers.
+Due to the nature of the QRydDemo hardware based on Rydberg atoms, QRydDemo quantum computing devices have special capabilities that are 'not' present in all universal quantum computers.
 
 The devices will have two-dimensional grids of optical tweezer-positions and different two-dimensional grids can be callibrated. A tweezer-position is a physical spot that can be populated by a qubit.
 Not every tweezer position needs to be filled by a qubit and qubit can be moved between tweezer positions.
@@ -9,7 +9,7 @@ Not every tweezer position needs to be filled by a qubit and qubit can be moved 
 Special operations
 ------------------
 
-To support the full flexibility of the QRyd devices, two additional qoqo operations are provided ``PragmaChangeQRydLayout`` and ``PragmaShiftQRydQubit``.
+To support the full flexibility of the QRydDemo devices, two additional qoqo operations are provided ``PragmaChangeQRydLayout`` and ``PragmaShiftQRydQubit``.
 ``PragmaChangeQRydLayout`` allows a quantum circuit to change between predefined callibrated optical tweezer postions.
 ``PragmaShiftQRydQubit`` allows a quantum circuit to shift a qubit from one tweezer postion to another.
 
@@ -27,10 +27,10 @@ To support the full flexibility of the QRyd devices, two additional qoqo operati
 Devices
 -------
 
-Each type of QRyd hardware type or Simulator device can be represented by a Device class.
+Each type of QRydDemo hardware type or Simulator device can be represented by a Device class.
 The available hardware operations are defined in the devices. They save the 2D connectivity and can be queried for the availability of certain gate operations on the qubit.
 At the moment there is only an example Device class ``FirstDevice``, that can be used for simulations. More devices will be added as the hardware specifications are finalized.
-The fundamental gates that are available on the QRyd devices are the ``RotateX``, ``PhaseShiftState0``, ``PhaseShiftState1`` and ``PhaseShiftedControlledZ`` qoqo operations.
+The fundamental gates that are available on the QRydDemo devices are the ``RotateX``, ``PhaseShiftState0``, ``PhaseShiftState1`` and ``PhaseShiftedControlledZ`` qoqo operations.
 The three single qubit gates are assumed to be available on all qubits. 
 The ``PhaseShiftedControlledZ`` is available between a subset of qubit pairs.
 The ``PhaseShiftedControlledZ`` is a ControlledPauliZ gate that also applies single qubit phases.
@@ -69,7 +69,7 @@ For the example model of ``FirstDevice`` the two qubit gate is available between
 SimulatorBackend
 ----------------
 
-The ``SimulatorBackend`` of qoqo-qryd can execute qoqo QuantumPrograms depending on the provided devices. At the moment only the ``FirstDevice`` is available for the QRyd project.
+The ``SimulatorBackend`` of qoqo-qryd can execute qoqo QuantumPrograms depending on the provided devices. At the moment only the ``FirstDevice`` is available for the QRydDemo project.
 Executing a circuit with the ``SimulatorBackend`` initialized by the ``FirstDevice`` corresponds to running a simulation of the QuantumProgram which validates that only
 operations available in ``FirstDevice`` are used.
 
