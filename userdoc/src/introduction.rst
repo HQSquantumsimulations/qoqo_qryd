@@ -1,7 +1,7 @@
 Introduction
 ============
 
-The qoqo-qryd package is designed to enable the excution of quantum algorithms implemented in `qoqo <https://github.com/HQSquantumsimulations/qoqo>`_ on Qryd hardware.
+The qoqo-qryd package is designed to enable the excution of quantum algorithms implemented in `qoqo <https://github.com/HQSquantumsimulations/qoqo>`_ on QRydDemo hardware.
 
 Low level: quantum circuits
 --------------------------
