@@ -1,4 +1,4 @@
-# qoqo-
+# qoqo-qryd
 
 [![GitHub Workflow Status](https://github.com/HQSquantumsimulations/qoqo_qryd/workflows/ci_tests_main/badge.svg)](https://github.com/HQSquantumsimulations/qoqo-qryd/actions)
 [![PyPI](https://img.shields.io/pypi/v/qoqo-qryd)](https://pypi.org/project/qoqo-qryd/)
@@ -6,7 +6,16 @@
 [![Crates.io](https://img.shields.io/crates/v/qoqo-qryd)](https://crates.io/crates/qoqo-qryd)
 ![Crates.io](https://img.shields.io/crates/l/qoqo-qryd)
 
-The `/qoqo-qryd` folder is there to provide a python interface for the implemented functionalities in `/roqoqo-qryd` (in rust) for the QRydDemo project.
+The `qoqo-qryd` python package implements support [qoqo](https://github.com/HQSquantumsimulations/qoqo) support for quantum computers and quantum computer emulators of the [QRydDemo](https://thequantumlaend.de/qryddemo/) project.
+
+The QRydDemo project builds on Quantum computers using Rydberg atoms.
+qoqo is quantum computing toolkit by [HQS Quantum Simulations](https://quantumsimulations.de).
+
+The qoqo-qryd package provides three modules:
+
+* Backends that execute a compiled qoqo QuantumProgram on QRydDemo hardware or simulators,
+* A set of specific operations only available on QRydDemo hardware,
+* A collection of devices that represent hardware devices available in the QrydDemo project.
 
 ## Installation
 
@@ -18,12 +27,12 @@ pip install qoqo-qryd
 
 ## Documentation
 
-A user documentation is provided in the folder `/userdoc`.
+The [user documentation](https://hqsquantumsimulations.github.io/qoqo_qryd/) is provided on github pages.
 The API-documentation for qoqo-qryd is provided can be found as an appendix of the user documentation or built separately with sphinx.
 
 ## Examples
 
-A small collection of example python programs for the QRydDemo project is located in `/examples`. The folder includes
+A small collection of [example python scripts](https://github.com/HQSquantumsimulations/qoqo_qryd/tree/main/qoqo-qryd/examples) for the QRydDemo project is can be found in the project github repository. The examples include
 
 * `howto_webapi_qoqo.ipynb` provides an example accessing the QRydDemo's emulator with Qoqo.
 * `switch_layout_example.py` shows how to construct a QRydDemo device and using the PragmaChangeQrydLayout operation to switch between layouts in a quantum Circuit.

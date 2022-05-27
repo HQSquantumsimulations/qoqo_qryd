@@ -1,6 +1,6 @@
 # qoqo-qryd
 
-This software package is designed to support the [QRydDemo](https://thequantumlaend.de/qryddemo/) proejct on Quantum computing with Rydberg atoms. It provides components to support QRydDemo quantum computers based on the [qoqo](https://github.com/HQSquantumsimulations/qoqo) quantum toolkit by [HQS Quantum Simulations](https://quantumsimulations.de) used to represent quantum circuits.
+This software package is designed to support the [QRydDemo](https://thequantumlaend.de/qryddemo/) project on Quantum computing with Rydberg atoms. It provides components to support QRydDemo quantum computers based on the [qoqo](https://github.com/HQSquantumsimulations/qoqo) quantum toolkit by [HQS Quantum Simulations](https://quantumsimulations.de) used to represent quantum circuits.
 
 This repository contains two components:
 
