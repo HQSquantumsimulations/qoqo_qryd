@@ -1,16 +1,16 @@
 Welcome to the qoqo-qryd user documentation!
 ============================================
 
-The qoqo-qryd package provides software to create quantum programs for and run them on the QRyd quantum computer.
+The qoqo-qryd package provides software to create quantum programs for and run them on the QRydDemo quantum computer.
 
 The qoqo-qryd package is based on the open source `qoqo <https://github.com/HQSquantumsimulations/qoqo>`_ quantum computing toolkit.
 
 
 The qoqo-qryd package project provides three components:
 
-   - Backends to run compiled qoqo quantum programs of QRyd hardware or simulators,
-   - Device classes representing Qryd quantum hardware and it
-   - Specific operations that are only available on QRyd hardware.
+   - Backends to run compiled qoqo quantum programs of QRydDemo hardware or simulators,
+   - Device classes representing QRydDemo quantum hardware and it
+   - Specific operations that are only available on QRydDemo hardware.
 
 To learn more about the general approach to create quantum programs and executing them see :doc:`src/introduction` and :doc:`src/execution`.
 

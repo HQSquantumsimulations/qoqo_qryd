@@ -3,7 +3,7 @@ Executing quantum programs
 
 To obtain results from a QuantumProgram, Measurement or Circuit it needs to be executed on real quantum computing hardware or run on a simulator.
 
-Qoqo uses separate backends for this evaluation. For each hardware or simulator a backend can be created that implements qoqo's ``EvaluatingBackend`` interface and runs QuantumPrograms. For an overview of backends see the `qoqo <https://github.com/HQSquantumsimulations/qoqo>`_ website. Backends which provide the functionality to run a single circuit are so-called ``EvaluatingBackend``. The QRyd backends fall in this category.
+Qoqo uses separate backends for this evaluation. For each hardware or simulator a backend can be created that implements qoqo's ``EvaluatingBackend`` interface and runs QuantumPrograms. For an overview of backends see the `qoqo <https://github.com/HQSquantumsimulations/qoqo>`_ website. Backends which provide the functionality to run a single circuit are so-called ``EvaluatingBackend``. The QRydDemo backends fall in this category.
 
 An ``EvaluatingBackend`` can run:
 
@@ -80,7 +80,7 @@ As an example we will use the quantum program from :doc:`introduction` and the `
    # Run the program with  0.1 substituting `angle`
    expecation_values = program.run(backend, [0.1])
 
-The QuantumProgram can be run in the same way with the qoqo_qryd ``SimulatorBackend`` when all quantum operations are replaced by sequences of operations directly supported by the QRyd hardware.
+The QuantumProgram can be run in the same way with the qoqo_qryd ``SimulatorBackend`` when all quantum operations are replaced by sequences of operations directly supported by the QRydDemo hardware.
 To distinguish between a command returning expectation values and a program returning register the comman ``run_registers`` is used here.
 
 .. code-block:: python

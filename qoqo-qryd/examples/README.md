@@ -1,28 +1,13 @@
-# qoqo-qryd
+# Examples
 
-The `/qoqo-qryd` folder is there to provide a python interface for the implemented functionalities in `/roqoqo-qryd` (in rust) for the QRydDemo project.
-
-## Installation
-
-The `qoqo_qryd` package is a standard python package and can be installed with the pip command.
-
-```bash
-pip install qoqo-qryd
-```
-
-## Documentation
-
-A user documentation is provided in the folder `/userdoc`. 
-
-## Examples
-
-A small collection of example python programs for the QRydDemo project is located in `/examples`. The folder includes
+A small collection of example python programs for the QRydDemo project.
 
 * `howto_webapi_qoqo.ipynb` provides an example accessing the QRydDemo's emulator with Qoqo.
 * `switch_layout_example.py` shows how to construct a QRydDemo device and using the PragmaChangeQrydLayout operation to switch between layouts in a quantum Circuit.
 * `shift_qubits_example.py` shows how to construct a QRydDemo device and using the PragmaShiftQrydQubit operation to shift qubits between tweezer positions in a quantum Circuit.
 * `multi_qubit_example.py` shows how to use multi-qubit-operations.
 * `serialisation_example.py` demonstrates how to serialize a QuantumProgram to json.
+
 
 ## OpenSSL
 
