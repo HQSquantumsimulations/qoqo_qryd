@@ -21,7 +21,7 @@ use std::f64::consts::PI;
 use std::{env, usize};
 
 // Helper function to create a python object of square device
-fn _create_backend_with_square_device(py: Python) -> &PyCell<APIBackendWrapper> {
+fn create_backend_with_square_device(py: Python) -> &PyCell<APIBackendWrapper> {
     let seed: Option<usize> = Some(11);
     let pcz_theta: f64 = PI / 4.0;
     let device_type = py.get_type::<QrydEmuSquareDeviceWrapper>();
@@ -86,6 +86,82 @@ fn test_new_triangle() {
                 .unwrap()
                 .cast_as::<PyCell<APIBackendWrapper>>();
             assert!(backend.is_ok());
+        });
+    }
+}
+
+/// Test copy and deepcopy for api backend with square device
+#[test]
+fn test_copy_deepcopy_square() {
+    if env::var("QRYD_API_TOKEN").is_ok() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let backend = create_backend_with_square_device(py);
+
+            let copy_op = backend.call_method0("__copy__").unwrap();
+            let copy_wrapper = copy_op.extract::<APIBackendWrapper>().unwrap();
+            let deepcopy_op = backend.call_method1("__deepcopy__", ("",)).unwrap();
+            let deepcopy_wrapper = deepcopy_op.extract::<APIBackendWrapper>().unwrap();
+
+            let backend_wrapper = backend.extract::<APIBackendWrapper>().unwrap();
+            assert_eq!(backend_wrapper, copy_wrapper);
+            assert_eq!(backend_wrapper, deepcopy_wrapper);
+        });
+    }
+}
+
+/// Test to and from json for api backend with square device
+#[test]
+fn test_json_square() {
+    if env::var("QRYD_API_TOKEN").is_ok() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let backend = create_backend_with_square_device(py);
+
+            let serialised = backend.call_method0("to_json").unwrap();
+            let deserialised = backend.call_method1("from_json", (serialised,)).unwrap();
+
+            let vec: Vec<u8> = Vec::new();
+            let deserialised_error = backend.call_method1("from_json", (vec,));
+            assert!(deserialised_error.is_err());
+
+            let deserialised_error = deserialised.call_method0("from_json");
+            assert!(deserialised_error.is_err());
+
+            let serialised_error = serialised.call_method0("to_json");
+            assert!(serialised_error.is_err());
+
+            let serde_wrapper = deserialised.extract::<APIBackendWrapper>().unwrap();
+            let backend_wrapper = backend.extract::<APIBackendWrapper>().unwrap();
+            assert_eq!(backend_wrapper, serde_wrapper);
+        });
+    }
+}
+
+/// Test to and from bincode for api backend with square device
+#[test]
+fn test_bincode_square() {
+    if env::var("QRYD_API_TOKEN").is_ok() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let backend = create_backend_with_square_device(py);
+
+            let serialised = backend.call_method0("to_bincode").unwrap();
+            let deserialised = backend.call_method1("from_bincode", (serialised,)).unwrap();
+
+            let vec: Vec<u8> = Vec::new();
+            let deserialised_error = backend.call_method1("from_bincode", (vec,));
+            assert!(deserialised_error.is_err());
+
+            let deserialised_error = deserialised.call_method0("from_bincode");
+            assert!(deserialised_error.is_err());
+
+            let serialised_error = serialised.call_method0("to_bincode");
+            assert!(serialised_error.is_err());
+
+            let serde_wrapper = deserialised.extract::<APIBackendWrapper>().unwrap();
+            let backend_wrapper = backend.extract::<APIBackendWrapper>().unwrap();
+            assert_eq!(backend_wrapper, serde_wrapper);
         });
     }
 }
