@@ -1,0 +1,31 @@
+qoqo\_qryd.api\_devices.QrydEmuTriangularDevice
+===============================================
+
+.. currentmodule:: qoqo_qryd.api_devices
+
+.. autoclass:: QrydEmuTriangularDevice
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~QrydEmuTriangularDevice.__init__
+      ~QrydEmuTriangularDevice.from_bincode
+      ~QrydEmuTriangularDevice.from_json
+      ~QrydEmuTriangularDevice.number_qubits
+      ~QrydEmuTriangularDevice.pcz_theta
+      ~QrydEmuTriangularDevice.qrydbackend
+      ~QrydEmuTriangularDevice.seed
+      ~QrydEmuTriangularDevice.to_bincode
+      ~QrydEmuTriangularDevice.to_json
+      ~QrydEmuTriangularDevice.two_qubit_edges
+   
+   
+
+   
+   
+   

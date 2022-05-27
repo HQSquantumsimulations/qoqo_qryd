@@ -1,0 +1,29 @@
+qoqo\_qryd.SimulatorBackend
+===========================
+
+.. currentmodule:: qoqo_qryd
+
+.. autoclass:: SimulatorBackend
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~SimulatorBackend.__init__
+      ~SimulatorBackend.from_bincode
+      ~SimulatorBackend.from_json
+      ~SimulatorBackend.run_circuit
+      ~SimulatorBackend.run_measurement
+      ~SimulatorBackend.run_measurement_registers
+      ~SimulatorBackend.to_bincode
+      ~SimulatorBackend.to_json
+   
+   
+
+   
+   
+   

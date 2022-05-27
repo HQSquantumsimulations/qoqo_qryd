@@ -1,0 +1,36 @@
+qoqo\_qryd.qryd\_devices.FirstDevice
+====================================
+
+.. currentmodule:: qoqo_qryd.qryd_devices
+
+.. autoclass:: FirstDevice
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~FirstDevice.__init__
+      ~FirstDevice.add_layout
+      ~FirstDevice.change_qubit_positions
+      ~FirstDevice.controlled_z_phase
+      ~FirstDevice.from_bincode
+      ~FirstDevice.from_json
+      ~FirstDevice.number_columns
+      ~FirstDevice.number_qubits
+      ~FirstDevice.number_rows
+      ~FirstDevice.qubit_positions
+      ~FirstDevice.set_cutoff
+      ~FirstDevice.switch_layout
+      ~FirstDevice.to_bincode
+      ~FirstDevice.to_json
+      ~FirstDevice.two_qubit_edges
+   
+   
+
+   
+   
+   

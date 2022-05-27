@@ -1,0 +1,46 @@
+Welcome to the qoqo-qryd user documentation!
+============================================
+
+The qoqo-qryd package provides software to create quantum programs for and run them on the QRydDemo quantum computer.
+
+The qoqo-qryd package is based on the open source `qoqo <https://github.com/HQSquantumsimulations/qoqo>`_ quantum computing toolkit.
+
+
+The qoqo-qryd package project provides three components:
+
+   - Backends to run compiled qoqo quantum programs of QRydDemo hardware or simulators,
+   - Device classes representing QRydDemo quantum hardware and it
+   - Specific operations that are only available on QRydDemo hardware.
+
+To learn more about the general approach to create quantum programs and executing them see :doc:`src/introduction` and :doc:`src/execution`.
+
+A collection of example python programs can be found in :doc:`src/examples`.
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+   src/installation.md
+   src/introduction
+   src/execution
+   src/qrydspecifics
+   src/examples
+   src/qoqo_qryd_api
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+
+
+Acknowledgments related to using OpenSSL for http requests
+
+This product includes software developed by the OpenSSL Project
+for use in the OpenSSL Toolkit. (http://www.openssl.org/)
+
+This product includes cryptographic software written by Eric Young
+(eay@cryptsoft.com).  This product includes software written by Tim
+Hudson (tjh@cryptsoft.com).

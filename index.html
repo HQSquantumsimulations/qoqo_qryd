@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to the qoqo-qryd user documentation! &mdash; qoqo-qryd 0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="src/installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="#" class="icon icon-home"> qoqo-qryd
+          </a>
+              <div class="version">
+                0.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="src/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="src/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="src/execution.html">Executing quantum programs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="src/qrydspecifics.html">QRyd devices and operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="src/examples.html">qoqo-qryd examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="src/qoqo_qryd_api.html">qoqo-qryd API documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">qoqo-qryd</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+      <li>Welcome to the qoqo-qryd user documentation!</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section id="welcome-to-the-qoqo-qryd-user-documentation">
+<h1>Welcome to the qoqo-qryd user documentation!<a class="headerlink" href="#welcome-to-the-qoqo-qryd-user-documentation" title="Permalink to this headline"></a></h1>
+<p>The qoqo-qryd package provides software to create quantum programs for and run them on the QRydDemo quantum computer.</p>
+<p>The qoqo-qryd package is based on the open source <a class="reference external" href="https://github.com/HQSquantumsimulations/qoqo">qoqo</a> quantum computing toolkit.</p>
+<p>The qoqo-qryd package project provides three components:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Backends to run compiled qoqo quantum programs of QRydDemo hardware or simulators,</p></li>
+<li><p>Device classes representing QRydDemo quantum hardware and it</p></li>
+<li><p>Specific operations that are only available on QRydDemo hardware.</p></li>
+</ul>
+</div></blockquote>
+<p>To learn more about the general approach to create quantum programs and executing them see <a class="reference internal" href="src/introduction.html"><span class="doc">Introduction</span></a> and <a class="reference internal" href="src/execution.html"><span class="doc">Executing quantum programs</span></a>.</p>
+<p>A collection of example python programs can be found in <a class="reference internal" href="src/examples.html"><span class="doc">qoqo-qryd examples</span></a>.</p>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="src/installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src/installation.html#installing-qoqo-qryd">Installing qoqo-qryd</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="src/introduction.html">Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src/introduction.html#low-level-quantum-circuits">Low level: quantum circuits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src/introduction.html#high-level-quantum-programs">High-level: quantum programs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="src/execution.html">Executing quantum programs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src/execution.html#executing-quantumprograms-without-without-returning-expecation-values">Executing QuantumPrograms without without returning expecation values</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src/execution.html#non-executing-backends">Non-executing backends</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="src/qrydspecifics.html">QRyd devices and operations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src/qrydspecifics.html#special-operations">Special operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src/qrydspecifics.html#devices">Devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src/qrydspecifics.html#simulatorbackend">SimulatorBackend</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="src/examples.html">qoqo-qryd examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src/examples.html#using-qubit-shift-operations">Using qubit shift operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src/examples.html#changing-the-device-layout">Changing the device layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src/examples.html#using-multi-qubit-operations">Using Multi-Qubit-operations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="src/qoqo_qryd_api.html">qoqo-qryd API documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src/generated/qoqo_qryd.html">qoqo_qryd</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+<p>Acknowledgments related to using OpenSSL for http requests</p>
+<p>This product includes software developed by the OpenSSL Project
+for use in the OpenSSL Toolkit. (<a class="reference external" href="http://www.openssl.org/">http://www.openssl.org/</a>)</p>
+<p>This product includes cryptographic software written by Eric Young
+(<a class="reference external" href="mailto:eay&#37;&#52;&#48;cryptsoft&#46;com">eay<span>&#64;</span>cryptsoft<span>&#46;</span>com</a>).  This product includes software written by Tim
+Hudson (<a class="reference external" href="mailto:tjh&#37;&#52;&#48;cryptsoft&#46;com">tjh<span>&#64;</span>cryptsoft<span>&#46;</span>com</a>).</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="src/installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, HQS Quantum Simulations GmbH.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

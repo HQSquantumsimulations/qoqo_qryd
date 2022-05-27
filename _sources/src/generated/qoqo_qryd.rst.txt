@@ -1,0 +1,30 @@
+﻿qoqo\_qryd
+==========
+
+.. automodule:: qoqo_qryd
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      APIBackend
+      SimulatorBackend
+   
+   
+
+   
+   
+   
+
+
+

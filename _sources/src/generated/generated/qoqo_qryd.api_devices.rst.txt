@@ -1,0 +1,30 @@
+qoqo\_qryd.api\_devices
+=======================
+
+.. automodule:: qoqo_qryd.api_devices
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      QrydEmuSquareDevice
+      QrydEmuTriangularDevice
+   
+   
+
+   
+   
+   
+
+
+

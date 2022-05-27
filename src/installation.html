@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Installation &mdash; qoqo-qryd 0.1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Introduction" href="introduction.html" />
+    <link rel="prev" title="Welcome to the qoqo-qryd user documentation!" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> qoqo-qryd
+          </a>
+              <div class="version">
+                0.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installing-qoqo-qryd">Installing qoqo-qryd</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#using-roqoqo-qryd-in-rust-code">Using roqoqo-qryd in rust code</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="execution.html">Executing quantum programs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qrydspecifics.html">QRyd devices and operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">qoqo-qryd examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qoqo_qryd_api.html">qoqo-qryd API documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">qoqo-qryd</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Installation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/src/installation.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h1>
+<section id="installing-qoqo-qryd">
+<h2>Installing qoqo-qryd<a class="headerlink" href="#installing-qoqo-qryd" title="Permalink to this headline"></a></h2>
+<p>For the python package we recommend checking out the latest tagged version from github installing it via pip. The pip installation requires rust and cmake to be installed locally. We recommend using <a class="reference external" href="https://rustup.rs">rustup</a> to set up a rust toolchain. The pip should also automatically install  <a class="reference external" href="https://github.com/PyO3/maturin">maturin</a> tool to build a python package locally and install it.
+Maturin needs an installed rust toolchain.</p>
+<p>For a quick installation you can also use:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install ./qoqo-qryd/qoqo-qryd/
+</pre></div>
+</div>
+<p>Specifically for macOS on Apple Silicon the following build command should be used:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="nv">RUSTFLAGS</span><span class="o">=</span><span class="s2">&quot;-C link-arg=-undefined -C link-arg=dynamic_lookup&quot;</span> pip install ./qoqo-qryd/qoqo-qryd/
+</pre></div>
+</div>
+<p>For a quick installation of the dependencies you can also use:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>curl --proto <span class="s1">&#39;=https&#39;</span> --tlsv1.2 -sSf https://sh.rustup.rs <span class="p">|</span> sh
+pip install maturin
+</pre></div>
+</div>
+<p>The user can also first build a python package with maturin and install it manually. Please note that the package should be built from the top level directory of the workspace selecting the qoqo package with the <code class="docutils literal notranslate"><span class="pre">-m</span> <span class="pre">qoqo/Cargo.toml</span></code> option.
+A typical build and run command is</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>maturin build -m qoqo-qryd/Cargo.toml --release
+pip install target/wheels/<span class="nv">$NAME_OF_WHEEL</span>
+</pre></div>
+</div>
+<section id="using-roqoqo-qryd-in-rust-code">
+<h3>Using roqoqo-qryd in rust code<a class="headerlink" href="#using-roqoqo-qryd-in-rust-code" title="Permalink to this headline"></a></h3>
+<p>For using roqoqo-qryd in rust code including the optional simulator simply add</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="n">roqoqo-qryd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">version</span><span class="o">=</span><span class="s">&quot;0.1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">path</span><span class="o">=</span><span class="s">&quot;...&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">features</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;simulator&quot;</span><span class="p">]}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>to the <code class="docutils literal notranslate"><span class="pre">[dependencies]</span></code> section of your Cargo.toml.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to the qoqo-qryd user documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="introduction.html" class="btn btn-neutral float-right" title="Introduction" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, HQS Quantum Simulations GmbH.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
