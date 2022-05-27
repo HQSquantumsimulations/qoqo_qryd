@@ -1,6 +1,6 @@
 # qoqo-
 
-[![GitHub Workflow Status](https://github.com/HQSquantumsimulations/qoqo_qryd/workflows/ci_tests/badge.svg)](https://github.com/HQSquantumsimulations/qoqo-qryd/actions)
+[![GitHub Workflow Status](https://github.com/HQSquantumsimulations/qoqo_qryd/workflows/ci_tests_main/badge.svg)](https://github.com/HQSquantumsimulations/qoqo-qryd/actions)
 [![PyPI](https://img.shields.io/pypi/v/qoqo-qryd)](https://pypi.org/project/qoqo-qryd/)
 [![PyPI - Format](https://img.shields.io/pypi/format/qoqo-qryd)](https://pypi.org/project/qoqo-qryd/)
 [![Crates.io](https://img.shields.io/crates/v/qoqo-qryd)](https://crates.io/crates/qoqo-qryd)

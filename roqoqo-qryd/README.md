@@ -1,6 +1,6 @@
 # roqoqo-qryd
 [![Crates.io](https://img.shields.io/crates/v/roqoqo-qryd)](https://crates.io/crates/roqoqo-qryd)
-[![GitHub Workflow Status](https://github.com/HQSquantumsimulations/qoqo_qryd/workflows/ci_tests/badge.svg)](https://github.com/HQSquantumsimulations/qoqo/actions)
+[![GitHub Workflow Status](https://github.com/HQSquantumsimulations/qoqo_qryd/workflows/ci_tests_main/badge.svg)](https://github.com/HQSquantumsimulations/qoqo/actions)
 [![docs.rs](https://img.shields.io/docsrs/roqoqo-qryd)](https://docs.rs/roqoqo-qryd/)
 ![Crates.io](https://img.shields.io/crates/l/roqoqo-qryd)
 
