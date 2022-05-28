@@ -359,9 +359,7 @@ pub fn convert_into_device(input: &PyAny) -> Result<QRydDevice, QoqoBackendError
     deserialize(&bytes[..]).map_err(|_| QoqoBackendError::CannotExtractObject)
 }
 
-/// QRyd Devices
-///
-/// Provides the qoqo devices representing QRyd hardware.
+/// Prototype qoqo devices for Rydberg hardware
 ///
 /// .. autosummary::
 ///    :toctree: generated/

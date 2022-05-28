@@ -21,6 +21,7 @@ use roqoqo_qryd::api_devices::{QRydAPIDevice, QrydEmuSquareDevice, QrydEmuTriang
 /// At the moment only contains a square and a triangular device.
 #[pyclass(name = "QrydEmuSquareDevice", module = "qoqo_qryd")]
 #[derive(Clone, Debug, PartialEq)]
+#[pyo3(text_signature = "(seed, pcz_theta)")]
 pub struct QrydEmuSquareDeviceWrapper {
     /// Internal storage of [roqoqo_qryd::QRydAPIDevice]
     pub internal: QrydEmuSquareDevice,
@@ -86,6 +87,7 @@ impl QrydEmuSquareDeviceWrapper {
     ///     TypeError: Input cannot be converted to byte array.
     ///     ValueError: Input cannot be deserialized to QrydEmuSquareDevice.
     #[classmethod]
+    #[pyo3(text_signature = "(input)")]
     pub fn from_bincode(_cls: &PyType, input: &PyAny) -> PyResult<QrydEmuSquareDeviceWrapper> {
         let bytes = input
             .extract::<Vec<u8>>()
@@ -122,6 +124,7 @@ impl QrydEmuSquareDeviceWrapper {
     /// Raises:
     ///     ValueError: Input cannot be deserialized to QrydEmuSquareDevice.
     #[classmethod]
+    #[pyo3(text_signature = "(input)")]
     fn from_json(_cls: &PyType, input: &str) -> PyResult<QrydEmuSquareDeviceWrapper> {
         Ok(QrydEmuSquareDeviceWrapper {
             internal: serde_json::from_str(input).map_err(|_| {
@@ -212,6 +215,7 @@ impl QrydEmuSquareDeviceWrapper {
 /// At the moment only contains a square and a triangular device.
 #[pyclass(name = "QrydEmuTriangularDevice", module = "qoqo_qryd")]
 #[derive(Clone, Debug, PartialEq)]
+#[pyo3(text_signature = "(seed, pcz_theta)")]
 pub struct QrydEmuTriangularDeviceWrapper {
     /// Internal storage of [roqoqo_qryd::QRydAPIDevice]
     pub internal: QrydEmuTriangularDevice,
@@ -278,6 +282,7 @@ impl QrydEmuTriangularDeviceWrapper {
     ///     TypeError: Input cannot be converted to byte array.
     ///     ValueError: Input cannot be deserialized to QrydEmuTriangularDevice.
     #[classmethod]
+    #[pyo3(text_signature = "(input)")]
     pub fn from_bincode(_cls: &PyType, input: &PyAny) -> PyResult<QrydEmuTriangularDeviceWrapper> {
         let bytes = input
             .extract::<Vec<u8>>()
@@ -315,6 +320,7 @@ impl QrydEmuTriangularDeviceWrapper {
     /// Raises:
     ///     ValueError: Input cannot be deserialized to QrydEmuTriangularDevice.
     #[classmethod]
+    #[pyo3(text_signature = "(input)")]
     fn from_json(_cls: &PyType, input: &str) -> PyResult<QrydEmuTriangularDeviceWrapper> {
         Ok(QrydEmuTriangularDeviceWrapper {
             internal: serde_json::from_str(input).map_err(|_| {
@@ -416,9 +422,7 @@ pub fn convert_into_device(input: &PyAny) -> Result<QRydAPIDevice, QoqoBackendEr
     bincode::deserialize(&bytes[..]).map_err(|_| QoqoBackendError::CannotExtractObject)
 }
 
-/// QRyd WebAPI Devices.
-///
-/// Provides the devices representing QRyd WebAPI.
+/// Devices available on the QRydDemo WebAPI.
 ///
 /// .. autosummary::
 ///    :toctree: generated/

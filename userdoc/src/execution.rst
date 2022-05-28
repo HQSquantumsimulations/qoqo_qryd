@@ -1,5 +1,5 @@
 Executing quantum programs
-=========================
+==========================
 
 To obtain results from a QuantumProgram, Measurement or Circuit it needs to be executed on real quantum computing hardware or run on a simulator.
 

@@ -1,17 +1,18 @@
-QRyd devices and operations
-===========================
+Rydberg devices and operations
+==============================
 
-Due to the nature of the QRydDemo hardware based on Rydberg atoms, QRydDemo quantum computing devices have special capabilities that are 'not' present in all universal quantum computers.
+Due to the nature of the QRydDemo hardware based on Rydberg atoms, QRydDemo quantum computing devices can have special capabilities that are 'not' present in all universal quantum computers.
 
-The devices will have two-dimensional grids of optical tweezer-positions and different two-dimensional grids can be callibrated. A tweezer-position is a physical spot that can be populated by a qubit.
+The devices can have two-dimensional grids of optical tweezer-positions and different two-dimensional grids can be calibrated. A tweezer-position is a physical spot that can be populated by a qubit.
 Not every tweezer position needs to be filled by a qubit and qubit can be moved between tweezer positions.
+Note that all functionality described here is a preview and does not represent a finalized QRydDemo design.
 
 Special operations
 ------------------
 
 To support the full flexibility of the QRydDemo devices, two additional qoqo operations are provided ``PragmaChangeQRydLayout`` and ``PragmaShiftQRydQubit``.
-``PragmaChangeQRydLayout`` allows a quantum circuit to change between predefined callibrated optical tweezer postions.
-``PragmaShiftQRydQubit`` allows a quantum circuit to shift a qubit from one tweezer postion to another.
+``PragmaChangeQRydLayout`` allows a quantum circuit to change between predefined calibrated optical tweezer positions.
+``PragmaShiftQRydQubit`` allows a quantum circuit to shift a qubit from one tweezer position to another.
 
 .. code-block:: python
 
@@ -20,7 +21,7 @@ To support the full flexibility of the QRydDemo devices, two additional qoqo ope
    circuit = Circuit()
    # Switch to predefined layout 1
    circuit += PragmaChangeQRydLayout(new_layout=1).to_pragma_change_device()
-   # Shift qubit 0 to tweezer postion: row 0, column 1 and qubit 1 to postion row 1, column 1
+   # Shift qubit 0 to tweezer position: row 0, column 1 and qubit 1 to postion row 1, column 1
    circuit += PragmaShiftQRydQubit(new_positions={0: (0,1), 1: (1,1)}).to_pragma_change_device()
 
 
@@ -47,7 +48,7 @@ For the example model of ``FirstDevice`` the two qubit gate is available between
    device = devices.FirstDevice(
       # The number of tweezer position rows in the 2D Grid is fixed
       number_rows=2,
-      # The number of tweezer postiton  columns in the 2D grid is also fixed
+      # The number of tweezer position  columns in the 2D grid is also fixed
       number_columns=4,
       # As not all tweezer positions must be filled, the number of positions
       # occupied by qubits per row is fixed
@@ -55,7 +56,7 @@ For the example model of ``FirstDevice`` the two qubit gate is available between
       # The (model) physical distance between rows is fixed
       row_distance=1.0,
       # The initial layout (layout number 0 for PragmaChangeQRydLayout) is defined 
-      # by the physcial positions of the tweezers in each row
+      # by the physical positions of the tweezers in each row
       initial_layout=np.array([
          [0.0, 1.0, 2.0, 3.0],
          [0.0, 1.0, 2.0, 3.0]])
@@ -82,7 +83,7 @@ operations available in ``FirstDevice`` are used.
    device = devices.FirstDevice(
       # The number of tweezer position rows in the 2D Grid is fixed
       number_rows=2,
-      # The number of tweezer postiton  columns in the 2D grid is also fixed
+      # The number of tweezer position  columns in the 2D grid is also fixed
       number_columns=4,
       # As not all tweezer positions must be filled, the number of positions
       # occupied by qubits per row is fixed
@@ -90,7 +91,7 @@ operations available in ``FirstDevice`` are used.
       # The (model) physical distance between rows is fixed
       row_distance=1.0,
       # The initial layout (layout number 0 for PragmaChangeQRydLayout) is defined 
-      # by the physcial positions of the tweezers in each row
+      # by the physical positions of the tweezers in each row
       initial_layout=np.array([
          [0.0, 1.0, 2.0, 3.0],
          [0.0, 1.0, 2.0, 3.0]]))

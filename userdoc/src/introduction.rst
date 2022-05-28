@@ -1,14 +1,14 @@
 Introduction
 ============
 
-The qoqo-qryd package is designed to enable the excution of quantum algorithms implemented in `qoqo <https://github.com/HQSquantumsimulations/qoqo>`_ on QRydDemo hardware.
+The qoqo-qryd package is designed to enable the execution of quantum algorithms implemented in `qoqo <https://github.com/HQSquantumsimulations/qoqo>`_ on QRydDemo hardware.
 
 Low level: quantum circuits
 --------------------------
 
 Qoqo is a circuit based quantum computing toolkit. Like many other quantum computing toolkits it can be used to construct quantum circuits sequences of quantum operations that are to be executed on a quantum computer.
 
-Examples for quantum operations are the controlled NOT (CNOT) operation on two qubits and the Hadamard gate on a sinlge qubit.
+Examples for quantum operations are the controlled NOT (CNOT) operation on two qubits and the Hadamard gate on a single qubit.
 
 .. code-block:: python
 
@@ -55,7 +55,7 @@ The combination of the results of each quantum circuit happens in a classical me
 A qoqo measurement combines one ``constant_circuit`` that is always executed first, a list of ``circuits`` that are executed after the constant circuit and a ``measurement_input`` that encodes the classical post-processing.
 
 As an example take the measurement of a Hamiltonian ``H = 0.1 * X + 0.2 * Z`` where ``X`` and ``Z`` are Pauli operators. We want to measure ``H`` with respect to a state ``|psi> = (|0> + |1>)/sqrt(2)``. 
-We will use a Hadamard gate in the ``constant_circuit`` to prepare ``|psi>``. Since we cannot measure ``X`` and ``Z`` at the same time the ``circuits`` list will include one quantum circuit that does not apply any additional gate and one circuit that rotates the qubit basis into the ``X``-basis so that the expecation value ``<X>`` is equivalent to the measurement of ``<Z>`` in the new basis.
+We will use a Hadamard gate in the ``constant_circuit`` to prepare ``|psi>``. Since we cannot measure ``X`` and ``Z`` at the same time the ``circuits`` list will include one quantum circuit that does not apply any additional gate and one circuit that rotates the qubit basis into the ``X``-basis so that the expectation value ``<X>`` is equivalent to the measurement of ``<Z>`` in the new basis.
 This kind of measurement is referred to as a PauliZProduct measurement because each qubit is rotated in the correct basis for the readout. 
 For the post-processing the PauliZProduct measurement needs two more inputs: Which qubits to combine into expectation values and which weight to use for each result.
 
@@ -169,7 +169,7 @@ A QuantumProgram returning unprocessed measurements
 
 There also exist many use cases where end users want to receive the full measurement output without post-processing.
 For example when working with external tools that expect full  measurement records or when implementing custom post-processing.
-For these use cases the ``ClassicalRegister`` measurement can be used to create three dictionaries, one for all registers with bit values, one forall registers with float values and one for all registers with complex values.
+For these use cases the ``ClassicalRegister`` measurement can be used to create three dictionaries, one for all registers with bit values, one for all registers with float values and one for all registers with complex values.
 Note that this measurement does not need a separate measurement input as no post-processing takes place
 
 .. code-block:: python
