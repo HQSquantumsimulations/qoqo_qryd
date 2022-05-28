@@ -1,39 +1,47 @@
 # qoqo-qryd
 
-This software package is designed to support the [QRydDemo](https://thequantumlaend.de/qryddemo/) proejct on Quantum computing with Rydberg atoms. It provides components to support QRydDemo quantum computers based on the [qoqo](https://github.com/HQSquantumsimulations/qoqo) quantum toolkit by [HQS Quantum Simulations](https://quantumsimulations.de) used to represent quantum circuits.
+This software package is designed to support the [QRydDemo](https://thequantumlaend.de/qryddemo/) project on Quantum computing with Rydberg atoms. It provides components to support QRydDemo quantum computers based on the [qoqo](https://github.com/HQSquantumsimulations/qoqo) quantum toolkit by [HQS Quantum Simulations](https://quantumsimulations.de) used to represent quantum circuits.
 
 This repository contains two components:
 
 * roqoqo-qryd: the core rust library that builds on the roqoqo rust library.
 * qoqo-qryd: the python interface for roqoqo-qryd that uses the qoqo python interface.
 
-The qoqo-qryd/roqoqo-qryd packages provide three modules:
+The qoqo-qryd/roqoqo-qryd packages provide the following functionality:
 
-* Backends that execute a compiled qoqo QuantumProgram on QRydDemo hardware or simulators,
-* A set of specific operations only available on QRydDemo hardware,
-* A collection of devices, representations of the Hardware devices available in the QrydDemo project.
+### Interface to the current QRydDemo WebAPI
 
+At the moment QRydDemo WebAPI allows access to Quantum Hardware Emulators of different device topology. qoqo-qryd/roqoqo-qryd support interfacing with the corresponding REST-API (TODO: Link to documentation) with low level calls as well as a high-level backend to qoqo quantum programs.
+
+### QRydDemo specific hardware operations (prototype)
+
+Rydberg atom based quantum devices support, in principle, operations not commonly found in other quantum hardware. Changes in device topology are one of these operations. roqoqo-qryd/qoqo-qryd adds support for changes in device topology to qoqo.
+Note that this is a preview prototype and does not represent a finalized set of operations on the QRydDemo hardware.
+
+### Local simulator supporting specific hardware operations
+
+qoqo-qryd/roqoqo-qryd include a local [QuEST](https://github.com/QuEST-Kit/QuEST) based simulator for quantum devices supporting the Rydberg specific quantum operations. The simulator is intended to let users test the capabilities of quantum hardware with the additional operations. Note that the devices for the simulator do not represent a finalised design for QRydDemo.
 
 ## Accessing QRydDemo WebAPI
 
-To use the API Backend, a QRydDemo API token is required. The token can be obtained via our [online registration form](https://thequantumlaend.de/get-access/).
-
+To use the WebAPI, a QRydDemo account is required. Users can register via the [online registration form](https://thequantumlaend.de/get-access/).
 
 ## Installation
 
-The installation instructions are provided within the individual repositories. The `/qoqo-qryd` folder is there to provide a python interface for the implemented functionalities in `/roqoqo-qryd` (in rust).
+Installation instructions are provided by the corresponding READMEs of [qoqo-qryd](https://github.com/HQSquantumsimulations/qoqo_qryd/blob/main/qoqo-qryd/README.md) and [roqoqo-qryd]([qoqo-qryd](https://github.com/HQSquantumsimulations/qoqo_qryd/blob/main/roqoqo-qryd/README.md))
 
 ## Documentation
 
-A user documentation is provided in the folder `/userdoc`. Although the code snippets in the documentation are provided for the python users, the general information on the design principles and the structure of the project also applies to `roqoqo-qryd`, e.g. "QRydDemo devices and operations" that the user might refer to.
+We recommend getting started with the [user documentation](https://hqsquantumsimulations.github.io/qoqo_qryd/).
+ The example code snippets in the documentation are provided for the python users of `qoqo-qryd`, the general information on the design principles and the structure of the project also applies to `roqoqo-qryd`, e.g. "QRydDemo devices and operations" that the user might refer to.
 
-Additionally, API documentation generated from the source code can be build for the rust part. The instructions are given in `/roqoqo-qryd`.
+The `roqoqo-qryd` API documentation can be found [here](https://docs.rs/roqoqo-qryd/).
 
 ## Examples
 
 A small collection of example python programs for the QRydDemo project can be found [here](https://github.com/HQSquantumsimulations/qoqo_qryd/tree/main/qoqo-qryd/examples).
 
-The examples for the usage of roqoqo_qryd written in rust will follow.
+The examples for the usage of roqoqo-qryd written in rust will follow.
 
 ## OpenSSL
 

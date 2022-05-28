@@ -10,13 +10,7 @@
 # or implied. See the License for the specific language governing permissions and limitations under
 # the License.
  
-""" Components for the qoqo/roqoqo quantum toolkit by `HQS Quantum Simulations <https://quantumsimulations.de>`_ that support QRyd quantum computers.
-
-The qoqo-qryd/roqoqo-qryd packages provide three components:
-
-* devices: python/rust representation of QRyd devices
-* operations: roqoqo Pragma operations specific to QRyd devices that can change the topology of QRyd devices
-* simulator (optional): A QuEST based simulator for QRyd devices that checks the availability of the quantum operations on a chosen device during simulation
+""" `QRydDemo <https://quantumsimulations.de>`_ support for the qoqo quantum toolkit by `HQS Quantum Simulations <https://quantumsimulations.de>`_.
 
 .. autosummary::
     :toctree: generated/

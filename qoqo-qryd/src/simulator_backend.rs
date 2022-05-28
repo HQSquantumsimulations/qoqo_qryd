@@ -26,7 +26,7 @@ use roqoqo_qryd::qryd_devices::QRydDevice;
 use roqoqo_qryd::SimulatorBackend;
 use std::collections::HashMap;
 
-/// QRyd simulator backend
+/// Local simulator backend for Rydberg devices.
 ///
 /// The QRyd simulator backend applies each operation in a circuit to a quantum register.
 /// The underlying simulator uses the QuEST library.
