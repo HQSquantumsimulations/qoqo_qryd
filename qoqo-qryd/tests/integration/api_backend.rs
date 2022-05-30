@@ -18,7 +18,7 @@ use pyo3::Python;
 use qoqo_qryd::api_backend::APIBackendWrapper;
 use qoqo_qryd::api_devices::{QrydEmuSquareDeviceWrapper, QrydEmuTriangularDeviceWrapper};
 use std::f64::consts::PI;
-use std::{usize};
+use std::usize;
 
 // Helper function to create a python object of square device
 fn create_backend_with_square_device(py: Python) -> &PyCell<APIBackendWrapper> {
