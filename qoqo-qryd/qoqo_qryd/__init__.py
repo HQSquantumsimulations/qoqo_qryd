@@ -10,7 +10,7 @@
 # or implied. See the License for the specific language governing permissions and limitations under
 # the License.
  
-""" `QRydDemo <https://quantumsimulations.de>`_ support for the qoqo quantum toolkit by `HQS Quantum Simulations <https://quantumsimulations.de>`_.
+""" `QRydDemo <https://thequantumlaend.de/qryddemo/>`_ support for the `qoqo <https://github.com/HQSquantumsimulations/qoqo>`_ quantum toolkit.
 
 .. autosummary::
     :toctree: generated/
