@@ -244,12 +244,13 @@ impl QrydEmuSquareDevice {
     /// # Arguments
     ///
     /// * `seed` - Seed, if not provided will be set to 0 per default (not recommended!)
-    /// * 'pcz_theta' - The phase shift angle in the native 'PhaseShiftedControlledZ' gate.
-    pub fn new(seed: Option<usize>, pcz_theta: f64) -> Result<Self, RoqoqoBackendError> {
+    /// * `pcz_theta` - The phase shift angle in the native 'PhaseShiftedControlledZ' gate.
+    ///                 The value defaults to "2.13" the (preliminary) hardware design goal
+    pub fn new(seed: Option<usize>, pcz_theta: Option<f64>) -> Result<Self, RoqoqoBackendError> {
         let return_self = Self {
             local: false,
             seed: seed.unwrap_or_default(),
-            pcz_theta,
+            pcz_theta: pcz_theta.unwrap_or(2.13),
         };
         Ok(return_self)
     }
@@ -473,17 +474,18 @@ pub struct QrydEmuTriangularDevice {
 
 /// Implements the trait to create a new QrydEmuTriangularDevice and to return its field values.
 impl QrydEmuTriangularDevice {
-    /// Create new QrydEmuSquareDevice device
+    /// Create new QrydEmuTriangularDevice device
     ///
     /// # Arguments
     ///
     /// * `seed` - Seed, if not provided will be set to 0 per default (not recommended!)
     /// * `pcz_theta` - The phase shift angle in the native 'PhaseShiftedControlledZ' gate.
-    pub fn new(seed: Option<usize>, pcz_theta: f64) -> Result<Self, RoqoqoBackendError> {
+    ///                 The value defaults to "2.13" the (preliminary) hardware design goal
+    pub fn new(seed: Option<usize>, pcz_theta: Option<f64>) -> Result<Self, RoqoqoBackendError> {
         let return_self = Self {
             local: false,
             seed: seed.unwrap_or_default(),
-            pcz_theta,
+            pcz_theta: pcz_theta.unwrap_or(2.13),
         };
         Ok(return_self)
     }
