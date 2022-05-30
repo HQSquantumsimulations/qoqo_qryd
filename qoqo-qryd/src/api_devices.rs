@@ -31,12 +31,15 @@ pub struct QrydEmuSquareDeviceWrapper {
 impl QrydEmuSquareDeviceWrapper {
     /// Create new QrydEmuSquareDevice device
     ///
-    /// # Arguments
+    /// Args:
+    ///     seed (int): Seed, if not provided will be set to 0 per default (not recommended!)
+    ///     pcz_theta (Optional[float]): Phase angle for the basis gate 'PhaseShiftedControllZ'.
+    ///                                  If not provided will be set to (preliminary) hardware goal 2.13.
     ///
-    /// * `seed` - Seed, if not provided will be set to 0 per default (not recommended!)
-    /// * 'pcz_theta' - Phase angle for the basis gate 'PhaseShiftedControllZ'. If not provided will be set to 0.0.
+    /// Returns:
+    ///     QrydEmuTriangularDevice: New device
     #[new]
-    pub fn new(seed: Option<usize>, pcz_theta: f64) -> PyResult<Self> {
+    pub fn new(seed: Option<usize>, pcz_theta: Option<f64>) -> PyResult<Self> {
         Ok(Self {
             internal: QrydEmuSquareDevice::new(seed, pcz_theta)
                 .map_err(|err| PyValueError::new_err(format!("{:?}", err)))?,
@@ -223,14 +226,17 @@ pub struct QrydEmuTriangularDeviceWrapper {
 
 #[pymethods]
 impl QrydEmuTriangularDeviceWrapper {
-    /// Create new QrydEmuSquareDevice device
+    /// Create new QrydEmuTriangularDevice device
     ///
-    /// # Arguments
+    /// Args:
+    ///     seed (int): Seed, if not provided will be set to 0 per default (not recommended!)
+    ///     pcz_theta (Optional[float]): Phase angle for the basis gate 'PhaseShiftedControllZ'.
+    ///                                  If not provided will be set to (preliminary) hardware goal 2.13.
     ///
-    /// * `seed` - Seed, if not provided will be set to 0 per default (not recommended!)
-    /// * `pcz_theta` - The phase shift in the native PhaseShiftedControlledZ gate
+    /// Returns:
+    ///     QrydEmuTriangularDevice: New device
     #[new]
-    pub fn new(seed: Option<usize>, pcz_theta: f64) -> PyResult<Self> {
+    pub fn new(seed: Option<usize>, pcz_theta: Option<f64>) -> PyResult<Self> {
         Ok(Self {
             internal: QrydEmuTriangularDevice::new(seed, pcz_theta)
                 .map_err(|err| PyValueError::new_err(format!("{:?}", err)))?,

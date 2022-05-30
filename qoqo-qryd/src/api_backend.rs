@@ -16,7 +16,7 @@ use crate::api_devices::convert_into_device;
 use bincode::{deserialize, serialize};
 use pyo3::exceptions::{PyRuntimeError, PyTypeError, PyValueError};
 use pyo3::prelude::*;
-use pyo3::types::{PyByteArray, PyDict, PyType};
+use pyo3::types::{PyByteArray, PyDict};
 use qoqo::QoqoBackendError;
 use qoqo::{convert_into_circuit, convert_into_quantum_program};
 use roqoqo::prelude::*;
@@ -265,7 +265,7 @@ impl APIBackendWrapper {
     ///     ValueError: Input cannot be deserialized to APIBackend.
     #[staticmethod]
     #[pyo3(text_signature = "(input)")]
-    fn from_json(_cls: &PyType, input: &str) -> PyResult<APIBackendWrapper> {
+    fn from_json(input: &str) -> PyResult<APIBackendWrapper> {
         Ok(APIBackendWrapper {
             internal: serde_json::from_str(input)
                 .map_err(|_| PyValueError::new_err("Input cannot be deserialized to APIBackend"))?,
