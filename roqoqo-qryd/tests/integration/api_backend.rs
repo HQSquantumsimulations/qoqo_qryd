@@ -289,7 +289,6 @@ fn api_backend_errorcase2() {
         .post_job(
             program,
         );
-    
     assert!(job_loc.is_err());
 
     let job_loc_dummy: String = "DummyString".to_string();
@@ -303,7 +302,7 @@ fn api_backend_errorcase2() {
     assert!(job_delete.is_err());
 }
 
-// Test error cases. Case 3: putting requests on non-existing job_id
+// Test error cases. Case 3: invalid job_id
 #[test]
 fn api_backend_errorcase3() {
     if env::var("QRYD_API_TOKEN").is_ok() {
