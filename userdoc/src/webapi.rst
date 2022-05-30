@@ -16,7 +16,17 @@ To use the WebAPI, a QRydDemo account is required. Users can register via the `o
 Devices
 -------
 
-At the moment the QrydDemo WebAPI supports two device emulators. Both support 30 qubits one in a square another with a triangular topology. TODO: Add pictures.
+At the moment the QrydDemo WebAPI supports two device emulators. Both support 30 qubits one in a square another with a triangular topology.
+
+.. image:: ../../qoqo-qryd/examples/square.png
+    :width: 300
+    :alt: Square lattice with nearest-neighbor connectivity
+
+.. image:: ../../qoqo-qryd/examples/triangle.png
+    :width: 300
+    :alt: Triangle lattice with nearest-neighbor connectivity
+
+
 The Emulators allow the user to set the phase shift in the ``PhaseShiftedControlledZ`` native gate and the seed for the random number generator. In qoqo-qryd these are set when creating the devices.
 
 .. code-block:: python
