@@ -851,7 +851,7 @@ dependencies = [
 
 [[package]]
 name = "qoqo-qryd"
-version = "0.5.1"
+version = "0.5.2"
 dependencies = [
  "bincode",
  "ndarray",
@@ -1050,7 +1050,7 @@ dependencies = [
 
 [[package]]
 name = "roqoqo-qryd"
-version = "0.5.1"
+version = "0.5.2"
 dependencies = [
  "bincode",
  "bitvec",
