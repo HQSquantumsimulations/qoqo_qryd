@@ -7293,7 +7293,7 @@ THE SOFTWARE.
 
 
 ====================================================
-hyper 0.14.18
+hyper 0.14.19
 https://hyper.rs
 by Sean McArthur <sean@seanmonstar.com>
 A fast and correct HTTP library.
@@ -7800,7 +7800,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-indexmap 1.8.1
+indexmap 1.8.2
 https://github.com/bluss/indexmap
 by bluss, Josh Stone <cuviper@gmail.com>
 A hash table with consistent order and fast iteration.
@@ -13995,11 +13995,11 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-parking_lot 0.12.0
+parking_lot 0.12.1
 https://github.com/Amanieu/parking_lot
 by Amanieu d'Antras <amanieu@gmail.com>
 More compact and efficient implementations of the standard synchronization primitives.
-License: Apache-2.0/MIT
+License: MIT OR Apache-2.0
 ----------------------------------------------------
 LICENSE-APACHE:
 
@@ -18469,7 +18469,7 @@ LICENSE:
 
 
 ====================================================
-qoqo-qryd 0.5.0-alpha.5
+qoqo-qryd 0.5.0
 https://github.com/HQSquantumsimulations/qoqo_qryd
 by HQS Quantum Simulations <info@quantumsimulations.de>
 QRyd backend for qoqo quantum computing toolkit
@@ -21529,7 +21529,7 @@ LICENSE:
 
 
 ====================================================
-roqoqo-qryd 0.5.0-alpha.5
+roqoqo-qryd 0.5.0
 https://github.com/HQSquantumsimulations/qoqo_qryd
 by HQS Quantum Simulations <info@quantumsimulations.de>
 QRyd interface for roqoqo rust quantum computing toolkit

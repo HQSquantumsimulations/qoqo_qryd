@@ -253,11 +253,8 @@ fn api_backend_errorcase1() {
             measurement,
             input_parameter_names: vec![],
         };
-        let job_loc = api_backend_new
-            .post_job(
-                program,
-            );
-        
+        let job_loc = api_backend_new.post_job(program);
+
         assert!(job_loc.is_err());
     }
 }
@@ -268,7 +265,8 @@ fn api_backend_errorcase2() {
     let number_qubits = 6;
     let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-    let api_backend_new = APIBackend::new(qryd_device, Some("DummyString".to_string()), None).unwrap();
+    let api_backend_new =
+        APIBackend::new(qryd_device, Some("DummyString".to_string()), None).unwrap();
     let qubit_mapping: HashMap<usize, usize> =
         (0..number_qubits).into_iter().map(|x| (x, x)).collect();
     let mut circuit = Circuit::new();
@@ -285,10 +283,7 @@ fn api_backend_errorcase2() {
         measurement,
         input_parameter_names: vec![],
     };
-    let job_loc = api_backend_new
-        .post_job(
-            program,
-        );
+    let job_loc = api_backend_new.post_job(program);
     assert!(job_loc.is_err());
 
     let job_loc_dummy: String = "DummyString".to_string();
@@ -298,7 +293,7 @@ fn api_backend_errorcase2() {
     let job_result = api_backend_new.get_job_result(job_loc_dummy.clone());
     assert!(job_result.is_err());
 
-    let job_delete = api_backend_new.delete_job(job_loc_dummy.clone());
+    let job_delete = api_backend_new.delete_job(job_loc_dummy);
     assert!(job_delete.is_err());
 }
 
@@ -317,7 +312,7 @@ fn api_backend_errorcase3() {
         let job_result = api_backend_new.get_job_result(job_loc.clone());
         assert!(job_result.is_err());
 
-        let job_delete = api_backend_new.delete_job(job_loc.clone());
+        let job_delete = api_backend_new.delete_job(job_loc);
         assert!(job_delete.is_err());
     }
 }

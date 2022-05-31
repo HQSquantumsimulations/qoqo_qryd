@@ -474,18 +474,17 @@ pub fn convert_into_backend(input: &PyAny) -> Result<APIBackend, QoqoBackendErro
 
 #[cfg(test)]
 mod test {
-    use crate::api_devices::*;
     use super::*;
     use roqoqo_qryd::api_devices::*;
-   #[test]
-   fn debug_and_clone() {
+    #[test]
+    fn debug_and_clone() {
         let device: QRydAPIDevice = QrydEmuSquareDevice::new(None, None).into();
         let backend = APIBackend::new(device.clone(), Some("".to_string()), Some(2)).unwrap();
-        let wrapper = APIBackendWrapper{internal: backend};
+        let wrapper = APIBackendWrapper { internal: backend };
         let a = format!("{:?}", wrapper);
         assert!(a.contains("QrydEmuSquareDevice"));
         let backend2 = APIBackend::new(device, Some("a".to_string()), Some(2)).unwrap();
-        let wrapper2 = APIBackendWrapper{internal: backend2};
+        let wrapper2 = APIBackendWrapper { internal: backend2 };
         assert_eq!(wrapper.clone(), wrapper);
         assert_ne!(wrapper, wrapper2);
     }

@@ -41,8 +41,7 @@ impl QrydEmuSquareDeviceWrapper {
     #[new]
     pub fn new(seed: Option<usize>, pcz_theta: Option<f64>) -> Self {
         Self {
-            internal: QrydEmuSquareDevice::new(seed, pcz_theta)
-               
+            internal: QrydEmuSquareDevice::new(seed, pcz_theta),
         }
     }
 
@@ -238,7 +237,7 @@ impl QrydEmuTriangularDeviceWrapper {
     #[new]
     pub fn new(seed: Option<usize>, pcz_theta: Option<f64>) -> Self {
         Self {
-            internal: QrydEmuTriangularDevice::new(seed, pcz_theta)
+            internal: QrydEmuTriangularDevice::new(seed, pcz_theta),
         }
     }
 
