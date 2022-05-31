@@ -46,7 +46,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../execution.html">Executing quantum programs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../qrydspecifics.html">QRyd devices and operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../webapi.html">QRydDemo WebAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../qrydspecifics.html">Rydberg devices and operations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">qoqo-qryd examples</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../../qoqo_qryd_api.html">qoqo-qryd API documentation</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="../../qoqo_qryd.html">qoqo_qryd</a><ul class="current">
@@ -120,7 +121,7 @@
 <h1>qoqo_qryd.api_devices.QrydEmuTriangularDevice<a class="headerlink" href="#qoqo-qryd-api-devices-qrydemutriangulardevice" title="Permalink to this headline"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuTriangularDevice">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.api_devices.</span></span><span class="sig-name descname"><span class="pre">QrydEmuTriangularDevice</span></span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuTriangularDevice" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.api_devices.</span></span><span class="sig-name descname"><span class="pre">QrydEmuTriangularDevice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pcz_theta</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuTriangularDevice" title="Permalink to this definition"></a></dt>
 <dd><p>Collection of all QRyd devices for WebAPI.</p>
 <p>At the moment only contains a square and a triangular device.</p>
 <dl class="py method">
@@ -138,10 +139,10 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#qoqo_qryd.api_devices.QrydEmuTriangularDevice.__init__" title="qoqo_qryd.api_devices.QrydEmuTriangularDevice.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.api_devices.html#qoqo_qryd.api_devices.QrydEmuTriangularDevice.from_bincode" title="qoqo_qryd.api_devices.QrydEmuTriangularDevice.from_bincode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_bincode</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.api_devices.html#qoqo_qryd.api_devices.QrydEmuTriangularDevice.from_bincode" title="qoqo_qryd.api_devices.QrydEmuTriangularDevice.from_bincode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_bincode</span></code></a>()</p></td>
 <td><p>Convert the bincode representation of the QrydEmuTriangularDevice to a QrydEmuTriangularDevice the bincode crate.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.api_devices.html#qoqo_qryd.api_devices.QrydEmuTriangularDevice.from_json" title="qoqo_qryd.api_devices.QrydEmuTriangularDevice.from_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_json</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.api_devices.html#qoqo_qryd.api_devices.QrydEmuTriangularDevice.from_json" title="qoqo_qryd.api_devices.QrydEmuTriangularDevice.from_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_json</span></code></a>()</p></td>
 <td><p>Convert the json representation of a QrydEmuTriangularDevice to a QrydEmuTriangularDevice.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.api_devices.html#qoqo_qryd.api_devices.QrydEmuTriangularDevice.number_qubits" title="qoqo_qryd.api_devices.QrydEmuTriangularDevice.number_qubits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">number_qubits</span></code></a></p></td>

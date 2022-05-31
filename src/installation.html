@@ -20,7 +20,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Introduction" href="introduction.html" />
-    <link rel="prev" title="Welcome to the qoqo-qryd user documentation!" href="../index.html" /> 
+    <link rel="prev" title="Welcome to the qoqo-qryd/roqoqo-qryd user documentation!" href="../index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -52,7 +52,8 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Executing quantum programs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="qrydspecifics.html">QRyd devices and operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="webapi.html">QRydDemo WebAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qrydspecifics.html">Rydberg devices and operations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">qoqo-qryd examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="qoqo_qryd_api.html">qoqo-qryd API documentation</a></li>
 </ul>
@@ -109,25 +110,15 @@
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h1>
 <section id="installing-qoqo-qryd">
 <h2>Installing qoqo-qryd<a class="headerlink" href="#installing-qoqo-qryd" title="Permalink to this headline"></a></h2>
-<p>For the python package we recommend checking out the latest tagged version from github installing it via pip. The pip installation requires rust and cmake to be installed locally. We recommend using <a class="reference external" href="https://rustup.rs">rustup</a> to set up a rust toolchain. The pip should also automatically install  <a class="reference external" href="https://github.com/PyO3/maturin">maturin</a> tool to build a python package locally and install it.
-Maturin needs an installed rust toolchain.</p>
-<p>For a quick installation you can also use:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install ./qoqo-qryd/qoqo-qryd/
+<p>The <code class="docutils literal notranslate"><span class="pre">qoqo-qryd</span></code> package is available on PyPi as a source distribution and as precompiled wheels for linux and macOS on the x86 platform. Other platforms need to install from the source distribution.</p>
+<p>For both source distribution and pre-built wheels it can be installed via</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install qoqo-qryd
 </pre></div>
 </div>
-<p>Specifically for macOS on Apple Silicon the following build command should be used:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="nv">RUSTFLAGS</span><span class="o">=</span><span class="s2">&quot;-C link-arg=-undefined -C link-arg=dynamic_lookup&quot;</span> pip install ./qoqo-qryd/qoqo-qryd/
-</pre></div>
-</div>
+<p>When building from source <code class="docutils literal notranslate"><span class="pre">qoqo-qryd</span></code> requires rust, <a class="reference external" href="https://github.com/PyO3/maturin">maturin</a> and cmake to be installed locally. We recommend using <a class="reference external" href="https://rustup.rs">rustup</a> to set up a rust toolchain. The pip command should also automatically install maturin to build a python package locally and install it.</p>
 <p>For a quick installation of the dependencies you can also use:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>curl --proto <span class="s1">&#39;=https&#39;</span> --tlsv1.2 -sSf https://sh.rustup.rs <span class="p">|</span> sh
 pip install maturin
-</pre></div>
-</div>
-<p>The user can also first build a python package with maturin and install it manually. Please note that the package should be built from the top level directory of the workspace selecting the qoqo package with the <code class="docutils literal notranslate"><span class="pre">-m</span> <span class="pre">qoqo/Cargo.toml</span></code> option.
-A typical build and run command is</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>maturin build -m qoqo-qryd/Cargo.toml --release
-pip install target/wheels/<span class="nv">$NAME_OF_WHEEL</span>
 </pre></div>
 </div>
 <section id="using-roqoqo-qryd-in-rust-code">
@@ -145,7 +136,7 @@ pip install target/wheels/<span class="nv">$NAME_OF_WHEEL</span>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to the qoqo-qryd user documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to the qoqo-qryd/roqoqo-qryd user documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="introduction.html" class="btn btn-neutral float-right" title="Introduction" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

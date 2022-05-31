@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to the qoqo-qryd user documentation! &mdash; qoqo-qryd 0.1 documentation</title>
+  <title>Welcome to the qoqo-qryd/roqoqo-qryd user documentation! &mdash; qoqo-qryd 0.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -45,7 +45,8 @@
 <li class="toctree-l1"><a class="reference internal" href="src/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="src/introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="src/execution.html">Executing quantum programs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="src/qrydspecifics.html">QRyd devices and operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="src/webapi.html">QRydDemo WebAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="src/qrydspecifics.html">Rydberg devices and operations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="src/examples.html">qoqo-qryd examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="src/qoqo_qryd_api.html">qoqo-qryd API documentation</a></li>
 </ul>
@@ -64,7 +65,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="#" class="icon icon-home"></a> &raquo;</li>
-      <li>Welcome to the qoqo-qryd user documentation!</li>
+      <li>Welcome to the qoqo-qryd/roqoqo-qryd user documentation!</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -98,19 +99,32 @@
     text-align: unset;
 }
 </style>
-<section id="welcome-to-the-qoqo-qryd-user-documentation">
-<h1>Welcome to the qoqo-qryd user documentation!<a class="headerlink" href="#welcome-to-the-qoqo-qryd-user-documentation" title="Permalink to this headline"></a></h1>
-<p>The qoqo-qryd package provides software to create quantum programs for and run them on the QRydDemo quantum computer.</p>
-<p>The qoqo-qryd package is based on the open source <a class="reference external" href="https://github.com/HQSquantumsimulations/qoqo">qoqo</a> quantum computing toolkit.</p>
-<p>The qoqo-qryd package project provides three components:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>Backends to run compiled qoqo quantum programs of QRydDemo hardware or simulators,</p></li>
-<li><p>Device classes representing QRydDemo quantum hardware and it</p></li>
-<li><p>Specific operations that are only available on QRydDemo hardware.</p></li>
+<section id="welcome-to-the-qoqo-qryd-roqoqo-qryd-user-documentation">
+<h1>Welcome to the qoqo-qryd/roqoqo-qryd user documentation!<a class="headerlink" href="#welcome-to-the-qoqo-qryd-roqoqo-qryd-user-documentation" title="Permalink to this headline"></a></h1>
+<p>This software is designed to support the <a class="reference external" href="https://thequantumlaend.de/qryddemo/">QRydDemo</a> project on Quantum computing with Rydberg atoms. It provides components to support QRydDemo quantum computers based on the <a class="reference external" href="https://github.com/HQSquantumsimulations/qoqo">qoqo</a> quantum toolkit by <a class="reference external" href="https://quantumsimulations.de">HQS Quantum Simulations</a> used to represent quantum circuits.</p>
+<p>To learn more about the general approach to create quantum programs and executing them in qoqo see <a class="reference internal" href="src/introduction.html"><span class="doc">Introduction</span></a> and <a class="reference internal" href="src/execution.html"><span class="doc">Executing quantum programs</span></a>.</p>
+<p>This software is split into two packages:</p>
+<ul class="simple">
+<li><p>roqoqo-qryd: Implementing the core functionality and a Rust interface.</p></li>
+<li><p>qoqo-qryd: The Python interface.</p></li>
 </ul>
-</div></blockquote>
-<p>To learn more about the general approach to create quantum programs and executing them see <a class="reference internal" href="src/introduction.html"><span class="doc">Introduction</span></a> and <a class="reference internal" href="src/execution.html"><span class="doc">Executing quantum programs</span></a>.</p>
+<p>The packages are based on the open source <a class="reference external" href="https://github.com/HQSquantumsimulations/qoqo">qoqo</a> quantum computing toolkit.</p>
+<p>The packages provide the following functionalities:</p>
+<section id="interface-to-the-current-qryddemo-webapi">
+<h2>Interface to the current QRydDemo WebAPI<a class="headerlink" href="#interface-to-the-current-qryddemo-webapi" title="Permalink to this headline"></a></h2>
+<p>At the moment QRydDemo WebAPI allows access to Quantum Hardware Emulators of different device topology.
+qoqo-qryd/roqoqo-qryd support interfacing with the corresponding REST-API with low level calls as well as a high-level backend to qoqo quantum programs. For more details see <a class="reference internal" href="src/webapi.html"><span class="doc">QRydDemo WebAPI</span></a>.</p>
+</section>
+<section id="qryddemo-specific-hardware-operations-prototype">
+<h2>QRydDemo specific hardware operations (prototype)<a class="headerlink" href="#qryddemo-specific-hardware-operations-prototype" title="Permalink to this headline"></a></h2>
+<p>Rydberg atom based quantum devices support, in principle, operations not commonly found in other quantum hardware.
+Changes in device topology are one of these operations.
+roqoqo-qryd/qoqo-qryd adds support for changes in device topology to qoqo. For more details see <a class="reference internal" href="src/qrydspecifics.html"><span class="doc">Rydberg devices and operations</span></a>.
+Note that this is a preview prototype and does not represent a finalized set of operations on the QRydDemo hardware.</p>
+</section>
+<section id="local-simulator-supporting-specific-hardware-operations">
+<h2>Local simulator supporting specific hardware operations<a class="headerlink" href="#local-simulator-supporting-specific-hardware-operations" title="Permalink to this headline"></a></h2>
+<p>qoqo-qryd/roqoqo-qryd include a local <a class="reference external" href="https://github.com/QuEST-Kit/QuEST">QuEST</a> based simulator for quantum devices supporting the Rydberg specific quantum operations. The simulator is intended to let users test the capabilities of quantum hardware with the additional operations. For more details see <a class="reference internal" href="src/qrydspecifics.html"><span class="doc">Rydberg devices and operations</span></a>. Note that the devices for the simulator do not represent a finalized design for QRydDemo.</p>
 <p>A collection of example python programs can be found in <a class="reference internal" href="src/examples.html"><span class="doc">qoqo-qryd examples</span></a>.</p>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
@@ -129,7 +143,13 @@
 <li class="toctree-l2"><a class="reference internal" href="src/execution.html#non-executing-backends">Non-executing backends</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="src/qrydspecifics.html">QRyd devices and operations</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="src/webapi.html">QRydDemo WebAPI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src/webapi.html#getting-access-to-the-webapi">Getting access to the WebAPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src/webapi.html#devices">Devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src/webapi.html#apibackend">APIBackend</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="src/qrydspecifics.html">Rydberg devices and operations</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="src/qrydspecifics.html#special-operations">Special operations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="src/qrydspecifics.html#devices">Devices</a></li>
 <li class="toctree-l2"><a class="reference internal" href="src/qrydspecifics.html#simulatorbackend">SimulatorBackend</a></li>
@@ -147,6 +167,7 @@
 </li>
 </ul>
 </div>
+</section>
 </section>
 <section id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline"></a></h1>

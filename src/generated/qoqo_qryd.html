@@ -46,7 +46,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../execution.html">Executing quantum programs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../qrydspecifics.html">QRyd devices and operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../webapi.html">QRydDemo WebAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../qrydspecifics.html">Rydberg devices and operations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples.html">qoqo-qryd examples</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../qoqo_qryd_api.html">qoqo-qryd API documentation</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">qoqo_qryd</a><ul>
@@ -112,13 +113,7 @@
 </style>
 <section id="module-qoqo_qryd">
 <span id="qoqo-qryd"></span><h1>qoqo_qryd<a class="headerlink" href="#module-qoqo_qryd" title="Permalink to this headline"></a></h1>
-<p>Components for the qoqo/roqoqo quantum toolkit by <a class="reference external" href="https://quantumsimulations.de">HQS Quantum Simulations</a> that support QRyd quantum computers.</p>
-<p>The qoqo-qryd/roqoqo-qryd packages provide three components:</p>
-<ul class="simple">
-<li><p>devices: python/rust representation of QRyd devices</p></li>
-<li><p>operations: roqoqo Pragma operations specific to QRyd devices that can change the topology of QRyd devices</p></li>
-<li><p>simulator (optional): A QuEST based simulator for QRyd devices that checks the availability of the quantum operations on a chosen device during simulation</p></li>
-</ul>
+<p><a class="reference external" href="https://thequantumlaend.de/qryddemo/">QRydDemo</a> support for the <a class="reference external" href="https://github.com/HQSquantumsimulations/qoqo">qoqo</a> quantum toolkit.</p>
 <table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -126,19 +121,19 @@
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/qoqo_qryd.qryd_devices.html#module-qoqo_qryd.qryd_devices" title="qoqo_qryd.qryd_devices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">qryd_devices</span></code></a></p></td>
-<td><p>QRyd Devices</p></td>
+<td><p>Prototype qoqo devices for Rydberg hardware</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="generated/qoqo_qryd.api_devices.html#module-qoqo_qryd.api_devices" title="qoqo_qryd.api_devices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">api_devices</span></code></a></p></td>
-<td><p>QRyd WebAPI Devices.</p></td>
+<td><p>Devices available on the QRydDemo WebAPI.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/qoqo_qryd.pragma_operations.html#module-qoqo_qryd.pragma_operations" title="qoqo_qryd.pragma_operations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pragma_operations</span></code></a></p></td>
 <td><p>QRyd specific PragmaOperations that support changing the QRyd device during a circuit evaluation</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#qoqo_qryd.SimulatorBackend" title="qoqo_qryd.SimulatorBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SimulatorBackend</span></code></a>(device, /)</p></td>
-<td><p>QRyd simulator backend</p></td>
+<td><p>Local simulator backend for Rydberg devices.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#qoqo_qryd.APIBackend" title="qoqo_qryd.APIBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">APIBackend</span></code></a>(device, /)</p></td>
-<td><p>QRyd WebAPI Backend.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#qoqo_qryd.APIBackend" title="qoqo_qryd.APIBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">APIBackend</span></code></a>(device, access_token, timeout)</p></td>
+<td><p>Qoqo backend interfacing QRydDemo WebAPI.</p></td>
 </tr>
 </tbody>
 </table>
@@ -149,18 +144,18 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#qoqo_qryd.APIBackend" title="qoqo_qryd.APIBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">APIBackend</span></code></a>(device, /)</p></td>
-<td><p>QRyd WebAPI Backend.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#qoqo_qryd.APIBackend" title="qoqo_qryd.APIBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">APIBackend</span></code></a>(device, access_token, timeout)</p></td>
+<td><p>Qoqo backend interfacing QRydDemo WebAPI.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#qoqo_qryd.SimulatorBackend" title="qoqo_qryd.SimulatorBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SimulatorBackend</span></code></a>(device, /)</p></td>
-<td><p>QRyd simulator backend</p></td>
+<td><p>Local simulator backend for Rydberg devices.</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py class">
 <dt class="sig sig-object py" id="qoqo_qryd.APIBackend">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.</span></span><span class="sig-name descname"><span class="pre">APIBackend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend" title="Permalink to this definition"></a></dt>
-<dd><p>QRyd WebAPI Backend.</p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.</span></span><span class="sig-name descname"><span class="pre">APIBackend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">access_token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend" title="Permalink to this definition"></a></dt>
+<dd><p>Qoqo backend interfacing QRydDemo WebAPI.</p>
 <p>The WebAPI Backend implements methods available in the QRyd Web API.
 Furthermore, QRyd quantum computer only allows gate operations
 that are available on a device model of a QRyd device (stored in a [crate::QRydDevice]).
@@ -168,11 +163,11 @@ This limitation is introduced by design to check the compatability of quantum pr
 For simulations of the QRyd quantum computer use the Backend simulator [crate::Backend].</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.APIBackend.delete_job">
-<span class="sig-name descname"><span class="pre">delete_job</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend.delete_job" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">delete_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_location</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend.delete_job" title="Permalink to this definition"></a></dt>
 <dd><p>Delete a posted WebAPI job</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>job_locatio</strong> (<em>str</em>) -- location (url) of the job one is interested in.</p>
+<dd class="field-odd"><p><strong>job_location</strong> (<em>str</em>) -- location (url) of the job one is interested in.</p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><strong>RuntimeError</strong> -- Could not delete job.</p>
@@ -182,7 +177,7 @@ For simulations of the QRyd quantum computer use the Backend simulator [crate::B
 
 <dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.APIBackend.from_bincode">
-<span class="sig-name descname"><span class="pre">from_bincode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend.from_bincode" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_bincode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend.from_bincode" title="Permalink to this definition"></a></dt>
 <dd><p>Convert the bincode representation of the APIBackend to a APIBackend using the bincode crate.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -205,7 +200,7 @@ For simulations of the QRyd quantum computer use the Backend simulator [crate::B
 
 <dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.APIBackend.from_json">
-<span class="sig-name descname"><span class="pre">from_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend.from_json" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend.from_json" title="Permalink to this definition"></a></dt>
 <dd><p>Convert the json representation of a APIBackend to a APIBackend.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -225,7 +220,7 @@ For simulations of the QRyd quantum computer use the Backend simulator [crate::B
 
 <dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.APIBackend.get_job_result">
-<span class="sig-name descname"><span class="pre">get_job_result</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend.get_job_result" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_job_result</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_location</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend.get_job_result" title="Permalink to this definition"></a></dt>
 <dd><p>Get status of a completed WebAPI job.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -240,7 +235,7 @@ For simulations of the QRyd quantum computer use the Backend simulator [crate::B
 
 <dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.APIBackend.get_job_status">
-<span class="sig-name descname"><span class="pre">get_job_status</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend.get_job_status" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_job_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_location</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend.get_job_status" title="Permalink to this definition"></a></dt>
 <dd><p>Get status of a posted WebAPI job.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -257,7 +252,7 @@ For simulations of the QRyd quantum computer use the Backend simulator [crate::B
 
 <dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.APIBackend.post_job">
-<span class="sig-name descname"><span class="pre">post_job</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend.post_job" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">post_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quantumprogram</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend.post_job" title="Permalink to this definition"></a></dt>
 <dd><p>Post to add a new job to be run on the backend and return the location of the job.</p>
 <p>Other free parameters of the job (<cite>seed</cite>, <cite>pcz_theta</cite> etc.)
 are provided by the device given during the initializing of the backend.</p>
@@ -279,7 +274,7 @@ or to delete the job.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.APIBackend.run_circuit">
-<span class="sig-name descname"><span class="pre">run_circuit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend.run_circuit" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">run_circuit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend.run_circuit" title="Permalink to this definition"></a></dt>
 <dd><p>Run a circuit with the QRyd APIBackend.</p>
 <p>A circuit is passed to the APIBackend and executed.
 During execution values are written to and read from classical registers
@@ -309,7 +304,7 @@ The results of each repetition are concatenated in OutputRegisters
 
 <dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.APIBackend.run_measurement">
-<span class="sig-name descname"><span class="pre">run_measurement</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend.run_measurement" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">run_measurement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">measurement</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend.run_measurement" title="Permalink to this definition"></a></dt>
 <dd><p>Evaluates expectation values of a measurement with the APIBackend.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -332,7 +327,7 @@ The results of each repetition are concatenated in OutputRegisters
 
 <dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.APIBackend.run_measurement_registers">
-<span class="sig-name descname"><span class="pre">run_measurement_registers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend.run_measurement_registers" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">run_measurement_registers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">measurement</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend.run_measurement_registers" title="Permalink to this definition"></a></dt>
 <dd><p>Run all circuits corresponding to one measurement with the QRyd APIBackend.</p>
 <p>An expectation value measurement in general involves several circuits.
 Each circuit is passed to the APIBackend and executed separately.
@@ -400,7 +395,7 @@ The results of each repetition are concatenated in OutputRegisters
 <dl class="py class">
 <dt class="sig sig-object py" id="qoqo_qryd.SimulatorBackend">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.</span></span><span class="sig-name descname"><span class="pre">SimulatorBackend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.SimulatorBackend" title="Permalink to this definition"></a></dt>
-<dd><p>QRyd simulator backend</p>
+<dd><p>Local simulator backend for Rydberg devices.</p>
 <p>The QRyd simulator backend applies each operation in a circuit to a quantum register.
 The underlying simulator uses the QuEST library.
 Although the underlying simulator supports arbitrary unitary gates, the QRyd simulator only

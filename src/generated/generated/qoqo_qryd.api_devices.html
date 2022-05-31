@@ -46,7 +46,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../execution.html">Executing quantum programs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../qrydspecifics.html">QRyd devices and operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../webapi.html">QRydDemo WebAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../qrydspecifics.html">Rydberg devices and operations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples.html">qoqo-qryd examples</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../qoqo_qryd_api.html">qoqo-qryd API documentation</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="../qoqo_qryd.html">qoqo_qryd</a><ul class="current">
@@ -117,18 +118,17 @@
 </style>
 <section id="module-qoqo_qryd.api_devices">
 <span id="qoqo-qryd-api-devices"></span><h1>qoqo_qryd.api_devices<a class="headerlink" href="#module-qoqo_qryd.api_devices" title="Permalink to this headline"></a></h1>
-<p>QRyd WebAPI Devices.</p>
-<p>Provides the devices representing QRyd WebAPI.</p>
+<p>Devices available on the QRydDemo WebAPI.</p>
 <table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice" title="qoqo_qryd.api_devices.QrydEmuSquareDevice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QrydEmuSquareDevice</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice" title="qoqo_qryd.api_devices.QrydEmuSquareDevice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QrydEmuSquareDevice</span></code></a>(seed, pcz_theta)</p></td>
 <td><p>Collection of all QRyd devices for WebAPI.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#qoqo_qryd.api_devices.QrydEmuTriangularDevice" title="qoqo_qryd.api_devices.QrydEmuTriangularDevice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QrydEmuTriangularDevice</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#qoqo_qryd.api_devices.QrydEmuTriangularDevice" title="qoqo_qryd.api_devices.QrydEmuTriangularDevice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QrydEmuTriangularDevice</span></code></a>(seed, pcz_theta)</p></td>
 <td><p>Collection of all QRyd devices for WebAPI.</p></td>
 </tr>
 </tbody>
@@ -140,17 +140,17 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice" title="qoqo_qryd.api_devices.QrydEmuSquareDevice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QrydEmuSquareDevice</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice" title="qoqo_qryd.api_devices.QrydEmuSquareDevice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QrydEmuSquareDevice</span></code></a>(seed, pcz_theta)</p></td>
 <td><p>Collection of all QRyd devices for WebAPI.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#qoqo_qryd.api_devices.QrydEmuTriangularDevice" title="qoqo_qryd.api_devices.QrydEmuTriangularDevice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QrydEmuTriangularDevice</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#qoqo_qryd.api_devices.QrydEmuTriangularDevice" title="qoqo_qryd.api_devices.QrydEmuTriangularDevice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QrydEmuTriangularDevice</span></code></a>(seed, pcz_theta)</p></td>
 <td><p>Collection of all QRyd devices for WebAPI.</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py class">
 <dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuSquareDevice">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.api_devices.</span></span><span class="sig-name descname"><span class="pre">QrydEmuSquareDevice</span></span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.api_devices.</span></span><span class="sig-name descname"><span class="pre">QrydEmuSquareDevice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pcz_theta</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice" title="Permalink to this definition"></a></dt>
 <dd><p>Collection of all QRyd devices for WebAPI.</p>
 <p>At the moment only contains a square and a triangular device.</p>
 <dl class="py method">
@@ -300,7 +300,7 @@ choice from a list of edges and can be used for applications like routing in qua
 
 <dl class="py class">
 <dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuTriangularDevice">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.api_devices.</span></span><span class="sig-name descname"><span class="pre">QrydEmuTriangularDevice</span></span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuTriangularDevice" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.api_devices.</span></span><span class="sig-name descname"><span class="pre">QrydEmuTriangularDevice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pcz_theta</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuTriangularDevice" title="Permalink to this definition"></a></dt>
 <dd><p>Collection of all QRyd devices for WebAPI.</p>
 <p>At the moment only contains a square and a triangular device.</p>
 <dl class="py method">
