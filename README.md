@@ -11,7 +11,7 @@ The qoqo-qryd/roqoqo-qryd packages provide the following functionality:
 
 ### Interface to the current QRydDemo WebAPI
 
-At the moment QRydDemo WebAPI allows access to Quantum Hardware Emulators of different device topology. qoqo-qryd/roqoqo-qryd support interfacing with the corresponding REST-API (TODO: Link to documentation) with low level calls as well as a high-level backend to qoqo quantum programs.
+At the moment QRydDemo WebAPI allows access to Quantum Hardware Emulators of different device topology. qoqo-qryd/roqoqo-qryd support interfacing with the corresponding [REST-API](https://api.qryddemo.itp3.uni-stuttgart.de/docs) with low level calls as well as a high-level backend to qoqo quantum programs.
 
 ### QRydDemo specific hardware operations (prototype)
 
