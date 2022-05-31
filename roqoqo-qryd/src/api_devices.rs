@@ -247,12 +247,11 @@ impl QrydEmuSquareDevice {
     /// * `pcz_theta` - The phase shift angle in the native 'PhaseShiftedControlledZ' gate.
     ///                 The value defaults to "2.13" the (preliminary) hardware design goal
     pub fn new(seed: Option<usize>, pcz_theta: Option<f64>) -> Self {
-        let return_self = Self {
+        Self {
             local: false,
             seed: seed.unwrap_or_default(),
             pcz_theta: pcz_theta.unwrap_or(2.13),
-        };
-        return_self
+        }
     }
 
     /// Returns the backend associated with the device.
@@ -482,12 +481,11 @@ impl QrydEmuTriangularDevice {
     /// * `pcz_theta` - The phase shift angle in the native 'PhaseShiftedControlledZ' gate.
     ///                 The value defaults to "2.13" the (preliminary) hardware design goal
     pub fn new(seed: Option<usize>, pcz_theta: Option<f64>) -> Self {
-        let return_self = Self {
+        Self {
             local: false,
             seed: seed.unwrap_or_default(),
             pcz_theta: pcz_theta.unwrap_or(2.13),
-        };
-        return_self
+        }
     }
 
     /// Returns the backend associated with the device.
