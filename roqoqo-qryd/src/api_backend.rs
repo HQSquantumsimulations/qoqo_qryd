@@ -46,7 +46,7 @@ pub struct APIBackend {
 }
 
 /// Local struct representing the body of the request message
-#[derive(Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, serde::Serialize)]
 struct QRydRunData {
     // The QRyd WebAPI Backend used to execute operations and circuits.
     // At the moment limited to the QRyd emulators
@@ -64,13 +64,13 @@ struct QRydRunData {
 }
 
 /// Local struct representing the body of a validation error message
-#[derive(Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, serde::Deserialize)]
 struct ValidationError {
     detail: ValidationErrorDetail,
 }
 
 /// Local struct representing the body of a validation error message
-#[derive(Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, serde::Deserialize)]
 struct ValidationErrorDetail {
     #[serde(default)]
     loc: Vec<String>,
@@ -81,31 +81,8 @@ struct ValidationErrorDetail {
     internal_type: String,
 }
 
-// Struct to represent QRyd response message
-//
-// Code |   Description
-//------------------------------------------
-// 201 | Successful Response
-// 422 | Validation Error
-//
-#[derive(serde::Serialize, serde::Deserialize)]
-struct QRydRunResponse {
-    // the json body "detail" includes String fields "loc", "msg", "type"
-    #[serde(default)] //?
-    detail: String,
-} // TBD: When/where is the job id communicated back to the client?
-
-// Struct used when calling QRyd WebAPI upon a given job id.
-#[derive(serde::Serialize, serde::Deserialize)]
-struct QRydJobQuerry {
-    // job id retrieved from QRyd WebAPI
-    id: String,
-    // Access token for identification with QRyd devices
-    access_token: String,
-}
-
 /// Struct to represent QRyd response when calling for the Job status.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Default)]
+#[derive(serde::Deserialize, Debug, Default)]
 pub struct QRydJobStatus {
     /// status of the job, e.g. "pending"
     #[serde(default)] // for optional fields
@@ -116,7 +93,7 @@ pub struct QRydJobStatus {
 }
 
 /// Struct to represent QRyd response on the result for the posted Job.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, Default)]
+#[derive(serde::Deserialize, Debug, Clone, Default)]
 pub struct QRydJobResult {
     /// The actual measured data
     #[serde(default)]
@@ -171,7 +148,7 @@ pub struct QRydJobResult {
 /// qubit 0 was measured in state |1> while the same measurement gave |0> for
 /// qubits 1 and 2 and 20 times qubit 2 was measured in state |1>
 /// with qubits 1 and 0 in state |0>
-#[derive(serde::Serialize, serde::Deserialize, Debug, Default, Clone)]
+#[derive(serde::Deserialize, Debug, Default, Clone)]
 pub struct ResultCounts {
     /// The dictionary of counts for each measured string
     pub counts: HashMap<String, u64>,
@@ -322,11 +299,6 @@ impl APIBackend {
         &self,
         job_location: String,
     ) -> Result<QRydJobStatus, RoqoqoBackendError> {
-        // Prepare message body
-        // let data = QRydJobQuerry {
-        //     id: job_id,
-        //     access_token: self.access_token.clone(),
-        // };
         // Prepare WebAPI client
         let client = reqwest::blocking::Client::builder()
             .https_only(true)
@@ -391,11 +363,6 @@ impl APIBackend {
         &self,
         job_location: String,
     ) -> Result<QRydJobResult, RoqoqoBackendError> {
-        // Prepare message body
-        // let data = QRydJobQuerry {
-        //     id: job,
-        //     access_token: self.access_token.clone(),
-        // };
         // Prepare WebAPI client
         let client = reqwest::blocking::Client::builder()
             .https_only(true)
@@ -629,7 +596,9 @@ impl EvaluatingBackend for APIBackend {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::api_devices::*;
+    use crate::api_devices::QrydEmuSquareDevice;
+    use roqoqo::measurements::{PauliZProduct, PauliZProductInput};
+    use roqoqo::{Circuit, QuantumProgram};
     #[test]
     fn debug_and_clone() {
         let device: QRydAPIDevice = QrydEmuSquareDevice::new(None, None).into();
@@ -639,5 +608,52 @@ mod test {
         let backend2 = APIBackend::new(device, Some("a".to_string()), Some(2)).unwrap();
         assert_eq!(backend.clone(), backend);
         assert_ne!(backend, backend2);
+    }
+
+    /// Test Debug of QRydRunData
+    #[test]
+    fn test_debug_qrydrundatastruct() {
+        let circuit = Circuit::new();
+        let input = PauliZProductInput::new(2, false);
+        let measurement = PauliZProduct {
+            constant_circuit: None,
+            circuits: vec![circuit.clone()],
+            input,
+        };
+        let program = QuantumProgram::PauliZProduct {
+            measurement,
+            input_parameter_names: vec!["test".to_string()],
+        };
+        let test = QRydRunData {
+            backend: "qryd_emu_cloudcomp_square".to_string(),
+            develop: false,
+            seed: 0,
+            pcz_theta: 0.0,
+            program,
+        };
+        assert_eq!(format!("{:?}", test), "QRydRunData { backend: \"qryd_emu_cloudcomp_square\", develop: false, seed: 0, pcz_theta: 0.0, program: PauliZProduct { measurement: PauliZProduct { constant_circuit: None, circuits: [Circuit { definitions: [], operations: [], _roqoqo_version: RoqoqoVersion }], input: PauliZProductInput { pauli_product_qubit_masks: {}, number_qubits: 2, number_pauli_products: 0, measured_exp_vals: {}, use_flipped_measurement: false } }, input_parameter_names: [\"test\"] } }");
+    }
+
+    /// Test Debug of QRydJobResult
+    #[test]
+    fn test_debug_qrydjobresult() {
+        let rescounts = ResultCounts {
+            counts: HashMap::new(),
+        };
+        let result = QRydJobResult {
+            data: rescounts,
+            time_taken: 0.0,
+            noise: "noise".to_string(),
+            method: "method".to_string(),
+            device: "device".to_string(),
+            num_qubits: 2,
+            num_clbits: 2,
+            fusion_max_qubits: 0,
+            fusion_avg_qubits: 0.0,
+            fusion_generated_gates: 0,
+            executed_single_qubit_gates: 0,
+            executed_two_qubit_gates: 0,
+        };
+        assert_eq!(format!("{:?}", result), "QRydJobResult { data: ResultCounts { counts: {} }, time_taken: 0.0, noise: \"noise\", method: \"method\", device: \"device\", num_qubits: 2, num_clbits: 2, fusion_max_qubits: 0, fusion_avg_qubits: 0.0, fusion_generated_gates: 0, executed_single_qubit_gates: 0, executed_two_qubit_gates: 0 }");
     }
 }
