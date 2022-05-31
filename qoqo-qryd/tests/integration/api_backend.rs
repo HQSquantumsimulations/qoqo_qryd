@@ -21,7 +21,10 @@ use std::f64::consts::PI;
 use std::usize;
 
 // Helper function to create a python object of square device
-fn create_backend_with_square_device(py: Python, seed: Option<usize>) -> &PyCell<APIBackendWrapper> {
+fn create_backend_with_square_device(
+    py: Python,
+    seed: Option<usize>,
+) -> &PyCell<APIBackendWrapper> {
     let pcz_theta: f64 = PI / 4.0;
     let device_type = py.get_type::<QrydEmuSquareDeviceWrapper>();
     let device: &PyCell<QrydEmuSquareDeviceWrapper> = device_type
@@ -90,8 +93,8 @@ fn test_new_triangle() {
 fn test_copy_deepcopy_square() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let backend = create_backend_with_square_device(py,  Some(11));
-        let backend2 = create_backend_with_square_device(py,  Some(2));
+        let backend = create_backend_with_square_device(py, Some(11));
+        let backend2 = create_backend_with_square_device(py, Some(2));
 
         let copy_op = backend.call_method0("__copy__").unwrap();
         let copy_wrapper = copy_op.extract::<APIBackendWrapper>().unwrap();
@@ -112,7 +115,7 @@ fn test_copy_deepcopy_square() {
 fn test_json_square() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let backend = create_backend_with_square_device(py,  Some(11));
+        let backend = create_backend_with_square_device(py, Some(11));
 
         let serialised = backend.call_method0("to_json").unwrap();
         let deserialised = backend.call_method1("from_json", (serialised,)).unwrap();
@@ -138,7 +141,7 @@ fn test_json_square() {
 fn test_bincode_square() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let backend = create_backend_with_square_device(py,  Some(11));
+        let backend = create_backend_with_square_device(py, Some(11));
 
         let serialised = backend.call_method0("to_bincode").unwrap();
         let deserialised = backend.call_method1("from_bincode", (serialised,)).unwrap();

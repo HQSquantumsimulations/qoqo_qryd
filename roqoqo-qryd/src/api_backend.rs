@@ -626,13 +626,12 @@ impl EvaluatingBackend for APIBackend {
     }
 }
 
-
 #[cfg(test)]
 mod test {
-    use crate::api_devices::*;
     use super::*;
-   #[test]
-   fn debug_and_clone() {
+    use crate::api_devices::*;
+    #[test]
+    fn debug_and_clone() {
         let device: QRydAPIDevice = QrydEmuSquareDevice::new(None, None).into();
         let backend = APIBackend::new(device.clone(), Some("".to_string()), Some(2)).unwrap();
         let a = format!("{:?}", backend);
