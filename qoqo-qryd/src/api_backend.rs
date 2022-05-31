@@ -475,7 +475,6 @@ pub fn convert_into_backend(input: &PyAny) -> Result<APIBackend, QoqoBackendErro
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::api_devices::*;
     use roqoqo_qryd::api_devices::*;
     #[test]
     fn debug_and_clone() {

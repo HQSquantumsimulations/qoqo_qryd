@@ -293,7 +293,7 @@ fn api_backend_errorcase2() {
     let job_result = api_backend_new.get_job_result(job_loc_dummy.clone());
     assert!(job_result.is_err());
 
-    let job_delete = api_backend_new.delete_job(job_loc_dummy.clone());
+    let job_delete = api_backend_new.delete_job(job_loc_dummy);
     assert!(job_delete.is_err());
 }
 
@@ -312,7 +312,7 @@ fn api_backend_errorcase3() {
         let job_result = api_backend_new.get_job_result(job_loc.clone());
         assert!(job_result.is_err());
 
-        let job_delete = api_backend_new.delete_job(job_loc.clone());
+        let job_delete = api_backend_new.delete_job(job_loc);
         assert!(job_delete.is_err());
     }
 }
