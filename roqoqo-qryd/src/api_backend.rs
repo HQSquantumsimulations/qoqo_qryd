@@ -526,7 +526,6 @@ impl EvaluatingBackend for APIBackend {
         &self,
         circuit: impl Iterator<Item = &'a Operation>,
     ) -> RegisterResult {
-        println!("test");
         let new_circ: Circuit = circuit.cloned().collect();
 
         let mut readout = "".to_string();
@@ -561,7 +560,6 @@ impl EvaluatingBackend for APIBackend {
         let mut status = "".to_string();
         let mut job_result = QRydJobResult::default();
         let fifteen = time::Duration::from_millis(200);
-        dbg!(&status);
         while test_counter < self.timeout && status != "completed" {
             test_counter += 1;
             let job_status = self.get_job_status(job_loc.clone()).unwrap();
