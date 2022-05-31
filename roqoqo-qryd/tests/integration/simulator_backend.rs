@@ -94,7 +94,6 @@ fn run_simple_circuit() {
 /// Simply test measurement process, not that gate is translated correclty
 #[test]
 #[cfg(feature = "simulator")]
-#[ignore = "Takes too long and puts large load on QRyd servers"]
 fn test_measurement() {
     let gate: GateOperation = PhaseShiftState1::new(0, std::f64::consts::FRAC_PI_2.into()).into();
     let preparation_gates: Vec<SingleQubitGateOperation> =
@@ -114,7 +113,6 @@ fn test_measurement() {
 
 /// Test full gate with stochastic application of gates, ignore normally because of length and load
 #[test]
-#[ignore = "Takes too long and puts large load on QRyd servers"]
 fn test_full_simple_gate() {
     let gate: GateOperation = RotateX::new(0, std::f64::consts::FRAC_PI_2.into()).into();
     let preparation_gates: Vec<SingleQubitGateOperation> = vec![

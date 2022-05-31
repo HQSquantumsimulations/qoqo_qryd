@@ -20,13 +20,27 @@
 
 //! # roqoqo-qryd
 //!
-//! Components for the qoqo/roqoqo quantum toolkit by [HQS Quantum Simulations](https://quantumsimulations.de) that support QRyd quantum computers.
+//! The `roqoqo-qryd` rust crate implements [qoqo](https://github.com/HQSquantumsimulations/qoqo) support for quantum computers and quantum computer emulators of the [QRydDemo](https://thequantumlaend.de/qryddemo/) project.
 //!
-//! The qoqo-qryd/roqoqo-qryd packages provide three components
+//! The QRydDemo project builds on Quantum computers using Rydberg atoms.
+//! qoqo is quantum computing toolkit by [HQS Quantum Simulations](https://quantumsimulations.de).
 //!
-//! * devices: python/rust representation of QRyd devices
-//! * operations: roqoqo Pragma operations specific to QRyd devices that can change the topology of QRyd devices
-//! * simulator (optional): A QuEST based simulator for QRyd devices that checks the availability of the quantum operations on a chosen device during simulation
+//! The roqoqo-qryd package contains the following functionality:
+//!
+//! ### Interface to the current QRydDemo WebAPI
+//!
+//! At the moment QRydDemo WebAPI allows access to Quantum Hardware Emulators of different device topology. roqoqo-qryd supports interfacing with the corresponding REST-API (TODO: Link to documentation) with low level calls as well as a high-level backend to qoqo quantum programs. For this it provides the backend `APIBackend` to evaluate roqoqo quantum programs and the `api_devices` module to represent devices available on the emulators.
+//!
+//! ### QRydDemo specific hardware operations (prototype)
+//!
+//! Rydberg atom based quantum devices support, in principle, operations not commonly found in other quantum hardware. Changes in device topology are one of these operations. roqoqo-qryd adds support for changes in device topology to roqoqo via the operations in its `pragma_operations` module.
+//! Note that this is a preview prototype and does not represent a finalized set of operations on the QRydDemo hardware.
+//!
+//! ### Local simulator supporting specific hardware operations
+//!
+//! roqoqo-qryd includes a local [QuEST](https://github.com/QuEST-Kit/QuEST) based simulator for quantum devices supporting the Rydberg specific quantum operations. The simulator is intended to let users test the capabilities of quantum hardware with the additional operations.
+//! roqoqo-qryd provides the simulator via the `SimulatorBackend` backend the implements the roqoqo `Backend` trait.The backend uses the device prototypes in roqoqo-qryd's `qryd_devices` module.
+//! Note that the devices for the simulator do not represent a finalised design for QRydDemo.
 
 /// Devices representing QRyd quantum computer(s)
 pub mod qryd_devices;
