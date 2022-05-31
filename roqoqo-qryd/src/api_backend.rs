@@ -612,7 +612,7 @@ mod test {
 
     /// Test Debug of QRydRunData
     #[test]
-    fn test_serialization_qrydrundatastruct() {
+    fn test_debug_qrydrundatastruct() {
         let circuit = Circuit::new();
         let input = PauliZProductInput::new(2, false);
         let measurement = PauliZProduct {
@@ -632,5 +632,28 @@ mod test {
             program,
         };
         assert_eq!(format!("{:?}", test), "QRydRunData { backend: \"qryd_emu_cloudcomp_square\", develop: false, seed: 0, pcz_theta: 0.0, program: PauliZProduct { measurement: PauliZProduct { constant_circuit: None, circuits: [Circuit { definitions: [], operations: [], _roqoqo_version: RoqoqoVersion }], input: PauliZProductInput { pauli_product_qubit_masks: {}, number_qubits: 2, number_pauli_products: 0, measured_exp_vals: {}, use_flipped_measurement: false } }, input_parameter_names: [\"test\"] } }");
+    }
+
+    /// Test Debug of QRydJobResult
+    #[test]
+    fn test_debug_qrydjobresult() {
+        let rescounts = ResultCounts {
+            counts: HashMap::new(),
+        };
+        let result = QRydJobResult {
+            data: rescounts,
+            time_taken: 0.0,
+            noise: "noise".to_string(),
+            method: "method".to_string(),
+            device: "device".to_string(),
+            num_qubits: 2,
+            num_clbits: 2,
+            fusion_max_qubits: 0,
+            fusion_avg_qubits: 0.0,
+            fusion_generated_gates: 0,
+            executed_single_qubit_gates: 0,
+            executed_two_qubit_gates: 0,
+        };
+        assert_eq!(format!("{:?}", result), "QRydJobResult { data: ResultCounts { counts: {} }, time_taken: 0.0, noise: \"noise\", method: \"method\", device: \"device\", num_qubits: 2, num_clbits: 2, fusion_max_qubits: 0, fusion_avg_qubits: 0.0, fusion_generated_gates: 0, executed_single_qubit_gates: 0, executed_two_qubit_gates: 0 }");
     }
 }
