@@ -15,7 +15,7 @@ The qoqo-qryd package contains the following functionality:
 
 ### Interface to the current QRydDemo WebAPI
 
-At the moment QRydDemo WebAPI allows access to Quantum Hardware Emulators of different device topology. qoqo-qryd supports interfacing with the corresponding REST-API (TODO: Link to documentation) with low level calls as well as a high-level backend to qoqo quantum programs. For this it provides the backend `APIBackend` to evaluate qoqo quantum programs and the `api_devices` module to represent devices available on the emulators.
+At the moment QRydDemo WebAPI allows access to Quantum Hardware Emulators of different device topology. qoqo-qryd supports interfacing with the corresponding [REST-API](https://api.qryddemo.itp3.uni-stuttgart.de/docs) with low level calls as well as a high-level backend to qoqo quantum programs. For this it provides the backend `APIBackend` to evaluate qoqo quantum programs and the `api_devices` module to represent devices available on the emulators.
 
 ### QRydDemo specific hardware operations (prototype)
 
@@ -34,7 +34,7 @@ To use the WebAPI, a QRydDemo account is required. Users can register via the [o
 
 ## Installation
 
-he `qoqo-qryd` package is available on PyPi as a source distribution and as precompiled wheels for linux and macOS on the x86 platform. Other platforms need to install from the source distribution.
+The `qoqo-qryd` package is available on PyPi as a source distribution and as precompiled wheels for linux and macOS on the x86 platform. Other platforms need to install from the source distribution.
 
 For both source distribution and pre-built wheels it can be installed via
 
