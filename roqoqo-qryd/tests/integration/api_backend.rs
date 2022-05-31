@@ -28,7 +28,7 @@ use std::{env, thread, time};
 fn api_backend() {
     if env::var("QRYD_API_TOKEN").is_ok() {
         let number_qubits = 6;
-        let device = QrydEmuSquareDevice::new(Some(2), Some(0.23)).unwrap();
+        let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
         let api_backend_new = APIBackend::new(qryd_device, None, None).unwrap();
         // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
@@ -90,7 +90,7 @@ fn api_backend() {
 fn api_triangular() {
     if env::var("QRYD_API_TOKEN").is_ok() {
         let number_qubits = 6;
-        let device = QrydEmuTriangularDevice::new(Some(2), Some(0.23)).unwrap();
+        let device = QrydEmuTriangularDevice::new(Some(2), Some(0.23));
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
         let api_backend_new = APIBackend::new(qryd_device, None, None).unwrap();
         // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
@@ -154,7 +154,7 @@ fn api_triangular() {
 fn evaluating_backend() {
     if env::var("QRYD_API_TOKEN").is_ok() {
         let number_qubits = 6;
-        let device = QrydEmuSquareDevice::new(Some(2), Some(0.23)).unwrap();
+        let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
         let api_backend_new = APIBackend::new(qryd_device, None, Some(20)).unwrap();
         // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
@@ -194,7 +194,7 @@ fn evaluating_backend() {
 #[test]
 fn api_delete() {
     if env::var("QRYD_API_TOKEN").is_ok() {
-        let device = QrydEmuSquareDevice::new(Some(1), Some(0.23)).unwrap();
+        let device = QrydEmuSquareDevice::new(Some(1), Some(0.23));
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
         let api_backend_new = APIBackend::new(qryd_device, None, None).unwrap();
         // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
@@ -233,7 +233,7 @@ fn api_delete() {
 fn api_backend_errorcase1() {
     if env::var("QRYD_API_TOKEN").is_ok() {
         let number_qubits = 6;
-        let device = QrydEmuSquareDevice::new(Some(2), Some(0.23)).unwrap();
+        let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
         let api_backend_new = APIBackend::new(qryd_device, None, None).unwrap();
         // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
@@ -266,7 +266,7 @@ fn api_backend_errorcase1() {
 #[test]
 fn api_backend_errorcase2() {
     let number_qubits = 6;
-    let device = QrydEmuSquareDevice::new(Some(2), Some(0.23)).unwrap();
+    let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
     let api_backend_new = APIBackend::new(qryd_device, Some("DummyString".to_string()), None).unwrap();
     let qubit_mapping: HashMap<usize, usize> =
@@ -306,7 +306,7 @@ fn api_backend_errorcase2() {
 #[test]
 fn api_backend_errorcase3() {
     if env::var("QRYD_API_TOKEN").is_ok() {
-        let device = QrydEmuSquareDevice::new(Some(2), Some(0.23)).unwrap();
+        let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
         let api_backend_new = APIBackend::new(qryd_device, None, None).unwrap();
         // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!

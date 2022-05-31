@@ -21,8 +21,7 @@ use std::f64::consts::PI;
 use std::usize;
 
 // Helper function to create a python object of square device
-fn create_backend_with_square_device(py: Python) -> &PyCell<APIBackendWrapper> {
-    let seed: Option<usize> = Some(11);
+fn create_backend_with_square_device(py: Python, seed: Option<usize>) -> &PyCell<APIBackendWrapper> {
     let pcz_theta: f64 = PI / 4.0;
     let device_type = py.get_type::<QrydEmuSquareDeviceWrapper>();
     let device: &PyCell<QrydEmuSquareDeviceWrapper> = device_type
@@ -91,15 +90,19 @@ fn test_new_triangle() {
 fn test_copy_deepcopy_square() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let backend = create_backend_with_square_device(py);
+        let backend = create_backend_with_square_device(py,  Some(11));
+        let backend2 = create_backend_with_square_device(py,  Some(2));
 
         let copy_op = backend.call_method0("__copy__").unwrap();
         let copy_wrapper = copy_op.extract::<APIBackendWrapper>().unwrap();
+        let copy_op2 = backend2.call_method0("__copy__").unwrap();
+        let copy_wrapper2 = copy_op2.extract::<APIBackendWrapper>().unwrap();
         let deepcopy_op = backend.call_method1("__deepcopy__", ("",)).unwrap();
         let deepcopy_wrapper = deepcopy_op.extract::<APIBackendWrapper>().unwrap();
 
         let backend_wrapper = backend.extract::<APIBackendWrapper>().unwrap();
         assert_eq!(backend_wrapper, copy_wrapper);
+        assert_ne!(copy_wrapper, copy_wrapper2);
         assert_eq!(backend_wrapper, deepcopy_wrapper);
     });
 }
@@ -109,7 +112,7 @@ fn test_copy_deepcopy_square() {
 fn test_json_square() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let backend = create_backend_with_square_device(py);
+        let backend = create_backend_with_square_device(py,  Some(11));
 
         let serialised = backend.call_method0("to_json").unwrap();
         let deserialised = backend.call_method1("from_json", (serialised,)).unwrap();
@@ -135,7 +138,7 @@ fn test_json_square() {
 fn test_bincode_square() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let backend = create_backend_with_square_device(py);
+        let backend = create_backend_with_square_device(py,  Some(11));
 
         let serialised = backend.call_method0("to_bincode").unwrap();
         let deserialised = backend.call_method1("from_bincode", (serialised,)).unwrap();

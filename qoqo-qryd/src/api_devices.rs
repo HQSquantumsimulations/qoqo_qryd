@@ -39,11 +39,11 @@ impl QrydEmuSquareDeviceWrapper {
     /// Returns:
     ///     QrydEmuTriangularDevice: New device
     #[new]
-    pub fn new(seed: Option<usize>, pcz_theta: Option<f64>) -> PyResult<Self> {
-        Ok(Self {
+    pub fn new(seed: Option<usize>, pcz_theta: Option<f64>) -> Self {
+        Self {
             internal: QrydEmuSquareDevice::new(seed, pcz_theta)
-                .map_err(|err| PyValueError::new_err(format!("{:?}", err)))?,
-        })
+               
+        }
     }
 
     /// Return a copy of the QRydAPIDevice (copy here produces a deepcopy).
@@ -236,11 +236,10 @@ impl QrydEmuTriangularDeviceWrapper {
     /// Returns:
     ///     QrydEmuTriangularDevice: New device
     #[new]
-    pub fn new(seed: Option<usize>, pcz_theta: Option<f64>) -> PyResult<Self> {
-        Ok(Self {
+    pub fn new(seed: Option<usize>, pcz_theta: Option<f64>) -> Self {
+        Self {
             internal: QrydEmuTriangularDevice::new(seed, pcz_theta)
-                .map_err(|err| PyValueError::new_err(format!("{:?}", err)))?,
-        })
+        }
     }
 
     /// Return a copy of the QRydAPIDevice (copy here produces a deepcopy).
