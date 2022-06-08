@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - uses: actions/setup-python@v2
+    - uses: actions/setup-python@v4.0.0
       with:
         python-version: 3.9
     - uses: actions-rs/toolchain@v1
@@ -56,7 +56,7 @@ jobs:
           toolchain: stable
           target: ${{ matrix.combinations.rust }}
           default: true
-      - uses: actions/setup-python@v3.1.2
+      - uses: actions/setup-python@v4.0.0
         with:
           python-version: ${{ matrix.python.py }}
       - name: linux wheels
@@ -93,7 +93,7 @@ jobs:
   #         toolchain: stable
   #         target: ${{ matrix.combinations.rust }}
   #         default: true
-  #     - uses: actions/setup-python@v3.1.2
+  #     - uses: actions/setup-python@v4.0.0
   #       with:
   #         python-version: ${{ matrix.python.py }}
   #     - name: windows wheels
@@ -131,7 +131,7 @@ jobs:
           target: ${{ matrix.combinations.rust }}
           default: true
           components: rustfmt
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v4.0.0
         with:
           python-version: ${{ matrix.python.py }}
       - run: |
@@ -175,7 +175,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
+    - uses: actions/setup-python@v4.0.0
     - uses: actions-rs/toolchain@v1
       with:
         profile: minimal
