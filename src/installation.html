@@ -14,6 +14,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../_static/js/theme.js"></script>
@@ -107,9 +108,9 @@
 }
 </style>
 <section id="installation">
-<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h1>
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h1>
 <section id="installing-qoqo-qryd">
-<h2>Installing qoqo-qryd<a class="headerlink" href="#installing-qoqo-qryd" title="Permalink to this headline"></a></h2>
+<h2>Installing qoqo-qryd<a class="headerlink" href="#installing-qoqo-qryd" title="Permalink to this heading"></a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">qoqo-qryd</span></code> package is available on PyPi as a source distribution and as precompiled wheels for linux and macOS on the x86 platform. Other platforms need to install from the source distribution.</p>
 <p>For both source distribution and pre-built wheels it can be installed via</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install qoqo-qryd
@@ -122,7 +123,7 @@ pip install maturin
 </pre></div>
 </div>
 <section id="using-roqoqo-qryd-in-rust-code">
-<h3>Using roqoqo-qryd in rust code<a class="headerlink" href="#using-roqoqo-qryd-in-rust-code" title="Permalink to this headline"></a></h3>
+<h3>Using roqoqo-qryd in rust code<a class="headerlink" href="#using-roqoqo-qryd-in-rust-code" title="Permalink to this heading"></a></h3>
 <p>For using roqoqo-qryd in rust code including the optional simulator simply add</p>
 <div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="n">roqoqo-qryd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">version</span><span class="o">=</span><span class="s">&quot;0.1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">path</span><span class="o">=</span><span class="s">&quot;...&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">features</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;simulator&quot;</span><span class="p">]}</span><span class="w"></span>
 </pre></div>

@@ -14,6 +14,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../_static/js/theme.js"></script>
@@ -106,18 +107,18 @@
 }
 </style>
 <section id="qryddemo-webapi">
-<h1>QRydDemo WebAPI<a class="headerlink" href="#qryddemo-webapi" title="Permalink to this headline"></a></h1>
+<h1>QRydDemo WebAPI<a class="headerlink" href="#qryddemo-webapi" title="Permalink to this heading"></a></h1>
 <p>The QRydDemo project at the moment provides access to a Quantum Hardware Emulator via a REST-API.
 qoqo-qryd and roqoqo-qryd allow interfacing with the WebAPI.
 The WebAPI can be accessed on the level of direct API calls.
 It is also possible to use the WebAPI as an <code class="docutils literal notranslate"><span class="pre">EvaluatingBackend</span></code> for general (non-parameterized)
 qoqo QuantumPrograms via the WebAPI as described in <span class="xref std std-doc">src/execution</span>.</p>
 <section id="getting-access-to-the-webapi">
-<h2>Getting access to the WebAPI<a class="headerlink" href="#getting-access-to-the-webapi" title="Permalink to this headline"></a></h2>
+<h2>Getting access to the WebAPI<a class="headerlink" href="#getting-access-to-the-webapi" title="Permalink to this heading"></a></h2>
 <p>To use the WebAPI, a QRydDemo account is required. Users can register via the <a class="reference external" href="https://thequantumlaend.de/get-access/">online registration form</a>. Access is controlled via a Token. The token can either be directly provided to the <code class="docutils literal notranslate"><span class="pre">APIBackend</span></code> on creation or the backend tries to read it from the <code class="docutils literal notranslate"><span class="pre">QRYD_API_TOKEN</span></code> environmental variable.</p>
 </section>
 <section id="devices">
-<h2>Devices<a class="headerlink" href="#devices" title="Permalink to this headline"></a></h2>
+<h2>Devices<a class="headerlink" href="#devices" title="Permalink to this heading"></a></h2>
 <p>At the moment the QrydDemo WebAPI supports two device emulators. Both support 30 qubits one in a square another with a triangular topology.</p>
 <a class="reference internal image-reference" href="../_images/square.png"><img alt="Square lattice with nearest-neighbor connectivity" src="../_images/square.png" style="width: 300px;" /></a>
 <a class="reference internal image-reference" href="../_images/triangle.png"><img alt="Triangle lattice with nearest-neighbor connectivity" src="../_images/triangle.png" style="width: 300px;" /></a>
@@ -138,7 +139,7 @@ qoqo QuantumPrograms via the WebAPI as described in <span class="xref std std-do
 </div>
 </section>
 <section id="apibackend">
-<h2>APIBackend<a class="headerlink" href="#apibackend" title="Permalink to this headline"></a></h2>
+<h2>APIBackend<a class="headerlink" href="#apibackend" title="Permalink to this heading"></a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">APIBackend</span></code> of qoqo-qryd supports the four direct API-calls of the QRydDemo WebAPI:</p>
 <ol class="arabic simple">
 <li><p>Queueing a job of running a qoqo QuantumProgram with a ClassicalRegister measurement</p></li>

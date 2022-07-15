@@ -14,6 +14,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../_static/js/theme.js"></script>
@@ -105,7 +106,7 @@
 }
 </style>
 <section id="executing-quantum-programs">
-<h1>Executing quantum programs<a class="headerlink" href="#executing-quantum-programs" title="Permalink to this headline"></a></h1>
+<h1>Executing quantum programs<a class="headerlink" href="#executing-quantum-programs" title="Permalink to this heading"></a></h1>
 <p>To obtain results from a QuantumProgram, Measurement or Circuit it needs to be executed on real quantum computing hardware or run on a simulator.</p>
 <p>Qoqo uses separate backends for this evaluation. For each hardware or simulator a backend can be created that implements qoqo's <code class="docutils literal notranslate"><span class="pre">EvaluatingBackend</span></code> interface and runs QuantumPrograms. For an overview of backends see the <a class="reference external" href="https://github.com/HQSquantumsimulations/qoqo">qoqo</a> website. Backends which provide the functionality to run a single circuit are so-called <code class="docutils literal notranslate"><span class="pre">EvaluatingBackend</span></code>. The QRydDemo backends fall in this category.</p>
 <p>An <code class="docutils literal notranslate"><span class="pre">EvaluatingBackend</span></code> can run:</p>
@@ -214,11 +215,11 @@ To distinguish between a command returning expectation values and a program retu
 </pre></div>
 </div>
 <section id="executing-quantumprograms-without-without-returning-expecation-values">
-<h2>Executing QuantumPrograms without without returning expecation values<a class="headerlink" href="#executing-quantumprograms-without-without-returning-expecation-values" title="Permalink to this headline"></a></h2>
+<h2>Executing QuantumPrograms without without returning expecation values<a class="headerlink" href="#executing-quantumprograms-without-without-returning-expecation-values" title="Permalink to this heading"></a></h2>
 <p>As described in <span class="xref std std-doc">introdcution</span> the <code class="docutils literal notranslate"><span class="pre">ClassicalRegister</span></code> measurement can be used to return the full measurement record.</p>
 </section>
 <section id="non-executing-backends">
-<h2>Non-executing backends<a class="headerlink" href="#non-executing-backends" title="Permalink to this headline"></a></h2>
+<h2>Non-executing backends<a class="headerlink" href="#non-executing-backends" title="Permalink to this heading"></a></h2>
 <p>Qoqo also has backends that cannot be used to run or evaluate a quantum circuit. These backends typically are used to translate qoqo circuits to other quantum toolkits or languages. One example is <a class="reference external" href="https://github.com/HQSquantumsimulations/qoqo_qasm">qoqo_qasm</a> .</p>
 </section>
 </section>
