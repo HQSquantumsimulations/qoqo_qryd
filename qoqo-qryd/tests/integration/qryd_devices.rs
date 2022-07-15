@@ -213,7 +213,7 @@ fn test_switch_layout() {
         let updated_device = device
             .call_method1("add_layout", (1, new_layout.to_pyarray(py)))
             .unwrap();
-        let _ = updated_device.call_method1("switch_layout", (1,)).unwrap();
+        updated_device.call_method1("switch_layout", (1,)).unwrap();
 
         let comp_device = device_type
             .call1((3, 2, vec![2, 2, 2], 1.0, new_layout.to_pyarray(py)))
@@ -314,7 +314,7 @@ fn test_change_qubit_positions() {
         new_qubits.insert(3, (1, 0));
         new_qubits.insert(4, (2, 1));
         new_qubits.insert(5, (2, 0));
-        let _ = device
+        device
             .call_method1("change_qubit_positions", (new_qubits.clone(),))
             .unwrap();
 

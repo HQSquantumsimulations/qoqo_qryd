@@ -346,8 +346,8 @@ fn test_change_qubit_positions() {
         (3_usize, (1_usize, 1_usize)),
     ];
     let new_pos = create_simple_qubit_positions(&qubits);
-    let _ = device.change_qubit_positions(&new_pos).unwrap();
-    let _ = qryd_device.change_qubit_positions(&new_pos).unwrap();
+    device.change_qubit_positions(&new_pos).unwrap();
+    qryd_device.change_qubit_positions(&new_pos).unwrap();
 
     assert_eq!(device.number_rows(), 2);
     assert_eq!(device.number_columns(), 3);
