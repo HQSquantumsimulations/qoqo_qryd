@@ -72,9 +72,7 @@ fn run_simple_circuit() {
         .unwrap()
         .add_layout(1, layout)
         .unwrap();
-    dbg!(&device);
     device.switch_layout(&1).unwrap();
-    dbg!(&device);
     let backend = SimulatorBackend::new(device.into());
     let mut circuit = Circuit::new();
     circuit += DefinitionBit::new("ro".to_string(), 2, true);

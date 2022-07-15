@@ -135,7 +135,7 @@ fn test_fail_new_square() {
         let backend = backend_type.call1((3_u32, ""));
         assert!(backend.is_err());
         if let Ok(old_token) = env::var("QRYD_API_TOKEN") {
-            let _ = env::remove_var("QRYD_API_TOKEN");
+            env::remove_var("QRYD_API_TOKEN");
             let backend = backend_type.call1((device,));
             assert!(backend.is_err());
             env::set_var("QRYD_API_TOKEN", old_token);

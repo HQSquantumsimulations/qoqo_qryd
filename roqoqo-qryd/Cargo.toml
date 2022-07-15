@@ -1,6 +1,6 @@
 [package]
 name = "roqoqo-qryd"
-version = "0.5.2"
+version = "0.5.3"
 authors = ["HQS Quantum Simulations <info@quantumsimulations.de>"]
 edition = "2021"
 license = "Apache-2.0"
@@ -22,10 +22,10 @@ doctest = false
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-roqoqo = {version="1.0.0-alpha.1", features=["serialize"]}
-roqoqo-derive = {version="1.0.0-alpha.1"}
-roqoqo-quest = {version = "0.5", default-features=false, optional=true}
-qoqo_calculator = { version="0.7"}
+roqoqo = {version="1.0.0-alpha.3", features=["serialize"]}
+roqoqo-derive = {version="1.0.0-alpha.3"}
+roqoqo-quest = {version = "0.6", default-features=false, optional=true}
+qoqo_calculator = { version="0.8"}
 serde = {version="1.0", features=["derive"], optional=true}
 serde_json = "1.0"
 ndarray= {version="0.15"}
@@ -38,7 +38,7 @@ hex = "0.4"
 [dev-dependencies]
 test-case = "2.0.2"
 serde_test = {version="1.0"}
-roqoqo-test = {version="1.0.0-alpha.1"}
+roqoqo-test = {version="1.0.0-alpha.3"}
 
 [features]
 default = ["serialize", "simulator"]

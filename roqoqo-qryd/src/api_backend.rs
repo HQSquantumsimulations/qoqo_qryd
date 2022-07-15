@@ -615,7 +615,7 @@ mod test {
         let input = PauliZProductInput::new(2, false);
         let measurement = PauliZProduct {
             constant_circuit: None,
-            circuits: vec![circuit.clone()],
+            circuits: vec![circuit],
             input,
         };
         let program = QuantumProgram::PauliZProduct {
