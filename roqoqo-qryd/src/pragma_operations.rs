@@ -31,7 +31,6 @@ use std::collections::HashMap;
     Clone,
     PartialEq,
     roqoqo_derive::Operate,
-    roqoqo_derive::Substitute,
     roqoqo_derive::OperatePragma,
     serde::Serialize,
     serde::Deserialize,
@@ -39,6 +38,23 @@ use std::collections::HashMap;
 pub struct PragmaChangeQRydLayout {
     /// The index of the new layout the device is changed to.
     new_layout: usize,
+}
+
+impl Substitute for PragmaChangeQRydLayout {
+    fn substitute_parameters(
+        &self,
+        _calculator: &qoqo_calculator::Calculator,
+    ) -> Result<Self, RoqoqoError> {
+        Ok(self.clone())
+    }
+
+    fn remap_qubits(&self, mapping: &HashMap<usize, usize>) -> Result<Self, RoqoqoError> {
+        if let Some((index, _)) = mapping.iter().next() {
+            Err(RoqoqoError::QubitMappingError { qubit: *index })
+        } else {
+            Ok(self.clone())
+        }
+    }
 }
 
 impl PragmaChangeQRydLayout {
@@ -85,7 +101,6 @@ const TAGS_PragmaChangeQRydLayout: &[&str; 3] =
     Clone,
     PartialEq,
     roqoqo_derive::Operate,
-    roqoqo_derive::Substitute,
     roqoqo_derive::OperatePragma,
     serde::Serialize,
     serde::Deserialize,
@@ -93,6 +108,27 @@ const TAGS_PragmaChangeQRydLayout: &[&str; 3] =
 pub struct PragmaShiftQRydQubit {
     /// The new qubit positions in the row-column grid of the QRyd device.
     new_positions: HashMap<usize, (usize, usize)>,
+}
+
+impl Substitute for PragmaShiftQRydQubit {
+    fn substitute_parameters(
+        &self,
+        _calculator: &qoqo_calculator::Calculator,
+    ) -> Result<Self, RoqoqoError> {
+        Ok(self.clone())
+    }
+
+    fn remap_qubits(&self, mapping: &HashMap<usize, usize>) -> Result<Self, RoqoqoError> {
+        let mut new_new_positions: HashMap<usize, (usize, usize)> =
+            HashMap::with_capacity(self.new_positions.len());
+        for (index, (row, col)) in self.new_positions.iter() {
+            let new_index = mapping.get(index).unwrap_or(index);
+            new_new_positions.insert(*new_index, (*row, *col));
+        }
+        Ok(Self {
+            new_positions: new_new_positions,
+        })
+    }
 }
 
 impl PragmaShiftQRydQubit {

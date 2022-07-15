@@ -100,9 +100,11 @@ fn pragma_change_qryd_layout_substitute_trait() {
 
     // (2) Remap qubits function
     let mut qubit_mapping_test: HashMap<usize, usize> = HashMap::new();
-    qubit_mapping_test.insert(0, 2);
     let result = pragma_test.remap_qubits(&qubit_mapping_test).unwrap();
     assert_eq!(result, pragma);
+    qubit_mapping_test.insert(0, 2);
+    let result = pragma_test.remap_qubits(&qubit_mapping_test);
+    assert!(result.is_err());
 }
 
 /// Test PragmaChangeQRydLayout Serialization and Deserialization traits (readable)
@@ -231,18 +233,20 @@ fn pragma_shift_qryd_qubit_substitute_trait() {
     new_positions.insert(1, (0, 0));
     new_positions.insert(0, (0, 1));
     let pragma = PragmaShiftQRydQubit::new(new_positions.clone());
-    let pragma_test = PragmaShiftQRydQubit::new(new_positions.clone());
+    let mut new_new_positions: HashMap<usize, (usize, usize)> = HashMap::new();
+    new_new_positions.insert(1, (0, 0));
+    new_new_positions.insert(2, (0, 1));
+    let pragma_test = PragmaShiftQRydQubit::new(new_new_positions.clone());
     // (1) Substitute parameters function
     let mut substitution_dict: Calculator = Calculator::new();
     substitution_dict.set_variable("ro", 0.0);
-    let result = pragma_test
-        .substitute_parameters(&substitution_dict)
-        .unwrap();
+    let result = pragma.substitute_parameters(&substitution_dict).unwrap();
     assert_eq!(result, pragma);
 
     // (2) Remap qubits function
     let mut qubit_mapping_test: HashMap<usize, usize> = HashMap::new();
     qubit_mapping_test.insert(0, 2);
+    qubit_mapping_test.insert(2, 0);
     let result = pragma_test.remap_qubits(&qubit_mapping_test).unwrap();
     assert_eq!(result, pragma);
 }

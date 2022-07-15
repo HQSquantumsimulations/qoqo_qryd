@@ -296,18 +296,39 @@ fn test_pragmas_substitute_parameters() {
 fn test_pragmas_remap_qubits() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let ops: [&PyAny; 2] = [new_pragma_layout(py, 0), new_pragma_shift(py, 0)];
-        for operation in ops {
-            let mut qubit_mapping: HashMap<usize, usize> = HashMap::new();
-            qubit_mapping.insert(0, 2);
-            let remapped_op = operation
-                .call_method1("remap_qubits", (qubit_mapping,))
-                .unwrap();
+        let operation = new_pragma_shift(py, 0);
+        let op2 = new_pragma_shift(py, 2);
+        let mut qubit_mapping: HashMap<usize, usize> = HashMap::new();
+        qubit_mapping.insert(0, 2);
+        qubit_mapping.insert(2, 0);
+        let remapped_op = operation
+            .call_method1("remap_qubits", (qubit_mapping,))
+            .unwrap();
 
-            let comparison =
-                bool::extract(remapped_op.call_method1("__eq__", (operation,)).unwrap()).unwrap();
-            assert!(comparison);
-        }
+        let comparison =
+            bool::extract(remapped_op.call_method1("__eq__", (op2,)).unwrap()).unwrap();
+        assert!(comparison);
+    });
+}
+
+#[test]
+fn test_pragmas_remap_qubits_change_layout() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let operation = new_pragma_layout(py, 0);
+        let qubit_mapping: HashMap<usize, usize> = HashMap::new();
+
+        let remapped_op = operation
+            .call_method1("remap_qubits", (qubit_mapping,))
+            .unwrap();
+        let comparison =
+            bool::extract(remapped_op.call_method1("__eq__", (operation,)).unwrap()).unwrap();
+        assert!(comparison);
+        let mut qubit_mapping: HashMap<usize, usize> = HashMap::new();
+        qubit_mapping.insert(0, 2);
+        qubit_mapping.insert(2, 0);
+        let remapped_op = operation.call_method1("remap_qubits", (qubit_mapping,));
+        assert!(remapped_op.is_err());
     });
 }
 
