@@ -18,6 +18,7 @@ jobs:
         profile: minimal
         toolchain: stable
         default: true
+    - uses: Swatinem/rust-cache@v1.4.0
     - name: Install dependencies
       run: |
         pip install maturin pytest numpy qoqo
@@ -56,6 +57,7 @@ jobs:
           toolchain: stable
           target: ${{ matrix.combinations.rust }}
           default: true
+      - uses: Swatinem/rust-cache@v1.4.0
       - uses: actions/setup-python@v3.1.2
         with:
           python-version: ${{ matrix.python.py }}
@@ -65,7 +67,7 @@ jobs:
           maturin-version: latest
           command: build
           manylinux: 2010
-          args: -i python${{ matrix.python.py }} --out wheels --no-sdist -m qoqo-qryd/Cargo.toml --release --cargo-extra-args="--locked"
+          args: -i python${{ matrix.python.py }} --out wheels -m qoqo-qryd/Cargo.toml --release --locked
       - name: test install
         run: |
           pip install wheels/* --force-reinstall
@@ -101,7 +103,7 @@ jobs:
   #       with:
   #         maturin-version: latest
   #         command: build
-  #         args: -i python --out wheels --no-sdist -m qoqo-qryd/Cargo.toml --release --cargo-extra-args="--locked"
+  #         args: -i python --out wheels  -m qoqo-qryd/Cargo.toml --release --locked
   #     - name: store artifact
   #       uses: actions/upload-artifact@v3
   #       with:
@@ -131,6 +133,7 @@ jobs:
           target: ${{ matrix.combinations.rust }}
           default: true
           components: rustfmt
+      - uses: Swatinem/rust-cache@v1.4.0
       - uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python.py }}
@@ -150,6 +153,7 @@ jobs:
           profile: minimal
           toolchain: stable
           components: clippy
+      - uses: Swatinem/rust-cache@v1.4.0
       - run: |
           cd qoqo-qryd
           sudo apt install -y clang-12
@@ -167,6 +171,7 @@ jobs:
           toolchain: stable
           target: x86_64-unknown-linux-gnu
           default: true
+      - uses: Swatinem/rust-cache@v1.4.0
       - run: |
           cd qoqo-qryd
           cargo test --doc --package=roqoqo-qryd
@@ -181,6 +186,7 @@ jobs:
         profile: minimal
         toolchain: stable
         default: true
+    - uses: Swatinem/rust-cache@v1.4.0
     - name: Install dependencies
       run: |
         sudo apt install make
@@ -198,16 +204,15 @@ jobs:
   #     - uses: actions/checkout@master
   #     - uses: actions-rs/toolchain@v1
   #       with:
-  #           toolchain: nightly
-  #           components: clippy
+  #           toolchain: stable
+  #           components: llvm-tools-preview
   #           override: true
   #     - run: |
   #         cd interfaces/
-  #         rustup component add llvm-tools-preview
-  #         export RUSTFLAGS="-Zinstrument-coverage"
-  #         export RUSTDOCFLAGS="-Zinstrument-coverage"
+  #         export RUSTFLAGS="-Cinstrument-coverage"
+  #         export RUSTDOCFLAGS="-Cinstrument-coverage"
   #         cargo build --verbose
-  #         LLVM_PROFILE_FILE="coverage-%p-%m.profraw" cargo +nightly test --package=roqoqo-qryd --no-default-features
+  #         LLVM_PROFILE_FILE="coverage-%p-%m.profraw" cargo test --package=roqoqo-qryd --no-default-features
   #         cd roqoqo-qryd/
   #         cargo install grcov
   #         grcov . --binary-path ../target/debug/ -s . -t lcov --branch --ignore-not-existing --ignore "cargo" --ignore "/mod.rs" --ignore "/lib.rs" --ignore "*/_auto_generated_operations.rs" --keep-only "src/*" -o lcov.info
