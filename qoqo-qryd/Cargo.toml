@@ -1,6 +1,6 @@
 [package]
 name = "qoqo-qryd"
-version = "0.5.3"
+version = "0.5.4"
 authors = ["HQS Quantum Simulations <info@quantumsimulations.de>"]
 edition = "2021"
 license = "Apache-2.0"
@@ -32,9 +32,9 @@ numpy = "0.16"
 
 qoqo_calculator_pyo3 = {version="0.8", default-features=false}
 
-qoqo = {version="1.0.0-alpha.3", default-features=false}
+qoqo = {version="1.0.0-alpha.4", default-features=false}
 
-roqoqo = {version="1.0.0-alpha.3", features = ["serialize"]}
+roqoqo = {version="1.0.0-alpha.4", features = ["serialize"]}
 
 ndarray = "0.15"
 roqoqo-qryd = {version="0.5.0", path="../roqoqo-qryd", default-features=false, features = ["serialize"]}
