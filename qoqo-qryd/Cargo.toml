@@ -34,7 +34,7 @@ qoqo_calculator_pyo3 = {version="0.8", default-features=false}
 
 qoqo = {version="1.0.0-alpha.3", default-features=false}
 
-roqoqo = {version="1.0.0-alpha.3", features = ["serialize"]}
+roqoqo = {version="1.0.0-alpha.4", features = ["serialize"]}
 
 ndarray = "0.15"
 roqoqo-qryd = {version="0.5.0", path="../roqoqo-qryd", default-features=false, features = ["serialize"]}
