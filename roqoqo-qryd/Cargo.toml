@@ -22,7 +22,7 @@ doctest = false
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-roqoqo = {version="1.0.0-alpha.3", features=["serialize"]}
+roqoqo = {version="1.0.0-alpha.5", features=["serialize"]}
 roqoqo-derive = {version="1.0.0-alpha.3"}
 roqoqo-quest = {version = "0.6", default-features=false, optional=true}
 qoqo_calculator = { version="0.8"}

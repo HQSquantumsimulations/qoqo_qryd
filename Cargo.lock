@@ -1004,9 +1004,9 @@ dependencies = [
 
 [[package]]
 name = "roqoqo"
-version = "1.0.0-alpha.3"
+version = "1.0.0-alpha.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1667c4d2e84f9832d9787503bd405eba06df7d89b25f22eb478e2c3478938b4d"
+checksum = "bb7d360d3826bbe19baa6b6e88acc1029d4d5f78a10075f4fd9e5499763805a6"
 dependencies = [
  "bincode",
  "nalgebra",
@@ -1025,9 +1025,9 @@ dependencies = [
 
 [[package]]
 name = "roqoqo-derive"
-version = "1.0.0-alpha.3"
+version = "1.0.0-alpha.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "26b2b14ee3573d22bc0d35e06497b867ee8c47f2ed8163b544a76fadf2df38be"
+checksum = "6736355a6a2ec86461fbd886209ad1a31d500fd0d872d50a5e97b1c094faf134"
 dependencies = [
  "proc-macro2",
  "quote",
