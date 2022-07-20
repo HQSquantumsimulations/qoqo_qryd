@@ -1337,7 +1337,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 ====================================================
-bytes 1.1.0
+bytes 1.2.0
 https://github.com/tokio-rs/bytes
 by Carl Lerche <me@carllerche.com>, Sean McArthur <sean@seanmonstar.com>
 Types and traits for working with bytes
@@ -5824,7 +5824,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-hashbrown 0.12.2
+hashbrown 0.12.3
 https://github.com/rust-lang/hashbrown
 by Amanieu d'Antras <amanieu@gmail.com>
 A Rust port of Google's SwissTable hash map
@@ -17824,7 +17824,7 @@ LICENSE:
 
 
 ====================================================
-qoqo 1.0.0-alpha.4
+qoqo 1.0.0-alpha.5
 https://github.com/HQSquantumsimulations/qoqo
 by HQS Quantum Simulations <info@quantumsimulations.de>
 Quantum computing circuit toolkit. Python interface of roqoqo
@@ -18036,7 +18036,7 @@ LICENSE:
 
 
 ====================================================
-qoqo-macros 1.0.0-alpha.4
+qoqo-macros 1.0.0-alpha.5
 by HQS Quantum Simulations <info@quantumsimulations.de>
 Macros for the qoqo crate
 License: Apache-2.0
@@ -18247,7 +18247,7 @@ LICENSE:
 
 
 ====================================================
-qoqo-qryd 0.5.3
+qoqo-qryd 0.5.4
 https://github.com/HQSquantumsimulations/qoqo_qryd
 by HQS Quantum Simulations <info@quantumsimulations.de>
 QRyd backend for qoqo quantum computing toolkit
@@ -18883,11 +18883,11 @@ LICENSE:
 
 
 ====================================================
-quest-sys 0.6.1
+quest-sys 0.7.0
 https://github.com/HQSquantumsimulations/qoqo-quest
 by HQS Quantum Simulations <info@quantumsimulations.de>
 Bindings to the QuEST quantum computer simulator C library
-License: Apache-2.0
+License: Apache-2.0 AND MIT AND BSD-3-Clause
 ----------------------------------------------------
 LICENSE:
 
@@ -20884,7 +20884,7 @@ THE SOFTWARE.
 
 
 ====================================================
-roqoqo 1.0.0-alpha.4
+roqoqo 1.0.0-alpha.5
 https://github.com/HQSquantumsimulations/qoqo
 by HQS Quantum Simulations <info@quantumsimulations.de>
 Rust Quantum Computing Toolkit by HQS
@@ -21096,7 +21096,7 @@ LICENSE:
 
 
 ====================================================
-roqoqo-derive 1.0.0-alpha.4
+roqoqo-derive 1.0.0-alpha.5
 by HQS Quantum Simulations <info@quantumsimulations.de>
 Macros for the roqoqo crate
 License: Apache-2.0
@@ -21307,7 +21307,7 @@ LICENSE:
 
 
 ====================================================
-roqoqo-qryd 0.5.3
+roqoqo-qryd 0.5.4
 https://github.com/HQSquantumsimulations/qoqo_qryd
 by HQS Quantum Simulations <info@quantumsimulations.de>
 QRyd interface for roqoqo rust quantum computing toolkit
@@ -21519,7 +21519,7 @@ LICENSE:
 
 
 ====================================================
-roqoqo-quest 0.6.1
+roqoqo-quest 0.7.0
 https://github.com/HQSquantumsimulations/qoqo-quest
 by HQS Quantum Simulations <info@quantumsimulations.de>
 QuEST simulator for the qoqo quantum computing toolkit
@@ -21731,7 +21731,7 @@ LICENSE:
 
 
 ====================================================
-roqoqo-test 1.0.0-alpha.4
+roqoqo-test 1.0.0-alpha.5
 https://github.com/HQSquantumsimulations/qoqo
 by HQS Quantum Simulations <info@quantumsimulations.de>
 Testing helper functions for roqoqo toolkit
@@ -24324,7 +24324,7 @@ LICENSE:
 
 
 ====================================================
-slab 0.4.6
+slab 0.4.7
 https://github.com/tokio-rs/slab
 by Carl Lerche <me@carllerche.com>
 Pre-allocated storage for a uniform data type
