@@ -36,7 +36,7 @@ bitvec = "1.0"
 hex = "0.4"
 
 [dev-dependencies]
-test-case = "2.0.2"
+test-case = "2.2.1"
 serde_test = {version="1.0"}
 roqoqo-test = {version="1.0.0-alpha.5"}
 
