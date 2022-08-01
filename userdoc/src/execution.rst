@@ -22,7 +22,7 @@ As an example we will use the quantum program from :doc:`introduction` and the `
    from qoqo import operations as ops
    from qoqo.measurements import PauliZProduct, PauliZProductInput
    from qoqo import QuantumProgram
-   from qoqo_quest import SimulatorBackend
+   from qoqo_quest import Backend
    # initialize |psi>
    init_circuit = Circuit()
    # Apply a RotateY gate with a symbolic angle
@@ -62,7 +62,7 @@ As an example we will use the quantum program from :doc:`introduction` and the `
    # a single circuit, a measurement, and a quantum program.
 
    # Create a backend simulating one qubit
-   backend = SimulatorBackend(1)
+   backend = Backend(1)
 
    # a) Run a single circuit 
    (bit_registers, float_registers, complex_registers) = backend.run_circuit(z_circuit)
@@ -90,7 +90,7 @@ To distinguish between a command returning expectation values and a program retu
    from qoqo import operations as ops
    from qoqo.measurements import ClassicalRegister
    from qoqo import QuantumProgram
-   from qoqo_quest import SimulatorBackend
+   from qoqo_quest import Backend
    # initialize |psi>
    init_circuit = Circuit()
    # Apply a RotateY gate with a symbolic angle
@@ -115,11 +115,12 @@ To distinguish between a command returning expectation values and a program retu
    # The symbolic value angle in the circuits will be replaced by that free parameter during execution.
    program = QuantumProgram(measurement=measurement, input_parameter_names=["angle"])
 
-   backend = SimulatorBackend(1)
+   backend = Backend(1)
    (bit_registers, float_registers, complex_registers) = program.run_registers(backend, [0.1])
    print(bit_registers)
 
-Executing QuantumPrograms without without returning expecation values
+
+Executing QuantumPrograms without returning expecation values
 ---------------------------------------------------------------------
 
 As described in :doc:`introdcution` the ``ClassicalRegister`` measurement can be used to return the full measurement record. 
