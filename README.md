@@ -28,7 +28,7 @@ To use the WebAPI, a QRydDemo account is required. Users can register via the [o
 
 ## Installation
 
-Installation instructions are provided by the corresponding READMEs of [qoqo-qryd](https://github.com/HQSquantumsimulations/qoqo_qryd/blob/main/qoqo-qryd/README.md) and [roqoqo-qryd]([qoqo-qryd](https://github.com/HQSquantumsimulations/qoqo_qryd/blob/main/roqoqo-qryd/README.md))
+Installation instructions are provided by the corresponding READMEs of [qoqo-qryd](https://github.com/HQSquantumsimulations/qoqo_qryd/blob/main/qoqo-qryd/README.md) and [roqoqo-qryd](https://github.com/HQSquantumsimulations/qoqo_qryd/blob/main/roqoqo-qryd/README.md).
 
 ## Documentation
 
