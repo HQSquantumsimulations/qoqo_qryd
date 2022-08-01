@@ -51,10 +51,10 @@ Examples are to follow soon.
 
 ## OpenSSL
 
-Acknowledgments related to using OpenSSL for http requests
+Acknowledgments related to using OpenSSL for http requests:
 
 "This product includes software developed by the OpenSSL Project
-for use in the OpenSSL Toolkit. (http://www.openssl.org/)"
+for use in the OpenSSL Toolkit (http://www.openssl.org/)."
 
 This product includes cryptographic software written by Eric Young
 (eay@cryptsoft.com). This product includes software written by Tim
