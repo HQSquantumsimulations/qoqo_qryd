@@ -5,7 +5,7 @@ The QRydDemo project at the moment provides access to a Quantum Hardware Emulato
 qoqo-qryd and roqoqo-qryd allow interfacing with the WebAPI.
 The WebAPI can be accessed on the level of direct API calls.
 It is also possible to use the WebAPI as an ``EvaluatingBackend`` for general (non-parameterized)
-qoqo QuantumPrograms via the WebAPI as described in :doc:`src/execution`.
+qoqo QuantumPrograms via the WebAPI as described in :doc:`execution`.
 
 
 Getting access to the WebAPI
@@ -16,7 +16,7 @@ To use the WebAPI, a QRydDemo account is required. Users can register via the `o
 Devices
 -------
 
-At the moment the QrydDemo WebAPI supports two device emulators. Both support 30 qubits one in a square another with a triangular topology.
+At the moment the QrydDemo WebAPI supports two device emulators. Both support 30 qubits, one in a square and another with a triangular topology.
 
 .. image:: ../../qoqo-qryd/examples/square.png
     :width: 300
@@ -49,10 +49,10 @@ APIBackend
 
 The ``APIBackend`` of qoqo-qryd supports the four direct API-calls of the QRydDemo WebAPI:
 
-1. Queueing a job of running a qoqo QuantumProgram with a ClassicalRegister measurement 
-2. Querying the status of the job
-3. Retrieving the results of the job
-4. Deleting a posted job
+1. Queueing a job of running a qoqo QuantumProgram with a ClassicalRegister measurement (``post_job(quantumprogram)``).
+2. Querying the status of the job (``get_job_status(job)```).
+3. Retrieving the results of the job (``get_job_result(job)```).
+4. Deleting a posted job (``delete_job(job)``).
 
 Additional information can be found on the `API documentation <https://thequantumlaend.de/qryddemo/>`_
 
