@@ -1,6 +1,6 @@
 # qoqo-qryd
 
-This software package is designed to support the [QRydDemo](https://thequantumlaend.de/qryddemo/) project on Quantum computing with Rydberg atoms. It provides components to support QRydDemo quantum computers based on the [qoqo](https://github.com/HQSquantumsimulations/qoqo) quantum toolkit by [HQS Quantum Simulations](https://quantumsimulations.de) used to represent quantum circuits.
+This software package is designed to support the [QRydDemo](https://thequantumlaend.de/qryddemo/) project on quantum computing with Rydberg atoms. It provides components to support QRydDemo quantum computers based on the [qoqo](https://github.com/HQSquantumsimulations/qoqo) quantum toolkit by [HQS Quantum Simulations](https://quantumsimulations.de) used to represent quantum circuits.
 
 This repository contains two components:
 
@@ -20,7 +20,7 @@ Note that this is a preview prototype and does not represent a finalized set of 
 
 ### Local simulator supporting specific hardware operations
 
-qoqo-qryd/roqoqo-qryd include a local [QuEST](https://github.com/QuEST-Kit/QuEST) based simulator for quantum devices supporting the Rydberg specific quantum operations. The simulator is intended to let users test the capabilities of quantum hardware with the additional operations. Note that the devices for the simulator do not represent a finalised design for QRydDemo.
+qoqo-qryd/roqoqo-qryd include a local [QuEST](https://github.com/QuEST-Kit/QuEST) based simulator for quantum devices supporting the Rydberg specific quantum operations. The simulator is intended to let users test the capabilities of quantum hardware with the additional operations. Note that the devices for the simulator do not represent a finalized design for QRydDemo.
 
 ## Accessing QRydDemo WebAPI
 

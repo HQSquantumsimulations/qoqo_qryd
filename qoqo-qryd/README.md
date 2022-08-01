@@ -6,9 +6,9 @@
 [![Crates.io](https://img.shields.io/crates/v/qoqo-qryd)](https://crates.io/crates/qoqo-qryd)
 ![Crates.io](https://img.shields.io/crates/l/qoqo-qryd)
 
-The `qoqo-qryd` python package implements [qoqo](https://github.com/HQSquantumsimulations/qoqo) support for quantum computers and quantum computer emulators of the [QRydDemo](https://thequantumlaend.de/qryddemo/) project.
+The `qoqo-qryd` python package implements modules to support [qoqo](https://github.com/HQSquantumsimulations/qoqo) usage with quantum computers and quantum computer emulators of the [QRydDemo](https://thequantumlaend.de/qryddemo/) project.
 
-The QRydDemo project builds on Quantum computers using Rydberg atoms.
+The QRydDemo project builds on quantum computers using Rydberg atoms.
 qoqo is quantum computing toolkit by [HQS Quantum Simulations](https://quantumsimulations.de).
 
 The qoqo-qryd package contains the following functionality:
@@ -26,7 +26,7 @@ Note that this is a preview prototype and does not represent a finalized set of 
 
 qoqo-qryd includes a local [QuEST](https://github.com/QuEST-Kit/QuEST) based simulator for quantum devices supporting the Rydberg specific quantum operations. The simulator is intended to let users test the capabilities of quantum hardware with the additional operations.
 qoqo-qryd provides the simulator via the `SimulatorBackend` qoqo-compatible backend that uses the device prototypes in its `qryd_devices` module.
-Note that the devices for the simulator do not represent a finalised design for QRydDemo.
+Note that the devices for the simulator do not represent a finalized design for QRydDemo.
 
 ## Accessing QRydDemo WebAPI
 
@@ -54,17 +54,17 @@ pip install maturin
 ## Documentation
 
 The [user documentation](https://hqsquantumsimulations.github.io/qoqo_qryd/) is provided on github pages.
-The API-documentation for qoqo-qryd is provided can be found as an appendix of the user documentation.
+The API-documentation for qoqo-qryd can be found as an appendix of the user documentation.
 
 ## Examples
 
-A small collection of [example python scripts](https://github.com/HQSquantumsimulations/qoqo_qryd/tree/main/qoqo-qryd/examples) for the QRydDemo project is can be found in the project github repository. The examples include
+A small collection of [example python scripts](https://github.com/HQSquantumsimulations/qoqo_qryd/tree/main/qoqo-qryd/examples) for the QRydDemo project can be found in the project github repository. The examples include
 
-* `howto_webapi_qoqo.ipynb` provides an example accessing the QRydDemo's emulator with Qoqo.
+* `howto_webapi_qoqo.ipynb` provides an example accessing the QRydDemo's emulator with qoqo.
 * `switch_layout_example.py` shows how to construct a QRydDemo device and using the PragmaChangeQrydLayout operation to switch between layouts in a quantum Circuit.
 * `shift_qubits_example.py` shows how to construct a QRydDemo device and using the PragmaShiftQrydQubit operation to shift qubits between tweezer positions in a quantum Circuit.
 * `multi_qubit_example.py` shows how to use multi-qubit-operations.
-* `serialisation_example.py` demonstrates how to serialize a QuantumProgram to json.
+* `serialisation_example.py` demonstrates how to serialize a QuantumProgram to JSON format.
 
 ## OpenSSL
 
