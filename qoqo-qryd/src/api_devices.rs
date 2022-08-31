@@ -11,7 +11,8 @@
 // limitations under the License.use bincode::{deserialize, serialize};
 use pyo3::exceptions::{PyTypeError, PyValueError};
 use pyo3::prelude::*;
-use pyo3::types::{PyByteArray, PyType};
+use pyo3::types::PyByteArray;
+use qoqo::devices::GenericDeviceWrapper;
 use qoqo::QoqoBackendError;
 use roqoqo::devices::Device;
 use roqoqo_qryd::api_devices::{QRydAPIDevice, QrydEmuSquareDevice, QrydEmuTriangularDevice};
@@ -42,6 +43,23 @@ impl QrydEmuSquareDeviceWrapper {
     pub fn new(seed: Option<usize>, pcz_theta: Option<f64>) -> Self {
         Self {
             internal: QrydEmuSquareDevice::new(seed, pcz_theta),
+        }
+    }
+
+    /// Turns Device into GenericDevice
+    ///
+    /// Can be used as a generic interface for devices when a boxed dyn trait object cannot be used
+    /// (for example when the interface needs to be serialized)
+    ///
+    /// Returns:
+    ///     GenericDevice: The device in generic representation
+    ///
+    /// Note:
+    ///     GenericDevice uses nested HashMaps to represent the most general device connectivity.
+    ///     The memory usage will be inefficient for devices with large qubit numbers.
+    fn generic_device(&self) -> GenericDeviceWrapper {
+        GenericDeviceWrapper {
+            internal: self.internal.to_generic_device(),
         }
     }
 
@@ -88,9 +106,9 @@ impl QrydEmuSquareDeviceWrapper {
     /// Raises:
     ///     TypeError: Input cannot be converted to byte array.
     ///     ValueError: Input cannot be deserialized to QrydEmuSquareDevice.
-    #[classmethod]
+    #[staticmethod]
     #[pyo3(text_signature = "(input)")]
-    pub fn from_bincode(_cls: &PyType, input: &PyAny) -> PyResult<QrydEmuSquareDeviceWrapper> {
+    pub fn from_bincode(input: &PyAny) -> PyResult<QrydEmuSquareDeviceWrapper> {
         let bytes = input
             .extract::<Vec<u8>>()
             .map_err(|_| PyTypeError::new_err("Input cannot be converted to byte array"))?;
@@ -125,9 +143,9 @@ impl QrydEmuSquareDeviceWrapper {
     ///
     /// Raises:
     ///     ValueError: Input cannot be deserialized to QrydEmuSquareDevice.
-    #[classmethod]
+    #[staticmethod]
     #[pyo3(text_signature = "(input)")]
-    fn from_json(_cls: &PyType, input: &str) -> PyResult<QrydEmuSquareDeviceWrapper> {
+    fn from_json(input: &str) -> PyResult<QrydEmuSquareDeviceWrapper> {
         Ok(QrydEmuSquareDeviceWrapper {
             internal: serde_json::from_str(input).map_err(|_| {
                 PyValueError::new_err("Input cannot be deserialized to QrydEmuSquareDevice")
@@ -274,6 +292,23 @@ impl QrydEmuTriangularDeviceWrapper {
         Ok(b)
     }
 
+    /// Turns Device into GenericDevice
+    ///
+    /// Can be used as a generic interface for devices when a boxed dyn trait object cannot be used
+    /// (for example when the interface needs to be serialized)
+    ///
+    /// Returns:
+    ///     GenericDevice: The device in generic representation
+    ///
+    /// Note:
+    ///     GenericDevice uses nested HashMaps to represent the most general device connectivity.
+    ///     The memory usage will be inefficient for devices with large qubit numbers.
+    fn generic_device(&self) -> GenericDeviceWrapper {
+        GenericDeviceWrapper {
+            internal: self.internal.to_generic_device(),
+        }
+    }
+
     /// Convert the bincode representation of the QrydEmuTriangularDevice to a QrydEmuTriangularDevice the bincode crate.
     ///
     /// Args:
@@ -285,9 +320,9 @@ impl QrydEmuTriangularDeviceWrapper {
     /// Raises:
     ///     TypeError: Input cannot be converted to byte array.
     ///     ValueError: Input cannot be deserialized to QrydEmuTriangularDevice.
-    #[classmethod]
+    #[staticmethod]
     #[pyo3(text_signature = "(input)")]
-    pub fn from_bincode(_cls: &PyType, input: &PyAny) -> PyResult<QrydEmuTriangularDeviceWrapper> {
+    pub fn from_bincode(input: &PyAny) -> PyResult<QrydEmuTriangularDeviceWrapper> {
         let bytes = input
             .extract::<Vec<u8>>()
             .map_err(|_| PyTypeError::new_err("Input cannot be converted to byte array"))?;
@@ -323,9 +358,9 @@ impl QrydEmuTriangularDeviceWrapper {
     ///
     /// Raises:
     ///     ValueError: Input cannot be deserialized to QrydEmuTriangularDevice.
-    #[classmethod]
+    #[staticmethod]
     #[pyo3(text_signature = "(input)")]
-    fn from_json(_cls: &PyType, input: &str) -> PyResult<QrydEmuTriangularDeviceWrapper> {
+    fn from_json(input: &str) -> PyResult<QrydEmuTriangularDeviceWrapper> {
         Ok(QrydEmuTriangularDeviceWrapper {
             internal: serde_json::from_str(input).map_err(|_| {
                 PyValueError::new_err("Input cannot be deserialized to QrydEmuTriangularDevice")

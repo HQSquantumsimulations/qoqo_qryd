@@ -19,8 +19,9 @@ use std::collections::HashMap;
 
 use crate::{PragmaChangeQRydLayout, PragmaShiftQRydQubit};
 use bincode::deserialize;
+use itertools::Itertools;
 use ndarray::Array2;
-use roqoqo::devices::Device;
+use roqoqo::devices::{Device, GenericDevice};
 use roqoqo::RoqoqoBackendError;
 
 /// Default value for the phase shift of PhaseShiftedControlledZ
@@ -156,6 +157,12 @@ impl Device for QRydDevice {
             Self::FirstDevice(d) => d.two_qubit_edges(),
         }
     }
+
+    fn to_generic_device(&self) -> roqoqo::devices::GenericDevice {
+        match self {
+            Self::FirstDevice(d) => d.to_generic_device(),
+        }
+    }
 }
 impl From<&FirstDevice> for QRydDevice {
     fn from(input: &FirstDevice) -> Self {
@@ -194,6 +201,8 @@ pub struct FirstDevice {
     cutoff: f64,
     // The phase shift in the native PhaseShiftedControlledZ gate
     controlled_z_phase: f64,
+    // Controls if multi_qubit_operations are present
+    // multi_qubit_operations: bool,
 }
 
 impl FirstDevice {
@@ -257,6 +266,7 @@ impl FirstDevice {
             current_layout,
             cutoff: 1.0,
             controlled_z_phase,
+            // multi_qubit_operations: true,
         }
         .add_layout(0, initial_layout)?;
         Ok(return_self)
@@ -402,6 +412,7 @@ impl Device for FirstDevice {
         // The gate time can optionally be used for noise considerations
         // For the first device it is hardcoded, eventually for later device models
         // it could be extracted from callibration data
+
         match hqslang {
             // "PhaseShiftState0" => Some(1e-6), // Updated gate definition as of April 2022
             "PhaseShiftState1" => Some(1e-6),
@@ -456,6 +467,9 @@ impl Device for FirstDevice {
     }
     #[allow(unused_variables)]
     fn multi_qubit_gate_time(&self, hqslang: &str, qubits: &[usize]) -> Option<f64> {
+        // if !self.multi_qubit_operations {
+        //     return None;
+        // }
         // If any qubit is not in device operation is not available
         if qubits
             .iter()
@@ -537,5 +551,77 @@ impl Device for FirstDevice {
                 msg: "Wrapped operation not supported in QRydDevice".to_string(),
             }),
         }
+    }
+
+    fn to_generic_device(&self) -> roqoqo::devices::GenericDevice {
+        let mut new_generic_device = GenericDevice::new(self.number_qubits());
+
+        for gate_name in ["PhaseShiftState1", "RotateX", "RotateY", "RotateXY"] {
+            for qubit in 0..self.number_qubits() {
+                new_generic_device
+                    .set_single_qubit_gate_time(
+                        gate_name,
+                        qubit,
+                        self.single_qubit_gate_time(gate_name, &qubit).unwrap(),
+                    )
+                    .unwrap();
+            }
+        }
+        for qubit in 0..self.number_qubits() {
+            new_generic_device
+                .set_qubit_decoherence_rates(qubit, self.qubit_decoherence_rates(&qubit).unwrap())
+                .unwrap();
+        }
+        for row in 0..self.number_qubits() {
+            for column in row + 1..self.number_qubits() {
+                if self
+                    .two_qubit_gate_time("PhaseShiftedControlledZ", &row, &column)
+                    .is_some()
+                {
+                    new_generic_device
+                        .set_two_qubit_gate_time(
+                            "PhaseShiftedControlledZ",
+                            row,
+                            column,
+                            self.two_qubit_gate_time("PhaseShiftedControlledZ", &row, &column)
+                                .unwrap(),
+                        )
+                        .unwrap();
+                    new_generic_device
+                        .set_two_qubit_gate_time(
+                            "PhaseShiftedControlledZ",
+                            column,
+                            row,
+                            self.two_qubit_gate_time("PhaseShiftedControlledZ", &row, &column)
+                                .unwrap(),
+                        )
+                        .unwrap();
+                }
+            }
+        }
+        // if self.multi_qubit_operations {
+        for row in 0..self.number_rows() {
+            let potential_qubits: Vec<usize> = self
+                .qubit_positions()
+                .iter()
+                .filter_map(
+                    |(qubit, (qrow, _column))| if qrow == &row { Some(*qubit) } else { None },
+                )
+                .collect();
+            let max_length = potential_qubits.len();
+            for combination_length in 3..=max_length {
+                for qubits in potential_qubits
+                    .iter()
+                    .copied()
+                    .combinations(combination_length)
+                {
+                    new_generic_device
+                        .set_multi_qubit_gate_time("MultiQubitZZ", qubits, 2e-5)
+                        .unwrap();
+                }
+            }
+            // }
+        }
+        new_generic_device
     }
 }
