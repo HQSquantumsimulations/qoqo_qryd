@@ -6,7 +6,7 @@ The qoqo-qryd package is designed to enable the execution of quantum algorithms 
 Low level: quantum circuits
 --------------------------
 
-Qoqo is a circuit based quantum computing toolkit. Like many other quantum computing toolkits it can be used to construct quantum circuits sequences of quantum operations that are to be executed on a quantum computer.
+Qoqo is a circuit based quantum computing toolkit. Like many other quantum computing toolkits it can be used to construct quantum circuits - sequences of quantum operations that are to be executed on a quantum computer.
 
 Examples for quantum operations are the controlled NOT (CNOT) operation on two qubits and the Hadamard gate on a single qubit.
 
@@ -47,17 +47,17 @@ High-level: quantum programs
 
 On a more abstract level a quantum program can be defined as a program that can be executed on a quantum computer after receiving a list of classical parameters and returns a list of classical results.
 
-Qoqo provides the QuantumProgram class for this purpose and a QuantumProgram is the preferred way to communicate between different programs (for example with hardware or simulators) and to save quantum programs with the qoqo toolkit.
+Qoqo provides the QuantumProgram class for this purpose. A QuantumProgram is the preferred way to communicate between different programs (for example with hardware or simulators) and to save quantum programs with the qoqo toolkit.
 
 For many applications the measurement results of several circuits need to be combined to extract the required information from a quantum state prepared by the quantum operations in a quantum circuit.
-The combination of the results of each quantum circuit happens in a classical measurement post-processing.
+The combination of the results of each quantum circuit happens in a post-processing of classical measurement.
 
-A qoqo measurement combines one ``constant_circuit`` that is always executed first, a list of ``circuits`` that are executed after the constant circuit and a ``measurement_input`` that encodes the classical post-processing.
+A qoqo measurement combines one ``constant_circuit`` that is always executed first, a list of ``circuits`` that are executed after the constant circuit, and a ``measurement_input`` that encodes the classical post-processing.
 
 As an example take the measurement of a Hamiltonian ``H = 0.1 * X + 0.2 * Z`` where ``X`` and ``Z`` are Pauli operators. We want to measure ``H`` with respect to a state ``|psi> = (|0> + |1>)/sqrt(2)``. 
 We will use a Hadamard gate in the ``constant_circuit`` to prepare ``|psi>``. Since we cannot measure ``X`` and ``Z`` at the same time the ``circuits`` list will include one quantum circuit that does not apply any additional gate and one circuit that rotates the qubit basis into the ``X``-basis so that the expectation value ``<X>`` is equivalent to the measurement of ``<Z>`` in the new basis.
 This kind of measurement is referred to as a PauliZProduct measurement because each qubit is rotated in the correct basis for the readout. 
-For the post-processing the PauliZProduct measurement needs two more inputs: Which qubits to combine into expectation values and which weight to use for each result.
+For the post-processing the PauliZProduct measurement needs two more details to be added to the input (``PauliZProductInput``): Which qubits to combine into expectation values (``add_pauliz_product()``) and which weight to use for each result (``add_linear_exp_val()``).
 
 In general one can measure the expectation values of the products of local Z operators, e.g. ``<Z0>``, ``<Z1>``, ``<Z0*Z1>``, ``<Z0*Z3>``, ...
 The PauliZProductInput needs to define all of these products that are measured. Here we will measure two products ``<Z0>`` after a rotation in the X basis and ``<Z0>`` without an additional rotation.
@@ -108,7 +108,7 @@ The PauliZProductInput also defines the weights of the products in the final res
 
 For an overview of other available readouts and measurements please see the `qoqo <https://github.com/HQSquantumsimulations/qoqo>`_ documentation.
 
-The qoqo QuantumProgram combines a measurement with a list of free parameters that are not set at compile time but can be dynamically set whenever the QuantumProgram is run.
+The qoqo QuantumProgram combines a measurement with a list of free parameters that are not set at compilation time but can be dynamically set whenever the QuantumProgram is run.
 To demonstrate we modify the example from above to use a state ``|psi>`` with a free angle between ``|0>`` and ``|1>``. Such a state can be prepared by a ``RotateX`` quantum operation.
 
 .. code-block:: python
@@ -122,7 +122,7 @@ To demonstrate we modify the example from above to use a state ``|psi>`` with a 
    # Apply a RotateY gate with a symbolic angle
    # To execute the circuit this symbolic parameter needs to be replaced 
    # by a real number with the help of a QuantumProgram
-   init_circuit += ops.RotateY(0, "angle")
+   init_circuit += ops.RotateX(0, "angle")
    # Z-basis measurement circuit with 1000 shots
    z_circuit = Circuit()
    z_circuit += ops.DefinitionBit("ro_z", 1, is_output=True)
@@ -183,7 +183,7 @@ Note that this measurement does not need a separate measurement input as no post
    # Apply a RotateY gate with a symbolic angle
    # To execute the circuit this symbolic parameter needs to be replaced 
    # with a real number with the help of a QuantumProgram
-   init_circuit += ops.RotateY(0, "angle")
+   init_circuit += ops.RotateX(0, "angle")
    # Z-basis measurement circuit with 1000 shots
    z_circuit = Circuit()
    z_circuit += ops.DefinitionBit("ro_z", 1, is_output=True)

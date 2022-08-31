@@ -28,7 +28,7 @@ To support the full flexibility of the QRydDemo devices, two additional qoqo ope
 Devices
 -------
 
-Each type of QRydDemo hardware type or Simulator device can be represented by a Device class.
+Each type of QRydDemo hardware or Simulator device can be represented by a Device class.
 The available hardware operations are defined in the devices. They save the 2D connectivity and can be queried for the availability of certain gate operations on the qubit.
 At the moment there is only an example Device class ``FirstDevice``, that can be used for simulations. More devices will be added as the hardware specifications are finalized.
 The fundamental gates that are available on the QRydDemo devices are the ``RotateX``, ``PhaseShiftState0``, ``PhaseShiftState1`` and ``PhaseShiftedControlledZ`` qoqo operations.
