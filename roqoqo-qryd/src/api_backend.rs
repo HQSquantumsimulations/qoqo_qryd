@@ -261,12 +261,12 @@ impl APIBackend {
                     format!( "QuantumProgram or metadata could not be parsed by QRyd Web-API Backend. msg: {} type: {}, loc: {:?}",querry_response.detail.msg, querry_response.detail.internal_type, querry_response.detail.loc,  )
             });
             }
-            return Err(RoqoqoBackendError::NetworkError {
+            Err(RoqoqoBackendError::NetworkError {
                 msg: format!(
                     "Request to server failed with HTTP status code {:?}",
                     status_code
                 ),
-            });
+            })
         } else {
             let resp_headers = resp.headers();
             if resp_headers.contains_key("Location") {
@@ -332,12 +332,12 @@ impl APIBackend {
                     format!( "QuantumProgram or metadata could not be parsed by QRyd Web-API Backend. msg: {} type: {}, loc: {:?}",querry_response.detail.msg, querry_response.detail.internal_type, querry_response.detail.loc,  )
             });
             }
-            return Err(RoqoqoBackendError::NetworkError {
+            Err(RoqoqoBackendError::NetworkError {
                 msg: format!(
                     "Request to server failed with HTTP status code {:?}",
                     status_code
                 ),
-            });
+            })
         } else {
             // response object includes the fields `status` and `msg` that can be accessed if required
             let response: Result<QRydJobStatus, RoqoqoBackendError> = resp
@@ -397,12 +397,12 @@ impl APIBackend {
                     format!( "QuantumProgram or metadata could not be parsed by QRyd Web-API Backend. msg: {} type: {}, loc: {:?}",querry_response.detail.msg, querry_response.detail.internal_type, querry_response.detail.loc,  )
             });
             }
-            return Err(RoqoqoBackendError::NetworkError {
+            Err(RoqoqoBackendError::NetworkError {
                 msg: format!(
                     "Request to server failed with HTTP status code {:?}",
                     status_code
                 ),
-            });
+            })
         } else {
             // response object
             let response: Result<QRydJobResult, RoqoqoBackendError> = resp
@@ -453,12 +453,12 @@ impl APIBackend {
                     format!( "QuantumProgram or metadata could not be parsed by QRyd Web-API Backend. msg: {} type: {}, loc: {:?}",querry_response.detail.msg, querry_response.detail.internal_type, querry_response.detail.loc,  )
             });
             }
-            return Err(RoqoqoBackendError::NetworkError {
+            Err(RoqoqoBackendError::NetworkError {
                 msg: format!(
                     "Request to server failed with HTTP status code {:?}",
                     status_code
                 ),
-            });
+            })
         } else {
             Ok(())
         }

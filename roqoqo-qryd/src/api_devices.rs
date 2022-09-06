@@ -11,7 +11,7 @@
 // limitations under the License.
 
 use ndarray::Array2;
-use roqoqo::devices::Device;
+use roqoqo::devices::{Device, GenericDevice};
 use roqoqo::RoqoqoBackendError;
 
 /// Collection of all QRyd devices for WebAPI.
@@ -192,6 +192,27 @@ impl Device for QRydAPIDevice {
         match self {
             Self::QrydEmuSquareDevice(d) => d.two_qubit_edges(),
             Self::QrydEmuTriangularDevice(d) => d.two_qubit_edges(),
+        }
+    }
+
+    /// Turns Device into GenericDevice
+    ///
+    /// Can be used as a generic interface for devices when a boxed dyn trait object cannot be used
+    /// (for example when the interface needs to be serialized)
+    ///
+    /// # Notes
+    ///
+    /// GenericDevice uses nested HashMaps to represent the most general device connectivity.
+    /// The memory usage will be inefficient for devices with large qubit numbers.
+    ///
+    /// # Returns
+    ///
+    /// * `GenericDevice` - The device in generic representation
+    ///
+    fn to_generic_device(&self) -> roqoqo::devices::GenericDevice {
+        match self {
+            Self::QrydEmuSquareDevice(d) => d.to_generic_device(),
+            Self::QrydEmuTriangularDevice(d) => d.to_generic_device(),
         }
     }
 }
@@ -452,6 +473,69 @@ impl Device for QrydEmuSquareDevice {
             msg: "Wrapped operation not supported in QRydAPIDevice".to_string(),
         })
     }
+
+    /// Turns Device into GenericDevice
+    ///
+    /// Can be used as a generic interface for devices when a boxed dyn trait object cannot be used
+    /// (for example when the interface needs to be serialized)
+    ///
+    /// # Notes
+    ///
+    /// GenericDevice uses nested HashMaps to represent the most general device connectivity.
+    /// The memory usage will be inefficient for devices with large qubit numbers.
+    ///
+    /// # Returns
+    ///
+    /// * `GenericDevice` - The device in generic representation
+    ///
+    fn to_generic_device(&self) -> roqoqo::devices::GenericDevice {
+        let mut new_generic_device = GenericDevice::new(self.number_qubits());
+
+        for gate_name in ["PhaseShiftState1", "RotateX", "RotateY", "RotateXY"] {
+            for qubit in 0..self.number_qubits() {
+                new_generic_device
+                    .set_single_qubit_gate_time(
+                        gate_name,
+                        qubit,
+                        self.single_qubit_gate_time(gate_name, &qubit).unwrap(),
+                    )
+                    .unwrap();
+            }
+        }
+        for qubit in 0..self.number_qubits() {
+            new_generic_device
+                .set_qubit_decoherence_rates(qubit, self.qubit_decoherence_rates(&qubit).unwrap())
+                .unwrap();
+        }
+        for row in 0..self.number_qubits() {
+            for column in row + 1..self.number_qubits() {
+                if self
+                    .two_qubit_gate_time("PhaseShiftedControlledZ", &row, &column)
+                    .is_some()
+                {
+                    new_generic_device
+                        .set_two_qubit_gate_time(
+                            "PhaseShiftedControlledZ",
+                            row,
+                            column,
+                            self.two_qubit_gate_time("PhaseShiftedControlledZ", &row, &column)
+                                .unwrap(),
+                        )
+                        .unwrap();
+                    new_generic_device
+                        .set_two_qubit_gate_time(
+                            "PhaseShiftedControlledZ",
+                            column,
+                            row,
+                            self.two_qubit_gate_time("PhaseShiftedControlledZ", &row, &column)
+                                .unwrap(),
+                        )
+                        .unwrap();
+                }
+            }
+        }
+        new_generic_device
+    }
 }
 
 /// Triangular Device for the emulator API.
@@ -701,5 +785,68 @@ impl Device for QrydEmuTriangularDevice {
         Err(RoqoqoBackendError::GenericError {
             msg: "Wrapped operation not supported in QRydAPIDevice".to_string(),
         })
+    }
+
+    /// Turns Device into GenericDevice
+    ///
+    /// Can be used as a generic interface for devices when a boxed dyn trait object cannot be used
+    /// (for example when the interface needs to be serialized)
+    ///
+    /// # Notes
+    ///
+    /// GenericDevice uses nested HashMaps to represent the most general device connectivity.
+    /// The memory usage will be inefficient for devices with large qubit numbers.
+    ///
+    /// # Returns
+    ///
+    /// * `GenericDevice` - The device in generic representation
+    ///
+    fn to_generic_device(&self) -> GenericDevice {
+        let mut new_generic_device = GenericDevice::new(self.number_qubits());
+
+        for gate_name in ["PhaseShiftState1", "RotateX", "RotateY", "RotateXY"] {
+            for qubit in 0..self.number_qubits() {
+                new_generic_device
+                    .set_single_qubit_gate_time(
+                        gate_name,
+                        qubit,
+                        self.single_qubit_gate_time(gate_name, &qubit).unwrap(),
+                    )
+                    .unwrap();
+            }
+        }
+        for qubit in 0..self.number_qubits() {
+            new_generic_device
+                .set_qubit_decoherence_rates(qubit, self.qubit_decoherence_rates(&qubit).unwrap())
+                .unwrap();
+        }
+        for row in 0..self.number_qubits() {
+            for column in row + 1..self.number_qubits() {
+                if self
+                    .two_qubit_gate_time("PhaseShiftedControlledZ", &row, &column)
+                    .is_some()
+                {
+                    new_generic_device
+                        .set_two_qubit_gate_time(
+                            "PhaseShiftedControlledZ",
+                            row,
+                            column,
+                            self.two_qubit_gate_time("PhaseShiftedControlledZ", &row, &column)
+                                .unwrap(),
+                        )
+                        .unwrap();
+                    new_generic_device
+                        .set_two_qubit_gate_time(
+                            "PhaseShiftedControlledZ",
+                            column,
+                            row,
+                            self.two_qubit_gate_time("PhaseShiftedControlledZ", &row, &column)
+                                .unwrap(),
+                        )
+                        .unwrap();
+                }
+            }
+        }
+        new_generic_device
     }
 }

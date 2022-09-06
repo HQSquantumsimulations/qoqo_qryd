@@ -30,7 +30,7 @@ use std::collections::HashMap;
     module = "qoqo_qryd.pragma_operations"
 )]
 #[pyo3(text_signature = "(new_layout, /)")]
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 /// This PRAGMA operation changes the layout of a QRyd device.
 ///
 /// Before running a circuit a number of layouts can be registered
@@ -282,7 +282,7 @@ impl PragmaChangeQRydLayoutWrapper {
 
 #[pyclass(name = "PragmaShiftQRydQubit", module = "qoqo_qryd.pragma_operations")]
 #[pyo3(text_signature = "(new_positions, /)")]
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 /// This PRAGMA operation shifts qubits between tweezer positions.
 ///
 /// The tweezer positions in a FirstQryd device do not all have to be occupied.

@@ -14,7 +14,8 @@ use bincode::{deserialize, serialize};
 use numpy::PyReadonlyArray2;
 use pyo3::exceptions::{PyTypeError, PyValueError};
 use pyo3::prelude::*;
-use pyo3::types::{PyByteArray, PyType};
+use pyo3::types::PyByteArray;
+use qoqo::devices::GenericDeviceWrapper;
 use qoqo::QoqoBackendError;
 use roqoqo::devices::Device;
 use roqoqo_qryd::qryd_devices::{FirstDevice, QRydDevice};
@@ -92,6 +93,23 @@ impl FirstDeviceWrapper {
         self.internal.controlled_z_phase()
     }
 
+    /// Turns Device into GenericDevice
+    ///
+    /// Can be used as a generic interface for devices when a boxed dyn trait object cannot be used
+    /// (for example when the interface needs to be serialized)
+    ///
+    /// Returns:
+    ///     GenericDevice: The device in generic representation
+    ///
+    /// Note:
+    ///     GenericDevice uses nested HashMaps to represent the most general device connectivity.
+    ///     The memory usage will be inefficient for devices with large qubit numbers.
+    fn generic_device(&self) -> GenericDeviceWrapper {
+        GenericDeviceWrapper {
+            internal: self.internal.to_generic_device(),
+        }
+    }
+
     /// Return a copy of the FirstDevice (copy here produces a deepcopy).
     ///
     /// Returns:
@@ -135,8 +153,8 @@ impl FirstDeviceWrapper {
     /// Raises:
     ///     TypeError: Input cannot be converted to byte array.
     ///     ValueError: Input cannot be deserialized to FirstDevice.
-    #[classmethod]
-    pub fn from_bincode(_cls: &PyType, input: &PyAny) -> PyResult<FirstDeviceWrapper> {
+    #[staticmethod]
+    pub fn from_bincode(input: &PyAny) -> PyResult<FirstDeviceWrapper> {
         let bytes = input
             .extract::<Vec<u8>>()
             .map_err(|_| PyTypeError::new_err("Input cannot be converted to byte array"))?;
@@ -171,8 +189,8 @@ impl FirstDeviceWrapper {
     ///
     /// Raises:
     ///     ValueError: Input cannot be deserialized to FirstDevice.
-    #[classmethod]
-    fn from_json(_cls: &PyType, input: &str) -> PyResult<FirstDeviceWrapper> {
+    #[staticmethod]
+    fn from_json(input: &str) -> PyResult<FirstDeviceWrapper> {
         Ok(FirstDeviceWrapper {
             internal: serde_json::from_str(input).map_err(|_| {
                 PyValueError::new_err("Input cannot be deserialized to FirstDevice")
