@@ -557,14 +557,14 @@ impl Device for FirstDevice {
     ///
     /// Can be used as a generic interface for devices when a boxed dyn trait object cannot be used
     /// (for example when the interface needs to be serialized)
-    /// 
+    ///
     /// # Notes
-    /// 
+    ///
     /// GenericDevice uses nested HashMaps to represent the most general device connectivity.
     /// The memory usage will be inefficient for devices with large qubit numbers.
     ///
     /// # Returns
-    /// 
+    ///
     /// * `GenericDevice` - The device in generic representation
     ///
     fn to_generic_device(&self) -> roqoqo::devices::GenericDevice {
