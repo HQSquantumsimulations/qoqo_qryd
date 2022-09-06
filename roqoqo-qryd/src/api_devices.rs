@@ -195,6 +195,20 @@ impl Device for QRydAPIDevice {
         }
     }
 
+    /// Turns Device into GenericDevice
+    ///
+    /// Can be used as a generic interface for devices when a boxed dyn trait object cannot be used
+    /// (for example when the interface needs to be serialized)
+    /// 
+    /// # Notes
+    /// 
+    /// GenericDevice uses nested HashMaps to represent the most general device connectivity.
+    /// The memory usage will be inefficient for devices with large qubit numbers.
+    ///
+    /// # Returns
+    /// 
+    /// * `GenericDevice` - The device in generic representation
+    ///
     fn to_generic_device(&self) -> roqoqo::devices::GenericDevice {
         match self {
             Self::QrydEmuSquareDevice(d) => d.to_generic_device(),
@@ -460,6 +474,20 @@ impl Device for QrydEmuSquareDevice {
         })
     }
 
+    /// Turns Device into GenericDevice
+    ///
+    /// Can be used as a generic interface for devices when a boxed dyn trait object cannot be used
+    /// (for example when the interface needs to be serialized)
+    /// 
+    /// # Notes
+    /// 
+    /// GenericDevice uses nested HashMaps to represent the most general device connectivity.
+    /// The memory usage will be inefficient for devices with large qubit numbers.
+    ///
+    /// # Returns
+    /// 
+    /// * `GenericDevice` - The device in generic representation
+    ///
     fn to_generic_device(&self) -> roqoqo::devices::GenericDevice {
         let mut new_generic_device = GenericDevice::new(self.number_qubits());
 
@@ -759,6 +787,20 @@ impl Device for QrydEmuTriangularDevice {
         })
     }
 
+    /// Turns Device into GenericDevice
+    ///
+    /// Can be used as a generic interface for devices when a boxed dyn trait object cannot be used
+    /// (for example when the interface needs to be serialized)
+    /// 
+    /// # Notes
+    /// 
+    /// GenericDevice uses nested HashMaps to represent the most general device connectivity.
+    /// The memory usage will be inefficient for devices with large qubit numbers.
+    ///
+    /// # Returns
+    /// 
+    /// * `GenericDevice` - The device in generic representation
+    ///
     fn to_generic_device(&self) -> GenericDevice {
         let mut new_generic_device = GenericDevice::new(self.number_qubits());
 
