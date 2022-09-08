@@ -19,6 +19,7 @@ qoqo\_qryd.qryd\_devices.FirstDevice
       ~FirstDevice.controlled_z_phase
       ~FirstDevice.from_bincode
       ~FirstDevice.from_json
+      ~FirstDevice.generic_device
       ~FirstDevice.number_columns
       ~FirstDevice.number_qubits
       ~FirstDevice.number_rows

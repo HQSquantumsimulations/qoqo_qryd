@@ -16,6 +16,7 @@ qoqo\_qryd.api\_devices.QrydEmuTriangularDevice
       ~QrydEmuTriangularDevice.__init__
       ~QrydEmuTriangularDevice.from_bincode
       ~QrydEmuTriangularDevice.from_json
+      ~QrydEmuTriangularDevice.generic_device
       ~QrydEmuTriangularDevice.number_qubits
       ~QrydEmuTriangularDevice.pcz_theta
       ~QrydEmuTriangularDevice.qrydbackend

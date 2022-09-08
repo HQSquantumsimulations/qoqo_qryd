@@ -122,6 +122,15 @@
 pip install maturin
 </pre></div>
 </div>
+<p>Once rust, maturin and cmake are set up, the local wheel can be built and installed by</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> qoqo-qryd
+maturin build --release
+
+<span class="c1"># the name of the built wheel is composed as </span>
+<span class="c1"># &#39;qoqo_qryd-&lt;version&gt;-&lt;platform-details&gt;.whl&#39;</span>
+pip install ../target/wheels/&lt;wheel-name&gt;.whl
+</pre></div>
+</div>
 <section id="using-roqoqo-qryd-in-rust-code">
 <h3>Using roqoqo-qryd in rust code<a class="headerlink" href="#using-roqoqo-qryd-in-rust-code" title="Permalink to this heading"></a></h3>
 <p>For using roqoqo-qryd in rust code including the optional simulator simply add</p>

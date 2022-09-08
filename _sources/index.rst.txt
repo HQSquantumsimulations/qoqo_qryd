@@ -1,7 +1,7 @@
 Welcome to the qoqo-qryd/roqoqo-qryd user documentation!
 ========================================================
 
-This software is designed to support the `QRydDemo <https://thequantumlaend.de/qryddemo/>`_ project on Quantum computing with Rydberg atoms. It provides components to support QRydDemo quantum computers based on the `qoqo <https://github.com/HQSquantumsimulations/qoqo>`_ quantum toolkit by `HQS Quantum Simulations <https://quantumsimulations.de>`_ used to represent quantum circuits.
+This software is designed to support the `QRydDemo <https://thequantumlaend.de/qryddemo/>`_ project on quantum computing with Rydberg atoms. It provides components to support QRydDemo quantum computers based on the `qoqo <https://github.com/HQSquantumsimulations/qoqo>`_ quantum toolkit by `HQS Quantum Simulations <https://quantumsimulations.de>`_ used to represent quantum circuits.
 
 To learn more about the general approach to create quantum programs and executing them in qoqo see :doc:`src/introduction` and :doc:`src/execution`.
 
@@ -18,8 +18,8 @@ The packages provide the following functionalities:
 Interface to the current QRydDemo WebAPI
 ----------------------------------------
 
-At the moment QRydDemo WebAPI allows access to Quantum Hardware Emulators of different device topology. 
-qoqo-qryd/roqoqo-qryd support interfacing with the corresponding REST-API with low level calls as well as a high-level backend to qoqo quantum programs. For more details see :doc:`src/webapi`.
+At the moment QRydDemo WebAPI allows access to Quantum Hardware Emulators of different device topologies. 
+qoqo-qryd/roqoqo-qryd support interfacing with the corresponding REST-API with low level calls, i.e. using `Circuit`,  as well as with high-level backend based functionalities, i.e. by using `QuantumPrograms` in qoqo. For more details see :doc:`src/webapi`.
 
 QRydDemo specific hardware operations (prototype)
 -------------------------------------------------
@@ -58,10 +58,13 @@ Indices and tables
 * :ref:`search`
 
 
-Acknowledgments related to using OpenSSL for http requests
+OpenSSL
+-----------------
+
+Acknowledgments related to using OpenSSL for http requests:
 
 This product includes software developed by the OpenSSL Project
-for use in the OpenSSL Toolkit. (http://www.openssl.org/)
+for use in the OpenSSL Toolkit (http://www.openssl.org/).
 
 This product includes cryptographic software written by Eric Young
 (eay@cryptsoft.com).  This product includes software written by Tim

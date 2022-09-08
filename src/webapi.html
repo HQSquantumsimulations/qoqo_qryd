@@ -112,14 +112,14 @@
 qoqo-qryd and roqoqo-qryd allow interfacing with the WebAPI.
 The WebAPI can be accessed on the level of direct API calls.
 It is also possible to use the WebAPI as an <code class="docutils literal notranslate"><span class="pre">EvaluatingBackend</span></code> for general (non-parameterized)
-qoqo QuantumPrograms via the WebAPI as described in <span class="xref std std-doc">src/execution</span>.</p>
+qoqo QuantumPrograms via the WebAPI as described in <a class="reference internal" href="execution.html"><span class="doc">Executing quantum programs</span></a>.</p>
 <section id="getting-access-to-the-webapi">
 <h2>Getting access to the WebAPI<a class="headerlink" href="#getting-access-to-the-webapi" title="Permalink to this heading"></a></h2>
 <p>To use the WebAPI, a QRydDemo account is required. Users can register via the <a class="reference external" href="https://thequantumlaend.de/get-access/">online registration form</a>. Access is controlled via a Token. The token can either be directly provided to the <code class="docutils literal notranslate"><span class="pre">APIBackend</span></code> on creation or the backend tries to read it from the <code class="docutils literal notranslate"><span class="pre">QRYD_API_TOKEN</span></code> environmental variable.</p>
 </section>
 <section id="devices">
 <h2>Devices<a class="headerlink" href="#devices" title="Permalink to this heading"></a></h2>
-<p>At the moment the QrydDemo WebAPI supports two device emulators. Both support 30 qubits one in a square another with a triangular topology.</p>
+<p>At the moment the QrydDemo WebAPI supports two device emulators. Both support 30 qubits, one in a square and another with a triangular topology.</p>
 <a class="reference internal image-reference" href="../_images/square.png"><img alt="Square lattice with nearest-neighbor connectivity" src="../_images/square.png" style="width: 300px;" /></a>
 <a class="reference internal image-reference" href="../_images/triangle.png"><img alt="Triangle lattice with nearest-neighbor connectivity" src="../_images/triangle.png" style="width: 300px;" /></a>
 <p>The Emulators allow the user to set the phase shift in the <code class="docutils literal notranslate"><span class="pre">PhaseShiftedControlledZ</span></code> native gate and the seed for the random number generator. In qoqo-qryd these are set when creating the devices.</p>
@@ -142,10 +142,10 @@ qoqo QuantumPrograms via the WebAPI as described in <span class="xref std std-do
 <h2>APIBackend<a class="headerlink" href="#apibackend" title="Permalink to this heading"></a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">APIBackend</span></code> of qoqo-qryd supports the four direct API-calls of the QRydDemo WebAPI:</p>
 <ol class="arabic simple">
-<li><p>Queueing a job of running a qoqo QuantumProgram with a ClassicalRegister measurement</p></li>
-<li><p>Querying the status of the job</p></li>
-<li><p>Retrieving the results of the job</p></li>
-<li><p>Deleting a posted job</p></li>
+<li><p>Queueing a job of running a qoqo QuantumProgram with a ClassicalRegister measurement (<code class="docutils literal notranslate"><span class="pre">post_job(quantumprogram)</span></code>).</p></li>
+<li><p>Querying the status of the job (<code class="docutils literal notranslate"><span class="pre">get_job_status(job)`</span></code>).</p></li>
+<li><p>Retrieving the results of the job (<code class="docutils literal notranslate"><span class="pre">get_job_result(job)`</span></code>).</p></li>
+<li><p>Deleting a posted job (<code class="docutils literal notranslate"><span class="pre">delete_job(job)</span></code>).</p></li>
 </ol>
 <p>Additional information can be found on the <a class="reference external" href="https://thequantumlaend.de/qryddemo/">API documentation</a></p>
 <p>The four API calls can be used to obtain a result the following way:</p>

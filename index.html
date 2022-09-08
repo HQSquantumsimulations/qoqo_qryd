@@ -102,7 +102,7 @@
 </style>
 <section id="welcome-to-the-qoqo-qryd-roqoqo-qryd-user-documentation">
 <h1>Welcome to the qoqo-qryd/roqoqo-qryd user documentation!<a class="headerlink" href="#welcome-to-the-qoqo-qryd-roqoqo-qryd-user-documentation" title="Permalink to this heading"></a></h1>
-<p>This software is designed to support the <a class="reference external" href="https://thequantumlaend.de/qryddemo/">QRydDemo</a> project on Quantum computing with Rydberg atoms. It provides components to support QRydDemo quantum computers based on the <a class="reference external" href="https://github.com/HQSquantumsimulations/qoqo">qoqo</a> quantum toolkit by <a class="reference external" href="https://quantumsimulations.de">HQS Quantum Simulations</a> used to represent quantum circuits.</p>
+<p>This software is designed to support the <a class="reference external" href="https://thequantumlaend.de/qryddemo/">QRydDemo</a> project on quantum computing with Rydberg atoms. It provides components to support QRydDemo quantum computers based on the <a class="reference external" href="https://github.com/HQSquantumsimulations/qoqo">qoqo</a> quantum toolkit by <a class="reference external" href="https://quantumsimulations.de">HQS Quantum Simulations</a> used to represent quantum circuits.</p>
 <p>To learn more about the general approach to create quantum programs and executing them in qoqo see <a class="reference internal" href="src/introduction.html"><span class="doc">Introduction</span></a> and <a class="reference internal" href="src/execution.html"><span class="doc">Executing quantum programs</span></a>.</p>
 <p>This software is split into two packages:</p>
 <ul class="simple">
@@ -113,8 +113,8 @@
 <p>The packages provide the following functionalities:</p>
 <section id="interface-to-the-current-qryddemo-webapi">
 <h2>Interface to the current QRydDemo WebAPI<a class="headerlink" href="#interface-to-the-current-qryddemo-webapi" title="Permalink to this heading"></a></h2>
-<p>At the moment QRydDemo WebAPI allows access to Quantum Hardware Emulators of different device topology.
-qoqo-qryd/roqoqo-qryd support interfacing with the corresponding REST-API with low level calls as well as a high-level backend to qoqo quantum programs. For more details see <a class="reference internal" href="src/webapi.html"><span class="doc">QRydDemo WebAPI</span></a>.</p>
+<p>At the moment QRydDemo WebAPI allows access to Quantum Hardware Emulators of different device topologies.
+qoqo-qryd/roqoqo-qryd support interfacing with the corresponding REST-API with low level calls, i.e. using <cite>Circuit</cite>,  as well as with high-level backend based functionalities, i.e. by using <cite>QuantumPrograms</cite> in qoqo. For more details see <a class="reference internal" href="src/webapi.html"><span class="doc">QRydDemo WebAPI</span></a>.</p>
 </section>
 <section id="qryddemo-specific-hardware-operations-prototype">
 <h2>QRydDemo specific hardware operations (prototype)<a class="headerlink" href="#qryddemo-specific-hardware-operations-prototype" title="Permalink to this heading"></a></h2>
@@ -140,7 +140,7 @@ Note that this is a preview prototype and does not represent a finalized set of 
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="src/execution.html">Executing quantum programs</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="src/execution.html#executing-quantumprograms-without-without-returning-expecation-values">Executing QuantumPrograms without without returning expecation values</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src/execution.html#executing-quantumprograms-without-returning-expecation-values">Executing QuantumPrograms without returning expecation values</a></li>
 <li class="toctree-l2"><a class="reference internal" href="src/execution.html#non-executing-backends">Non-executing backends</a></li>
 </ul>
 </li>
@@ -177,12 +177,15 @@ Note that this is a preview prototype and does not represent a finalized set of 
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
 <li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
-<p>Acknowledgments related to using OpenSSL for http requests</p>
+<section id="openssl">
+<h2>OpenSSL<a class="headerlink" href="#openssl" title="Permalink to this heading"></a></h2>
+<p>Acknowledgments related to using OpenSSL for http requests:</p>
 <p>This product includes software developed by the OpenSSL Project
-for use in the OpenSSL Toolkit. (<a class="reference external" href="http://www.openssl.org/">http://www.openssl.org/</a>)</p>
+for use in the OpenSSL Toolkit (<a class="reference external" href="http://www.openssl.org/">http://www.openssl.org/</a>).</p>
 <p>This product includes cryptographic software written by Eric Young
 (<a class="reference external" href="mailto:eay&#37;&#52;&#48;cryptsoft&#46;com">eay<span>&#64;</span>cryptsoft<span>&#46;</span>com</a>).  This product includes software written by Tim
 Hudson (<a class="reference external" href="mailto:tjh&#37;&#52;&#48;cryptsoft&#46;com">tjh<span>&#64;</span>cryptsoft<span>&#46;</span>com</a>).</p>
+</section>
 </section>
 
 

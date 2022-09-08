@@ -7,7 +7,7 @@ Qoqo uses separate backends for this evaluation. For each hardware or simulator 
 
 An ``EvaluatingBackend`` can run:
 
-1. A single circuit. The backend will execute just the circuit and return the measurement results of all registers in a tuple (bit-registers, float-registers, complex-registers). bit_registers is a dictionary of all registers with bit values, float_registers of all registers with float values and complex_registers of all registers with complex values. All the postprocessing needs to be done manualy.
+1. A single circuit. The backend will execute just the circuit and return the measurement results of all registers in a tuple (bit-registers, float-registers, complex-registers). bit_registers is a dictionary of all registers with bit values, float_registers of all registers with float values and complex_registers of all registers with complex values. All the post-processing needs to be done manually.
 
 2. A measurement. All circuits in the measurement are run and the post-processed expectation values are returned.
 
@@ -22,7 +22,7 @@ As an example we will use the quantum program from :doc:`introduction` and the `
    from qoqo import operations as ops
    from qoqo.measurements import PauliZProduct, PauliZProductInput
    from qoqo import QuantumProgram
-   from qoqo_quest import SimulatorBackend
+   from qoqo_quest import Backend
    # initialize |psi>
    init_circuit = Circuit()
    # Apply a RotateY gate with a symbolic angle
@@ -62,7 +62,7 @@ As an example we will use the quantum program from :doc:`introduction` and the `
    # a single circuit, a measurement, and a quantum program.
 
    # Create a backend simulating one qubit
-   backend = SimulatorBackend(1)
+   backend = Backend(1)
 
    # a) Run a single circuit 
    (bit_registers, float_registers, complex_registers) = backend.run_circuit(z_circuit)
@@ -80,8 +80,9 @@ As an example we will use the quantum program from :doc:`introduction` and the `
    # Run the program with  0.1 substituting `angle`
    expecation_values = program.run(backend, [0.1])
 
-The QuantumProgram can be run in the same way with the qoqo_qryd ``SimulatorBackend`` when all quantum operations are replaced by sequences of operations directly supported by the QRydDemo hardware.
-To distinguish between a command returning expectation values and a program returning register the comman ``run_registers`` is used here.
+Note: The QuantumProgram can be run in the same way with the qoqo_qryd ``SimulatorBackend`` when all quantum operations are replaced by sequences of operations directly supported by the QRydDemo hardware. However, in order to use the qoqo_qryd ``SimulatorBackend``, a device needs to be defined first, as shown in the SimulatorBackend subsection of  :doc:`qrydspecifics`.
+
+In general, to distinguish between a command returning expectation values and a program returning register the command ``run_registers`` is used here.
 
 .. code-block:: python
 
@@ -89,7 +90,7 @@ To distinguish between a command returning expectation values and a program retu
    from qoqo import operations as ops
    from qoqo.measurements import ClassicalRegister
    from qoqo import QuantumProgram
-   from qoqo_quest import SimulatorBackend
+   from qoqo_quest import Backend
    # initialize |psi>
    init_circuit = Circuit()
    # Apply a RotateY gate with a symbolic angle
@@ -109,18 +110,21 @@ To distinguish between a command returning expectation values and a program retu
 
    measurement = ClassicalRegister(constant_circuit=init_circuit, circuits=[z_circuit, x_circuit])
 
-   # A quantum program is created from the measurement and "angle" is registered as a free input parameter
-   # The QuantumProgram now has one free parameter that needs to set when executing it.
-   # The symbolic value angle in the circuits will be replaced by that free parameter during execution.
+   # A quantum program is created from the measurement and "angle" is registered as a free input
+   # parameter. The QuantumProgram now has one free parameter that needs to be set when
+   # executing it. The symbolic value angle in the circuits will be replaced by that free parameter
+   # during execution.
    program = QuantumProgram(measurement=measurement, input_parameter_names=["angle"])
+
    backend = Backend(1)
    (bit_registers, float_registers, complex_registers) = program.run_registers(backend, [0.1])
    print(bit_registers)
 
-Executing QuantumPrograms without without returning expecation values
+
+Executing QuantumPrograms without returning expecation values
 ---------------------------------------------------------------------
 
-As described in :doc:`introdcution` the ``ClassicalRegister`` measurement can be used to return the full measurement record. 
+As described in :doc:`introduction` the ``ClassicalRegister`` measurement can be used to return the full measurement record. 
 
 Non-executing backends
 ----------------------

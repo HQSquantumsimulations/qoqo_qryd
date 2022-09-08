@@ -47,7 +47,7 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Executing quantum programs</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#executing-quantumprograms-without-without-returning-expecation-values">Executing QuantumPrograms without without returning expecation values</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#executing-quantumprograms-without-returning-expecation-values">Executing QuantumPrograms without returning expecation values</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#non-executing-backends">Non-executing backends</a></li>
 </ul>
 </li>
@@ -111,7 +111,7 @@
 <p>Qoqo uses separate backends for this evaluation. For each hardware or simulator a backend can be created that implements qoqo's <code class="docutils literal notranslate"><span class="pre">EvaluatingBackend</span></code> interface and runs QuantumPrograms. For an overview of backends see the <a class="reference external" href="https://github.com/HQSquantumsimulations/qoqo">qoqo</a> website. Backends which provide the functionality to run a single circuit are so-called <code class="docutils literal notranslate"><span class="pre">EvaluatingBackend</span></code>. The QRydDemo backends fall in this category.</p>
 <p>An <code class="docutils literal notranslate"><span class="pre">EvaluatingBackend</span></code> can run:</p>
 <ol class="arabic simple">
-<li><p>A single circuit. The backend will execute just the circuit and return the measurement results of all registers in a tuple (bit-registers, float-registers, complex-registers). bit_registers is a dictionary of all registers with bit values, float_registers of all registers with float values and complex_registers of all registers with complex values. All the postprocessing needs to be done manualy.</p></li>
+<li><p>A single circuit. The backend will execute just the circuit and return the measurement results of all registers in a tuple (bit-registers, float-registers, complex-registers). bit_registers is a dictionary of all registers with bit values, float_registers of all registers with float values and complex_registers of all registers with complex values. All the post-processing needs to be done manually.</p></li>
 <li><p>A measurement. All circuits in the measurement are run and the post-processed expectation values are returned.</p></li>
 <li><p>A quantum program. A <code class="docutils literal notranslate"><span class="pre">QuantumProgram</span></code> also handles replacement of variables. It provides its own <code class="docutils literal notranslate"><span class="pre">run</span></code> method and calls a provided backend internally.</p></li>
 </ol>
@@ -120,7 +120,7 @@
 <span class="kn">from</span> <span class="nn">qoqo</span> <span class="kn">import</span> <span class="n">operations</span> <span class="k">as</span> <span class="n">ops</span>
 <span class="kn">from</span> <span class="nn">qoqo.measurements</span> <span class="kn">import</span> <span class="n">PauliZProduct</span><span class="p">,</span> <span class="n">PauliZProductInput</span>
 <span class="kn">from</span> <span class="nn">qoqo</span> <span class="kn">import</span> <span class="n">QuantumProgram</span>
-<span class="kn">from</span> <span class="nn">qoqo_quest</span> <span class="kn">import</span> <span class="n">SimulatorBackend</span>
+<span class="kn">from</span> <span class="nn">qoqo_quest</span> <span class="kn">import</span> <span class="n">Backend</span>
 <span class="c1"># initialize |psi&gt;</span>
 <span class="n">init_circuit</span> <span class="o">=</span> <span class="n">Circuit</span><span class="p">()</span>
 <span class="c1"># Apply a RotateY gate with a symbolic angle</span>
@@ -160,7 +160,7 @@
 <span class="c1"># a single circuit, a measurement, and a quantum program.</span>
 
 <span class="c1"># Create a backend simulating one qubit</span>
-<span class="n">backend</span> <span class="o">=</span> <span class="n">SimulatorBackend</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">backend</span> <span class="o">=</span> <span class="n">Backend</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
 <span class="c1"># a) Run a single circuit</span>
 <span class="p">(</span><span class="n">bit_registers</span><span class="p">,</span> <span class="n">float_registers</span><span class="p">,</span> <span class="n">complex_registers</span><span class="p">)</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">run_circuit</span><span class="p">(</span><span class="n">z_circuit</span><span class="p">)</span>
@@ -179,13 +179,13 @@
 <span class="n">expecation_values</span> <span class="o">=</span> <span class="n">program</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">backend</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>The QuantumProgram can be run in the same way with the qoqo_qryd <code class="docutils literal notranslate"><span class="pre">SimulatorBackend</span></code> when all quantum operations are replaced by sequences of operations directly supported by the QRydDemo hardware.
-To distinguish between a command returning expectation values and a program returning register the comman <code class="docutils literal notranslate"><span class="pre">run_registers</span></code> is used here.</p>
+<p>Note: The QuantumProgram can be run in the same way with the qoqo_qryd <code class="docutils literal notranslate"><span class="pre">SimulatorBackend</span></code> when all quantum operations are replaced by sequences of operations directly supported by the QRydDemo hardware. However, in order to use the qoqo_qryd <code class="docutils literal notranslate"><span class="pre">SimulatorBackend</span></code>, a device needs to be defined first, as shown in the SimulatorBackend subsection of  <a class="reference internal" href="qrydspecifics.html"><span class="doc">Rydberg devices and operations</span></a>.</p>
+<p>In general, to distinguish between a command returning expectation values and a program returning register the command <code class="docutils literal notranslate"><span class="pre">run_registers</span></code> is used here.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qoqo</span> <span class="kn">import</span> <span class="n">Circuit</span>
 <span class="kn">from</span> <span class="nn">qoqo</span> <span class="kn">import</span> <span class="n">operations</span> <span class="k">as</span> <span class="n">ops</span>
 <span class="kn">from</span> <span class="nn">qoqo.measurements</span> <span class="kn">import</span> <span class="n">ClassicalRegister</span>
 <span class="kn">from</span> <span class="nn">qoqo</span> <span class="kn">import</span> <span class="n">QuantumProgram</span>
-<span class="kn">from</span> <span class="nn">qoqo_quest</span> <span class="kn">import</span> <span class="n">SimulatorBackend</span>
+<span class="kn">from</span> <span class="nn">qoqo_quest</span> <span class="kn">import</span> <span class="n">Backend</span>
 <span class="c1"># initialize |psi&gt;</span>
 <span class="n">init_circuit</span> <span class="o">=</span> <span class="n">Circuit</span><span class="p">()</span>
 <span class="c1"># Apply a RotateY gate with a symbolic angle</span>
@@ -205,18 +205,20 @@ To distinguish between a command returning expectation values and a program retu
 
 <span class="n">measurement</span> <span class="o">=</span> <span class="n">ClassicalRegister</span><span class="p">(</span><span class="n">constant_circuit</span><span class="o">=</span><span class="n">init_circuit</span><span class="p">,</span> <span class="n">circuits</span><span class="o">=</span><span class="p">[</span><span class="n">z_circuit</span><span class="p">,</span> <span class="n">x_circuit</span><span class="p">])</span>
 
-<span class="c1"># A quantum program is created from the measurement and &quot;angle&quot; is registered as a free input parameter</span>
-<span class="c1"># The QuantumProgram now has one free parameter that needs to set when executing it.</span>
-<span class="c1"># The symbolic value angle in the circuits will be replaced by that free parameter during execution.</span>
+<span class="c1"># A quantum program is created from the measurement and &quot;angle&quot; is registered as a free input</span>
+<span class="c1"># parameter. The QuantumProgram now has one free parameter that needs to be set when</span>
+<span class="c1"># executing it. The symbolic value angle in the circuits will be replaced by that free parameter</span>
+<span class="c1"># during execution.</span>
 <span class="n">program</span> <span class="o">=</span> <span class="n">QuantumProgram</span><span class="p">(</span><span class="n">measurement</span><span class="o">=</span><span class="n">measurement</span><span class="p">,</span> <span class="n">input_parameter_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;angle&quot;</span><span class="p">])</span>
+
 <span class="n">backend</span> <span class="o">=</span> <span class="n">Backend</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="p">(</span><span class="n">bit_registers</span><span class="p">,</span> <span class="n">float_registers</span><span class="p">,</span> <span class="n">complex_registers</span><span class="p">)</span> <span class="o">=</span> <span class="n">program</span><span class="o">.</span><span class="n">run_registers</span><span class="p">(</span><span class="n">backend</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">])</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">bit_registers</span><span class="p">)</span>
 </pre></div>
 </div>
-<section id="executing-quantumprograms-without-without-returning-expecation-values">
-<h2>Executing QuantumPrograms without without returning expecation values<a class="headerlink" href="#executing-quantumprograms-without-without-returning-expecation-values" title="Permalink to this heading"></a></h2>
-<p>As described in <span class="xref std std-doc">introdcution</span> the <code class="docutils literal notranslate"><span class="pre">ClassicalRegister</span></code> measurement can be used to return the full measurement record.</p>
+<section id="executing-quantumprograms-without-returning-expecation-values">
+<h2>Executing QuantumPrograms without returning expecation values<a class="headerlink" href="#executing-quantumprograms-without-returning-expecation-values" title="Permalink to this heading"></a></h2>
+<p>As described in <a class="reference internal" href="introduction.html"><span class="doc">Introduction</span></a> the <code class="docutils literal notranslate"><span class="pre">ClassicalRegister</span></code> measurement can be used to return the full measurement record.</p>
 </section>
 <section id="non-executing-backends">
 <h2>Non-executing backends<a class="headerlink" href="#non-executing-backends" title="Permalink to this heading"></a></h2>
