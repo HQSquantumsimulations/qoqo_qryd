@@ -511,62 +511,63 @@ fn test_convert_to_device() {
 #[test]
 fn test_pyo3_new_change_layout() {
     pyo3::prepare_freethreaded_python();
-    let gil = pyo3::Python::acquire_gil();
-    let py = gil.python();
-    let layout = array![[0.0, 1.0], [0.0, 1.0]];
-    let device_type = py.get_type::<FirstDeviceWrapper>();
-    let device = device_type
-        .call1((
-            2,
-            2,
-            vec![1, 1],
-            1.0,
-            array![[0.0, 1.0], [0.0, 1.0]].to_pyarray(py),
-        ))
-        .unwrap()
-        .cast_as::<PyCell<FirstDeviceWrapper>>()
-        .unwrap();
-    let backend_type = py.get_type::<SimulatorBackendWrapper>();
-    let backend = backend_type
-        .call1((device,))
-        .unwrap()
-        .cast_as::<PyCell<SimulatorBackendWrapper>>()
-        .unwrap();
 
-    let pragma_wrapper = backend.extract::<SimulatorBackendWrapper>().unwrap();
-    let device_diff = device_type
-        .call1((
-            2,
-            2,
-            vec![1, 1],
-            2.0,
-            array![[0.0, 1.0], [0.0, 1.0]].to_pyarray(py),
-        ))
-        .unwrap()
-        .cast_as::<PyCell<FirstDeviceWrapper>>()
-        .unwrap();
-    let new_op_diff = backend_type
-        .call1((device_diff,))
-        .unwrap()
-        .cast_as::<PyCell<SimulatorBackendWrapper>>()
-        .unwrap();
-    let pragma_wrapper_diff = new_op_diff.extract::<SimulatorBackendWrapper>().unwrap();
-    let helper_ne: bool = pragma_wrapper_diff != pragma_wrapper;
-    assert!(helper_ne);
-    let helper_eq: bool = pragma_wrapper == pragma_wrapper.clone();
-    assert!(helper_eq);
+    Python::with_gil(|py| {
+        let layout = array![[0.0, 1.0], [0.0, 1.0]];
+        let device_type = py.get_type::<FirstDeviceWrapper>();
+        let device = device_type
+            .call1((
+                2,
+                2,
+                vec![1, 1],
+                1.0,
+                array![[0.0, 1.0], [0.0, 1.0]].to_pyarray(py),
+            ))
+            .unwrap()
+            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .unwrap();
+        let backend_type = py.get_type::<SimulatorBackendWrapper>();
+        let backend = backend_type
+            .call1((device,))
+            .unwrap()
+            .cast_as::<PyCell<SimulatorBackendWrapper>>()
+            .unwrap();
 
-    let check_str = format!("{:?}", pragma_wrapper);
-    let check_1: &str = check_str.split("qubit_positions").collect::<Vec<&str>>()[0];
-    let check_2: &str = check_str.split("qubit_positions").collect::<Vec<&str>>()[1]
-        .split(")}")
-        .collect::<Vec<&str>>()[1];
-    let comp_str = format!("SimulatorBackendWrapper {{ internal: SimulatorBackend {{ device: FirstDevice(FirstDevice {{ number_rows: 2, number_columns: 2, qubit_positions: {{0: (0, 0), 1: (1, 0)}}, row_distance: 1.0, layout_register: {{0: {:?}}}, current_layout: 0, cutoff: 1.0, controlled_z_phase: 0.7853981633974483 }}) }} }}", layout);
-    let comp_1: &str = comp_str.split("qubit_positions").collect::<Vec<&str>>()[0];
-    let comp_2: &str = comp_str.split("qubit_positions").collect::<Vec<&str>>()[1]
-        .split(")}")
-        .collect::<Vec<&str>>()[1];
+        let pragma_wrapper = backend.extract::<SimulatorBackendWrapper>().unwrap();
+        let device_diff = device_type
+            .call1((
+                2,
+                2,
+                vec![1, 1],
+                2.0,
+                array![[0.0, 1.0], [0.0, 1.0]].to_pyarray(py),
+            ))
+            .unwrap()
+            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .unwrap();
+        let new_op_diff = backend_type
+            .call1((device_diff,))
+            .unwrap()
+            .cast_as::<PyCell<SimulatorBackendWrapper>>()
+            .unwrap();
+        let pragma_wrapper_diff = new_op_diff.extract::<SimulatorBackendWrapper>().unwrap();
+        let helper_ne: bool = pragma_wrapper_diff != pragma_wrapper;
+        assert!(helper_ne);
+        let helper_eq: bool = pragma_wrapper == pragma_wrapper.clone();
+        assert!(helper_eq);
 
-    assert_eq!(comp_1, check_1);
-    assert_eq!(comp_2, check_2);
+        let check_str = format!("{:?}", pragma_wrapper);
+        let check_1: &str = check_str.split("qubit_positions").collect::<Vec<&str>>()[0];
+        let check_2: &str = check_str.split("qubit_positions").collect::<Vec<&str>>()[1]
+            .split(")}")
+            .collect::<Vec<&str>>()[1];
+        let comp_str = format!("SimulatorBackendWrapper {{ internal: SimulatorBackend {{ device: FirstDevice(FirstDevice {{ number_rows: 2, number_columns: 2, qubit_positions: {{0: (0, 0), 1: (1, 0)}}, row_distance: 1.0, layout_register: {{0: {:?}}}, current_layout: 0, cutoff: 1.0, controlled_z_phase: 0.7853981633974483 }}) }} }}", layout);
+        let comp_1: &str = comp_str.split("qubit_positions").collect::<Vec<&str>>()[0];
+        let comp_2: &str = comp_str.split("qubit_positions").collect::<Vec<&str>>()[1]
+            .split(")}")
+            .collect::<Vec<&str>>()[1];
+
+        assert_eq!(comp_1, check_1);
+        assert_eq!(comp_2, check_2);
+    })
 }
