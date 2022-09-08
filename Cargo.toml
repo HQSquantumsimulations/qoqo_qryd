@@ -9,11 +9,3 @@ lto = "thin"
 
 [profile.bench]
 lto = "thin"
-
-[patch.crates-io]
-
-roqoqo = {git="https://github.com/HQSquantumsimulations/qoqo.git", branch="main"}
-roqoqo-derive = {git="https://github.com/HQSquantumsimulations/qoqo.git", branch="main"}
-qoqo = {git="https://github.com/HQSquantumsimulations/qoqo.git", branch="main"}
-roqoqo-test = {git="https://github.com/HQSquantumsimulations/qoqo.git", branch="main"}
-roqoqo-quest = {git="https://github.com/HQSquantumsimulations/qoqo-quest.git", branch="dev0.8.0"}

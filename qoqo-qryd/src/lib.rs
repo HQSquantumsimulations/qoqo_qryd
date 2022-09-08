@@ -13,7 +13,6 @@
 #![deny(missing_docs)]
 #![deny(missing_crate_level_docs)]
 #![deny(missing_debug_implementations)]
-#![allow(clippy::borrow_deref_ref)]
 
 //! # qoqo-qryd
 //!
@@ -88,12 +87,12 @@ fn qoqo_qryd(_py: Python, module: &PyModule) -> PyResult<()> {
     #[cfg(feature = "simulator")]
     module.add_class::<SimulatorBackendWrapper>()?;
     module.add_class::<APIBackendWrapper>()?;
-    let wrapper = wrap_pymodule!(qryd_devices);
+    let wrapper = wrap_pymodule!(qryd_devices::qryd_devices);
     module.add_wrapped(wrapper)?;
-    let wrapper2 = wrap_pymodule!(api_devices);
+    let wrapper2 = wrap_pymodule!(api_devices::api_devices);
     module.add_wrapped(wrapper2)?;
     // Adding nice imports corresponding to maturin example
-    let wrapper = wrap_pymodule!(pragma_operations);
+    let wrapper = wrap_pymodule!(pragma_operations::pragma_operations);
     module.add_wrapped(wrapper)?;
     // Adding nice imports corresponding to maturin example
     let system = PyModule::import(_py, "sys")?;
