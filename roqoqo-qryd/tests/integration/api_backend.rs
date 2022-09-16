@@ -12,7 +12,7 @@
 
 use std::collections::HashMap;
 
-use roqoqo::measurements::ClassicalRegister;
+use roqoqo::measurements::{ClassicalRegister, Cheated, CheatedInput};
 use roqoqo::measurements::{PauliZProduct, PauliZProductInput};
 use roqoqo::operations;
 use roqoqo::Circuit;
@@ -314,5 +314,51 @@ fn api_backend_errorcase3() {
 
         let job_delete = api_backend_new.delete_job(job_loc);
         assert!(job_delete.is_err());
+    }
+}
+
+// Test error cases. Case 4: invalid QuantumProgram
+#[test]
+fn api_backend_errorcase4() {
+    if env::var("QRYD_API_TOKEN").is_ok() {
+        let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
+        let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
+        let api_backend_new = APIBackend::new(qryd_device, None, None).unwrap();
+        // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
+        let measurement = ClassicalRegister {
+            constant_circuit: None,
+            circuits: vec![],
+        };
+        let program = QuantumProgram::ClassicalRegister {
+            measurement,
+            input_parameter_names: vec![],
+        };
+        let job_loc0 = api_backend_new.post_job(program);
+        assert!(job_loc0.is_err());
+
+        let mut circuit = Circuit::new();
+        circuit += operations::InputSymbolic::new("ro".to_string(), 0.34);
+        let measurement = ClassicalRegister {
+            constant_circuit: None,
+            circuits: vec![circuit],
+        };
+        let program = QuantumProgram::ClassicalRegister {
+            measurement,
+            input_parameter_names: vec![],
+        };
+        let job_loc1 = api_backend_new.post_job(program);
+        assert!(job_loc1.is_err());
+
+        let measurement = Cheated {
+            constant_circuit: None,
+            circuits: vec![],
+            input: CheatedInput::new(4),
+        };
+        let program = QuantumProgram::Cheated {
+            measurement,
+            input_parameter_names: vec![],
+        };
+        let job_loc2 = api_backend_new.post_job(program);
+        assert!(job_loc2.is_err());
     }
 }

@@ -597,6 +597,8 @@ mod test {
     use crate::api_devices::QrydEmuSquareDevice;
     use roqoqo::measurements::{PauliZProduct, PauliZProductInput};
     use roqoqo::{Circuit, QuantumProgram};
+
+    /// Test Debug, Clone and PartialEq of ApiBackend
     #[test]
     fn debug_and_clone() {
         let device: QRydAPIDevice = QrydEmuSquareDevice::new(None, None).into();
@@ -653,5 +655,15 @@ mod test {
             executed_two_qubit_gates: 0,
         };
         assert_eq!(format!("{:?}", result), "QRydJobResult { data: ResultCounts { counts: {} }, time_taken: 0.0, noise: \"noise\", method: \"method\", device: \"device\", num_qubits: 2, num_clbits: 2, fusion_max_qubits: 0, fusion_avg_qubits: 0.0, fusion_generated_gates: 0, executed_single_qubit_gates: 0, executed_two_qubit_gates: 0 }");
+    }
+
+    /// Test Debug of QRydJobStatus
+    #[test]
+    fn test_debug_validation() {
+        let status = QRydJobStatus {
+            status: "in progress".to_string(),
+            msg: "the job is still in progress".to_string(),
+        };
+        assert_eq!(format!("{:?}", status), "QRydJobStatus { status: \"in progress\", msg: \"the job is still in progress\" }");
     }
 }
