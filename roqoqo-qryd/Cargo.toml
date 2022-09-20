@@ -44,5 +44,5 @@ roqoqo-test = {version="1.1.0-beta.1"}
 [features]
 default = ["serialize", "simulator", "web-api"]
 serialize = ["serde"]
-web-api = ["reqwest"]
+web-api = ["reqwest", "hex", "bitvec"]
 simulator = ["roqoqo-quest"]
