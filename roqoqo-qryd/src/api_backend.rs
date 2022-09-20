@@ -177,21 +177,30 @@ impl APIBackend {
         timeout: Option<usize>,
         mock_port: Option<String>,
     ) -> Result<Self, RoqoqoBackendError> {
-        let access_token_internal: String = match access_token {
-            Some(s) => s,
-            None => env::var("QRYD_API_TOKEN").map_err(|_| {
-                RoqoqoBackendError::MissingAuthentification {
-                    msg: "QRYD access token is missing".to_string(),
-                }
-            })?,
-        };
+        if let Some(_) = mock_port {
+            Ok(Self {
+                device,
+                access_token: "".to_string(),
+                timeout: timeout.unwrap_or(30),
+                mock_port,
+            })
+        } else {
+            let access_token_internal: String = match access_token {
+                Some(s) => s,
+                None => env::var("QRYD_API_TOKEN").map_err(|_| {
+                    RoqoqoBackendError::MissingAuthentification {
+                        msg: "QRYD access token is missing".to_string(),
+                    }
+                })?,
+            };
 
-        Ok(Self {
-            device,
-            access_token: access_token_internal,
-            timeout: timeout.unwrap_or(30),
-            mock_port,
-        })
+            Ok(Self {
+                device,
+                access_token: access_token_internal,
+                timeout: timeout.unwrap_or(30),
+                mock_port,
+            })
+        }
     }
 
     /// Post to add a new job to be run on the backend and return the location of the job.
@@ -257,11 +266,13 @@ impl APIBackend {
         // needs to be derived dynamically based on the provided parameter 'qrydbackend'
         let resp: Response;
         if let Some(mock_port) = &self.mock_port {
-            resp = client.post(format!("http://127.0.0.1:{}", mock_port)).json(&data).send().map_err(|e| {
-                RoqoqoBackendError::NetworkError {
+            resp = client
+                .post(format!("http://127.0.0.1:{}", mock_port))
+                .json(&data)
+                .send()
+                .map_err(|e| RoqoqoBackendError::NetworkError {
                     msg: format!("{:?}", e),
-                }
-            })?;
+                })?;
         } else {
             resp = client
                 .post("https://api.qryddemo.itp3.uni-stuttgart.de/v2_0/jobs")

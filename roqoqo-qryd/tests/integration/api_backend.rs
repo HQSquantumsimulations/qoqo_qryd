@@ -22,6 +22,8 @@ use roqoqo_qryd::api_devices::{QRydAPIDevice, QrydEmuSquareDevice, QrydEmuTriang
 use roqoqo_qryd::APIBackend;
 use roqoqo_qryd::QRydJobResult;
 
+use qoqo_calculator::CalculatorFloat;
+
 use httpmock::MockServer;
 
 use std::{env, thread, time};
@@ -29,63 +31,63 @@ use std::{env, thread, time};
 // Test the new function
 #[test]
 fn api_backend() {
-    let server = MockServer::start();
-    
-    let number_qubits = 6;
-    let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
-    let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-    let api_backend_new = APIBackend::new(qryd_device, None, None, None).unwrap();
-    // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
-    let qubit_mapping: HashMap<usize, usize> =
-        (0..number_qubits).into_iter().map(|x| (x, x)).collect();
-    let mut circuit = Circuit::new();
-    circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
-    circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
-    circuit += operations::RotateX::new(4, std::f64::consts::FRAC_PI_2.into());
-    // circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
-    circuit +=
-        operations::PragmaRepeatedMeasurement::new("ro".to_string(), 40, Some(qubit_mapping)); // assert!(api_backend_new.is_ok());
-    let measurement = ClassicalRegister {
-        constant_circuit: None,
-        circuits: vec![circuit.clone()],
-    };
-    let program = QuantumProgram::ClassicalRegister {
-        measurement,
-        input_parameter_names: vec![],
-    };
-    let job_loc = api_backend_new
-        .post_job(
-            // "qryd_emu_localcomp_square".to_string(),
-            // Some(0),
-            // Some(0.23),
-            program,
-        )
-        .unwrap();
-    println!("Job location {}", job_loc);
+    if env::var("QRYD_API_TOKEN").is_ok() {
+        let number_qubits = 6;
+        let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
+        let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
+        let api_backend_new = APIBackend::new(qryd_device, None, None, None).unwrap();
+        // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
+        let qubit_mapping: HashMap<usize, usize> =
+            (0..number_qubits).into_iter().map(|x| (x, x)).collect();
+        let mut circuit = Circuit::new();
+        circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
+        circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
+        circuit += operations::RotateX::new(4, std::f64::consts::FRAC_PI_2.into());
+        // circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
+        circuit +=
+            operations::PragmaRepeatedMeasurement::new("ro".to_string(), 40, Some(qubit_mapping)); // assert!(api_backend_new.is_ok());
+        let measurement = ClassicalRegister {
+            constant_circuit: None,
+            circuits: vec![circuit.clone()],
+        };
+        let program = QuantumProgram::ClassicalRegister {
+            measurement,
+            input_parameter_names: vec![],
+        };
+        let job_loc = api_backend_new
+            .post_job(
+                // "qryd_emu_localcomp_square".to_string(),
+                // Some(0),
+                // Some(0.23),
+                program,
+            )
+            .unwrap();
+        println!("Job location {}", job_loc);
 
-    let fifteen = time::Duration::from_secs(1);
+        let fifteen = time::Duration::from_secs(1);
 
-    let mut test_counter = 0;
-    let mut status = "".to_string();
-    let mut job_result = QRydJobResult::default();
-    while test_counter < 20 && status != "completed" {
-        test_counter += 1;
-        let job_status = api_backend_new.get_job_status(job_loc.clone()).unwrap();
-        status = job_status.status.clone();
-        thread::sleep(fifteen);
+        let mut test_counter = 0;
+        let mut status = "".to_string();
+        let mut job_result = QRydJobResult::default();
+        while test_counter < 20 && status != "completed" {
+            test_counter += 1;
+            let job_status = api_backend_new.get_job_status(job_loc.clone()).unwrap();
+            status = job_status.status.clone();
+            thread::sleep(fifteen);
 
-        println!("Job status {:?}", job_status);
-        if status == *"completed" {
-            assert_eq!(job_status.status, "completed");
-            job_result = api_backend_new.get_job_result(job_loc.clone()).unwrap();
-            println!("Job result {:?}", job_result.clone());
+            println!("Job status {:?}", job_status);
+            if status == *"completed" {
+                assert_eq!(job_status.status, "completed");
+                job_result = api_backend_new.get_job_result(job_loc.clone()).unwrap();
+                println!("Job result {:?}", job_result.clone());
+            }
         }
-    }
-    let (bits, _, _) =
-        APIBackend::counts_to_result(job_result.data, "ro".to_string(), number_qubits).unwrap();
-    assert!(!bits.is_empty());
-    for line in bits["ro"].iter() {
-        println!("{:?}", line);
+        let (bits, _, _) =
+            APIBackend::counts_to_result(job_result.data, "ro".to_string(), number_qubits).unwrap();
+        assert!(!bits.is_empty());
+        for line in bits["ro"].iter() {
+            println!("{:?}", line);
+        }
     }
 }
 
@@ -323,47 +325,77 @@ fn api_backend_errorcase3() {
 // Test error cases. Case 4: invalid QuantumProgram
 #[test]
 fn api_backend_errorcase4() {
-    if env::var("QRYD_API_TOKEN").is_ok() {
-        let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
-        let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-        let api_backend_new = APIBackend::new(qryd_device, None, None, None).unwrap();
-        // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
-        let measurement = ClassicalRegister {
-            constant_circuit: None,
-            circuits: vec![],
-        };
-        let program = QuantumProgram::ClassicalRegister {
-            measurement,
-            input_parameter_names: vec![],
-        };
-        let job_loc0 = api_backend_new.post_job(program);
-        assert!(job_loc0.is_err());
+    let server = MockServer::start();
+    server.mock(|when, then| {
+        when.method("POST");
+        then.status(404);
+    });
+    server.mock(|when, then| {
+        when.method("GET");
+        then.status(404);
+    });
+    let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
+    let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
+    let api_backend_new =
+        APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
+    // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
+    let measurement = ClassicalRegister {
+        constant_circuit: None,
+        circuits: vec![],
+    };
+    let program = QuantumProgram::ClassicalRegister {
+        measurement,
+        input_parameter_names: vec![],
+    };
+    let job_loc0 = api_backend_new.post_job(program);
+    assert!(job_loc0.is_err());
+    assert_eq!(
+        job_loc0.unwrap_err(),
+        RoqoqoBackendError::GenericError {
+            msg: "QRyd API Backend only supports posting ClassicalRegister with one circuit"
+                .to_string()
+        }
+    );
 
-        let mut circuit = Circuit::new();
-        circuit += operations::InputSymbolic::new("ro".to_string(), 0.34);
-        let measurement = ClassicalRegister {
-            constant_circuit: None,
-            circuits: vec![circuit],
-        };
-        let program = QuantumProgram::ClassicalRegister {
-            measurement,
-            input_parameter_names: vec![],
-        };
-        let job_loc1 = api_backend_new.post_job(program);
-        assert!(job_loc1.is_err());
+    let mut circuit = Circuit::new();
+    circuit += operations::RotateZ::new(0, CalculatorFloat::from("parametrized"));
+    assert!(circuit.is_parametrized());
+    let measurement = ClassicalRegister {
+        constant_circuit: None,
+        circuits: vec![circuit],
+    };
+    let program = QuantumProgram::ClassicalRegister {
+        measurement,
+        input_parameter_names: vec![],
+    };
+    let job_loc1 = api_backend_new.post_job(program);
+    assert!(job_loc1.is_err());
+    assert_eq!(
+        job_loc1.unwrap_err(),
+        RoqoqoBackendError::GenericError {
+            msg: "Qoqo circuit contains symbolic parameters. The QrydWebAPI does not support symbolic parameters."
+                .to_string()
+        }
+    );
 
-        let measurement = Cheated {
-            constant_circuit: None,
-            circuits: vec![],
-            input: CheatedInput::new(4),
-        };
-        let program = QuantumProgram::Cheated {
-            measurement,
-            input_parameter_names: vec![],
-        };
-        let job_loc2 = api_backend_new.post_job(program);
-        assert!(job_loc2.is_err());
-    }
+    let measurement = Cheated {
+        constant_circuit: None,
+        circuits: vec![],
+        input: CheatedInput::new(4),
+    };
+    let program = QuantumProgram::Cheated {
+        measurement,
+        input_parameter_names: vec![],
+    };
+    let job_loc2 = api_backend_new.post_job(program);
+    assert!(job_loc2.is_err());
+    assert_eq!(
+        job_loc2.unwrap_err(),
+        RoqoqoBackendError::GenericError {
+            msg: "QRyd API Backend only supports posting ClassicalRegister QuantumPrograms"
+                .to_string()
+        }
+    );
 }
 
 #[test]
