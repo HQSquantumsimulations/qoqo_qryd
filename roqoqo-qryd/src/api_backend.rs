@@ -13,6 +13,8 @@
 use crate::api_devices::QRydAPIDevice;
 use bitvec::prelude::*;
 use num_complex::Complex64;
+use reqwest::blocking::Client;
+use reqwest::blocking::Response;
 use roqoqo::backends::RegisterResult;
 use roqoqo::measurements::ClassicalRegister;
 use roqoqo::operations::Define;
@@ -43,6 +45,8 @@ pub struct APIBackend {
     /// In synchronous operation the WebAPI is queried every 30 seconds until it has
     /// been queried `timeout` times.
     timeout: usize,
+    /// The address of the Mock server, used for testing purposes.
+    mock_port: Option<String>,
 }
 
 /// Local struct representing the body of the request message
@@ -171,6 +175,7 @@ impl APIBackend {
         device: QRydAPIDevice,
         access_token: Option<String>,
         timeout: Option<usize>,
+        mock_port: Option<String>,
     ) -> Result<Self, RoqoqoBackendError> {
         let access_token_internal: String = match access_token {
             Some(s) => s,
@@ -185,6 +190,7 @@ impl APIBackend {
             device,
             access_token: access_token_internal,
             timeout: timeout.unwrap_or(30),
+            mock_port,
         })
     }
 
@@ -230,24 +236,43 @@ impl APIBackend {
         };
 
         // Prepare WebAPI client
-        let client = reqwest::blocking::Client::builder()
-            .https_only(true)
-            .build()
-            .map_err(|x| RoqoqoBackendError::NetworkError {
-                msg: format!("could not create https client {:?}", x),
+        let client: Client;
+        if let Some(_) = &self.mock_port {
+            client = reqwest::blocking::Client::builder().build().map_err(|x| {
+                RoqoqoBackendError::NetworkError {
+                    msg: format!("could not create test client {:?}", x),
+                }
             })?;
+        } else {
+            client = reqwest::blocking::Client::builder()
+                .https_only(true)
+                .build()
+                .map_err(|x| RoqoqoBackendError::NetworkError {
+                    msg: format!("could not create https client {:?}", x),
+                })?;
+        }
 
         // Call WebAPI client
         // here: value for put() temporarily fixed.
         // needs to be derived dynamically based on the provided parameter 'qrydbackend'
-        let resp = client
-            .post("https://api.qryddemo.itp3.uni-stuttgart.de/v2_0/jobs")
-            .header("X-API-KEY", self.access_token.clone())
-            .json(&data)
-            .send()
-            .map_err(|e| RoqoqoBackendError::NetworkError {
-                msg: format!("{:?}", e),
+        let resp: Response;
+        if let Some(mock_port) = &self.mock_port {
+            resp = client.post(format!("http://127.0.0.1:{}", mock_port)).json(&data).send().map_err(|e| {
+                RoqoqoBackendError::NetworkError {
+                    msg: format!("{:?}", e),
+                }
             })?;
+        } else {
+            resp = client
+                .post("https://api.qryddemo.itp3.uni-stuttgart.de/v2_0/jobs")
+                .header("X-API-KEY", self.access_token.clone())
+                .json(&data)
+                .send()
+                .map_err(|e| RoqoqoBackendError::NetworkError {
+                    msg: format!("{:?}", e),
+                })?;
+        }
+
         let status_code = resp.status();
         if status_code != reqwest::StatusCode::CREATED {
             if status_code == reqwest::StatusCode::UNPROCESSABLE_ENTITY {
@@ -300,12 +325,21 @@ impl APIBackend {
         job_location: String,
     ) -> Result<QRydJobStatus, RoqoqoBackendError> {
         // Prepare WebAPI client
-        let client = reqwest::blocking::Client::builder()
-            .https_only(true)
-            .build()
-            .map_err(|x| RoqoqoBackendError::NetworkError {
-                msg: format!("could not create https client {:?}", x),
+        let client: Client;
+        if let Some(_) = &self.mock_port {
+            client = reqwest::blocking::Client::builder().build().map_err(|x| {
+                RoqoqoBackendError::NetworkError {
+                    msg: format!("could not create test client {:?}", x),
+                }
             })?;
+        } else {
+            client = reqwest::blocking::Client::builder()
+                .https_only(true)
+                .build()
+                .map_err(|x| RoqoqoBackendError::NetworkError {
+                    msg: format!("could not create https client {:?}", x),
+                })?;
+        }
 
         let url_string: String = job_location + "/status";
 
@@ -364,12 +398,21 @@ impl APIBackend {
         job_location: String,
     ) -> Result<QRydJobResult, RoqoqoBackendError> {
         // Prepare WebAPI client
-        let client = reqwest::blocking::Client::builder()
-            .https_only(true)
-            .build()
-            .map_err(|x| RoqoqoBackendError::NetworkError {
-                msg: format!("could not create https client {:?}", x),
+        let client: Client;
+        if let Some(_) = &self.mock_port {
+            client = reqwest::blocking::Client::builder().build().map_err(|x| {
+                RoqoqoBackendError::NetworkError {
+                    msg: format!("could not create test client {:?}", x),
+                }
             })?;
+        } else {
+            client = reqwest::blocking::Client::builder()
+                .https_only(true)
+                .build()
+                .map_err(|x| RoqoqoBackendError::NetworkError {
+                    msg: format!("could not create https client {:?}", x),
+                })?;
+        }
 
         // construct URL with {job_id} not required?
         let url_string: String = job_location + "/result";
@@ -425,12 +468,21 @@ impl APIBackend {
     ///
     pub fn delete_job(&self, job_location: String) -> Result<(), RoqoqoBackendError> {
         // Prepare WebAPI client
-        let client = reqwest::blocking::Client::builder()
-            .https_only(true)
-            .build()
-            .map_err(|x| RoqoqoBackendError::NetworkError {
-                msg: format!("could not create https client {:?}", x),
+        let client: Client;
+        if let Some(_) = &self.mock_port {
+            client = reqwest::blocking::Client::builder().build().map_err(|x| {
+                RoqoqoBackendError::NetworkError {
+                    msg: format!("could not create test client {:?}", x),
+                }
             })?;
+        } else {
+            client = reqwest::blocking::Client::builder()
+                .https_only(true)
+                .build()
+                .map_err(|x| RoqoqoBackendError::NetworkError {
+                    msg: format!("could not create https client {:?}", x),
+                })?;
+        }
         // Call WebAPI client
         let resp = client
             .delete(job_location)
@@ -602,10 +654,10 @@ mod test {
     #[test]
     fn debug_and_clone() {
         let device: QRydAPIDevice = QrydEmuSquareDevice::new(None, None).into();
-        let backend = APIBackend::new(device.clone(), Some("".to_string()), Some(2)).unwrap();
+        let backend = APIBackend::new(device.clone(), Some("".to_string()), Some(2), None).unwrap();
         let a = format!("{:?}", backend);
         assert!(a.contains("QrydEmuSquareDevice"));
-        let backend2 = APIBackend::new(device, Some("a".to_string()), Some(2)).unwrap();
+        let backend2 = APIBackend::new(device, Some("a".to_string()), Some(2), None).unwrap();
         assert_eq!(backend.clone(), backend);
         assert_ne!(backend, backend2);
     }
@@ -664,6 +716,9 @@ mod test {
             status: "in progress".to_string(),
             msg: "the job is still in progress".to_string(),
         };
-        assert_eq!(format!("{:?}", status), "QRydJobStatus { status: \"in progress\", msg: \"the job is still in progress\" }");
+        assert_eq!(
+            format!("{:?}", status),
+            "QRydJobStatus { status: \"in progress\", msg: \"the job is still in progress\" }"
+        );
     }
 }

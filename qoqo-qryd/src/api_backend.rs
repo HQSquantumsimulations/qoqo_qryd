@@ -74,7 +74,7 @@ impl APIBackendWrapper {
             PyTypeError::new_err(format!("Device Parameter is not QRydAPIDevice {:?}", err))
         })?;
         Ok(Self {
-            internal: APIBackend::new(device, access_token, timeout).map_err(|err| {
+            internal: APIBackend::new(device, access_token, timeout, None).map_err(|err| {
                 PyRuntimeError::new_err(format!("No access token found {:?}", err))
             })?,
         })
@@ -479,11 +479,11 @@ mod test {
     #[test]
     fn debug_and_clone() {
         let device: QRydAPIDevice = QrydEmuSquareDevice::new(None, None).into();
-        let backend = APIBackend::new(device.clone(), Some("".to_string()), Some(2)).unwrap();
+        let backend = APIBackend::new(device.clone(), Some("".to_string()), Some(2), None).unwrap();
         let wrapper = APIBackendWrapper { internal: backend };
         let a = format!("{:?}", wrapper);
         assert!(a.contains("QrydEmuSquareDevice"));
-        let backend2 = APIBackend::new(device, Some("a".to_string()), Some(2)).unwrap();
+        let backend2 = APIBackend::new(device, Some("a".to_string()), Some(2), None).unwrap();
         let wrapper2 = APIBackendWrapper { internal: backend2 };
         assert_eq!(wrapper.clone(), wrapper);
         assert_ne!(wrapper, wrapper2);

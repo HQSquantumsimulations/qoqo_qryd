@@ -40,6 +40,7 @@ itertools = "0.10.3"
 test-case = "2.0.2"
 serde_test = {version="1.0"}
 roqoqo-test = {version="1.1.0-alpha.2"}
+httpmock = "0.6"
 
 [features]
 default = ["serialize", "simulator"]
