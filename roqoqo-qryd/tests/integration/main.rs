@@ -25,7 +25,9 @@ mod simulator_backend;
 pub use simulator_backend::*;
 
 #[cfg(test)]
+#[cfg(feature="web-api")]
 mod api_backend;
+#[cfg(feature="web-api")]
 pub use api_backend::*;
 
 mod api_devices;

@@ -19,7 +19,9 @@ mod api_devices;
 pub use api_devices::*;
 
 #[cfg(test)]
+#[cfg(feature="web-api")]
 mod api_backend;
+#[cfg(feature="web-api")]
 pub use api_backend::*;
 
 #[cfg(test)]
