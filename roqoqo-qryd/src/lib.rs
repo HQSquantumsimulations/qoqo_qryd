@@ -61,7 +61,7 @@ mod simulator_backend;
 pub use simulator_backend::*;
 
 /// WebAPI backend for the QRyd quantum computer(s)
-#[cfg(feature="web-api")]
+#[cfg(feature = "web-api")]
 pub mod api_backend;
-#[cfg(feature="web-api")]
+#[cfg(feature = "web-api")]
 pub use api_backend::*;

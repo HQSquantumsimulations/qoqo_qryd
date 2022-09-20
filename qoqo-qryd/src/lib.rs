@@ -59,9 +59,9 @@ pub use simulator_backend::SimulatorBackendWrapper;
 ///
 /// The WebAPI Backend implements methods available in the QRyd Web API.
 ///
-#[cfg(feature="web-api")]
+#[cfg(feature = "web-api")]
 pub mod api_backend;
-#[cfg(feature="web-api")]
+#[cfg(feature = "web-api")]
 pub use api_backend::APIBackendWrapper;
 
 /// Collection of all QRyd devices for WebAPI.
@@ -88,7 +88,7 @@ pub use api_devices::*;
 fn qoqo_qryd(_py: Python, module: &PyModule) -> PyResult<()> {
     #[cfg(feature = "simulator")]
     module.add_class::<SimulatorBackendWrapper>()?;
-    #[cfg(feature="web-api")]
+    #[cfg(feature = "web-api")]
     module.add_class::<APIBackendWrapper>()?;
     let wrapper = wrap_pymodule!(qryd_devices::qryd_devices);
     module.add_wrapped(wrapper)?;
