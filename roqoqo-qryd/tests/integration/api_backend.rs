@@ -233,9 +233,9 @@ fn api_delete() {
     }
 }
 
-// Test error cases. Case 2: invalid API TOKEN
+// Test error cases. Case 3: invalid API TOKEN
 #[test]
-fn api_backend_errorcase2() {
+fn api_backend_errorcase3() {
     let number_qubits = 6;
     let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
@@ -281,9 +281,9 @@ fn api_backend_errorcase2() {
     assert!(job_delete.is_err());
 }
 
-// Test error cases. Case 3: invalid job_id
+// Test error cases. Case 4: invalid job_id
 #[test]
-fn api_backend_errorcase3() {
+fn api_backend_errorcase4() {
     let server = MockServer::start();
     let mock = server.mock(|when, then| {
         when.method("GET");
@@ -306,9 +306,9 @@ fn api_backend_errorcase3() {
     mock.assert()
 }
 
-// Test error cases. Case 4: invalid QuantumProgram
+// Test error cases. Case 5: invalid QuantumProgram
 #[test]
-fn api_backend_errorcase4() {
+fn api_backend_errorcase5() {
     let server = MockServer::start();
     let mock = server.mock(|when, then| {
         when.method("POST");
