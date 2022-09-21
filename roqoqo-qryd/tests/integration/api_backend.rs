@@ -297,10 +297,7 @@ fn api_backend_errorcase3() {
 #[test]
 fn api_backend_errorcase4() {
     let server = MockServer::start();
-    let mock = server.mock(|when, then| {
-        when.method("GET");
-        then.status(404);
-    });
+    
     let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
     let api_backend_new =
@@ -314,18 +311,13 @@ fn api_backend_errorcase4() {
 
     let job_delete = api_backend_new.delete_job(job_loc);
     assert!(job_delete.is_err());
-
-    mock.assert()
 }
 
 /// Test error cases. Case 5: invalid QuantumProgram
 #[test]
 fn api_backend_errorcase5() {
     let server = MockServer::start();
-    let mock = server.mock(|when, then| {
-        when.method("POST");
-        then.status(404);
-    });
+    
     let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
     let api_backend_new =
@@ -387,8 +379,6 @@ fn api_backend_errorcase5() {
                 .to_string()
         }
     );
-
-    mock.assert();
 }
 
 /// Test error cases. Case 6: missing Location header
