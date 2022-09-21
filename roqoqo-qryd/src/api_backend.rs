@@ -68,13 +68,13 @@ struct QRydRunData {
 }
 
 /// Local struct representing the body of a validation error message
-#[derive(Debug, serde::Deserialize)]
+#[derive(Debug, serde::Serialize, serde::Deserialize)]
 struct ValidationError {
     detail: ValidationErrorDetail,
 }
 
 /// Local struct representing the body of a validation error message
-#[derive(Debug, serde::Deserialize)]
+#[derive(Debug, serde::Serialize, serde::Deserialize)]
 struct ValidationErrorDetail {
     #[serde(default)]
     loc: Vec<String>,
@@ -658,7 +658,9 @@ impl EvaluatingBackend for APIBackend {
 mod test {
     use super::*;
     use crate::api_devices::QrydEmuSquareDevice;
+    use httpmock::MockServer;
     use roqoqo::measurements::{PauliZProduct, PauliZProductInput};
+    use roqoqo::operations;
     use roqoqo::{Circuit, QuantumProgram};
 
     /// Test Debug, Clone and PartialEq of ApiBackend
@@ -731,5 +733,46 @@ mod test {
             format!("{:?}", status),
             "QRydJobStatus { status: \"in progress\", msg: \"the job is still in progress\" }"
         );
+    }
+
+    // Test error cases. Case 1: constant_circuit != None
+    #[test]
+    fn api_backend_errorcase1() {
+        let detail = ValidationErrorDetail {
+            loc: vec!["DummyLoc".to_string()],
+            msg: "DummyMsg".to_string(),
+            internal_type: "DummyType".to_string(),
+        };
+        let error = ValidationError { detail };
+        let server = MockServer::start();
+        let mock = server.mock(|when, then| {
+            when.method("POST");
+            then.status(422).json_body_obj(&error);
+        });
+        let number_qubits = 6;
+        let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
+        let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
+        let api_backend_new =
+            APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
+        let qubit_mapping: HashMap<usize, usize> =
+            (0..number_qubits).into_iter().map(|x| (x, x)).collect();
+        let mut circuit = Circuit::new();
+        circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
+        circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
+        circuit += operations::RotateX::new(4, std::f64::consts::FRAC_PI_2.into());
+        circuit +=
+            operations::PragmaRepeatedMeasurement::new("ro".to_string(), 40, Some(qubit_mapping));
+        let measurement = ClassicalRegister {
+            constant_circuit: Some(circuit.clone()),
+            circuits: vec![circuit.clone()],
+        };
+        let program = QuantumProgram::ClassicalRegister {
+            measurement,
+            input_parameter_names: vec![],
+        };
+        let job_loc = api_backend_new.post_job(program);
+
+        mock.assert();
+        assert!(job_loc.is_err());
     }
 }

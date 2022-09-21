@@ -233,43 +233,22 @@ fn api_delete() {
     }
 }
 
-// Test error cases. Case 1: constant_circuit != None
-#[test]
-fn api_backend_errorcase1() {
-    if env::var("QRYD_API_TOKEN").is_ok() {
-        let number_qubits = 6;
-        let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
-        let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-        let api_backend_new = APIBackend::new(qryd_device, None, None, None).unwrap();
-        // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
-        let qubit_mapping: HashMap<usize, usize> =
-            (0..number_qubits).into_iter().map(|x| (x, x)).collect();
-        let mut circuit = Circuit::new();
-        circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
-        circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
-        circuit += operations::RotateX::new(4, std::f64::consts::FRAC_PI_2.into());
-        circuit +=
-            operations::PragmaRepeatedMeasurement::new("ro".to_string(), 40, Some(qubit_mapping));
-        let measurement = ClassicalRegister {
-            constant_circuit: Some(circuit.clone()),
-            circuits: vec![circuit.clone()],
-        };
-        let program = QuantumProgram::ClassicalRegister {
-            measurement,
-            input_parameter_names: vec![],
-        };
-        let job_loc = api_backend_new.post_job(program);
-
-        assert!(job_loc.is_err());
-    }
-}
-
 // Test error cases. Case 2: invalid API TOKEN
 #[test]
 fn api_backend_errorcase2() {
     let number_qubits = 6;
     let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
+
+    let api_backend_err = APIBackend::new(qryd_device.clone(), None, None, None);
+    assert!(api_backend_err.is_err());
+    assert_eq!(
+        api_backend_err.unwrap_err(),
+        RoqoqoBackendError::MissingAuthentification {
+            msg: "QRYD access token is missing".to_string()
+        }
+    );
+
     let api_backend_new =
         APIBackend::new(qryd_device, Some("DummyString".to_string()), None, None).unwrap();
     let qubit_mapping: HashMap<usize, usize> =
@@ -305,32 +284,8 @@ fn api_backend_errorcase2() {
 // Test error cases. Case 3: invalid job_id
 #[test]
 fn api_backend_errorcase3() {
-    if env::var("QRYD_API_TOKEN").is_ok() {
-        let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
-        let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-        let api_backend_new = APIBackend::new(qryd_device, None, None, None).unwrap();
-        // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
-        let job_loc: String = "DummyString".to_string();
-        let job_status = api_backend_new.get_job_status(job_loc.clone());
-        assert!(job_status.is_err());
-
-        let job_result = api_backend_new.get_job_result(job_loc.clone());
-        assert!(job_result.is_err());
-
-        let job_delete = api_backend_new.delete_job(job_loc);
-        assert!(job_delete.is_err());
-    }
-}
-
-// Test error cases. Case 4: invalid QuantumProgram
-#[test]
-fn api_backend_errorcase4() {
     let server = MockServer::start();
-    server.mock(|when, then| {
-        when.method("POST");
-        then.status(404);
-    });
-    server.mock(|when, then| {
+    let mock = server.mock(|when, then| {
         when.method("GET");
         then.status(404);
     });
@@ -338,7 +293,31 @@ fn api_backend_errorcase4() {
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
     let api_backend_new =
         APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
-    // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
+    let job_loc: String = "DummyString".to_string();
+    let job_status = api_backend_new.get_job_status(job_loc.clone());
+    assert!(job_status.is_err());
+
+    let job_result = api_backend_new.get_job_result(job_loc.clone());
+    assert!(job_result.is_err());
+
+    let job_delete = api_backend_new.delete_job(job_loc);
+    assert!(job_delete.is_err());
+
+    mock.assert()
+}
+
+// Test error cases. Case 4: invalid QuantumProgram
+#[test]
+fn api_backend_errorcase4() {
+    let server = MockServer::start();
+    let mock = server.mock(|when, then| {
+        when.method("POST");
+        then.status(404);
+    });
+    let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
+    let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
+    let api_backend_new =
+        APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
     let measurement = ClassicalRegister {
         constant_circuit: None,
         circuits: vec![],
@@ -396,6 +375,8 @@ fn api_backend_errorcase4() {
                 .to_string()
         }
     );
+
+    mock.assert();
 }
 
 #[test]
