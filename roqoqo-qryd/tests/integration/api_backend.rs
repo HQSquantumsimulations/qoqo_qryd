@@ -196,44 +196,56 @@ fn evaluating_backend() {
     }
 }
 
+/// Test api_delete successful functionality
 #[test]
 fn api_delete() {
-    if env::var("QRYD_API_TOKEN").is_ok() {
-        let device = QrydEmuSquareDevice::new(Some(1), Some(0.23));
-        let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-        let api_backend_new = APIBackend::new(qryd_device, None, None, None).unwrap();
-        // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
-        let qubit_mapping: HashMap<usize, usize> = (0..6).into_iter().map(|x| (x, x)).collect();
-        let mut circuit = Circuit::new();
-        circuit += operations::DefinitionBit::new("ro".to_string(), 6, true);
-        circuit += operations::RotateX::new(0, std::f64::consts::FRAC_PI_2.into());
-        circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
-        circuit += operations::RotateX::new(4, std::f64::consts::FRAC_PI_2.into());
-        circuit +=
-            operations::PragmaRepeatedMeasurement::new("ro".to_string(), 100, Some(qubit_mapping)); // assert!(api_backend_new.is_ok());
-        let measurement = ClassicalRegister {
-            constant_circuit: None,
-            circuits: vec![circuit.clone()],
-        };
-        let program = QuantumProgram::ClassicalRegister {
-            measurement,
-            input_parameter_names: vec![],
-        };
-        let job_loc = api_backend_new
-            .post_job(
-                // "qryd_emu_localcomp_square".to_string(),
-                // Some(0),
-                // Some(0.23),
-                program,
-            )
-            .unwrap();
-        println!("Job location {}", job_loc);
-        let delete_job = api_backend_new.delete_job(job_loc);
-        assert!(delete_job.is_ok());
-    }
+    let server = MockServer::start();
+    let mock_post = server.mock(|when, then| {
+        when.method("POST");
+        then.status(201)
+            .header("Location", format!("http://127.0.0.1:{}/DummyLocation", server.port()));
+    });
+    let mock_delete = server.mock(|when, then| {
+        when.method("DELETE");
+        then.status(200);
+    });
+    let device = QrydEmuSquareDevice::new(Some(1), Some(0.23));
+    let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
+    let api_backend_new = APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
+    // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
+    let qubit_mapping: HashMap<usize, usize> = (0..6).into_iter().map(|x| (x, x)).collect();
+    let mut circuit = Circuit::new();
+    circuit += operations::DefinitionBit::new("ro".to_string(), 6, true);
+    circuit += operations::RotateX::new(0, std::f64::consts::FRAC_PI_2.into());
+    circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
+    circuit += operations::RotateX::new(4, std::f64::consts::FRAC_PI_2.into());
+    circuit +=
+        operations::PragmaRepeatedMeasurement::new("ro".to_string(), 100, Some(qubit_mapping)); // assert!(api_backend_new.is_ok());
+    let measurement = ClassicalRegister {
+        constant_circuit: None,
+        circuits: vec![circuit.clone()],
+    };
+    let program = QuantumProgram::ClassicalRegister {
+        measurement,
+        input_parameter_names: vec![],
+    };
+    let job_loc = api_backend_new
+        .post_job(
+            // "qryd_emu_localcomp_square".to_string(),
+            // Some(0),
+            // Some(0.23),
+            program,
+        )
+        .unwrap();
+
+    let delete_job = api_backend_new.delete_job(job_loc);
+    assert!(delete_job.is_ok());
+
+    mock_post.assert();
+    mock_delete.assert();
 }
 
-// Test error cases. Case 3: invalid API TOKEN
+/// Test error cases. Case 3: invalid API TOKEN
 #[test]
 fn api_backend_errorcase3() {
     let number_qubits = 6;
@@ -281,7 +293,7 @@ fn api_backend_errorcase3() {
     assert!(job_delete.is_err());
 }
 
-// Test error cases. Case 4: invalid job_id
+/// Test error cases. Case 4: invalid job_id
 #[test]
 fn api_backend_errorcase4() {
     let server = MockServer::start();
@@ -306,7 +318,7 @@ fn api_backend_errorcase4() {
     mock.assert()
 }
 
-// Test error cases. Case 5: invalid QuantumProgram
+/// Test error cases. Case 5: invalid QuantumProgram
 #[test]
 fn api_backend_errorcase5() {
     let server = MockServer::start();
@@ -377,6 +389,53 @@ fn api_backend_errorcase5() {
     );
 
     mock.assert();
+}
+
+/// Test error cases. Case 6: missing Location header
+#[test]
+fn api_backend_errorcase6() {
+    let server = MockServer::start();
+    let mock = server.mock(|when, then| {
+        when.method("POST");
+        then.status(201);
+    });
+    let device = QrydEmuSquareDevice::new(Some(1), Some(0.23));
+    let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
+    let api_backend_new = APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
+    // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
+    let qubit_mapping: HashMap<usize, usize> = (0..6).into_iter().map(|x| (x, x)).collect();
+    let mut circuit = Circuit::new();
+    circuit += operations::DefinitionBit::new("ro".to_string(), 6, true);
+    circuit += operations::RotateX::new(0, std::f64::consts::FRAC_PI_2.into());
+    circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
+    circuit += operations::RotateX::new(4, std::f64::consts::FRAC_PI_2.into());
+    circuit +=
+        operations::PragmaRepeatedMeasurement::new("ro".to_string(), 100, Some(qubit_mapping)); // assert!(api_backend_new.is_ok());
+    let measurement = ClassicalRegister {
+        constant_circuit: None,
+        circuits: vec![circuit.clone()],
+    };
+    let program = QuantumProgram::ClassicalRegister {
+        measurement,
+        input_parameter_names: vec![],
+    };
+    let job_loc = api_backend_new
+        .post_job(
+            // "qryd_emu_localcomp_square".to_string(),
+            // Some(0),
+            // Some(0.23),
+            program,
+        );
+    
+    assert!(job_loc.is_err());
+    assert_eq!(
+        job_loc.unwrap_err(),
+        RoqoqoBackendError::NetworkError {
+            msg: "Server response missing the Location header"
+                .to_string()
+        }
+    );
+    mock.assert()
 }
 
 #[test]
