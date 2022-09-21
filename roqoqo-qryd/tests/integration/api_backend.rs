@@ -200,23 +200,11 @@ fn api_triangular() {
         .unwrap();
     assert!(!job_loc.is_empty());
 
-    let fifteen = time::Duration::from_millis(200);
+    let job_status = api_backend_new.get_job_status(job_loc.clone()).unwrap();
+    let job_result = api_backend_new.get_job_result(job_loc.clone()).unwrap();
 
-    let mut test_counter = 0;
-    let mut status = "".to_string();
-    let mut job_result = QRydJobResult::default();
-    while test_counter < 20 && status != "completed" {
-        test_counter += 1;
-        let job_status = api_backend_new.get_job_status(job_loc.clone()).unwrap();
-        status = job_status.status.clone();
-        thread::sleep(fifteen);
-        assert!(!job_status.status.clone().is_empty());
+    assert_eq!(job_status.status, "completed");
 
-        if status == *"completed" {
-            assert_eq!(job_status.status, "completed");
-            job_result = api_backend_new.get_job_result(job_loc.clone()).unwrap();
-        }
-    }
     let (bits, _, _) =
         APIBackend::counts_to_result(job_result.data, "ro".to_string(), number_qubits).unwrap();
     assert!(!bits.is_empty());
