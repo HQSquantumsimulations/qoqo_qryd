@@ -385,7 +385,7 @@ fn api_backend_errorcase5() {
 #[test]
 fn api_backend_errorcase6() {
     let server = MockServer::start();
-    let mock = server.mock(|when, then| {
+    let mut mock = server.mock(|when, then| {
         when.method("POST");
         then.status(201);
     });
@@ -414,7 +414,7 @@ fn api_backend_errorcase6() {
             // "qryd_emu_localcomp_square".to_string(),
             // Some(0),
             // Some(0.23),
-            program,
+            program.clone(),
         );
     
     assert!(job_loc.is_err());
@@ -425,7 +425,26 @@ fn api_backend_errorcase6() {
                 .to_string()
         }
     );
-    mock.assert()
+    mock.assert();
+
+    mock.delete();
+    let mock = server.mock(|when, then| {
+        when.method("POST");
+        then.status(201)
+            .header("Location", "\n");
+    });
+
+    let job_loc = api_backend_new
+        .post_job(
+            // "qryd_emu_localcomp_square".to_string(),
+            // Some(0),
+            // Some(0.23),
+            program,
+        );
+    
+    assert!(job_loc.is_err());
+    assert!(matches!(job_loc.unwrap_err(), RoqoqoBackendError::NetworkError { .. }));
+    mock.assert();
 }
 
 #[test]
