@@ -86,7 +86,7 @@ struct ValidationErrorDetail {
 }
 
 /// Struct to represent QRyd response when calling for the Job status.
-#[derive(serde::Deserialize, Debug, Default)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Default)]
 pub struct QRydJobStatus {
     /// status of the job, e.g. "pending"
     #[serde(default)] // for optional fields
@@ -97,7 +97,7 @@ pub struct QRydJobStatus {
 }
 
 /// Struct to represent QRyd response on the result for the posted Job.
-#[derive(serde::Deserialize, Debug, Clone, Default)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, Default)]
 pub struct QRydJobResult {
     /// The actual measured data
     #[serde(default)]
@@ -152,7 +152,7 @@ pub struct QRydJobResult {
 /// qubit 0 was measured in state |1> while the same measurement gave |0> for
 /// qubits 1 and 2 and 20 times qubit 2 was measured in state |1>
 /// with qubits 1 and 0 in state |0>
-#[derive(serde::Deserialize, Debug, Default, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Default, Clone)]
 pub struct ResultCounts {
     /// The dictionary of counts for each measured string
     pub counts: HashMap<String, u64>,

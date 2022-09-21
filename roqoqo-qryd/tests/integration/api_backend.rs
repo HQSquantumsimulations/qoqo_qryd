@@ -19,8 +19,7 @@ use roqoqo::Circuit;
 use roqoqo::QuantumProgram;
 use roqoqo::RoqoqoBackendError;
 use roqoqo_qryd::api_devices::{QRydAPIDevice, QrydEmuSquareDevice, QrydEmuTriangularDevice};
-use roqoqo_qryd::APIBackend;
-use roqoqo_qryd::QRydJobResult;
+use roqoqo_qryd::{APIBackend, QRydJobResult, QRydJobStatus, ResultCounts};
 
 use qoqo_calculator::CalculatorFloat;
 
@@ -31,128 +30,203 @@ use std::{env, thread, time};
 // Test the new function
 #[test]
 fn api_backend() {
-    if env::var("QRYD_API_TOKEN").is_ok() {
-        let number_qubits = 6;
-        let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
-        let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-        let api_backend_new = APIBackend::new(qryd_device, None, None, None).unwrap();
-        // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
-        let qubit_mapping: HashMap<usize, usize> =
-            (0..number_qubits).into_iter().map(|x| (x, x)).collect();
-        let mut circuit = Circuit::new();
-        circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
-        circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
-        circuit += operations::RotateX::new(4, std::f64::consts::FRAC_PI_2.into());
-        // circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
-        circuit +=
-            operations::PragmaRepeatedMeasurement::new("ro".to_string(), 40, Some(qubit_mapping)); // assert!(api_backend_new.is_ok());
-        let measurement = ClassicalRegister {
-            constant_circuit: None,
-            circuits: vec![circuit.clone()],
-        };
-        let program = QuantumProgram::ClassicalRegister {
-            measurement,
-            input_parameter_names: vec![],
-        };
-        let job_loc = api_backend_new
-            .post_job(
-                // "qryd_emu_localcomp_square".to_string(),
-                // Some(0),
-                // Some(0.23),
-                program,
-            )
-            .unwrap();
-        println!("Job location {}", job_loc);
+    let server = MockServer::start();
+    let qryd_job_status_completed = QRydJobStatus {
+        status: "completed".to_string(),
+        msg: "the job has been completed".to_string(),
+    };
+    let result_counts = ResultCounts {
+        counts: HashMap::from([("0x1".to_string(), 100), ("0x4".to_string(), 20)]),
+    };
+    let qryd_job_result_completed = QRydJobResult {
+        data: result_counts,
+        time_taken: 0.23,
+        noise: "noise".to_string(),
+        method: "method".to_string(),
+        device: "QrydEmuSquareDevice".to_string(),
+        num_qubits: 4,
+        num_clbits: 4,
+        fusion_max_qubits: 4,
+        fusion_avg_qubits: 4.0,
+        fusion_generated_gates: 100,
+        executed_single_qubit_gates: 50,
+        executed_two_qubit_gates: 50,
+    };
+    let mock_post = server.mock(|when, then| {
+        when.method("POST");
+        then.status(201).header(
+            "Location",
+            format!("http://127.0.0.1:{}/DummyLocation", server.port()),
+        );
+    });
+    let mock_status = server.mock(|when, then| {
+        when.method("GET").path("/DummyLocation/status");
+        then.status(200).json_body_obj(&qryd_job_status_completed);
+    });
+    let mock_result = server.mock(|when, then| {
+        when.method("GET").path("/DummyLocation/result");
+        then.status(200).json_body_obj(&qryd_job_result_completed);
+    });
 
-        let fifteen = time::Duration::from_secs(1);
+    let number_qubits = 6;
+    let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
+    let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
+    let api_backend_new =
+        APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
+    let qubit_mapping: HashMap<usize, usize> =
+        (0..number_qubits).into_iter().map(|x| (x, x)).collect();
+    let mut circuit = Circuit::new();
+    circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
+    circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
+    circuit += operations::RotateX::new(4, std::f64::consts::FRAC_PI_2.into());
+    // circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
+    circuit +=
+        operations::PragmaRepeatedMeasurement::new("ro".to_string(), 40, Some(qubit_mapping)); // assert!(api_backend_new.is_ok());
+    let measurement = ClassicalRegister {
+        constant_circuit: None,
+        circuits: vec![circuit.clone()],
+    };
+    let program = QuantumProgram::ClassicalRegister {
+        measurement,
+        input_parameter_names: vec![],
+    };
+    let job_loc = api_backend_new
+        .post_job(
+            // "qryd_emu_localcomp_square".to_string(),
+            // Some(0),
+            // Some(0.23),
+            program,
+        )
+        .unwrap();
 
-        let mut test_counter = 0;
-        let mut status = "".to_string();
-        let mut job_result = QRydJobResult::default();
-        while test_counter < 20 && status != "completed" {
-            test_counter += 1;
-            let job_status = api_backend_new.get_job_status(job_loc.clone()).unwrap();
-            status = job_status.status.clone();
-            thread::sleep(fifteen);
+    let fifteen = time::Duration::from_millis(200);
 
-            println!("Job status {:?}", job_status);
-            if status == *"completed" {
-                assert_eq!(job_status.status, "completed");
-                job_result = api_backend_new.get_job_result(job_loc.clone()).unwrap();
-                println!("Job result {:?}", job_result.clone());
-            }
-        }
-        let (bits, _, _) =
-            APIBackend::counts_to_result(job_result.data, "ro".to_string(), number_qubits).unwrap();
-        assert!(!bits.is_empty());
-        for line in bits["ro"].iter() {
-            println!("{:?}", line);
+    let mut test_counter = 0;
+    let mut status = "".to_string();
+    let mut job_result = QRydJobResult::default();
+    while test_counter < 20 && status != "completed" {
+        test_counter += 1;
+        let job_status = api_backend_new.get_job_status(job_loc.clone()).unwrap();
+        status = job_status.status.clone();
+        thread::sleep(fifteen);
+
+        if status == *"completed" {
+            assert_eq!(job_status.status, "completed");
+            job_result = api_backend_new.get_job_result(job_loc.clone()).unwrap();
         }
     }
+    let (bits, _, _) =
+        APIBackend::counts_to_result(job_result.data, "ro".to_string(), number_qubits).unwrap();
+    assert!(!bits.is_empty());
+    // for line in bits["ro"].iter() {
+    //     println!("{:?}", line);
+    // }
+
+    mock_post.assert();
+    mock_status.assert();
+    mock_result.assert();
 }
 
 #[test]
 fn api_triangular() {
-    if env::var("QRYD_API_TOKEN").is_ok() {
-        let number_qubits = 6;
-        let device = QrydEmuTriangularDevice::new(Some(2), Some(0.23));
-        let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-        let api_backend_new = APIBackend::new(qryd_device, None, None, None).unwrap();
-        // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
-        let qubit_mapping: HashMap<usize, usize> =
-            (0..number_qubits).into_iter().map(|x| (x, x)).collect();
-        let mut circuit = Circuit::new();
-        circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
-        circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
-        circuit += operations::RotateX::new(4, std::f64::consts::FRAC_PI_2.into());
-        // circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
-        circuit +=
-            operations::PragmaRepeatedMeasurement::new("ro".to_string(), 40, Some(qubit_mapping)); // assert!(api_backend_new.is_ok());
-        let measurement = ClassicalRegister {
-            constant_circuit: None,
-            circuits: vec![circuit.clone()],
-        };
-        let program = QuantumProgram::ClassicalRegister {
-            measurement,
-            input_parameter_names: vec![],
-        };
-        let job_loc = api_backend_new
-            .post_job(
-                // "qryd_emu_localcomp_square".to_string(),
-                // Some(0),
-                // Some(0.23),
-                program,
-            )
-            .unwrap();
-        println!("Job location {}", job_loc);
-        assert!(!job_loc.is_empty());
+    let server = MockServer::start();
+    let qryd_job_status_completed = QRydJobStatus {
+        status: "completed".to_string(),
+        msg: "the job has been completed".to_string(),
+    };
+    let result_counts = ResultCounts {
+        counts: HashMap::from([("0x1".to_string(), 100), ("0x4".to_string(), 20)]),
+    };
+    let qryd_job_result_completed = QRydJobResult {
+        data: result_counts,
+        time_taken: 0.23,
+        noise: "noise".to_string(),
+        method: "method".to_string(),
+        device: "QrydEmuSquareDevice".to_string(),
+        num_qubits: 4,
+        num_clbits: 4,
+        fusion_max_qubits: 4,
+        fusion_avg_qubits: 4.0,
+        fusion_generated_gates: 100,
+        executed_single_qubit_gates: 50,
+        executed_two_qubit_gates: 50,
+    };
+    let mock_post = server.mock(|when, then| {
+        when.method("POST");
+        then.status(201).header(
+            "Location",
+            format!("http://127.0.0.1:{}/DummyLocation", server.port()),
+        );
+    });
+    let mock_status = server.mock(|when, then| {
+        when.method("GET").path("/DummyLocation/status");
+        then.status(200).json_body_obj(&qryd_job_status_completed);
+    });
+    let mock_result = server.mock(|when, then| {
+        when.method("GET").path("/DummyLocation/result");
+        then.status(200).json_body_obj(&qryd_job_result_completed);
+    });
 
-        let fifteen = time::Duration::from_secs(1);
+    let number_qubits = 6;
+    let device = QrydEmuTriangularDevice::new(Some(2), Some(0.23));
+    let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
+    let api_backend_new =
+        APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
+    // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
+    let qubit_mapping: HashMap<usize, usize> =
+        (0..number_qubits).into_iter().map(|x| (x, x)).collect();
+    let mut circuit = Circuit::new();
+    circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
+    circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
+    circuit += operations::RotateX::new(4, std::f64::consts::FRAC_PI_2.into());
+    // circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
+    circuit +=
+        operations::PragmaRepeatedMeasurement::new("ro".to_string(), 40, Some(qubit_mapping)); // assert!(api_backend_new.is_ok());
+    let measurement = ClassicalRegister {
+        constant_circuit: None,
+        circuits: vec![circuit.clone()],
+    };
+    let program = QuantumProgram::ClassicalRegister {
+        measurement,
+        input_parameter_names: vec![],
+    };
+    let job_loc = api_backend_new
+        .post_job(
+            // "qryd_emu_localcomp_square".to_string(),
+            // Some(0),
+            // Some(0.23),
+            program,
+        )
+        .unwrap();
+    assert!(!job_loc.is_empty());
 
-        let mut test_counter = 0;
-        let mut status = "".to_string();
-        let mut job_result = QRydJobResult::default();
-        while test_counter < 20 && status != "completed" {
-            test_counter += 1;
-            let job_status = api_backend_new.get_job_status(job_loc.clone()).unwrap();
-            status = job_status.status.clone();
-            thread::sleep(fifteen);
-            assert!(!job_status.status.clone().is_empty());
+    let fifteen = time::Duration::from_millis(200);
 
-            println!("Job status {:?}", job_status);
-            if status == *"completed" {
-                assert_eq!(job_status.status, "completed");
-                job_result = api_backend_new.get_job_result(job_loc.clone()).unwrap();
-                println!("Job result {:?}", job_result.clone());
-            }
-        }
-        let (bits, _, _) =
-            APIBackend::counts_to_result(job_result.data, "ro".to_string(), number_qubits).unwrap();
-        assert!(!bits.is_empty());
-        for line in bits["ro"].iter() {
-            println!("{:?}", line);
+    let mut test_counter = 0;
+    let mut status = "".to_string();
+    let mut job_result = QRydJobResult::default();
+    while test_counter < 20 && status != "completed" {
+        test_counter += 1;
+        let job_status = api_backend_new.get_job_status(job_loc.clone()).unwrap();
+        status = job_status.status.clone();
+        thread::sleep(fifteen);
+        assert!(!job_status.status.clone().is_empty());
+
+        if status == *"completed" {
+            assert_eq!(job_status.status, "completed");
+            job_result = api_backend_new.get_job_result(job_loc.clone()).unwrap();
         }
     }
+    let (bits, _, _) =
+        APIBackend::counts_to_result(job_result.data, "ro".to_string(), number_qubits).unwrap();
+    assert!(!bits.is_empty());
+    // for line in bits["ro"].iter() {
+    //     println!("{:?}", line);
+    // }
+
+    mock_post.assert();
+    mock_status.assert();
+    mock_result.assert();
 }
 
 #[test]
@@ -202,8 +276,10 @@ fn api_delete() {
     let server = MockServer::start();
     let mock_post = server.mock(|when, then| {
         when.method("POST");
-        then.status(201)
-            .header("Location", format!("http://127.0.0.1:{}/DummyLocation", server.port()));
+        then.status(201).header(
+            "Location",
+            format!("http://127.0.0.1:{}/DummyLocation", server.port()),
+        );
     });
     let mock_delete = server.mock(|when, then| {
         when.method("DELETE");
@@ -211,7 +287,8 @@ fn api_delete() {
     });
     let device = QrydEmuSquareDevice::new(Some(1), Some(0.23));
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-    let api_backend_new = APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
+    let api_backend_new =
+        APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
     // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
     let qubit_mapping: HashMap<usize, usize> = (0..6).into_iter().map(|x| (x, x)).collect();
     let mut circuit = Circuit::new();
@@ -297,7 +374,7 @@ fn api_backend_errorcase3() {
 #[test]
 fn api_backend_errorcase4() {
     let server = MockServer::start();
-    
+
     let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
     let api_backend_new =
@@ -317,7 +394,7 @@ fn api_backend_errorcase4() {
 #[test]
 fn api_backend_errorcase5() {
     let server = MockServer::start();
-    
+
     let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
     let api_backend_new =
@@ -391,7 +468,8 @@ fn api_backend_errorcase6() {
     });
     let device = QrydEmuSquareDevice::new(Some(1), Some(0.23));
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-    let api_backend_new = APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
+    let api_backend_new =
+        APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
     // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
     let qubit_mapping: HashMap<usize, usize> = (0..6).into_iter().map(|x| (x, x)).collect();
     let mut circuit = Circuit::new();
@@ -409,20 +487,18 @@ fn api_backend_errorcase6() {
         measurement,
         input_parameter_names: vec![],
     };
-    let job_loc = api_backend_new
-        .post_job(
-            // "qryd_emu_localcomp_square".to_string(),
-            // Some(0),
-            // Some(0.23),
-            program.clone(),
-        );
-    
+    let job_loc = api_backend_new.post_job(
+        // "qryd_emu_localcomp_square".to_string(),
+        // Some(0),
+        // Some(0.23),
+        program.clone(),
+    );
+
     assert!(job_loc.is_err());
     assert_eq!(
         job_loc.unwrap_err(),
         RoqoqoBackendError::NetworkError {
-            msg: "Server response missing the Location header"
-                .to_string()
+            msg: "Server response missing the Location header".to_string()
         }
     );
     mock.assert();
@@ -430,20 +506,21 @@ fn api_backend_errorcase6() {
     mock.delete();
     let mock = server.mock(|when, then| {
         when.method("POST");
-        then.status(201)
-            .header("Location", "\n");
+        then.status(201).header("Location", "\n");
     });
 
-    let job_loc = api_backend_new
-        .post_job(
-            // "qryd_emu_localcomp_square".to_string(),
-            // Some(0),
-            // Some(0.23),
-            program,
-        );
-    
+    let job_loc = api_backend_new.post_job(
+        // "qryd_emu_localcomp_square".to_string(),
+        // Some(0),
+        // Some(0.23),
+        program,
+    );
+
     assert!(job_loc.is_err());
-    assert!(matches!(job_loc.unwrap_err(), RoqoqoBackendError::NetworkError { .. }));
+    assert!(matches!(
+        job_loc.unwrap_err(),
+        RoqoqoBackendError::NetworkError { .. }
+    ));
     mock.assert();
 }
 
