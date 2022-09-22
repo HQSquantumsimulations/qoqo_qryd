@@ -493,3 +493,83 @@ fn test_twoqubitedges_triangular() {
     assert_eq!(device.two_qubit_edges(), two_qubit_edges);
     assert_eq!(apidevice.two_qubit_edges(), device.two_qubit_edges());
 }
+
+// Test to_generic_device() for square device
+#[test]
+fn test_to_generic_device_square() {
+    let device = QrydEmuSquareDevice::new(Some(0), Some(PI));
+    let apidevice = QRydAPIDevice::from(&device);
+    let genericdevice = apidevice.to_generic_device();
+
+    assert_eq!(apidevice.number_qubits(), genericdevice.number_qubits());
+    assert_eq!(device.number_qubits(), genericdevice.number_qubits());
+    for gate_name in ["PhaseShiftState1", "RotateX", "RotateY", "RotateXY"] {
+        for qubit in 0..genericdevice.number_qubits() {
+            for el in genericdevice.single_qubit_gate_time(gate_name, &qubit) {
+                assert_eq!(
+                    el,
+                    apidevice.single_qubit_gate_time(gate_name, &qubit).unwrap()
+                );
+            }
+        }
+    }
+    for qubit in 0..genericdevice.number_qubits() {
+        assert_eq!(
+            genericdevice.qubit_decoherence_rates(&qubit),
+            apidevice.qubit_decoherence_rates(&qubit)
+        );
+    }
+    for row in 0..genericdevice.number_qubits() {
+        for column in row + 1..genericdevice.number_qubits() {
+            if genericdevice
+                .two_qubit_gate_time("PhaseShiftedControlledZ", &row, &column)
+                .is_some()
+            {
+                assert_eq!(
+                    genericdevice.two_qubit_gate_time("PhaseShiftedControlledZ", &row, &column),
+                    apidevice.two_qubit_gate_time("PhaseShiftedControlledZ", &row, &column)
+                )
+            }
+        }
+    }
+}
+
+// Test to_generic_device() for triangular device
+#[test]
+fn test_to_generic_device_triangular() {
+    let device = QrydEmuTriangularDevice::new(Some(0), Some(PI));
+    let apidevice = QRydAPIDevice::from(&device);
+    let genericdevice = apidevice.to_generic_device();
+
+    assert_eq!(apidevice.number_qubits(), genericdevice.number_qubits());
+    assert_eq!(device.number_qubits(), genericdevice.number_qubits());
+    for gate_name in ["PhaseShiftState1", "RotateX", "RotateY", "RotateXY"] {
+        for qubit in 0..genericdevice.number_qubits() {
+            for el in genericdevice.single_qubit_gate_time(gate_name, &qubit) {
+                assert_eq!(
+                    el,
+                    apidevice.single_qubit_gate_time(gate_name, &qubit).unwrap()
+                );
+            }
+        }
+    }
+    for qubit in 0..genericdevice.number_qubits() {
+        assert_eq!(
+            genericdevice.qubit_decoherence_rates(&qubit),
+            apidevice.qubit_decoherence_rates(&qubit)
+        );
+    }
+    for row in 0..genericdevice.number_qubits() {
+        for column in row + 1..genericdevice.number_qubits() {
+            if genericdevice
+                .two_qubit_gate_time("PhaseShiftedControlledZ", &row, &column)
+                .is_some()
+            {
+                assert_eq!(
+                    genericdevice.two_qubit_gate_time("PhaseShiftedControlledZ", &row, &column),
+                    apidevice.two_qubit_gate_time("PhaseShiftedControlledZ", &row, &column)
+                )
+            }
+        }
+    }
+}
