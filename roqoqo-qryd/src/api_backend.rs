@@ -735,7 +735,7 @@ mod test {
         );
     }
 
-    /// Test error cases. Case 1: constant_circuit != None
+    /// Test error cases. Case 1: UnprocessableEntity
     #[test]
     fn api_backend_errorcase1() {
         let detail = ValidationErrorDetail {
@@ -774,15 +774,33 @@ mod test {
 
         mock.assert();
         assert!(job_loc.is_err());
-        assert!(matches!(job_loc.unwrap_err(), RoqoqoBackendError::GenericError { .. }));
+        assert!(matches!(
+            job_loc.unwrap_err(),
+            RoqoqoBackendError::GenericError { .. }
+        ));
     }
 
     /// Test error cases. Case 2: ValidationError parsing error
     #[test]
     fn api_backend_errorcase2() {
         let server = MockServer::start();
-        let mock = server.mock(|when, then| {
+        let mock_post = server.mock(|when, then| {
             when.method("POST");
+            then.status(422).header(
+                "Location",
+                format!("http://127.0.0.1:{}/DummyLocation", server.port()),
+            );
+        });
+        let mock_status = server.mock(|when, then| {
+            when.method("GET").path("/DummyLocation/status");
+            then.status(422);
+        });
+        let mock_result = server.mock(|when, then| {
+            when.method("GET").path("/DummyLocation/result");
+            then.status(422);
+        });
+        let mock_delete = server.mock(|when, then| {
+            when.method("DELETE");
             then.status(422);
         });
         let number_qubits = 6;
@@ -808,8 +826,41 @@ mod test {
         };
         let job_loc = api_backend_new.post_job(program);
 
-        mock.assert();
+        mock_post.assert();
         assert!(job_loc.is_err());
-        assert!(matches!(job_loc.unwrap_err(), RoqoqoBackendError::NetworkError { .. }));
+        assert!(matches!(
+            job_loc.unwrap_err(),
+            RoqoqoBackendError::NetworkError { .. }
+        ));
+
+        let job_status = api_backend_new
+            .get_job_status(format!("http://127.0.0.1:{}/DummyLocation", server.port()));
+
+        mock_status.assert();
+        assert!(job_status.is_err());
+        assert!(matches!(
+            job_status.unwrap_err(),
+            RoqoqoBackendError::NetworkError { .. }
+        ));
+
+        let job_result = api_backend_new
+            .get_job_result(format!("http://127.0.0.1:{}/DummyLocation", server.port()));
+
+        mock_result.assert();
+        assert!(job_result.is_err());
+        assert!(matches!(
+            job_result.unwrap_err(),
+            RoqoqoBackendError::NetworkError { .. }
+        ));
+
+        let job_delete =
+            api_backend_new.delete_job(format!("http://127.0.0.1:{}/DummyLocation", server.port()));
+
+        mock_delete.assert();
+        assert!(job_delete.is_err());
+        assert!(matches!(
+            job_delete.unwrap_err(),
+            RoqoqoBackendError::NetworkError { .. }
+        ));
     }
 }
