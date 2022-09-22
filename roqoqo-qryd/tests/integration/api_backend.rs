@@ -691,6 +691,100 @@ fn api_backend_errorcase7() {
     ));
 }
 
+/// Test error case. Case 8: unexpected status code
+#[test]
+fn api_backend_errorcase8() {
+    let server = MockServer::start();
+    let mock_post = server.mock(|when, then| {
+        when.method("POST");
+        then.status(404);
+    });
+    let mock_status = server.mock(|when, then| {
+        when.method("GET").path("/DummyLocation/status");
+        then.status(404);
+    });
+    let mock_result = server.mock(|when, then| {
+        when.method("GET").path("/DummyLocation/result");
+        then.status(404);
+    });
+    let mock_delete = server.mock(|when, then| {
+        when.method("DELETE");
+        then.status(404);
+    });
+
+    let device = QrydEmuSquareDevice::new(Some(1), Some(0.23));
+    let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
+    let api_backend_new =
+        APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
+    let qubit_mapping: HashMap<usize, usize> = (0..6).into_iter().map(|x| (x, x)).collect();
+    let mut circuit = Circuit::new();
+    circuit += operations::DefinitionBit::new("ro".to_string(), 6, true);
+    circuit += operations::RotateX::new(0, std::f64::consts::FRAC_PI_2.into());
+    circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
+    circuit += operations::RotateX::new(4, std::f64::consts::FRAC_PI_2.into());
+    circuit +=
+        operations::PragmaRepeatedMeasurement::new("ro".to_string(), 100, Some(qubit_mapping)); // assert!(api_backend_new.is_ok());
+    let measurement = ClassicalRegister {
+        constant_circuit: None,
+        circuits: vec![circuit.clone()],
+    };
+    let program = QuantumProgram::ClassicalRegister {
+        measurement,
+        input_parameter_names: vec![],
+    };
+
+    let job_loc = api_backend_new.post_job(
+        // "qryd_emu_localcomp_square".to_string(),
+        // Some(0),
+        // Some(0.23),
+        program,
+    );
+
+    mock_post.assert();
+    assert!(job_loc.is_err());
+    assert_eq!(
+        job_loc.unwrap_err(),
+        RoqoqoBackendError::NetworkError {
+            msg: "Request to server failed with HTTP status code 404".to_string()
+        }
+    );
+
+    let job_status =
+        api_backend_new.get_job_status(format!("http://127.0.0.1:{}/DummyLocation", server.port()));
+
+    mock_status.assert();
+    assert!(job_status.is_err());
+    assert_eq!(
+        job_status.unwrap_err(),
+        RoqoqoBackendError::NetworkError {
+            msg: "Request to server failed with HTTP status code 404".to_string()
+        }
+    );
+
+    let job_result =
+        api_backend_new.get_job_result(format!("http://127.0.0.1:{}/DummyLocation", server.port()));
+
+    mock_result.assert();
+    assert!(job_result.is_err());
+    assert_eq!(
+        job_result.unwrap_err(),
+        RoqoqoBackendError::NetworkError {
+            msg: "Request to server failed with HTTP status code 404".to_string()
+        }
+    );
+
+    let job_delete = api_backend_new.delete_job(format!("http://127.0.0.1:{}/DummyLocation", server.port()));
+
+    mock_delete.assert();
+    assert!(job_delete.is_err());
+    assert_eq!(
+        job_delete.unwrap_err(),
+        RoqoqoBackendError::NetworkError {
+            msg: "Request to server failed with HTTP status code 404".to_string()
+        }
+    );
+}
+
 #[test]
 fn mock_test() {
     let server = MockServer::start();
