@@ -574,7 +574,6 @@ fn api_backend_errorcase6() {
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
     let api_backend_new =
         APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
-    // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
     let qubit_mapping: HashMap<usize, usize> = (0..6).into_iter().map(|x| (x, x)).collect();
     let mut circuit = Circuit::new();
     circuit += operations::DefinitionBit::new("ro".to_string(), 6, true);
@@ -626,6 +625,70 @@ fn api_backend_errorcase6() {
         RoqoqoBackendError::NetworkError { .. }
     ));
     mock.assert();
+}
+
+/// Test error case. Case 7: unreachable server
+#[test]
+fn api_backend_errorcase7() {
+    let device = QrydEmuSquareDevice::new(Some(1), Some(0.23));
+    let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
+    let api_backend_new =
+        APIBackend::new(qryd_device, None, None, Some("12345".to_string())).unwrap();
+    let qubit_mapping: HashMap<usize, usize> = (0..6).into_iter().map(|x| (x, x)).collect();
+    let mut circuit = Circuit::new();
+    circuit += operations::DefinitionBit::new("ro".to_string(), 6, true);
+    circuit += operations::RotateX::new(0, std::f64::consts::FRAC_PI_2.into());
+    circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
+    circuit += operations::RotateX::new(4, std::f64::consts::FRAC_PI_2.into());
+    circuit +=
+        operations::PragmaRepeatedMeasurement::new("ro".to_string(), 100, Some(qubit_mapping)); // assert!(api_backend_new.is_ok());
+    let measurement = ClassicalRegister {
+        constant_circuit: None,
+        circuits: vec![circuit.clone()],
+    };
+    let program = QuantumProgram::ClassicalRegister {
+        measurement,
+        input_parameter_names: vec![],
+    };
+
+    let job_loc = api_backend_new.post_job(
+        // "qryd_emu_localcomp_square".to_string(),
+        // Some(0),
+        // Some(0.23),
+        program,
+    );
+
+    assert!(job_loc.is_err());
+    assert!(matches!(
+        job_loc.unwrap_err(),
+        RoqoqoBackendError::NetworkError { .. }
+    ));
+
+    let job_status =
+        api_backend_new.get_job_status("http://127.0.0.1:12345/DummyLocation".to_string());
+
+    assert!(job_status.is_err());
+    assert!(matches!(
+        job_status.unwrap_err(),
+        RoqoqoBackendError::NetworkError { .. }
+    ));
+
+    let job_result =
+        api_backend_new.get_job_result("http://127.0.0.1:12345/DummyLocation".to_string());
+
+    assert!(job_result.is_err());
+    assert!(matches!(
+        job_result.unwrap_err(),
+        RoqoqoBackendError::NetworkError { .. }
+    ));
+
+    let job_delete = api_backend_new.delete_job("http://127.0.0.1:12345/DummyLocation".to_string());
+
+    assert!(job_delete.is_err());
+    assert!(matches!(
+        job_delete.unwrap_err(),
+        RoqoqoBackendError::NetworkError { .. }
+    ));
 }
 
 #[test]
