@@ -31,6 +31,10 @@ use std::{env, thread, time};
 #[test]
 fn api_backend() {
     let server = MockServer::start();
+    let qryd_job_status_in_progress = QRydJobStatus {
+        status: "in progress".to_string(),
+        msg: "the job is still in progress".to_string(),
+    };
     let qryd_job_status_completed = QRydJobStatus {
         status: "completed".to_string(),
         msg: "the job has been completed".to_string(),
@@ -59,9 +63,9 @@ fn api_backend() {
             format!("http://127.0.0.1:{}/DummyLocation", server.port()),
         );
     });
-    let mock_status = server.mock(|when, then| {
+    let mut mock_status0 = server.mock(|when, then| {
         when.method("GET").path("/DummyLocation/status");
-        then.status(200).json_body_obj(&qryd_job_status_completed);
+        then.status(200).json_body_obj(&qryd_job_status_in_progress);
     });
     let mock_result = server.mock(|when, then| {
         when.method("GET").path("/DummyLocation/result");
@@ -99,22 +103,29 @@ fn api_backend() {
         )
         .unwrap();
 
-    let fifteen = time::Duration::from_millis(200);
+    let fifteen = time::Duration::from_millis(50);
 
     let mut test_counter = 0;
     let mut status = "".to_string();
-    let mut job_result = QRydJobResult::default();
     while test_counter < 20 && status != "completed" {
         test_counter += 1;
         let job_status = api_backend_new.get_job_status(job_loc.clone()).unwrap();
         status = job_status.status.clone();
+        assert_eq!(job_status.status, "in progress");
         thread::sleep(fifteen);
-
-        if status == *"completed" {
-            assert_eq!(job_status.status, "completed");
-            job_result = api_backend_new.get_job_result(job_loc.clone()).unwrap();
-        }
     }
+    mock_status0.assert_hits(20);
+    mock_status0.delete();
+    let mock_status1 = server.mock(|when, then| {
+        when.method("GET").path("/DummyLocation/status");
+        then.status(200).json_body_obj(&qryd_job_status_completed);
+    });
+
+    let job_status = api_backend_new.get_job_status(job_loc.clone()).unwrap();
+
+    assert_eq!(job_status.status, "completed");
+
+    let job_result = api_backend_new.get_job_result(job_loc.clone()).unwrap();
     let (bits, _, _) =
         APIBackend::counts_to_result(job_result.data, "ro".to_string(), number_qubits).unwrap();
     assert!(!bits.is_empty());
@@ -123,7 +134,7 @@ fn api_backend() {
     // }
 
     mock_post.assert();
-    mock_status.assert();
+    mock_status1.assert();
     mock_result.assert();
 }
 
