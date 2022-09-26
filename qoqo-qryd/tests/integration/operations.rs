@@ -42,85 +42,87 @@ fn new_pragma_shift(py: Python, qubit: usize) -> &PyCell<PragmaShiftQRydQubitWra
 #[test]
 fn test_pyo3_new_change_layout() {
     pyo3::prepare_freethreaded_python();
-    let gil = pyo3::Python::acquire_gil();
-    let py = gil.python();
-    let operation = py.get_type::<PragmaChangeQRydLayoutWrapper>();
-    let new_op = operation
-        .call1((0,))
-        .unwrap()
-        .cast_as::<PyCell<PragmaChangeQRydLayoutWrapper>>()
-        .unwrap();
+    // let gil = pyo3::Python::acquire_gil();
+    // let py = gil.python();
+    Python::with_gil(|py| {
+        let operation = py.get_type::<PragmaChangeQRydLayoutWrapper>();
+        let new_op = operation
+            .call1((0,))
+            .unwrap()
+            .cast_as::<PyCell<PragmaChangeQRydLayoutWrapper>>()
+            .unwrap();
 
-    let comparison_copy = bool::extract(
-        new_op
-            .call_method1("__eq__", (new_pragma_layout(py, 0),))
-            .unwrap(),
-    )
-    .unwrap();
-    assert!(comparison_copy);
-
-    let pragma_wrapper = new_op.extract::<PragmaChangeQRydLayoutWrapper>().unwrap();
-    let new_op_diff = operation
-        .call1((1,))
-        .unwrap()
-        .cast_as::<PyCell<PragmaChangeQRydLayoutWrapper>>()
+        let comparison_copy = bool::extract(
+            new_op
+                .call_method1("__eq__", (new_pragma_layout(py, 0),))
+                .unwrap(),
+        )
         .unwrap();
-    let pragma_wrapper_diff = new_op_diff
-        .extract::<PragmaChangeQRydLayoutWrapper>()
-        .unwrap();
-    let helper_ne: bool = pragma_wrapper_diff != pragma_wrapper;
-    assert!(helper_ne);
-    let helper_eq: bool = pragma_wrapper == pragma_wrapper.clone();
-    assert!(helper_eq);
+        assert!(comparison_copy);
 
-    assert_eq!(
-        format!("{:?}", pragma_wrapper),
-        "PragmaChangeQRydLayoutWrapper { internal: PragmaChangeQRydLayout { new_layout: 0 } }"
-    );
+        let pragma_wrapper = new_op.extract::<PragmaChangeQRydLayoutWrapper>().unwrap();
+        let new_op_diff = operation
+            .call1((1,))
+            .unwrap()
+            .cast_as::<PyCell<PragmaChangeQRydLayoutWrapper>>()
+            .unwrap();
+        let pragma_wrapper_diff = new_op_diff
+            .extract::<PragmaChangeQRydLayoutWrapper>()
+            .unwrap();
+        let helper_ne: bool = pragma_wrapper_diff != pragma_wrapper;
+        assert!(helper_ne);
+        let helper_eq: bool = pragma_wrapper == pragma_wrapper.clone();
+        assert!(helper_eq);
+
+        assert_eq!(
+            format!("{:?}", pragma_wrapper),
+            "PragmaChangeQRydLayoutWrapper { internal: PragmaChangeQRydLayout { new_layout: 0 } }"
+        );
+    })
 }
 
 #[test]
 fn test_pyo3_new_shift_positions() {
     pyo3::prepare_freethreaded_python();
-    let gil = pyo3::Python::acquire_gil();
-    let py = gil.python();
-    let mut positions: HashMap<usize, (usize, usize)> = HashMap::new();
-    positions.insert(0, (0, 1));
-    let operation = py.get_type::<PragmaShiftQRydQubitWrapper>();
-    let new_op = operation
-        .call1((positions,))
-        .unwrap()
-        .cast_as::<PyCell<PragmaShiftQRydQubitWrapper>>()
-        .unwrap();
+    Python::with_gil(|py| {
+        let mut positions: HashMap<usize, (usize, usize)> = HashMap::new();
+        positions.insert(0, (0, 1));
+        let operation = py.get_type::<PragmaShiftQRydQubitWrapper>();
+        let new_op = operation
+            .call1((positions,))
+            .unwrap()
+            .cast_as::<PyCell<PragmaShiftQRydQubitWrapper>>()
+            .unwrap();
 
-    let comparison_copy = bool::extract(
-        new_op
-            .call_method1("__eq__", (new_pragma_shift(py, 0),))
-            .unwrap(),
-    )
-    .unwrap();
-    assert!(comparison_copy);
-
-    let mut positions: HashMap<usize, (usize, usize)> = HashMap::new();
-    positions.insert(1, (0, 1));
-    let pragma_wrapper = new_op.extract::<PragmaShiftQRydQubitWrapper>().unwrap();
-    let new_op_diff = operation
-        .call1((positions,))
-        .unwrap()
-        .cast_as::<PyCell<PragmaShiftQRydQubitWrapper>>()
+        let comparison_copy = bool::extract(
+            new_op
+                .call_method1("__eq__", (new_pragma_shift(py, 0),))
+                .unwrap(),
+        )
         .unwrap();
-    let pragma_wrapper_diff = new_op_diff
-        .extract::<PragmaShiftQRydQubitWrapper>()
-        .unwrap();
-    let helper_ne: bool = pragma_wrapper_diff != pragma_wrapper;
-    assert!(helper_ne);
-    let helper_eq: bool = pragma_wrapper == pragma_wrapper.clone();
-    assert!(helper_eq);
+        assert!(comparison_copy);
 
-    assert_eq!(
+        let mut positions: HashMap<usize, (usize, usize)> = HashMap::new();
+        positions.insert(1, (0, 1));
+        let pragma_wrapper = new_op.extract::<PragmaShiftQRydQubitWrapper>().unwrap();
+        let new_op_diff = operation
+            .call1((positions,))
+            .unwrap()
+            .cast_as::<PyCell<PragmaShiftQRydQubitWrapper>>()
+            .unwrap();
+        let pragma_wrapper_diff = new_op_diff
+            .extract::<PragmaShiftQRydQubitWrapper>()
+            .unwrap();
+        let helper_ne: bool = pragma_wrapper_diff != pragma_wrapper;
+        assert!(helper_ne);
+        let helper_eq: bool = pragma_wrapper == pragma_wrapper.clone();
+        assert!(helper_eq);
+
+        assert_eq!(
         format!("{:?}", pragma_wrapper),
         "PragmaShiftQRydQubitWrapper { internal: PragmaShiftQRydQubit { new_positions: {0: (0, 1)} } }"
     );
+    })
 }
 
 #[test]
