@@ -505,12 +505,12 @@ fn test_to_generic_device_square() {
     assert_eq!(device.number_qubits(), genericdevice.number_qubits());
     for gate_name in ["PhaseShiftState1", "RotateX", "RotateY", "RotateXY"] {
         for qubit in 0..genericdevice.number_qubits() {
-            for el in genericdevice.single_qubit_gate_time(gate_name, &qubit) {
-                assert_eq!(
-                    el,
-                    apidevice.single_qubit_gate_time(gate_name, &qubit).unwrap()
-                );
-            }
+            assert_eq!(
+                genericdevice
+                    .single_qubit_gate_time(gate_name, &qubit)
+                    .unwrap(),
+                apidevice.single_qubit_gate_time(gate_name, &qubit).unwrap()
+            );
         }
     }
     for qubit in 0..genericdevice.number_qubits() {
@@ -545,12 +545,10 @@ fn test_to_generic_device_triangular() {
     assert_eq!(device.number_qubits(), genericdevice.number_qubits());
     for gate_name in ["PhaseShiftState1", "RotateX", "RotateY", "RotateXY"] {
         for qubit in 0..genericdevice.number_qubits() {
-            for el in genericdevice.single_qubit_gate_time(gate_name, &qubit) {
-                assert_eq!(
-                    el,
-                    apidevice.single_qubit_gate_time(gate_name, &qubit).unwrap()
-                );
-            }
+            assert_eq!(
+                genericdevice.single_qubit_gate_time(gate_name, &qubit).unwrap(),
+                apidevice.single_qubit_gate_time(gate_name, &qubit).unwrap()
+            );
         }
     }
     for qubit in 0..genericdevice.number_qubits() {
