@@ -493,3 +493,37 @@ fn test_twoqubitedges_triangular() {
         assert_eq!(twoqubitedges_get, two_qubit_edges);
     });
 }
+
+// Test generic_device() for square device
+#[test]
+fn test_generic_device_square() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let device = create_square_device(py);
+        let generic_device = device.call_method0("generic_device").unwrap();
+
+        let num_gen = generic_device
+            .call_method0("number_qubits")
+            .unwrap()
+            .extract::<usize>()
+            .unwrap();
+        let num_dev = device
+            .call_method0("number_qubits")
+            .unwrap()
+            .extract::<usize>()
+            .unwrap();
+        assert_eq!(num_gen, num_dev);
+
+        for gate_name in ["PhaseShiftState1", "RotateX", "RotateY", "RotateXY"] {
+            for qubit in 0..num_gen {
+                //for el in genericdevice.single_qubit_gate_time(gate_name, &qubit) {
+                for el in generic_device.call_method1("single_qubit_gate_time", (gate_name, &qubit,)).unwrap().extract::<f64>().unwrap() {
+                    assert_eq!(
+                        el,
+                        apidevice.single_qubit_gate_time(gate_name, &qubit).unwrap()
+                    );
+                }
+            }
+        }
+    })
+}
