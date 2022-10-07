@@ -513,21 +513,12 @@ fn test_generic_device_square() {
             .extract::<usize>()
             .unwrap();
         assert_eq!(num_gen, num_dev);
-
-        // for gate_name in ["PhaseShiftState1", "RotateX", "RotateY", "RotateXY"] {
-        //     for qubit in 0..num_gen {
-        //         assert_eq!(
-        //             generic_device.call_method1("single_qubit_gate_time", (gate_name, qubit,)).unwrap().extract::<f64>().unwrap(),
-        //             device.call_method1("single_qubit_gate_time", (gate_name, qubit,)).unwrap().extract::<f64>().unwrap()
-        //         )
-        //     }
-        // }
     })
 }
 
 // Test generic_device() for triangular device
 #[test]
-fn test_generic_device_trianular() {
+fn test_generic_device_triangular() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let device = create_triangular_device(py);
@@ -544,14 +535,5 @@ fn test_generic_device_trianular() {
             .extract::<usize>()
             .unwrap();
         assert_eq!(num_gen, num_dev);
-
-        // for gate_name in ["PhaseShiftState1", "RotateX", "RotateY", "RotateXY"] {
-        //     for qubit in 0..num_gen {
-        //         assert_eq!(
-        //             generic_device.call_method1("single_qubit_gate_time", (gate_name, qubit,)).unwrap().extract::<f64>().unwrap(),
-        //             device.call_method1("single_qubit_gate_time", (gate_name, qubit,)).unwrap().extract::<f64>().unwrap()
-        //         )
-        //     }
-        // }
     })
 }
