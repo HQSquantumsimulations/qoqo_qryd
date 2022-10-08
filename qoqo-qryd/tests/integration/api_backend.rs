@@ -22,7 +22,7 @@ use qoqo_qryd::api_backend::{APIBackendWrapper, Registers};
 use qoqo_qryd::api_devices::{QrydEmuSquareDeviceWrapper, QrydEmuTriangularDeviceWrapper};
 use roqoqo::measurements::ClassicalRegister;
 use roqoqo::{operations, Circuit, QuantumProgram};
-use roqoqo_qryd::{QRydJobStatus, QRydJobResult, ResultCounts};
+use roqoqo_qryd::{QRydJobResult, QRydJobStatus, ResultCounts};
 use std::collections::HashMap;
 use std::f64::consts::PI;
 use std::usize;
@@ -50,27 +50,27 @@ fn create_backend_with_square_device(
     backend
 }
 
-fn create_valid_backend_with_square_device(
-    py: Python,
-    seed: Option<usize>,
-) -> &PyCell<APIBackendWrapper> {
-    let pcz_theta: f64 = PI / 4.0;
-    let device_type = py.get_type::<QrydEmuSquareDeviceWrapper>();
-    let device: &PyCell<QrydEmuSquareDeviceWrapper> = device_type
-        .call1((seed, pcz_theta))
-        .unwrap()
-        .cast_as::<PyCell<QrydEmuSquareDeviceWrapper>>()
-        .unwrap();
+// fn create_valid_backend_with_square_device(
+//     py: Python,
+//     seed: Option<usize>,
+// ) -> &PyCell<APIBackendWrapper> {
+//     let pcz_theta: f64 = PI / 4.0;
+//     let device_type = py.get_type::<QrydEmuSquareDeviceWrapper>();
+//     let device: &PyCell<QrydEmuSquareDeviceWrapper> = device_type
+//         .call1((seed, pcz_theta))
+//         .unwrap()
+//         .cast_as::<PyCell<QrydEmuSquareDeviceWrapper>>()
+//         .unwrap();
 
-    let backend_type: &PyType = py.get_type::<APIBackendWrapper>();
-    let none_string: Option<String> = None;
-    let backend: &PyCell<APIBackendWrapper> = backend_type
-        .call1((device, none_string))
-        .unwrap()
-        .cast_as::<PyCell<APIBackendWrapper>>()
-        .unwrap();
-    backend
-}
+//     let backend_type: &PyType = py.get_type::<APIBackendWrapper>();
+//     let none_string: Option<String> = None;
+//     let backend: &PyCell<APIBackendWrapper> = backend_type
+//         .call1((device, none_string))
+//         .unwrap()
+//         .cast_as::<PyCell<APIBackendWrapper>>()
+//         .unwrap();
+//     backend
+// }
 
 fn create_valid_backend_with_square_device_mocked(
     py: Python,
@@ -366,11 +366,11 @@ fn test_run_job() {
             .extract()
             .unwrap();
         let job_status = status_report.get("status").unwrap();
-        
+
         assert_eq!(job_status, "completed");
 
         let _job_result = backend.call_method1("get_job_result", (job_loc,)).unwrap();
-        
+
         mock_post.assert();
         mock_status1.assert();
         mock_result.assert();
@@ -378,28 +378,69 @@ fn test_run_job() {
 }
 
 #[test]
-fn test_run_measuremt_registers() {
-    if env::var("QRYD_API_TOKEN").is_ok() {
-        pyo3::prepare_freethreaded_python();
-        Python::with_gil(|py| {
-            let backend = create_valid_backend_with_square_device(py, Some(11));
-            let program = create_quantum_program(true);
-            let failed_result = backend.call_method1("run_measurement_registers", (3_u32,));
-            assert!(failed_result.is_err());
-            let measurement = program.measurement();
-            let result: Registers = backend
-                .call_method1("run_measurement_registers", (measurement,))
-                .unwrap()
-                .extract()
-                .unwrap();
-            let (bits, floats, complex) = result;
-            assert!(floats.is_empty());
-            assert!(complex.is_empty());
-            assert!(bits.contains_key("ro"));
-            let bit = bits.get("ro").unwrap();
-            assert_eq!(bit.len(), 40);
-        });
-    }
+fn test_run_measurement_registers() {
+    let server = MockServer::start();
+    let qryd_job_status_completed = QRydJobStatus {
+        status: "completed".to_string(),
+        msg: "the job has been completed".to_string(),
+    };
+    let result_counts = ResultCounts {
+        counts: HashMap::from([("0x0".to_string(), 40)]),
+    };
+    let qryd_job_result_completed = QRydJobResult {
+        data: result_counts,
+        time_taken: 0.23,
+        noise: "noise".to_string(),
+        method: "method".to_string(),
+        device: "QrydEmuSquareDevice".to_string(),
+        num_qubits: 2,
+        num_clbits: 2,
+        fusion_max_qubits: 2,
+        fusion_avg_qubits: 2.0,
+        fusion_generated_gates: 100,
+        executed_single_qubit_gates: 0,
+        executed_two_qubit_gates: 0,
+    };
+
+    let mock_post = server.mock(|when, then| {
+        when.method("POST");
+        then.status(201).header(
+            "Location",
+            format!("http://127.0.0.1:{}/DummyLocation", server.port()),
+        );
+    });
+    let mock_status1 = server.mock(|when, then| {
+        when.method("GET").path("/DummyLocation/status");
+        then.status(200).json_body_obj(&qryd_job_status_completed);
+    });
+    let mock_result = server.mock(|when, then| {
+        when.method("GET").path("/DummyLocation/result");
+        then.status(200).json_body_obj(&qryd_job_result_completed);
+    });
+
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let backend =
+            create_valid_backend_with_square_device_mocked(py, Some(11), server.port().to_string());
+        let program = create_quantum_program(true);
+        let failed_result = backend.call_method1("run_measurement_registers", (3_u32,));
+        assert!(failed_result.is_err());
+        let measurement = program.measurement();
+        let result: Registers = backend
+            .call_method1("run_measurement_registers", (measurement,))
+            .unwrap()
+            .extract()
+            .unwrap();
+        let (bits, floats, complex) = result;
+        assert!(floats.is_empty());
+        assert!(complex.is_empty());
+        assert!(bits.contains_key("ro"));
+        let bit = bits.get("ro").unwrap();
+        assert_eq!(bit.len(), 40);
+        mock_post.assert();
+        mock_status1.assert();
+        mock_result.assert();
+    });
 }
 
 #[test]
