@@ -17,7 +17,7 @@ use httpmock::MockServer;
 use pyo3::prelude::*;
 use pyo3::types::PyType;
 use pyo3::Python;
-use qoqo::QuantumProgramWrapper;
+use qoqo::{CircuitWrapper, QuantumProgramWrapper};
 use qoqo_qryd::api_backend::{APIBackendWrapper, Registers};
 use qoqo_qryd::api_devices::{QrydEmuSquareDeviceWrapper, QrydEmuTriangularDeviceWrapper};
 use roqoqo::measurements::ClassicalRegister;
@@ -375,6 +375,67 @@ fn test_run_job() {
         mock_status1.assert();
         mock_result.assert();
     });
+}
+
+#[test]
+fn test_run_circuit() {
+    let server = MockServer::start();
+    let qryd_job_status_completed = QRydJobStatus {
+        status: "completed".to_string(),
+        msg: "the job has been completed".to_string(),
+    };
+    let result_counts = ResultCounts {
+        counts: HashMap::from([("0x0".to_string(), 40)]),
+    };
+    let qryd_job_result_completed = QRydJobResult {
+        data: result_counts,
+        time_taken: 0.23,
+        noise: "noise".to_string(),
+        method: "method".to_string(),
+        device: "QrydEmuSquareDevice".to_string(),
+        num_qubits: 2,
+        num_clbits: 2,
+        fusion_max_qubits: 2,
+        fusion_avg_qubits: 2.0,
+        fusion_generated_gates: 100,
+        executed_single_qubit_gates: 0,
+        executed_two_qubit_gates: 0,
+    };
+
+    let mock_post = server.mock(|when, then| {
+        when.method("POST");
+        then.status(201).header(
+            "Location",
+            format!("http://127.0.0.1:{}/DummyLocation", server.port()),
+        );
+    });
+    let mock_status1 = server.mock(|when, then| {
+        when.method("GET").path("/DummyLocation/status");
+        then.status(200).json_body_obj(&qryd_job_status_completed);
+    });
+    let mock_result = server.mock(|when, then| {
+        when.method("GET").path("/DummyLocation/result");
+        then.status(200).json_body_obj(&qryd_job_result_completed);
+    });
+    
+    let mut circuit = Circuit::new();
+    circuit += operations::DefinitionBit::new("ro".to_string(), 2, true);
+    circuit += operations::RotateX::new(0, 0.0.into());
+    circuit += operations::PragmaRepeatedMeasurement::new("ro".to_string(), 40, None);
+    let circuit_py = CircuitWrapper { internal: circuit };
+
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let backend =
+            create_valid_backend_with_square_device_mocked(py, Some(11), server.port().to_string());
+
+        let registers = backend.call_method1("run_circuit", (circuit_py,)).unwrap();
+
+        mock_post.assert();
+        mock_status1.assert();
+        mock_result.assert();
+    });
+    
 }
 
 #[test]
