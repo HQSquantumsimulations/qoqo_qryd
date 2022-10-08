@@ -1463,6 +1463,7 @@ name = "qoqo-qryd"
 version = "0.6.0-beta.2"
 dependencies = [
  "bincode",
+ "httpmock",
  "ndarray",
  "numpy",
  "pyo3",

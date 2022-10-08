@@ -36,7 +36,7 @@ use std::collections::HashMap;
 ///
 #[pyclass(name = "APIBackend", module = "qoqo_qryd")]
 #[derive(Clone, Debug, PartialEq)]
-#[pyo3(text_signature = "(device, access_token, timeout)")]
+#[pyo3(text_signature = "(device, access_token, timeout, mock_port)")]
 pub struct APIBackendWrapper {
     /// Internal storage of [roqoqo_qryd::APIBackend]
     pub internal: APIBackend,
@@ -69,12 +69,13 @@ impl APIBackendWrapper {
         device: &PyAny,
         access_token: Option<String>,
         timeout: Option<usize>,
+        mock_port: Option<String>
     ) -> PyResult<Self> {
         let device: QRydAPIDevice = convert_into_device(device).map_err(|err| {
             PyTypeError::new_err(format!("Device Parameter is not QRydAPIDevice {:?}", err))
         })?;
         Ok(Self {
-            internal: APIBackend::new(device, access_token, timeout, None).map_err(|err| {
+            internal: APIBackend::new(device, access_token, timeout, mock_port).map_err(|err| {
                 PyRuntimeError::new_err(format!("No access token found {:?}", err))
             })?,
         })

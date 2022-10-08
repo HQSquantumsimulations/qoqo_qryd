@@ -43,6 +43,7 @@ serde_json = "1.0"
 
 [dev-dependencies]
 test-case = "2.0"
+httpmock = "0.6"
 
 [build-dependencies]
 pyo3-build-config = "0.17"

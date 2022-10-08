@@ -13,6 +13,7 @@
 //! Integration test for public API of QRyd WebAPI backend
 
 use core::time;
+use httpmock::MockServer;
 use pyo3::prelude::*;
 use pyo3::types::PyType;
 use pyo3::Python;
@@ -21,6 +22,7 @@ use qoqo_qryd::api_backend::{APIBackendWrapper, Registers};
 use qoqo_qryd::api_devices::{QrydEmuSquareDeviceWrapper, QrydEmuTriangularDeviceWrapper};
 use roqoqo::measurements::ClassicalRegister;
 use roqoqo::{operations, Circuit, QuantumProgram};
+use roqoqo_qryd::{QRydJobStatus, QRydJobResult, ResultCounts};
 use std::collections::HashMap;
 use std::f64::consts::PI;
 use std::usize;
@@ -64,6 +66,29 @@ fn create_valid_backend_with_square_device(
     let none_string: Option<String> = None;
     let backend: &PyCell<APIBackendWrapper> = backend_type
         .call1((device, none_string))
+        .unwrap()
+        .cast_as::<PyCell<APIBackendWrapper>>()
+        .unwrap();
+    backend
+}
+
+fn create_valid_backend_with_square_device_mocked(
+    py: Python,
+    seed: Option<usize>,
+    mock_port: String,
+) -> &PyCell<APIBackendWrapper> {
+    let pcz_theta: f64 = PI / 4.0;
+    let device_type = py.get_type::<QrydEmuSquareDeviceWrapper>();
+    let device: &PyCell<QrydEmuSquareDeviceWrapper> = device_type
+        .call1((seed, pcz_theta))
+        .unwrap()
+        .cast_as::<PyCell<QrydEmuSquareDeviceWrapper>>()
+        .unwrap();
+
+    let backend_type: &PyType = py.get_type::<APIBackendWrapper>();
+    let none_string: Option<String> = None;
+    let backend: &PyCell<APIBackendWrapper> = backend_type
+        .call1((device, none_string, 30, mock_port))
         .unwrap()
         .cast_as::<PyCell<APIBackendWrapper>>()
         .unwrap();
@@ -118,6 +143,7 @@ fn test_new_square() {
     });
 }
 
+// Test to check a failed backend creation
 #[test]
 fn test_fail_new_square() {
     pyo3::prepare_freethreaded_python();
@@ -262,34 +288,93 @@ fn test_query_job_status_fail() {
 
 #[test]
 fn test_run_job() {
-    if env::var("QRYD_API_TOKEN").is_ok() {
-        pyo3::prepare_freethreaded_python();
-        Python::with_gil(|py| {
-            let backend = create_valid_backend_with_square_device(py, Some(11));
-            let program = create_quantum_program(true);
-            let job_loc = backend.call_method1("post_job", (program,)).unwrap();
-            let fifteen = time::Duration::from_secs(1);
+    let server = MockServer::start();
+    let qryd_job_status_in_progress = QRydJobStatus {
+        status: "in progress".to_string(),
+        msg: "the job is still in progress".to_string(),
+    };
+    let qryd_job_status_completed = QRydJobStatus {
+        status: "completed".to_string(),
+        msg: "the job has been completed".to_string(),
+    };
+    let result_counts = ResultCounts {
+        counts: HashMap::from([("0x1".to_string(), 100), ("0x4".to_string(), 20)]),
+    };
+    let qryd_job_result_completed = QRydJobResult {
+        data: result_counts,
+        time_taken: 0.23,
+        noise: "noise".to_string(),
+        method: "method".to_string(),
+        device: "QrydEmuSquareDevice".to_string(),
+        num_qubits: 4,
+        num_clbits: 4,
+        fusion_max_qubits: 4,
+        fusion_avg_qubits: 4.0,
+        fusion_generated_gates: 100,
+        executed_single_qubit_gates: 50,
+        executed_two_qubit_gates: 50,
+    };
+    let mock_post = server.mock(|when, then| {
+        when.method("POST");
+        then.status(201).header(
+            "Location",
+            format!("http://127.0.0.1:{}/DummyLocation", server.port()),
+        );
+    });
+    let mut mock_status0 = server.mock(|when, then| {
+        when.method("GET").path("/DummyLocation/status");
+        then.status(200).json_body_obj(&qryd_job_status_in_progress);
+    });
+    let mock_result = server.mock(|when, then| {
+        when.method("GET").path("/DummyLocation/result");
+        then.status(200).json_body_obj(&qryd_job_result_completed);
+    });
 
-            let mut test_counter = 0;
-            let mut status = "".to_string();
-            while test_counter < 20 && status != "completed" {
-                test_counter += 1;
-                let status_report: HashMap<String, String> = backend
-                    .call_method1("get_job_status", (job_loc,))
-                    .unwrap()
-                    .extract()
-                    .unwrap();
-                let job_status = status_report.get("status").unwrap();
-                status = job_status.clone();
-                thread::sleep(fifteen);
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let backend =
+            create_valid_backend_with_square_device_mocked(py, Some(11), server.port().to_string());
+        let program = create_quantum_program(true);
+        let job_loc = backend.call_method1("post_job", (program,)).unwrap();
+        let fifteen = time::Duration::from_millis(50);
 
-                if status == *"completed" {
-                    assert_eq!(status, "completed");
-                    let _job_result = backend.call_method1("get_job_result", (job_loc,)).unwrap();
-                }
-            }
+        let mut test_counter = 0;
+        let mut status = "".to_string();
+        while test_counter < 20 && status != "completed" {
+            test_counter += 1;
+            let status_report: HashMap<String, String> = backend
+                .call_method1("get_job_status", (job_loc,))
+                .unwrap()
+                .extract()
+                .unwrap();
+            let job_status = status_report.get("status").unwrap();
+            status = job_status.clone();
+            assert_eq!(job_status, "in progress");
+            thread::sleep(fifteen);
+        }
+
+        mock_status0.assert_hits(20);
+        mock_status0.delete();
+        let mock_status1 = server.mock(|when, then| {
+            when.method("GET").path("/DummyLocation/status");
+            then.status(200).json_body_obj(&qryd_job_status_completed);
         });
-    }
+
+        let status_report: HashMap<String, String> = backend
+            .call_method1("get_job_status", (job_loc,))
+            .unwrap()
+            .extract()
+            .unwrap();
+        let job_status = status_report.get("status").unwrap();
+        
+        assert_eq!(job_status, "completed");
+
+        let _job_result = backend.call_method1("get_job_result", (job_loc,)).unwrap();
+        
+        mock_post.assert();
+        mock_status1.assert();
+        mock_result.assert();
+    });
 }
 
 #[test]

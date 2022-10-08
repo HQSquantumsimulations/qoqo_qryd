@@ -129,9 +129,6 @@ fn api_backend() {
     let (bits, _, _) =
         APIBackend::counts_to_result(job_result.data, "ro".to_string(), number_qubits).unwrap();
     assert!(!bits.is_empty());
-    // for line in bits["ro"].iter() {
-    //     println!("{:?}", line);
-    // }
 
     mock_post.assert();
     mock_status1.assert();
