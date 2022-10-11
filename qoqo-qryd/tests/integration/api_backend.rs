@@ -503,9 +503,16 @@ fn test_run_measurement_registers() {
     Python::with_gil(|py| {
         let backend =
             create_valid_backend_with_square_device_mocked(py, Some(11), server.port().to_string());
-        let program = create_quantum_program(true);
+
         let failed_result = backend.call_method1("run_measurement_registers", (3_u32,));
         assert!(failed_result.is_err());
+
+        let failed_program = create_quantum_program(false);
+        let measurement = failed_program.measurement();
+        let failed_result = backend.call_method1("run_measurement_registers", (measurement,));
+        assert!(failed_result.is_err());
+
+        let program = create_quantum_program(true);
         let measurement = program.measurement();
         let (bits, floats, complex): Registers = backend
             .call_method1("run_measurement_registers", (measurement,))
