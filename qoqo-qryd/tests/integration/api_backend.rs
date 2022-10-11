@@ -446,6 +446,9 @@ fn test_run_circuit() {
         let backend =
             create_valid_backend_with_square_device_mocked(py, Some(11), server.port().to_string());
 
+        let result = backend.call_method1("run_circuit", (3usize,));
+        assert!(result.is_err());
+
         backend.call_method1("run_circuit", (circuit_py,)).unwrap();
 
         mock_post.assert();
@@ -569,10 +572,14 @@ fn test_run_measurement() {
         let failed_result = backend.call_method1("run_measurement", (3_u32,));
         assert!(failed_result.is_err());
 
-        let (bits, floats, complex) = backend
+        let result: Option<HashMap<String, f64>> = backend
             .call_method1("run_measurement", (cheated,))
+            .unwrap()
+            .extract()
             .unwrap();
-        // TODO
+
+        assert!(result.is_some());
+
         mock_post.assert();
         mock_status1.assert();
         mock_result.assert();
