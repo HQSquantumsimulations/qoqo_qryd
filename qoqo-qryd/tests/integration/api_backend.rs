@@ -637,6 +637,10 @@ fn test_bincode_square() {
         let deserialised_error = backend.call_method1("from_bincode", (vec,));
         assert!(deserialised_error.is_err());
 
+        let st: String = "test".to_string();
+        let deserialised_error = backend.call_method1("from_bincode", (st,));
+        assert!(deserialised_error.is_err());
+
         let deserialised_error = deserialised.call_method0("from_bincode");
         assert!(deserialised_error.is_err());
 
