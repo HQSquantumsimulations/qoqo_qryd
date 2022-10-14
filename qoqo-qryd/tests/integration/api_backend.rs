@@ -19,12 +19,12 @@ use pyo3::types::PyType;
 use pyo3::Python;
 use qoqo::measurements::CheatedWrapper;
 use qoqo::{CircuitWrapper, QuantumProgramWrapper};
-use qoqo_qryd::api_backend::{APIBackendWrapper, Registers, convert_into_backend};
+use qoqo_qryd::api_backend::{convert_into_backend, APIBackendWrapper, Registers};
 use qoqo_qryd::api_devices::{QrydEmuSquareDeviceWrapper, QrydEmuTriangularDeviceWrapper};
 use roqoqo::measurements::{Cheated, CheatedInput, ClassicalRegister};
 use roqoqo::{operations, Circuit, QuantumProgram};
-use roqoqo_qryd::{APIBackend, QRydJobResult, QRydJobStatus, ResultCounts};
 use roqoqo_qryd::api_devices::{QRydAPIDevice, QrydEmuSquareDevice};
+use roqoqo_qryd::{APIBackend, QRydJobResult, QRydJobStatus, ResultCounts};
 use std::collections::HashMap;
 use std::f64::consts::PI;
 use std::usize;
@@ -612,13 +612,20 @@ fn test_convert_into_backend() {
     Python::with_gil(|py| {
         let pcz_theta: f64 = PI / 4.0;
         let none_string: Option<String> = None;
-        let initial = create_valid_backend_with_square_device_mocked(py, Some(11), server.port().to_string());
+        let initial =
+            create_valid_backend_with_square_device_mocked(py, Some(11), server.port().to_string());
         let converted = convert_into_backend(initial).unwrap();
-        
+
         let rust_dev: QrydEmuSquareDevice = QrydEmuSquareDevice::new(Some(11), Some(pcz_theta));
         let rust_api: QRydAPIDevice = QRydAPIDevice::from(rust_dev);
-        let rust_backend: APIBackend = APIBackend::new(rust_api, none_string, Some(30), Some(server.port().to_string())).unwrap();
-        
+        let rust_backend: APIBackend = APIBackend::new(
+            rust_api,
+            none_string,
+            Some(30),
+            Some(server.port().to_string()),
+        )
+        .unwrap();
+
         assert_eq!(converted, rust_backend);
     });
 }
