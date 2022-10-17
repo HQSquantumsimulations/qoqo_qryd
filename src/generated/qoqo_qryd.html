@@ -16,6 +16,7 @@
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -57,6 +58,30 @@
 <li class="toctree-l3"><a class="reference internal" href="generated/qoqo_qryd.pragma_operations.html">qoqo_qryd.pragma_operations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="generated/qoqo_qryd.SimulatorBackend.html">qoqo_qryd.SimulatorBackend</a></li>
 <li class="toctree-l3"><a class="reference internal" href="generated/qoqo_qryd.APIBackend.html">qoqo_qryd.APIBackend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#qoqo_qryd.APIBackend"><code class="docutils literal notranslate"><span class="pre">APIBackend</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.APIBackend.delete_job"><code class="docutils literal notranslate"><span class="pre">APIBackend.delete_job()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.APIBackend.from_bincode"><code class="docutils literal notranslate"><span class="pre">APIBackend.from_bincode()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.APIBackend.from_json"><code class="docutils literal notranslate"><span class="pre">APIBackend.from_json()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.APIBackend.get_job_result"><code class="docutils literal notranslate"><span class="pre">APIBackend.get_job_result()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.APIBackend.get_job_status"><code class="docutils literal notranslate"><span class="pre">APIBackend.get_job_status()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.APIBackend.post_job"><code class="docutils literal notranslate"><span class="pre">APIBackend.post_job()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.APIBackend.run_circuit"><code class="docutils literal notranslate"><span class="pre">APIBackend.run_circuit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.APIBackend.run_measurement"><code class="docutils literal notranslate"><span class="pre">APIBackend.run_measurement()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.APIBackend.run_measurement_registers"><code class="docutils literal notranslate"><span class="pre">APIBackend.run_measurement_registers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.APIBackend.to_bincode"><code class="docutils literal notranslate"><span class="pre">APIBackend.to_bincode()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.APIBackend.to_json"><code class="docutils literal notranslate"><span class="pre">APIBackend.to_json()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#qoqo_qryd.SimulatorBackend"><code class="docutils literal notranslate"><span class="pre">SimulatorBackend</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.SimulatorBackend.from_bincode"><code class="docutils literal notranslate"><span class="pre">SimulatorBackend.from_bincode()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.SimulatorBackend.from_json"><code class="docutils literal notranslate"><span class="pre">SimulatorBackend.from_json()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.SimulatorBackend.run_circuit"><code class="docutils literal notranslate"><span class="pre">SimulatorBackend.run_circuit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.SimulatorBackend.run_measurement"><code class="docutils literal notranslate"><span class="pre">SimulatorBackend.run_measurement()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.SimulatorBackend.run_measurement_registers"><code class="docutils literal notranslate"><span class="pre">SimulatorBackend.run_measurement_registers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.SimulatorBackend.to_bincode"><code class="docutils literal notranslate"><span class="pre">SimulatorBackend.to_bincode()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.SimulatorBackend.to_json"><code class="docutils literal notranslate"><span class="pre">SimulatorBackend.to_json()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
