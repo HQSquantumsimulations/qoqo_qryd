@@ -309,6 +309,7 @@ impl APIBackend {
         }
         let quantumprogram: roqoqo_1_0::QuantumProgram =
             downconvert_roqoqo_version(quantumprogram)?;
+        // dbg!(&serde_json::to_string(&quantumprogram).unwrap());
         let data = QRydRunData {
             backend: self.device.qrydbackend(),
             seed: seed_param,
@@ -349,6 +350,7 @@ impl APIBackend {
                     format!( "QuantumProgram or metadata could not be parsed by QRyd Web-API Backend. msg: {} type: {}, loc: {:?}",querry_response.detail[0].msg, querry_response.detail[0].internal_type, querry_response.detail[0].loc,  )
             });
             }
+            // dbg!(&resp);
             Err(RoqoqoBackendError::NetworkError {
                 msg: format!(
                     "Request to server failed with HTTP status code {:?}",
