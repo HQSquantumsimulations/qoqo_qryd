@@ -309,6 +309,7 @@ impl APIBackend {
         }
         let quantumprogram: roqoqo_1_0::QuantumProgram =
             downconvert_roqoqo_version(quantumprogram)?;
+        // dbg!(&serde_json::to_string(&quantumprogram).unwrap());
         let data = QRydRunData {
             backend: self.device.qrydbackend(),
             seed: seed_param,
