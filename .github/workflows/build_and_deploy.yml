@@ -9,6 +9,7 @@ on:
 jobs:
   deploy_cratesio:
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
     - uses: actions/checkout@v3
     - uses: actions-rs/toolchain@v1
@@ -24,7 +25,7 @@ jobs:
         cargo publish --manifest-path=qoqo-qryd/Cargo.toml
 
   build_maturin_builds_linux:
-    needs: deploy_cratesio
+    # needs: deploy_cratesio
     name: maturin_build-${{ matrix.combinations.runs_on }}
     runs-on: ${{ matrix.combinations.runs_on }}
     strategy:
@@ -66,7 +67,7 @@ jobs:
           path: wheels
 
   build_maturin_builds_linux_src:
-    needs: deploy_cratesio
+    # needs: deploy_cratesio
     name: maturin_build-${{ matrix.combinations.runs_on }}
     runs-on: ${{ matrix.combinations.runs_on }}
     strategy:
@@ -143,7 +144,7 @@ jobs:
   
   build_maturin_builds_macos:
     name: maturin_build-${{ matrix.combinations.runs_on }}
-    needs: deploy_cratesio
+    # needs: deploy_cratesio
     runs-on: ${{ matrix.combinations.runs_on }}
     strategy:
       matrix:
@@ -188,7 +189,7 @@ jobs:
           path: wheels
 
   deploy:
-      needs: [deploy_cratesio, build_maturin_builds_macos, build_maturin_builds_linux, build_maturin_builds_linux_src]
+      needs: [build_maturin_builds_macos, build_maturin_builds_linux, build_maturin_builds_linux_src]
       runs-on: ubuntu-latest
       steps:
       - uses: actions/setup-python@v3.1.2
