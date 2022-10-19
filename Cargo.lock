@@ -944,9 +944,9 @@ dependencies = [
 
 [[package]]
 name = "quest-sys"
-version = "0.8.0"
+version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fdb133957301451957d7e141376bf21ac812fe254329d09bd790d604f1cb27ec"
+checksum = "448e8176c03dd6830c5c5e047eb0f491ad267e4aad46ee4a16cede1b12722e94"
 dependencies = [
  "cmake",
 ]
