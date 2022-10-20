@@ -749,7 +749,6 @@ mod test {
     use super::*;
     use crate::api_devices::QrydEmuSquareDevice;
     use httpmock::MockServer;
-    use roqoqo::measurements::{PauliZProduct, PauliZProductInput};
     use roqoqo::operations;
     use roqoqo::{Circuit, QuantumProgram};
 
@@ -833,7 +832,7 @@ mod test {
             msg: "DummyMsg".to_string(),
             internal_type: "DummyType".to_string(),
         };
-        let error = ValidationError { detail };
+        let error = ValidationError { detail: vec![detail] };
         let server = MockServer::start();
         let mock_status = server.mock(|when, then| {
             when.method("GET").path("/DummyLocation/status");
