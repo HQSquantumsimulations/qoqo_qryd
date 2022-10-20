@@ -28,10 +28,6 @@ from typing import (
     List
 )
 from copy import copy
-from qoqo_pyquest import (
-    pyquest_call_operation,
-    pyquest_call_circuit
-)
 
 def test():
     device = QrydEmuSquareDevice(pcz_theta=0.23, seed=1)
@@ -52,7 +48,7 @@ def test():
 
     for i in range(20):
         print(i)
-        sleep(30)
+        sleep(5)
         job_status = backend.get_job_status(job_location)
         if job_status["status"] == "completed":
             result = backend.get_job_result(job_location)
