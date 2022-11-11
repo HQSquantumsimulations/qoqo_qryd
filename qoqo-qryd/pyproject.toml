@@ -1,6 +1,6 @@
 [project]
 name = "qoqo_qryd"
-version = "0.6.1"
+version = "0.7.0-alpha.1"
 dependencies = [
   'numpy',
   'qoqo>=1.2.0-alpha.1',
