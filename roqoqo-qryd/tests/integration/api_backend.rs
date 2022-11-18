@@ -32,19 +32,127 @@ fn api_backend() {
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
         let api_backend_new = APIBackend::new(qryd_device, None, None).unwrap();
         // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
-        let qubit_mapping: HashMap<usize, usize> =
-            (0..number_qubits).into_iter().map(|x| (x, x)).collect();
         let mut circuit = Circuit::new();
         circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
         circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
-        circuit += operations::RotateX::new(4, std::f64::consts::FRAC_PI_2.into());
+        circuit += operations::RotateY::new(4, std::f64::consts::FRAC_PI_2.into());
+        circuit += operations::RotateZ::new(4, std::f64::consts::FRAC_PI_2.into());
+        circuit += operations::PauliX::new(2);
+        circuit += operations::PauliY::new(2);
+        circuit += operations::PauliZ::new(2);
+        circuit += operations::Hadamard::new(3);
+        circuit += operations::SqrtPauliX::new(5);
+        circuit += operations::InvSqrtPauliX::new(5);
+        circuit += operations::PhaseShiftState1::new(4, std::f64::consts::FRAC_PI_2.into());
+        circuit += operations::RotateXY::new(
+            4,
+            std::f64::consts::FRAC_PI_2.into(),
+            std::f64::consts::FRAC_PI_4.into(),
+        );
+        circuit += operations::CNOT::new(1, 2);
+        circuit += operations::SWAP::new(1, 2);
+        circuit += operations::ISwap::new(1, 2);
+        circuit += operations::ControlledPauliY::new(1, 2);
+        circuit += operations::ControlledPauliZ::new(1, 2);
+        circuit += operations::ControlledPhaseShift::new(1, 2, std::f64::consts::FRAC_PI_4.into());
+
         // circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
-        circuit +=
-            operations::PragmaRepeatedMeasurement::new("ro".to_string(), 40, Some(qubit_mapping)); // assert!(api_backend_new.is_ok());
+        for i in 0..number_qubits {
+            circuit += operations::MeasureQubit::new(i, "ro".to_string(), number_qubits - i - 1);
+        }
+        circuit += operations::PragmaSetNumberOfMeasurements::new(40, "ro".to_string()); // assert!(api_backend_new.is_ok());
         let measurement = ClassicalRegister {
             constant_circuit: None,
             circuits: vec![circuit.clone()],
         };
+        let program = QuantumProgram::ClassicalRegister {
+            measurement,
+            input_parameter_names: vec![],
+        };
+        let job_loc = api_backend_new
+            .post_job(
+                // "qryd_emu_localcomp_square".to_string(),
+                // Some(0),
+                // Some(0.23),
+                program,
+            )
+            .unwrap();
+        println!("Job location {}", job_loc);
+
+        let fifteen = time::Duration::from_secs(1);
+
+        let mut test_counter = 0;
+        let mut status = "".to_string();
+        let mut job_result = QRydJobResult::default();
+        while test_counter < 20 && status != "completed" {
+            test_counter += 1;
+            let job_status = api_backend_new.get_job_status(job_loc.clone()).unwrap();
+            status = job_status.status.clone();
+            thread::sleep(fifteen);
+
+            println!("Job status {:?}", job_status);
+            if status == *"completed" {
+                assert_eq!(job_status.status, "completed");
+                job_result = api_backend_new.get_job_result(job_loc.clone()).unwrap();
+                println!("Job result {:?}", job_result.clone());
+            }
+        }
+        let (bits, _, _) =
+            APIBackend::counts_to_result(job_result.data, "ro".to_string(), number_qubits).unwrap();
+        assert!(!bits.is_empty());
+        for line in bits["ro"].iter() {
+            println!("{:?}", line);
+        }
+    }
+}
+
+#[test]
+fn api_backend_with_constant_circuit() {
+    if env::var("QRYD_API_TOKEN").is_ok() {
+        let number_qubits = 6;
+        let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
+        let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
+        let api_backend_new = APIBackend::new(qryd_device, None, None).unwrap();
+        // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
+        let mut circuit = Circuit::new();
+        circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
+        circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
+        circuit += operations::RotateY::new(4, std::f64::consts::FRAC_PI_2.into());
+        circuit += operations::RotateZ::new(4, std::f64::consts::FRAC_PI_2.into());
+        circuit += operations::PauliX::new(2);
+        circuit += operations::PauliY::new(2);
+        circuit += operations::PauliZ::new(2);
+        circuit += operations::Hadamard::new(3);
+        circuit += operations::SqrtPauliX::new(5);
+        circuit += operations::InvSqrtPauliX::new(5);
+        circuit += operations::PhaseShiftState1::new(4, std::f64::consts::FRAC_PI_2.into());
+        circuit += operations::RotateXY::new(
+            4,
+            std::f64::consts::FRAC_PI_2.into(),
+            std::f64::consts::FRAC_PI_4.into(),
+        );
+        circuit += operations::CNOT::new(1, 2);
+        circuit += operations::SWAP::new(1, 2);
+        circuit += operations::ISwap::new(1, 2);
+        circuit += operations::ControlledPauliY::new(1, 2);
+        circuit += operations::ControlledPauliZ::new(1, 2);
+        circuit += operations::ControlledPhaseShift::new(1, 2, std::f64::consts::FRAC_PI_4.into());
+
+        // circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
+        for i in 0..number_qubits {
+            circuit += operations::MeasureQubit::new(i, "ro".to_string(), number_qubits - i - 1);
+        }
+        circuit += operations::PragmaSetNumberOfMeasurements::new(40, "ro".to_string()); // assert!(api_backend_new.is_ok());
+        let mut constant_circuit = Circuit::new();
+
+        constant_circuit += operations::PauliX::new(0);
+        constant_circuit += operations::Hadamard::new(1);
+
+        let measurement = ClassicalRegister {
+            constant_circuit: Some(constant_circuit),
+            circuits: vec![circuit.clone()],
+        };
+
         let program = QuantumProgram::ClassicalRegister {
             measurement,
             input_parameter_names: vec![],
@@ -94,15 +202,35 @@ fn api_triangular() {
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
         let api_backend_new = APIBackend::new(qryd_device, None, None).unwrap();
         // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
-        let qubit_mapping: HashMap<usize, usize> =
-            (0..number_qubits).into_iter().map(|x| (x, x)).collect();
         let mut circuit = Circuit::new();
         circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
         circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
-        circuit += operations::RotateX::new(4, std::f64::consts::FRAC_PI_2.into());
+        circuit += operations::RotateY::new(4, std::f64::consts::FRAC_PI_2.into());
+        circuit += operations::RotateZ::new(4, std::f64::consts::FRAC_PI_2.into());
+        circuit += operations::PauliX::new(2);
+        circuit += operations::PauliY::new(2);
+        circuit += operations::PauliZ::new(2);
+        circuit += operations::Hadamard::new(3);
+        circuit += operations::SqrtPauliX::new(5);
+        circuit += operations::InvSqrtPauliX::new(5);
+        circuit += operations::PhaseShiftState1::new(4, std::f64::consts::FRAC_PI_2.into());
+        circuit += operations::RotateXY::new(
+            4,
+            std::f64::consts::FRAC_PI_2.into(),
+            std::f64::consts::FRAC_PI_4.into(),
+        );
+        circuit += operations::CNOT::new(1, 2);
+        circuit += operations::SWAP::new(1, 2);
+        circuit += operations::ISwap::new(1, 2);
+        circuit += operations::ControlledPauliY::new(1, 2);
+        circuit += operations::ControlledPauliZ::new(1, 2);
+        circuit += operations::ControlledPhaseShift::new(1, 2, std::f64::consts::FRAC_PI_4.into());
+
         // circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
-        circuit +=
-            operations::PragmaRepeatedMeasurement::new("ro".to_string(), 40, Some(qubit_mapping)); // assert!(api_backend_new.is_ok());
+        for i in 0..number_qubits {
+            circuit += operations::MeasureQubit::new(i, "ro".to_string(), number_qubits - i - 1);
+        }
+        circuit += operations::PragmaSetNumberOfMeasurements::new(40, "ro".to_string()); // assert!(api_backend_new.is_ok());
         let measurement = ClassicalRegister {
             constant_circuit: None,
             circuits: vec![circuit.clone()],
@@ -198,14 +326,36 @@ fn api_delete() {
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
         let api_backend_new = APIBackend::new(qryd_device, None, None).unwrap();
         // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
-        let qubit_mapping: HashMap<usize, usize> = (0..6).into_iter().map(|x| (x, x)).collect();
+        let number_qubits = 6;
         let mut circuit = Circuit::new();
-        circuit += operations::DefinitionBit::new("ro".to_string(), 6, true);
-        circuit += operations::RotateX::new(0, std::f64::consts::FRAC_PI_2.into());
-        circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
-        circuit += operations::RotateX::new(4, std::f64::consts::FRAC_PI_2.into());
-        circuit +=
-            operations::PragmaRepeatedMeasurement::new("ro".to_string(), 100, Some(qubit_mapping)); // assert!(api_backend_new.is_ok());
+        circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
+        circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
+        circuit += operations::RotateY::new(4, std::f64::consts::FRAC_PI_2.into());
+        circuit += operations::RotateZ::new(4, std::f64::consts::FRAC_PI_2.into());
+        circuit += operations::PauliX::new(2);
+        circuit += operations::PauliY::new(2);
+        circuit += operations::PauliZ::new(2);
+        circuit += operations::Hadamard::new(3);
+        circuit += operations::SqrtPauliX::new(5);
+        circuit += operations::InvSqrtPauliX::new(5);
+        circuit += operations::PhaseShiftState1::new(4, std::f64::consts::FRAC_PI_2.into());
+        circuit += operations::RotateXY::new(
+            4,
+            std::f64::consts::FRAC_PI_2.into(),
+            std::f64::consts::FRAC_PI_4.into(),
+        );
+        circuit += operations::CNOT::new(1, 2);
+        circuit += operations::SWAP::new(1, 2);
+        circuit += operations::ISwap::new(1, 2);
+        circuit += operations::ControlledPauliY::new(1, 2);
+        circuit += operations::ControlledPauliZ::new(1, 2);
+        circuit += operations::ControlledPhaseShift::new(1, 2, std::f64::consts::FRAC_PI_4.into());
+
+        // circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
+        for i in 0..number_qubits {
+            circuit += operations::MeasureQubit::new(i, "ro".to_string(), number_qubits - i - 1);
+        }
+        circuit += operations::PragmaSetNumberOfMeasurements::new(40, "ro".to_string()); // assert!(api_backend_new.is_ok());
         let measurement = ClassicalRegister {
             constant_circuit: None,
             circuits: vec![circuit.clone()],
@@ -228,7 +378,7 @@ fn api_delete() {
     }
 }
 
-// Test error cases. Case 1: constant_circuit != None
+// Test error cases. Case 1: constant_circuit with measurement
 #[test]
 fn api_backend_errorcase1() {
     if env::var("QRYD_API_TOKEN").is_ok() {
@@ -237,14 +387,39 @@ fn api_backend_errorcase1() {
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
         let api_backend_new = APIBackend::new(qryd_device, None, None).unwrap();
         // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
-        let qubit_mapping: HashMap<usize, usize> =
-            (0..number_qubits).into_iter().map(|x| (x, x)).collect();
         let mut circuit = Circuit::new();
         circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
         circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
         circuit += operations::RotateX::new(4, std::f64::consts::FRAC_PI_2.into());
-        circuit +=
-            operations::PragmaRepeatedMeasurement::new("ro".to_string(), 40, Some(qubit_mapping));
+        circuit += operations::MeasureQubit::new(0, "ro".to_string(), 0);
+        circuit += operations::PragmaSetNumberOfMeasurements::new(10, "ro".to_string());
+        let measurement = ClassicalRegister {
+            constant_circuit: Some(circuit.clone()),
+            circuits: vec![circuit.clone()],
+        };
+        let program = QuantumProgram::ClassicalRegister {
+            measurement,
+            input_parameter_names: vec![],
+        };
+        let job_loc = api_backend_new.post_job(program);
+        assert!(job_loc.is_err());
+    }
+}
+
+// Test error cases. Case 5: Not supported gate
+#[test]
+fn api_backend_errorcase5() {
+    if env::var("QRYD_API_TOKEN").is_ok() {
+        let number_qubits = 6;
+        let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
+        let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
+        let api_backend_new = APIBackend::new(qryd_device, None, None).unwrap();
+        // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
+        let mut circuit = Circuit::new();
+        circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
+        circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
+        circuit += operations::RotateX::new(4, std::f64::consts::FRAC_PI_2.into());
+        circuit += operations::PragmaRepeatedMeasurement::new("ro".to_string(), 10, None);
         let measurement = ClassicalRegister {
             constant_circuit: Some(circuit.clone()),
             circuits: vec![circuit.clone()],
@@ -266,14 +441,13 @@ fn api_backend_errorcase2() {
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
     let api_backend_new =
         APIBackend::new(qryd_device, Some("DummyString".to_string()), None).unwrap();
-    let qubit_mapping: HashMap<usize, usize> =
-        (0..number_qubits).into_iter().map(|x| (x, x)).collect();
+
     let mut circuit = Circuit::new();
     circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
     circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
     circuit += operations::RotateX::new(4, std::f64::consts::FRAC_PI_2.into());
-    circuit +=
-        operations::PragmaRepeatedMeasurement::new("ro".to_string(), 40, Some(qubit_mapping));
+    circuit += operations::MeasureQubit::new(0, "ro".to_string(), 0);
+    circuit += operations::PragmaSetNumberOfMeasurements::new(10, "ro".to_string());
     let measurement = ClassicalRegister {
         constant_circuit: None,
         circuits: vec![circuit.clone()],

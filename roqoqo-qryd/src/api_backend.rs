@@ -18,6 +18,7 @@ use roqoqo::measurements::ClassicalRegister;
 use roqoqo::operations::Define;
 use roqoqo::operations::Operation;
 use roqoqo::prelude::EvaluatingBackend;
+use roqoqo::prelude::Operate;
 use roqoqo::Circuit;
 use roqoqo::QuantumProgram;
 use roqoqo::RoqoqoBackendError;
@@ -49,18 +50,34 @@ pub struct APIBackend {
 /// Local struct representing the body of the request message
 #[derive(Debug, serde::Serialize)]
 struct QRydRunData {
-    // The QRyd WebAPI Backend used to execute operations and circuits.
-    // At the moment limited to the QRyd emulators
-    // ('qryd_emu_localcomp_square', 'qryd_emu_localcomp_triangle',
-    // 'qryd_emu_cloudcomp_square', 'qryd_emu_cloudcomp_triangle')
+    /// The QRyd WebAPI Backend used to execute operations and circuits.
+    /// At the moment limited to the QRyd emulators
+    /// ('qryd_emu_localcomp_square', 'qryd_emu_localcomp_triangle',
+    /// 'qryd_emu_cloudcomp_square', 'qryd_emu_cloudcomp_triangle')
     backend: String,
-    //
-    develop: bool,
-    // Seed
-    seed: usize,
-    // Phase angle for the basis gate 'PhaseShiftedControllZ'.
+    /// Is develop version default: false
+    dev: bool,
+    /// Qubits that are fused in simulator default none
+    fusion_max_qubits: usize,
+    /// Random seed for the simulator default none
+    seed_simulator: Option<usize>,
+    /// Random seed for the compiler default none
+    seed_compiler: Option<usize>,
+    /// Phase angle for the basis gate 'PhaseShiftedControllZ'.
     pcz_theta: f64,
-    // Roqoqo QuantumProgram to be executed.
+    /// Use the extended set in SABRE routing
+    /// default true
+    use_extended_set: bool,
+    /// Use back-and-forth SABRE runs to optimize initial qubit mapping
+    /// default true
+    use_reverse_traversal: bool,
+    /// Number of back-and-forth iterations used
+    reverse_traversal_iterations: usize,
+    /// Size of the extended set if used, default 5
+    extended_set_size: usize,
+    /// Weight given to the extended set, default 0.5
+    extended_set_weight: f64,
+    /// Roqoqo QuantumProgram to be executed.
     program: roqoqo_1_0::QuantumProgram,
 }
 
@@ -176,6 +193,64 @@ fn downconvert_roqoqo_version(
         input_parameter_names,
     };
     Ok(downconverted_program)
+}
+
+fn check_operation_compatability(op: &Operation) -> Result<(), RoqoqoBackendError> {
+    match op {
+        Operation::MeasureQubit(_) => Ok(()),
+        Operation::DefinitionBit(_) => Ok(()),
+        Operation::PhaseShiftState1(_) => Ok(()),
+        Operation::RotateXY(_) => Ok(()),
+        Operation::RotateX(_) => Ok(()),
+        Operation::RotateY(_) => Ok(()),
+        Operation::RotateZ(_) => Ok(()),
+        Operation::PhaseShiftedControlledZ(_) => Ok(()),
+        Operation::Hadamard(_) => Ok(()),
+        Operation::PauliX(_) => Ok(()),
+        Operation::PauliY(_) => Ok(()),
+        Operation::PauliZ(_) => Ok(()),
+        Operation::SqrtPauliX(_) =>  Ok(()),
+        Operation::InvSqrtPauliX(_) =>  Ok(()),
+        Operation::CNOT(_) => Ok(()),
+        Operation::ControlledPauliY(_) =>  Ok(()),
+        Operation::ControlledPauliZ(_) =>  Ok(()),
+        Operation::ControlledPhaseShift(_) => Ok(()),
+        Operation::SWAP(_) =>  Ok(()),
+        Operation::ISwap(_) => Ok(()),
+        Operation::PragmaSetNumberOfMeasurements(_) => Ok(()),
+        _ => Err(RoqoqoBackendError::GenericError {
+            msg: format!("Operation {} is not supported by QRydDemo Web API backend.\n
+            Use: MeasureQubit, PragmaSetNumberOfMeasurements, PhaseShiftState1, RotateXY, RotateX, RotateY, RotateZ, RotateZ, Hadamard, PauliX, PauliY, PauliZ, SqrtPauliX, InvSqrtPauliX, PhaseShiftedControlledZ, CNOT, ControlledPauliY, ControlledPauliZ, ControlledPhaseShift, SWAP or ISwap instead.", op.hqslang())
+        })
+    }
+}
+
+fn check_for_api_compatability(program: &QuantumProgram) -> Result<(), RoqoqoBackendError> {
+    let (measurement, _input_parameter_names) = match program {
+        QuantumProgram::ClassicalRegister {
+            measurement,
+            input_parameter_names,
+        } => Ok((measurement, input_parameter_names)),
+        _ => Err(RoqoqoBackendError::GenericError {
+            msg:
+                "Only ClassiclaRegister measurements are supported by the Qryd WebAPI at the moment"
+                    .to_string(),
+        }),
+    }?;
+    for op in measurement.circuits[0].iter() {
+        check_operation_compatability(op)?
+    }
+
+    match &measurement.constant_circuit {
+        Some(constant_circuit) => {
+            for op in constant_circuit.iter() {
+                check_operation_compatability(op)?
+            }
+        }
+        None => (),
+    }
+
+    Ok(())
 }
 
 /// Struct to represent QRyd response on the result for the posted Job.
@@ -307,15 +382,23 @@ impl APIBackend {
                 })
             }
         }
+        check_for_api_compatability(&quantumprogram)?;
         let quantumprogram: roqoqo_1_0::QuantumProgram =
             downconvert_roqoqo_version(quantumprogram)?;
         // dbg!(&serde_json::to_string(&quantumprogram).unwrap());
         let data = QRydRunData {
             backend: self.device.qrydbackend(),
-            seed: seed_param,
-            develop: false,
             pcz_theta: theta_param,
             program: quantumprogram,
+            dev: false,
+            fusion_max_qubits: 4,
+            seed_simulator: Some(seed_param),
+            seed_compiler: None,
+            use_extended_set: true,
+            use_reverse_traversal: true,
+            extended_set_size: 5,
+            extended_set_weight: 0.5,
+            reverse_traversal_iterations: 2,
         };
 
         // Prepare WebAPI client
@@ -330,7 +413,7 @@ impl APIBackend {
         // here: value for put() temporarily fixed.
         // needs to be derived dynamically based on the provided parameter 'qrydbackend'
         let resp = client
-            .post("https://api.qryddemo.itp3.uni-stuttgart.de/v2_0/jobs")
+            .post("https://api.qryddemo.itp3.uni-stuttgart.de/v3_0/jobs")
             .header("X-API-KEY", self.access_token.clone())
             .json(&data)
             .send()
@@ -348,7 +431,7 @@ impl APIBackend {
                     })?;
                 return Err(RoqoqoBackendError::GenericError{msg:
                     format!( "QuantumProgram or metadata could not be parsed by QRyd Web-API Backend. msg: {} type: {}, loc: {:?}",querry_response.detail[0].msg, querry_response.detail[0].internal_type, querry_response.detail[0].loc,  )
-            });
+                });
             }
             // dbg!(&resp);
             Err(RoqoqoBackendError::NetworkError {
@@ -713,10 +796,17 @@ mod test {
 
         let test = QRydRunData {
             backend: "qryd_emu_cloudcomp_square".to_string(),
-            develop: false,
-            seed: 0,
             pcz_theta: 0.0,
             program,
+            dev: false,
+            fusion_max_qubits: 4,
+            seed_simulator: None,
+            seed_compiler: None,
+            use_extended_set: true,
+            use_reverse_traversal: true,
+            extended_set_size: 5,
+            extended_set_weight: 0.5,
+            reverse_traversal_iterations: 2,
         };
         assert_eq!(format!("{:?}", test), "QRydRunData { backend: \"qryd_emu_cloudcomp_square\", develop: false, seed: 0, pcz_theta: 0.0, program: ClassicalRegister { measurement: ClassicalRegister { constant_circuit: None, circuits: [Circuit { definitions: [], operations: [], _roqoqo_version: RoqoqoVersion }] }, input_parameter_names: [\"test\"] } }");
     }
