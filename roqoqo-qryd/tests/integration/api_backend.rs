@@ -23,7 +23,7 @@ use roqoqo_qryd::QRydJobResult;
 
 use std::{env, thread, time};
 
-// Test the new function
+// Test submitting a valid circuit
 #[test]
 fn api_backend() {
     if env::var("QRYD_API_TOKEN").is_ok() {
@@ -103,6 +103,38 @@ fn api_backend() {
         for line in bits["ro"].iter() {
             println!("{:?}", line);
         }
+    }
+}
+
+// Test submitting an invalid circuit
+#[test]
+fn api_backend_failing() {
+    if env::var("QRYD_API_TOKEN").is_ok() {
+        let number_qubits = 6;
+        let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
+        let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
+        let api_backend_new = APIBackend::new(qryd_device, None, None).unwrap();
+        // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
+        let mut circuit = Circuit::new();
+        circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
+
+        circuit += operations::ControlledPhaseShift::new(1, 2, std::f64::consts::FRAC_PI_4.into());
+        circuit += operations::PragmaRepeatedMeasurement::new("ro".to_string(), 20, None);
+        // circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
+        // for i in 0..number_qubits {
+        //     circuit += operations::MeasureQubit::new(i, "ro".to_string(), number_qubits - i - 1);
+        // }
+        // circuit += operations::PragmaSetNumberOfMeasurements::new(40, "ro".to_string()); // assert!(api_backend_new.is_ok());
+        let measurement = ClassicalRegister {
+            constant_circuit: None,
+            circuits: vec![circuit.clone()],
+        };
+        let program = QuantumProgram::ClassicalRegister {
+            measurement,
+            input_parameter_names: vec![],
+        };
+        let program_result = program.run(api_backend_new, &[]);
+        assert!(program_result.is_err());
     }
 }
 
@@ -286,15 +318,16 @@ fn evaluating_backend() {
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
         let api_backend_new = APIBackend::new(qryd_device, None, Some(20)).unwrap();
         // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
-        let qubit_mapping: HashMap<usize, usize> =
-            (0..number_qubits).into_iter().map(|x| (x, x)).collect();
         let mut circuit = Circuit::new();
         circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
         circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
         circuit += operations::RotateX::new(4, std::f64::consts::PI.into());
         circuit += operations::RotateX::new(2, std::f64::consts::PI.into());
-        circuit +=
-            operations::PragmaRepeatedMeasurement::new("ro".to_string(), 40, Some(qubit_mapping)); // assert!(api_backend_new.is_ok());
+        for i in 0..number_qubits {
+            circuit += operations::MeasureQubit::new(i, "ro".to_string(), i);
+        }
+        circuit += operations::PragmaSetNumberOfMeasurements::new(40, "ro".to_string()); // assert!(api_backend_new.is_ok());
+
         let mut input = PauliZProductInput::new(6, false);
         let index = input
             .add_pauliz_product("ro".to_string(), vec![0, 2, 4])
@@ -375,34 +408,6 @@ fn api_delete() {
         println!("Job location {}", job_loc);
         let delete_job = api_backend_new.delete_job(job_loc);
         assert!(delete_job.is_ok());
-    }
-}
-
-// Test error cases. Case 1: constant_circuit with measurement
-#[test]
-fn api_backend_errorcase1() {
-    if env::var("QRYD_API_TOKEN").is_ok() {
-        let number_qubits = 6;
-        let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
-        let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-        let api_backend_new = APIBackend::new(qryd_device, None, None).unwrap();
-        // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
-        let mut circuit = Circuit::new();
-        circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
-        circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
-        circuit += operations::RotateX::new(4, std::f64::consts::FRAC_PI_2.into());
-        circuit += operations::MeasureQubit::new(0, "ro".to_string(), 0);
-        circuit += operations::PragmaSetNumberOfMeasurements::new(10, "ro".to_string());
-        let measurement = ClassicalRegister {
-            constant_circuit: Some(circuit.clone()),
-            circuits: vec![circuit.clone()],
-        };
-        let program = QuantumProgram::ClassicalRegister {
-            measurement,
-            input_parameter_names: vec![],
-        };
-        let job_loc = api_backend_new.post_job(program);
-        assert!(job_loc.is_err());
     }
 }
 

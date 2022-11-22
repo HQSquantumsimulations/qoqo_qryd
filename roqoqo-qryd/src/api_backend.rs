@@ -273,7 +273,7 @@ pub struct QRydJobResult {
     pub device: String,
     // #[serde(default)]
     // /// The used precision
-    // precision: String,
+    // pub precision: String,
     #[serde(default)]
     /// The number of qubits that were used in the run
     pub num_qubits: u32,
@@ -295,6 +295,9 @@ pub struct QRydJobResult {
     #[serde(default)]
     /// Number of two qubit gates actually executed in the circuit
     pub executed_two_qubit_gates: u32,
+    /// The time taken to compile the quantum program on the WebAPI
+    #[serde(default)]
+    pub compilation_time: f64,
 }
 
 /// Represents the counts of measurements returned by QRyd API
@@ -808,7 +811,7 @@ mod test {
             extended_set_weight: 0.5,
             reverse_traversal_iterations: 2,
         };
-        assert_eq!(format!("{:?}", test), "QRydRunData { backend: \"qryd_emu_cloudcomp_square\", develop: false, seed: 0, pcz_theta: 0.0, program: ClassicalRegister { measurement: ClassicalRegister { constant_circuit: None, circuits: [Circuit { definitions: [], operations: [], _roqoqo_version: RoqoqoVersion }] }, input_parameter_names: [\"test\"] } }");
+        assert_eq!(format!("{:?}", test), "QRydRunData { backend: \"qryd_emu_cloudcomp_square\", dev: false, fusion_max_qubits: 4, seed_simulator: None, seed_compiler: None, pcz_theta: 0.0, use_extended_set: true, use_reverse_traversal: true, reverse_traversal_iterations: 2, extended_set_size: 5, extended_set_weight: 0.5, program: ClassicalRegister { measurement: ClassicalRegister { constant_circuit: None, circuits: [Circuit { definitions: [], operations: [], _roqoqo_version: RoqoqoVersion }] }, input_parameter_names: [\"test\"] } }");
     }
 
     /// Test Debug of QRydJobResult
@@ -830,7 +833,9 @@ mod test {
             fusion_generated_gates: 0,
             executed_single_qubit_gates: 0,
             executed_two_qubit_gates: 0,
+            // precision: "single".to_string(),
+            compilation_time: 1.0,
         };
-        assert_eq!(format!("{:?}", result), "QRydJobResult { data: ResultCounts { counts: {} }, time_taken: 0.0, noise: \"noise\", method: \"method\", device: \"device\", num_qubits: 2, num_clbits: 2, fusion_max_qubits: 0, fusion_avg_qubits: 0.0, fusion_generated_gates: 0, executed_single_qubit_gates: 0, executed_two_qubit_gates: 0 }");
+        assert_eq!(format!("{:?}", result), "QRydJobResult { data: ResultCounts { counts: {} }, time_taken: 0.0, noise: \"noise\", method: \"method\", device: \"device\", num_qubits: 2, num_clbits: 2, fusion_max_qubits: 0, fusion_avg_qubits: 0.0, fusion_generated_gates: 0, executed_single_qubit_gates: 0, executed_two_qubit_gates: 0, compilation_time: 1.0 }");
     }
 }
