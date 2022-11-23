@@ -263,7 +263,7 @@ impl APIBackend {
         timeout: Option<usize>,
         mock_port: Option<String>,
     ) -> Result<Self, RoqoqoBackendError> {
-        if let Some(_) = mock_port {
+        if mock_port.is_some() {
             Ok(Self {
                 device,
                 access_token: "".to_string(),
@@ -334,21 +334,20 @@ impl APIBackend {
         };
 
         // Prepare WebAPI client
-        let client: Client;
-        if let Some(_) = &self.mock_port {
-            client = reqwest::blocking::Client::builder().build().map_err(|x| {
+        let client: Client = if self.mock_port.is_some() {
+            reqwest::blocking::Client::builder().build().map_err(|x| {
                 RoqoqoBackendError::NetworkError {
                     msg: format!("could not create test client {:?}", x),
                 }
-            })?;
+            })?
         } else {
-            client = reqwest::blocking::Client::builder()
+            reqwest::blocking::Client::builder()
                 .https_only(true)
                 .build()
                 .map_err(|x| RoqoqoBackendError::NetworkError {
                     msg: format!("could not create https client {:?}", x),
-                })?;
-        }
+                })?
+        };
 
         // Call WebAPI client
         // here: value for put() temporarily fixed.
@@ -426,21 +425,20 @@ impl APIBackend {
         job_location: String,
     ) -> Result<QRydJobStatus, RoqoqoBackendError> {
         // Prepare WebAPI client
-        let client: Client;
-        if let Some(_) = &self.mock_port {
-            client = reqwest::blocking::Client::builder().build().map_err(|x| {
+        let client: Client = if self.mock_port.is_some() {
+            reqwest::blocking::Client::builder().build().map_err(|x| {
                 RoqoqoBackendError::NetworkError {
                     msg: format!("could not create test client {:?}", x),
                 }
-            })?;
+            })?
         } else {
-            client = reqwest::blocking::Client::builder()
+            reqwest::blocking::Client::builder()
                 .https_only(true)
                 .build()
                 .map_err(|x| RoqoqoBackendError::NetworkError {
                     msg: format!("could not create https client {:?}", x),
-                })?;
-        }
+                })?
+        };
 
         let url_string: String = job_location + "/status";
 
@@ -499,21 +497,20 @@ impl APIBackend {
         job_location: String,
     ) -> Result<QRydJobResult, RoqoqoBackendError> {
         // Prepare WebAPI client
-        let client: Client;
-        if let Some(_) = &self.mock_port {
-            client = reqwest::blocking::Client::builder().build().map_err(|x| {
+        let client: Client = if self.mock_port.is_some() {
+            reqwest::blocking::Client::builder().build().map_err(|x| {
                 RoqoqoBackendError::NetworkError {
                     msg: format!("could not create test client {:?}", x),
                 }
-            })?;
+            })?
         } else {
-            client = reqwest::blocking::Client::builder()
+            reqwest::blocking::Client::builder()
                 .https_only(true)
                 .build()
                 .map_err(|x| RoqoqoBackendError::NetworkError {
                     msg: format!("could not create https client {:?}", x),
-                })?;
-        }
+                })?
+        };
 
         // construct URL with {job_id} not required?
         let url_string: String = job_location + "/result";
@@ -569,21 +566,20 @@ impl APIBackend {
     ///
     pub fn delete_job(&self, job_location: String) -> Result<(), RoqoqoBackendError> {
         // Prepare WebAPI client
-        let client: Client;
-        if let Some(_) = &self.mock_port {
-            client = reqwest::blocking::Client::builder().build().map_err(|x| {
+        let client: Client = if self.mock_port.is_some() {
+            reqwest::blocking::Client::builder().build().map_err(|x| {
                 RoqoqoBackendError::NetworkError {
                     msg: format!("could not create test client {:?}", x),
                 }
-            })?;
+            })?
         } else {
-            client = reqwest::blocking::Client::builder()
+            reqwest::blocking::Client::builder()
                 .https_only(true)
                 .build()
                 .map_err(|x| RoqoqoBackendError::NetworkError {
                     msg: format!("could not create https client {:?}", x),
-                })?;
-        }
+                })?
+        };
         // Call WebAPI client
         let resp = client
             .delete(job_location)
