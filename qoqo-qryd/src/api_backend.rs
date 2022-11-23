@@ -69,7 +69,7 @@ impl APIBackendWrapper {
         device: &PyAny,
         access_token: Option<String>,
         timeout: Option<usize>,
-        mock_port: Option<String>
+        mock_port: Option<String>,
     ) -> PyResult<Self> {
         let device: QRydAPIDevice = convert_into_device(device).map_err(|err| {
             PyTypeError::new_err(format!("Device Parameter is not QRydAPIDevice {:?}", err))

@@ -770,7 +770,8 @@ fn api_backend_errorcase8() {
         }
     );
 
-    let job_delete = api_backend_new.delete_job(format!("http://127.0.0.1:{}/DummyLocation", server.port()));
+    let job_delete =
+        api_backend_new.delete_job(format!("http://127.0.0.1:{}/DummyLocation", server.port()));
 
     mock_delete.assert();
     assert!(job_delete.is_err());

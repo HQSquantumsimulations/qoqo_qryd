@@ -832,7 +832,9 @@ mod test {
             msg: "DummyMsg".to_string(),
             internal_type: "DummyType".to_string(),
         };
-        let error = ValidationError { detail: vec![detail] };
+        let error = ValidationError {
+            detail: vec![detail],
+        };
         let server = MockServer::start();
         let mock_status = server.mock(|when, then| {
             when.method("GET").path("/DummyLocation/status");
@@ -849,7 +851,10 @@ mod test {
         let mock_post = server.mock(|when, then| {
             when.method("POST");
             then.status(422)
-                .header("Location", format!("http://127.0.0.1:{}/DummyLocation", server.port()))
+                .header(
+                    "Location",
+                    format!("http://127.0.0.1:{}/DummyLocation", server.port()),
+                )
                 .json_body_obj(&error);
         });
         let number_qubits = 6;

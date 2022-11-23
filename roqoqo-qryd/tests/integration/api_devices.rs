@@ -546,7 +546,9 @@ fn test_to_generic_device_triangular() {
     for gate_name in ["PhaseShiftState1", "RotateX", "RotateY", "RotateXY"] {
         for qubit in 0..genericdevice.number_qubits() {
             assert_eq!(
-                genericdevice.single_qubit_gate_time(gate_name, &qubit).unwrap(),
+                genericdevice
+                    .single_qubit_gate_time(gate_name, &qubit)
+                    .unwrap(),
                 apidevice.single_qubit_gate_time(gate_name, &qubit).unwrap()
             );
         }
