@@ -883,12 +883,17 @@ fn api_backend_errorcase4() {
 /// Test error cases. Case 5: invalid QuantumProgram
 #[test]
 fn api_backend_errorcase5() {
-    let server = MockServer::start();
-
     let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-    let api_backend_new =
-        APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
+    let api_backend_new: APIBackend;
+    if env::var("QRYD_API_TOKEN").is_ok() {
+        api_backend_new = APIBackend::new(qryd_device, None, None, None).unwrap();
+    } else {
+        let server = MockServer::start();
+
+        api_backend_new =
+            APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
+    }
     let measurement = ClassicalRegister {
         constant_circuit: None,
         circuits: vec![],
