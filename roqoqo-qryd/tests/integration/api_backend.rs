@@ -81,7 +81,6 @@ fn api_backend() {
                 program,
             )
             .unwrap();
-        println!("Job location {}", job_loc);
 
         let fifteen = time::Duration::from_secs(1);
 
@@ -94,19 +93,14 @@ fn api_backend() {
             status = job_status.status.clone();
             thread::sleep(fifteen);
 
-            println!("Job status {:?}", job_status);
             if status == *"completed" {
                 assert_eq!(job_status.status, "completed");
                 job_result = api_backend_new.get_job_result(job_loc.clone()).unwrap();
-                println!("Job result {:?}", job_result.clone());
             }
         }
         let (bits, _, _) =
             APIBackend::counts_to_result(job_result.data, "ro".to_string(), number_qubits).unwrap();
         assert!(!bits.is_empty());
-        for line in bits["ro"].iter() {
-            println!("{:?}", line);
-        }
     } else {
         let server = MockServer::start();
         let qryd_job_status_in_progress = QRydJobStatus {
@@ -304,7 +298,6 @@ fn api_backend_with_constant_circuit() {
                 program,
             )
             .unwrap();
-        println!("Job location {}", job_loc);
 
         let fifteen = time::Duration::from_secs(1);
 
@@ -317,19 +310,14 @@ fn api_backend_with_constant_circuit() {
             status = job_status.status.clone();
             thread::sleep(fifteen);
 
-            println!("Job status {:?}", job_status);
             if status == *"completed" {
                 assert_eq!(job_status.status, "completed");
                 job_result = api_backend_new.get_job_result(job_loc.clone()).unwrap();
-                println!("Job result {:?}", job_result.clone());
             }
         }
         let (bits, _, _) =
             APIBackend::counts_to_result(job_result.data, "ro".to_string(), number_qubits).unwrap();
         assert!(!bits.is_empty());
-        for line in bits["ro"].iter() {
-            println!("{:?}", line);
-        }
     }
 }
 
@@ -386,7 +374,6 @@ fn api_triangular() {
                 program,
             )
             .unwrap();
-        println!("Job location {}", job_loc);
         assert!(!job_loc.is_empty());
 
         let fifteen = time::Duration::from_secs(1);
@@ -401,19 +388,14 @@ fn api_triangular() {
             thread::sleep(fifteen);
             assert!(!job_status.status.clone().is_empty());
 
-            println!("Job status {:?}", job_status);
             if status == *"completed" {
                 assert_eq!(job_status.status, "completed");
                 job_result = api_backend_new.get_job_result(job_loc.clone()).unwrap();
-                println!("Job result {:?}", job_result.clone());
             }
         }
         let (bits, _, _) =
             APIBackend::counts_to_result(job_result.data, "ro".to_string(), number_qubits).unwrap();
         assert!(!bits.is_empty());
-        for line in bits["ro"].iter() {
-            println!("{:?}", line);
-        }
     } else {
         let server = MockServer::start();
         let qryd_job_status_completed = QRydJobStatus {
@@ -493,9 +475,6 @@ fn api_triangular() {
         let (bits, _, _) =
             APIBackend::counts_to_result(job_result.data, "ro".to_string(), number_qubits).unwrap();
         assert!(!bits.is_empty());
-        // for line in bits["ro"].iter() {
-        //     println!("{:?}", line);
-        // }
 
         mock_post.assert();
         mock_status.assert();
@@ -539,7 +518,6 @@ fn evaluating_backend() {
             input_parameter_names: vec![],
         };
         let program_result = program.run(api_backend_new, &[]).unwrap().unwrap();
-        println!("{:?}", program_result);
         assert_eq!(program_result.get("test"), Some(&-3.0));
     } else {
         let server = MockServer::start();
@@ -741,7 +719,6 @@ fn api_delete() {
                 program,
             )
             .unwrap();
-        println!("Job location {}", job_loc);
         let delete_job = api_backend_new.delete_job(job_loc);
         assert!(delete_job.is_ok());
     } else {
