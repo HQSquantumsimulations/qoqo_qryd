@@ -1178,34 +1178,3 @@ fn api_backend_errorcase8() {
         }
     );
 }
-
-#[test]
-fn mock_test() {
-    let server = MockServer::start();
-
-    let hello_mock = server.mock(|when, then| {
-        when.method("GET").path("/translate");
-        then.status(200);
-    });
-
-    let client = reqwest::blocking::Client::builder()
-        .build()
-        .map_err(|e| RoqoqoBackendError::NetworkError {
-            msg: format!("{:?}", e),
-        })
-        .unwrap();
-
-    let url_string = format!("http://{}/translate", server.address());
-
-    let resp = client
-        .get(url_string)
-        .send()
-        .map_err(|e| RoqoqoBackendError::NetworkError {
-            msg: format!("{:?}", e),
-        })
-        .unwrap();
-
-    hello_mock.assert();
-
-    assert_eq!(resp.status(), 200)
-}
