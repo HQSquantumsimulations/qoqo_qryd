@@ -953,14 +953,12 @@ mod test {
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
         let api_backend_new =
             APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
-        let qubit_mapping: HashMap<usize, usize> =
-            (0..number_qubits).into_iter().map(|x| (x, x)).collect();
         let mut circuit = Circuit::new();
         circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
         circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
         circuit += operations::RotateX::new(4, std::f64::consts::FRAC_PI_2.into());
-        circuit +=
-            operations::PragmaRepeatedMeasurement::new("ro".to_string(), 40, Some(qubit_mapping));
+        circuit += operations::MeasureQubit::new(0, "ro".to_string(), 0);
+        circuit += operations::PragmaSetNumberOfMeasurements::new(10, "ro".to_string());
         let measurement = ClassicalRegister {
             constant_circuit: Some(circuit.clone()),
             circuits: vec![circuit.clone()],
@@ -1037,14 +1035,12 @@ mod test {
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
         let api_backend_new =
             APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
-        let qubit_mapping: HashMap<usize, usize> =
-            (0..number_qubits).into_iter().map(|x| (x, x)).collect();
         let mut circuit = Circuit::new();
         circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
         circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
         circuit += operations::RotateX::new(4, std::f64::consts::FRAC_PI_2.into());
-        circuit +=
-            operations::PragmaRepeatedMeasurement::new("ro".to_string(), 40, Some(qubit_mapping));
+        circuit += operations::MeasureQubit::new(0, "ro".to_string(), 0);
+        circuit += operations::PragmaSetNumberOfMeasurements::new(10, "ro".to_string());
         let measurement = ClassicalRegister {
             constant_circuit: Some(circuit.clone()),
             circuits: vec![circuit.clone()],

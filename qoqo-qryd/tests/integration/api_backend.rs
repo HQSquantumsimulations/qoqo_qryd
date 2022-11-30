@@ -319,6 +319,7 @@ fn test_run_job() {
         counts: HashMap::from([("0x1".to_string(), 100), ("0x4".to_string(), 20)]),
     };
     let qryd_job_result_completed = QRydJobResult {
+        compilation_time: 1.0,
         data: result_counts,
         time_taken: 0.23,
         noise: "noise".to_string(),
@@ -406,6 +407,7 @@ fn test_run_circuit() {
         counts: HashMap::from([("0x0".to_string(), 40)]),
     };
     let qryd_job_result_completed = QRydJobResult {
+        compilation_time: 1.0,
         data: result_counts,
         time_taken: 0.23,
         noise: "noise".to_string(),
@@ -469,6 +471,7 @@ fn test_run_measurement_registers() {
         counts: HashMap::from([("0x0".to_string(), 40)]),
     };
     let qryd_job_result_completed = QRydJobResult {
+        compilation_time: 1.0,
         data: result_counts,
         time_taken: 0.23,
         noise: "noise".to_string(),
@@ -541,6 +544,7 @@ fn test_run_measurement() {
         counts: HashMap::from([("0x0".to_string(), 40)]),
     };
     let qryd_job_result_completed = QRydJobResult {
+        compilation_time: 1.0,
         data: result_counts,
         time_taken: 0.23,
         noise: "noise".to_string(),
