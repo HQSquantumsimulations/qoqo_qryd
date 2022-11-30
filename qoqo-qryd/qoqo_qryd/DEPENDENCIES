@@ -694,7 +694,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-base64 0.13.0
+base64 0.13.1
 https://github.com/marshallpierce/rust-base64
 by Alice Maz <alice@alicemaz.com>, Marshall Pierce <marshall@mpierce.org>
 encodes and decodes base64 as bytes or utf8
@@ -1237,7 +1237,7 @@ SOFTWARE.
 
 
 ====================================================
-bumpalo 3.11.0
+bumpalo 3.11.1
 https://github.com/fitzgen/bumpalo
 by Nick Fitzgerald <fitzgen@gmail.com>
 A fast bump allocation arena for Rust.
@@ -1478,7 +1478,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-bytemuck 1.12.1
+bytemuck 1.12.3
 https://github.com/Lokathor/bytemuck
 by Lokathor <zefria@gmail.com>
 A crate for mucking around with piles of bytes.
@@ -1578,7 +1578,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 ====================================================
-bytes 1.2.1
+bytes 1.3.0
 https://github.com/tokio-rs/bytes
 by Carl Lerche <me@carllerche.com>, Sean McArthur <sean@seanmonstar.com>
 Types and traits for working with bytes
@@ -1614,14 +1614,14 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-cc 1.0.73
-https://github.com/alexcrichton/cc-rs
+cc 1.0.77
+https://github.com/rust-lang/cc-rs
 by Alex Crichton <alex@alexcrichton.com>
 A build-time dependency for Cargo build scripts to assist in invoking the native
 C compiler to compile native C code into a static archive to be linked into Rust
 code.
 
-License: MIT/Apache-2.0
+License: MIT OR Apache-2.0
 ----------------------------------------------------
 LICENSE-APACHE:
 
@@ -2102,12 +2102,12 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-cmake 0.1.48
-https://github.com/alexcrichton/cmake-rs
+cmake 0.1.49
+https://github.com/rust-lang/cmake-rs
 by Alex Crichton <alex@alexcrichton.com>
 A build dependency for running `cmake` to build a native library
 
-License: MIT/Apache-2.0
+License: MIT OR Apache-2.0
 ----------------------------------------------------
 LICENSE-APACHE:
 
@@ -4806,7 +4806,7 @@ SOFTWARE.
 
 
 ====================================================
-futures-channel 0.3.24
+futures-channel 0.3.25
 https://rust-lang.github.io/futures-rs
 by 
 Channels for asynchronous communication using futures-rs.
@@ -5050,7 +5050,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-futures-core 0.3.24
+futures-core 0.3.25
 https://rust-lang.github.io/futures-rs
 by 
 The core traits and types in for the `futures` library.
@@ -5294,7 +5294,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-futures-io 0.3.24
+futures-io 0.3.25
 https://rust-lang.github.io/futures-rs
 by 
 The `AsyncRead`, `AsyncWrite`, `AsyncSeek`, and `AsyncBufRead` traits for the futures-rs library.
@@ -5538,7 +5538,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-futures-sink 0.3.24
+futures-sink 0.3.25
 https://rust-lang.github.io/futures-rs
 by 
 The asynchronous `Sink` trait for the futures-rs library.
@@ -5782,7 +5782,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-futures-task 0.3.24
+futures-task 0.3.25
 https://rust-lang.github.io/futures-rs
 by 
 Tools for working with tasks.
@@ -6026,7 +6026,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-futures-util 0.3.24
+futures-util 0.3.25
 https://rust-lang.github.io/futures-rs
 by 
 Common utilities and extension traits for the futures-rs library.
@@ -6270,7 +6270,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-getrandom 0.2.7
+getrandom 0.2.8
 https://github.com/rust-random/getrandom
 by The Rand Project Developers
 A small cross-platform library for retrieving random data from system source
@@ -6512,7 +6512,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-h2 0.3.14
+h2 0.3.15
 https://github.com/hyperium/h2
 by Carl Lerche <me@carllerche.com>, Sean McArthur <sean@seanmonstar.com>
 An HTTP/2 client and server
@@ -8017,7 +8017,7 @@ THE SOFTWARE.
 
 
 ====================================================
-hyper 0.14.20
+hyper 0.14.23
 https://hyper.rs
 by Sean McArthur <sean@seanmonstar.com>
 A fast and correct HTTP library.
@@ -8524,7 +8524,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-indexmap 1.9.1
+indexmap 1.9.2
 https://github.com/bluss/indexmap
 by 
 A hash table with consistent order and fast iteration.
@@ -9042,7 +9042,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 ====================================================
-ipnet 2.5.0
+ipnet 2.5.1
 https://github.com/krisprice/ipnet
 by Kris Price <kris@krisprice.nz>
 Provides types and useful methods for working with IPv4 and IPv6 network addresses, commonly called IP prefixes. The new `IpNet`, `Ipv4Net`, and `Ipv6Net` types build on the existing `IpAddr`, `Ipv4Addr`, and `Ipv6Addr` types already provided in Rust's standard library and align to their design to stay consistent. The module also provides useful traits that extend `Ipv4Addr` and `Ipv6Addr` with methods for `Add`, `Sub`, `BitAnd`, and `BitOr` operations. The module only uses stable feature so it is guaranteed to compile using the stable toolchain.
@@ -10229,7 +10229,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-libc 0.2.135
+libc 0.2.137
 https://github.com/rust-lang/libc
 by The Rust Project Developers
 Raw FFI bindings to platform libraries like libc.
@@ -10446,7 +10446,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-libm 0.2.5
+libm 0.2.6
 https://github.com/rust-lang/libm
 by Jorge Aparicio <jorge@japaric.io>
 libm in pure Rust
@@ -11747,7 +11747,7 @@ THE SOFTWARE.
 
 
 ====================================================
-mio 0.8.4
+mio 0.8.5
 https://github.com/tokio-rs/mio
 by Carl Lerche <me@carllerche.com>, Thomas de Zeeuw <thomasdezeeuw@gmail.com>, Tokio Contributors <team@tokio.rs>
 Lightweight non-blocking IO
@@ -11989,7 +11989,7 @@ LICENSE:
 
 
 ====================================================
-nalgebra 0.31.2
+nalgebra 0.31.4
 https://nalgebra.org
 by Sébastien Crozet <developer@crozet.re>
 General-purpose linear algebra library with transformations and statically-sized or dynamically-sized matrices.
@@ -12208,7 +12208,7 @@ Procedural macros for nalgebra
 License: Apache-2.0
 
 ====================================================
-native-tls 0.2.10
+native-tls 0.2.11
 https://github.com/sfackler/rust-native-tls
 by Steven Fackler <sfackler@gmail.com>
 A wrapper over a platform's native TLS implementation
@@ -13651,7 +13651,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-num_cpus 1.13.1
+num_cpus 1.14.0
 https://github.com/seanmonstar/num_cpus
 by Sean McArthur <sean@seanmonstar.com>
 Get the number of CPUs on a machine.
@@ -13923,7 +13923,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 ====================================================
-once_cell 1.15.0
+once_cell 1.16.0
 https://github.com/matklad/once_cell
 by Aleksey Kladov <aleksey.kladov@gmail.com>
 Single assignment cells and lazy values.
@@ -14162,7 +14162,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-openssl 0.10.42
+openssl 0.10.43
 https://github.com/sfackler/rust-openssl
 by Steven Fackler <sfackler@gmail.com>
 OpenSSL bindings
@@ -14665,7 +14665,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-openssl-src 111.22.0+1.1.1q
+openssl-src 111.24.0+1.1.1s
 https://github.com/alexcrichton/openssl-src-rs
 by Alex Crichton <alex@alexcrichton.com>
 Source of OpenSSL and logic to build it.
@@ -14907,7 +14907,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-openssl-sys 0.9.76
+openssl-sys 0.9.78
 https://github.com/sfackler/rust-openssl
 by Alex Crichton <alex@alexcrichton.com>, Steven Fackler <sfackler@gmail.com>
 FFI bindings to OpenSSL
@@ -15184,7 +15184,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-parking_lot_core 0.9.4
+parking_lot_core 0.9.5
 https://github.com/Amanieu/parking_lot
 by Amanieu d'Antras <amanieu@gmail.com>
 An advanced API for creating custom synchronization primitives.
@@ -16606,7 +16606,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-pkg-config 0.3.25
+pkg-config 0.3.26
 https://github.com/rust-lang/pkg-config-rs
 by Alex Crichton <alex@alexcrichton.com>
 A library to run the pkg-config system tool at build time in order to be used in
@@ -16849,7 +16849,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-ppv-lite86 0.2.16
+ppv-lite86 0.2.17
 https://github.com/cryptocorrosion/cryptocorrosion
 by The CryptoCorrosion Contributors
 Implementation of the crypto-simd API for x86
@@ -17805,7 +17805,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-pyo3 0.17.2
+pyo3 0.17.3
 https://github.com/pyo3/pyo3
 by PyO3 Project and Contributors <https://github.com/PyO3>
 Bindings to Python interpreter
@@ -18005,7 +18005,7 @@ LICENSE:
 
 
 ====================================================
-pyo3-build-config 0.17.2
+pyo3-build-config 0.17.3
 https://github.com/pyo3/pyo3
 by PyO3 Project and Contributors <https://github.com/PyO3>
 Build configuration for the PyO3 ecosystem
@@ -18205,7 +18205,7 @@ LICENSE:
 
 
 ====================================================
-pyo3-ffi 0.17.2
+pyo3-ffi 0.17.3
 https://github.com/pyo3/pyo3
 by PyO3 Project and Contributors <https://github.com/PyO3>
 Python-API bindings for the PyO3 ecosystem
@@ -18833,7 +18833,7 @@ docs/license.html_lib.
 
 
 ====================================================
-pyo3-macros 0.17.2
+pyo3-macros 0.17.3
 https://github.com/pyo3/pyo3
 by PyO3 Project and Contributors <https://github.com/PyO3>
 Proc macros for PyO3 package
@@ -19033,7 +19033,7 @@ LICENSE:
 
 
 ====================================================
-pyo3-macros-backend 0.17.2
+pyo3-macros-backend 0.17.3
 https://github.com/pyo3/pyo3
 by PyO3 Project and Contributors <https://github.com/PyO3>
 Code generation for PyO3 package
@@ -20292,7 +20292,7 @@ LICENSE:
 
 
 ====================================================
-quest-sys 0.8.0
+quest-sys 0.8.1
 https://github.com/HQSquantumsimulations/qoqo-quest
 by HQS Quantum Simulations <info@quantumsimulations.de>
 Bindings to the QuEST quantum computer simulator C library
@@ -22043,7 +22043,7 @@ A safe, reliable implementation of remove_dir_all for Windows
 License: MIT/Apache-2.0
 
 ====================================================
-reqwest 0.11.12
+reqwest 0.11.13
 https://github.com/seanmonstar/reqwest
 by Sean McArthur <sean@seanmonstar.com>
 higher level HTTP client library
@@ -23337,7 +23337,7 @@ LICENSE:
 
 
 ====================================================
-roqoqo-quest 0.8.0
+roqoqo-quest 0.8.1
 https://github.com/HQSquantumsimulations/qoqo-quest
 by HQS Quantum Simulations <info@quantumsimulations.de>
 QuEST simulator for the qoqo quantum computing toolkit
@@ -24758,7 +24758,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-serde 1.0.145
+serde 1.0.148
 https://serde.rs
 by Erick Tryzelaar <erick.tryzelaar@gmail.com>, David Tolnay <dtolnay@gmail.com>
 A generic serialization/deserialization framework
@@ -24997,7 +24997,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-serde_derive 1.0.145
+serde_derive 1.0.148
 https://serde.rs
 by Erick Tryzelaar <erick.tryzelaar@gmail.com>, David Tolnay <dtolnay@gmail.com>
 Macros 1.1 implementation of #[derive(Serialize, Deserialize)]
@@ -25236,7 +25236,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-serde_json 1.0.86
+serde_json 1.0.89
 https://github.com/serde-rs/json
 by Erick Tryzelaar <erick.tryzelaar@gmail.com>, David Tolnay <dtolnay@gmail.com>
 A JSON serialization file format
@@ -25475,7 +25475,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-serde_test 1.0.145
+serde_test 1.0.148
 https://serde.rs
 by Erick Tryzelaar <erick.tryzelaar@gmail.com>, David Tolnay <dtolnay@gmail.com>
 Token De/Serializer for testing De/Serialize implementations
@@ -25930,7 +25930,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-simba 0.7.2
+simba 0.7.3
 https://github.com/dimforge/simba
 by sebcrozet <developer@crozet.re>
 SIMD algebra for Rust
@@ -26662,7 +26662,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-syn 1.0.102
+syn 1.0.104
 https://github.com/dtolnay/syn
 by David Tolnay <dtolnay@gmail.com>
 Parser for Rust source code
@@ -26933,7 +26933,7 @@ SOFTWARE.
 
 
 ====================================================
-target-lexicon 0.12.4
+target-lexicon 0.12.5
 https://github.com/bytecodealliance/target-lexicon
 by Dan Gohman <sunfish@mozilla.com>
 Targeting utilities for compilers and related tools
@@ -28191,7 +28191,7 @@ SOFTWARE.
 
 
 ====================================================
-tokio 1.21.2
+tokio 1.22.0
 https://tokio.rs
 by Tokio Contributors <team@tokio.rs>
 An event-driven, non-blocking I/O platform for writing asynchronous I/O
@@ -33472,7 +33472,7 @@ THE SOFTWARE.
 
 
 ====================================================
-wyz 0.5.0
+wyz 0.5.1
 https://myrrlyn.net/crates/wyz
 by myrrlyn <self@myrrlyn.dev>
 myrrlyn’s utility collection
