@@ -857,12 +857,18 @@ fn api_backend_errorcase3() {
 /// Test error cases. Case 4: invalid job_id
 #[test]
 fn api_backend_errorcase4() {
-    let server = MockServer::start();
-
+    let api_backend_new: APIBackend;
     let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-    let api_backend_new =
-        APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
+
+    if env::var("QRYD_API_TOKEN").is_ok() {
+        api_backend_new = APIBackend::new(qryd_device, None, None, None).unwrap();
+    } else {
+        let server = MockServer::start();
+
+        api_backend_new =
+            APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
+    }
     let job_loc: String = "DummyString".to_string();
     let job_status = api_backend_new.get_job_status(job_loc.clone());
     assert!(job_status.is_err());
