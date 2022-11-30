@@ -770,34 +770,39 @@ fn api_delete() {
     }
 }
 
-// Test error cases. Case const: constant_circuit != None
+// Test error cases. Case const: invalid constant_circuit
 #[test]
 fn api_backend_errorcase_const() {
+    let api_backend_new: APIBackend;
+    let number_qubits = 6;
+    let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
+    let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
     if env::var("QRYD_API_TOKEN").is_ok() {
-        let number_qubits = 6;
-        let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
-        let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-        let api_backend_new = APIBackend::new(qryd_device, None, None, None).unwrap();
-        // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
-        let qubit_mapping: HashMap<usize, usize> =
-            (0..number_qubits).into_iter().map(|x| (x, x)).collect();
-        let mut circuit = Circuit::new();
-        circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
-        circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
-        circuit += operations::RotateX::new(4, std::f64::consts::FRAC_PI_2.into());
-        circuit +=
-            operations::PragmaRepeatedMeasurement::new("ro".to_string(), 40, Some(qubit_mapping));
-        let measurement = ClassicalRegister {
-            constant_circuit: Some(circuit.clone()),
-            circuits: vec![circuit.clone()],
-        };
-        let program = QuantumProgram::ClassicalRegister {
-            measurement,
-            input_parameter_names: vec![],
-        };
-        let job_loc = api_backend_new.post_job(program);
-        assert!(job_loc.is_err());
+        api_backend_new = APIBackend::new(qryd_device, None, None, None).unwrap();
+    } else {
+        let server = MockServer::start();
+
+        api_backend_new = APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
     }
+    // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
+    let qubit_mapping: HashMap<usize, usize> =
+        (0..number_qubits).into_iter().map(|x| (x, x)).collect();
+    let mut circuit = Circuit::new();
+    circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
+    circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
+    circuit += operations::RotateX::new(4, std::f64::consts::FRAC_PI_2.into());
+    circuit +=
+        operations::PragmaRepeatedMeasurement::new("ro".to_string(), 40, Some(qubit_mapping));
+    let measurement = ClassicalRegister {
+        constant_circuit: Some(circuit.clone()),
+        circuits: vec![circuit.clone()],
+    };
+    let program = QuantumProgram::ClassicalRegister {
+        measurement,
+        input_parameter_names: vec![],
+    };
+    let job_loc = api_backend_new.post_job(program);
+    assert!(job_loc.is_err());
 }
 
 /// Test error cases. Case 3: invalid API TOKEN
