@@ -481,9 +481,9 @@ fn test_run_circuit() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let backend: &PyCell<APIBackendWrapper> = if env::var("QRYD_API_TOKEN").is_ok() {
-            create_valid_backend_with_square_device(py, Some(11));
+            create_valid_backend_with_square_device(py, Some(11))
         } else {
-            create_valid_backend_with_square_device_mocked(py, Some(11), server.port().to_string());
+            create_valid_backend_with_square_device_mocked(py, Some(11), server.port().to_string())
         };
 
         let result = backend.call_method1("run_circuit", (3usize,));
@@ -544,9 +544,9 @@ fn test_run_measurement_registers() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let backend: &PyCell<APIBackendWrapper> = if env::var("QRYD_API_TOKEN").is_ok() {
-            create_valid_backend_with_square_device(py, Some(11));
+            create_valid_backend_with_square_device(py, Some(11))
         } else {
-            create_valid_backend_with_square_device_mocked(py, Some(11), server.port().to_string());
+            create_valid_backend_with_square_device_mocked(py, Some(11), server.port().to_string())
         };
 
         let failed_result = backend.call_method1("run_measurement_registers", (3_u32,));
@@ -622,9 +622,9 @@ fn test_run_measurement() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let backend: &PyCell<APIBackendWrapper> = if env::var("QRYD_API_TOKEN").is_ok() {
-            create_valid_backend_with_square_device(py, Some(11));
+            create_valid_backend_with_square_device(py, Some(11))
         } else {
-            create_valid_backend_with_square_device_mocked(py, Some(11), server.port().to_string());
+            create_valid_backend_with_square_device_mocked(py, Some(11), server.port().to_string())
         };
         let cheated = create_cheated_measurement();
 
@@ -665,9 +665,9 @@ fn test_convert_into_backend() {
         let none_string: Option<String> = None;
         let server = MockServer::start();
         let initial: &PyCell<APIBackendWrapper> = if env::var("QRYD_API_TOKEN").is_ok() {
-            create_valid_backend_with_square_device(py, Some(11));
+            create_valid_backend_with_square_device(py, Some(11))
         } else {
-            create_valid_backend_with_square_device_mocked(py, Some(11), server.port().to_string());
+            create_valid_backend_with_square_device_mocked(py, Some(11), server.port().to_string())
         };
 
         let converted = convert_into_backend(initial).unwrap();
@@ -675,7 +675,7 @@ fn test_convert_into_backend() {
         let rust_dev: QrydEmuSquareDevice = QrydEmuSquareDevice::new(Some(11), Some(pcz_theta));
         let rust_api: QRydAPIDevice = QRydAPIDevice::from(rust_dev);
         let rust_backend: APIBackend = if env::var("QRYD_API_TOKEN").is_ok() {
-            APIBackend::new(rust_api, none_string.clone(), Some(30), none_string.clone()).unwrap();
+            APIBackend::new(rust_api, none_string.clone(), Some(30), none_string.clone()).unwrap()
         } else {
             APIBackend::new(
                 rust_api,
@@ -683,7 +683,7 @@ fn test_convert_into_backend() {
                 Some(30),
                 Some(server.port().to_string()),
             )
-            .unwrap();
+            .unwrap()
         };
 
         assert_eq!(converted, rust_backend);
