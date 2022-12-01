@@ -15,7 +15,7 @@
 use core::time;
 use httpmock::MockServer;
 use pyo3::prelude::*;
-use pyo3::types::PyType;
+use pyo3::types::{PyType, PyList};
 use pyo3::Python;
 use qoqo::measurements::CheatedWrapper;
 use qoqo::{CircuitWrapper, QuantumProgramWrapper};
@@ -687,6 +687,10 @@ fn test_convert_into_backend() {
         };
 
         assert_eq!(converted, rust_backend);
+
+        let wrong_param: &PyAny = PyList::empty(py);
+        let wrong_convert = convert_into_backend(wrong_param);
+        assert!(wrong_convert.is_err());
     });
 }
 
