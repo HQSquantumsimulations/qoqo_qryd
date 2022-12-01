@@ -675,7 +675,7 @@ fn test_convert_into_backend() {
         let rust_dev: QrydEmuSquareDevice = QrydEmuSquareDevice::new(Some(11), Some(pcz_theta));
         let rust_api: QRydAPIDevice = QRydAPIDevice::from(rust_dev);
         let rust_backend: APIBackend = if env::var("QRYD_API_TOKEN").is_ok() {
-            APIBackend::new(rust_api, none_string.clone(), Some(30), none_string.clone()).unwrap()
+            APIBackend::new(rust_api, none_string.clone(), Some(30), none_string).unwrap()
         } else {
             APIBackend::new(
                 rust_api,
