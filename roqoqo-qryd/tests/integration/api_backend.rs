@@ -323,49 +323,50 @@ fn api_backend_with_constant_circuit() {
 
 #[test]
 fn api_triangular() {
-    if env::var("QRYD_API_TOKEN").is_ok() {
-        let number_qubits = 6;
-        let device = QrydEmuTriangularDevice::new(Some(2), Some(0.23));
-        let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-        let api_backend_new = APIBackend::new(qryd_device, None, None, None).unwrap();
-        // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
-        let mut circuit = Circuit::new();
-        circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
-        circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
-        circuit += operations::RotateY::new(4, std::f64::consts::FRAC_PI_2.into());
-        circuit += operations::RotateZ::new(4, std::f64::consts::FRAC_PI_2.into());
-        circuit += operations::PauliX::new(2);
-        circuit += operations::PauliY::new(2);
-        circuit += operations::PauliZ::new(2);
-        circuit += operations::Hadamard::new(3);
-        circuit += operations::SqrtPauliX::new(5);
-        circuit += operations::InvSqrtPauliX::new(5);
-        circuit += operations::PhaseShiftState1::new(4, std::f64::consts::FRAC_PI_2.into());
-        circuit += operations::RotateXY::new(
-            4,
-            std::f64::consts::FRAC_PI_2.into(),
-            std::f64::consts::FRAC_PI_4.into(),
-        );
-        circuit += operations::CNOT::new(1, 2);
-        circuit += operations::SWAP::new(1, 2);
-        circuit += operations::ISwap::new(1, 2);
-        circuit += operations::ControlledPauliY::new(1, 2);
-        circuit += operations::ControlledPauliZ::new(1, 2);
-        circuit += operations::ControlledPhaseShift::new(1, 2, std::f64::consts::FRAC_PI_4.into());
+    let number_qubits = 6;
+    let device = QrydEmuTriangularDevice::new(Some(2), Some(0.23));
+    let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
+    let mut circuit = Circuit::new();
+    circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
+    circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
+    circuit += operations::RotateY::new(4, std::f64::consts::FRAC_PI_2.into());
+    circuit += operations::RotateZ::new(4, std::f64::consts::FRAC_PI_2.into());
+    circuit += operations::PauliX::new(2);
+    circuit += operations::PauliY::new(2);
+    circuit += operations::PauliZ::new(2);
+    circuit += operations::Hadamard::new(3);
+    circuit += operations::SqrtPauliX::new(5);
+    circuit += operations::InvSqrtPauliX::new(5);
+    circuit += operations::PhaseShiftState1::new(4, std::f64::consts::FRAC_PI_2.into());
+    circuit += operations::RotateXY::new(
+        4,
+        std::f64::consts::FRAC_PI_2.into(),
+        std::f64::consts::FRAC_PI_4.into(),
+    );
+    circuit += operations::CNOT::new(1, 2);
+    circuit += operations::SWAP::new(1, 2);
+    circuit += operations::ISwap::new(1, 2);
+    circuit += operations::ControlledPauliY::new(1, 2);
+    circuit += operations::ControlledPauliZ::new(1, 2);
+    circuit += operations::ControlledPhaseShift::new(1, 2, std::f64::consts::FRAC_PI_4.into());
 
-        // circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
-        for i in 0..number_qubits {
-            circuit += operations::MeasureQubit::new(i, "ro".to_string(), number_qubits - i - 1);
-        }
-        circuit += operations::PragmaSetNumberOfMeasurements::new(40, "ro".to_string()); // assert!(api_backend_new.is_ok());
-        let measurement = ClassicalRegister {
-            constant_circuit: None,
-            circuits: vec![circuit.clone()],
-        };
-        let program = QuantumProgram::ClassicalRegister {
-            measurement,
-            input_parameter_names: vec![],
-        };
+    // circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
+    for i in 0..number_qubits {
+        circuit += operations::MeasureQubit::new(i, "ro".to_string(), number_qubits - i - 1);
+    }
+    circuit += operations::PragmaSetNumberOfMeasurements::new(40, "ro".to_string()); // assert!(api_backend_new.is_ok());
+    let measurement = ClassicalRegister {
+        constant_circuit: None,
+        circuits: vec![circuit.clone()],
+    };
+    let program = QuantumProgram::ClassicalRegister {
+        measurement,
+        input_parameter_names: vec![],
+    };
+
+    if env::var("QRYD_API_TOKEN").is_ok() {
+        let api_backend_new = APIBackend::new(qryd_device, None, None, None).unwrap();
+
         let job_loc = api_backend_new
             .post_job(
                 // "qryd_emu_localcomp_square".to_string(),
@@ -399,7 +400,7 @@ fn api_triangular() {
     } else {
         let server = MockServer::start();
         let qryd_job_status_completed = QRydJobStatus {
-            status: "completed".to_string(),
+            status: "Completed".to_string(),
             msg: "the job has been completed".to_string(),
         };
         let result_counts = ResultCounts {
@@ -436,27 +437,9 @@ fn api_triangular() {
             then.status(200).json_body_obj(&qryd_job_result_completed);
         });
 
-        let number_qubits = 6;
-        let device = QrydEmuTriangularDevice::new(Some(2), Some(0.23));
-        let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
         let api_backend_new =
             APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
-        // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
-        let mut circuit = Circuit::new();
-        circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
-        circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
-        circuit += operations::RotateX::new(4, std::f64::consts::FRAC_PI_2.into());
-        // circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
-        circuit += operations::MeasureQubit::new(0, "ro".to_string(), 0);
-        circuit += operations::PragmaSetNumberOfMeasurements::new(10, "ro".to_string());
-        let measurement = ClassicalRegister {
-            constant_circuit: None,
-            circuits: vec![circuit.clone()],
-        };
-        let program = QuantumProgram::ClassicalRegister {
-            measurement,
-            input_parameter_names: vec![],
-        };
+
         let job_loc = api_backend_new
             .post_job(
                 // "qryd_emu_localcomp_square".to_string(),
@@ -470,7 +453,7 @@ fn api_triangular() {
         let job_status = api_backend_new.get_job_status(job_loc.clone()).unwrap();
         let job_result = api_backend_new.get_job_result(job_loc.clone()).unwrap();
 
-        assert_eq!(job_status.status, "completed");
+        assert_eq!(job_status.status, "Completed");
 
         let (bits, _, _) =
             APIBackend::counts_to_result(job_result.data, "ro".to_string(), number_qubits).unwrap();
