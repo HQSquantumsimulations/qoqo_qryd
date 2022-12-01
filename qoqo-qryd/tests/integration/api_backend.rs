@@ -611,8 +611,16 @@ fn test_run_measurement() {
 
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let backend =
-            create_valid_backend_with_square_device_mocked(py, Some(11), server.port().to_string());
+        let backend: &PyCell<APIBackendWrapper>;
+        if env::var("QRYD_API_TOKEN").is_ok() {
+            backend = create_valid_backend_with_square_device(py, Some(11));
+        } else {
+            backend = create_valid_backend_with_square_device_mocked(
+                py,
+                Some(11),
+                server.port().to_string(),
+            );
+        }
         let cheated = create_cheated_measurement();
 
         let failed_result = backend.call_method1("run_measurement", (3_u32,));
@@ -625,10 +633,11 @@ fn test_run_measurement() {
             .unwrap();
 
         assert!(result.is_some());
-
-        mock_post.assert();
-        mock_status1.assert();
-        mock_result.assert();
+        if !env::var("QRYD_API_TOKEN").is_ok() {
+            mock_post.assert();
+            mock_status1.assert();
+            mock_result.assert();
+        }
     });
 }
 
