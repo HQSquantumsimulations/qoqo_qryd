@@ -115,7 +115,7 @@ pub struct QRydJobStatus {
 }
 
 /// Convert from new roqoqo 1.1.0 QuantumProgram to 1.0.0
-fn downconvert_roqoqo_version(
+pub fn downconvert_roqoqo_version(
     program: QuantumProgram,
 ) -> Result<roqoqo_1_0::QuantumProgram, RoqoqoBackendError> {
     let (measurement, input_parameter_names) = match program {
