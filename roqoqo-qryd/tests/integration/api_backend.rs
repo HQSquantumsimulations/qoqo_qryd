@@ -483,40 +483,41 @@ fn api_triangular() {
 }
 #[test]
 fn evaluating_backend() {
-    if env::var("QRYD_API_TOKEN").is_ok() {
-        let number_qubits = 6;
-        let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
-        let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-        let api_backend_new = APIBackend::new(qryd_device, None, Some(20), None).unwrap();
-        // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
-        let mut circuit = Circuit::new();
-        circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
-        circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
-        circuit += operations::RotateX::new(4, std::f64::consts::PI.into());
-        circuit += operations::RotateX::new(2, std::f64::consts::PI.into());
-        for i in 0..number_qubits {
-            circuit += operations::MeasureQubit::new(i, "ro".to_string(), i);
-        }
-        circuit += operations::PragmaSetNumberOfMeasurements::new(40, "ro".to_string()); // assert!(api_backend_new.is_ok());
+    let number_qubits = 6;
+    let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
+    let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
+    let mut circuit = Circuit::new();
+    circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
+    circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
+    circuit += operations::RotateX::new(4, std::f64::consts::PI.into());
+    circuit += operations::RotateX::new(2, std::f64::consts::PI.into());
+    for i in 0..number_qubits {
+        circuit += operations::MeasureQubit::new(i, "ro".to_string(), i);
+    }
+    circuit += operations::PragmaSetNumberOfMeasurements::new(40, "ro".to_string()); // assert!(api_backend_new.is_ok());
 
-        let mut input = PauliZProductInput::new(6, false);
-        let index = input
-            .add_pauliz_product("ro".to_string(), vec![0, 2, 4])
-            .unwrap();
-        let mut linear: HashMap<usize, f64> = HashMap::new();
-        linear.insert(index, 3.0);
-        input
-            .add_linear_exp_val("test".to_string(), linear)
-            .unwrap();
-        let measurement = PauliZProduct {
-            input,
-            constant_circuit: None,
-            circuits: vec![circuit.clone()],
-        };
-        let program = QuantumProgram::PauliZProduct {
-            measurement,
-            input_parameter_names: vec![],
-        };
+    let mut input = PauliZProductInput::new(6, false);
+    let index = input
+        .add_pauliz_product("ro".to_string(), vec![0, 2, 4])
+        .unwrap();
+    let mut linear: HashMap<usize, f64> = HashMap::new();
+    linear.insert(index, 3.0);
+    input
+        .add_linear_exp_val("test".to_string(), linear)
+        .unwrap();
+    let measurement = PauliZProduct {
+        input,
+        constant_circuit: None,
+        circuits: vec![circuit.clone()],
+    };
+    let program = QuantumProgram::PauliZProduct {
+        measurement,
+        input_parameter_names: vec![],
+    };
+
+    if env::var("QRYD_API_TOKEN").is_ok() {
+        let api_backend_new = APIBackend::new(qryd_device, None, Some(20), None).unwrap();
+
         let program_result = program.run(api_backend_new, &[]).unwrap().unwrap();
         assert_eq!(program_result.get("test"), Some(&-3.0));
     } else {
@@ -567,36 +568,9 @@ fn evaluating_backend() {
             then.status(200).json_body_obj(&qryd_job_result_completed);
         });
 
-        let number_qubits = 6;
-        let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
-        let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
         let api_backend_new =
             APIBackend::new(qryd_device, None, Some(20), Some(server.port().to_string())).unwrap();
-        let mut circuit = Circuit::new();
-        circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
-        circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
-        circuit += operations::RotateX::new(4, std::f64::consts::PI.into());
-        circuit += operations::RotateX::new(2, std::f64::consts::PI.into());
-        circuit += operations::MeasureQubit::new(0, "ro".to_string(), 0);
-        circuit += operations::PragmaSetNumberOfMeasurements::new(10, "ro".to_string());
-        let mut input = PauliZProductInput::new(6, false);
-        let index = input
-            .add_pauliz_product("ro".to_string(), vec![0, 2, 4])
-            .unwrap();
-        let mut linear: HashMap<usize, f64> = HashMap::new();
-        linear.insert(index, 3.0);
-        input
-            .add_linear_exp_val("test".to_string(), linear)
-            .unwrap();
-        let measurement = PauliZProduct {
-            input,
-            constant_circuit: None,
-            circuits: vec![circuit.clone()],
-        };
-        let program = QuantumProgram::PauliZProduct {
-            measurement,
-            input_parameter_names: vec![],
-        };
+
         let program_result = program.run(api_backend_new.clone(), &[]).unwrap().unwrap();
 
         assert_eq!(program_result.get("test"), Some(&-3.0));
