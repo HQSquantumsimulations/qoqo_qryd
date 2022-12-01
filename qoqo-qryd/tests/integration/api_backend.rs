@@ -15,7 +15,7 @@
 use core::time;
 use httpmock::MockServer;
 use pyo3::prelude::*;
-use pyo3::types::{PyType, PyList};
+use pyo3::types::{PyList, PyType};
 use pyo3::Python;
 use qoqo::measurements::CheatedWrapper;
 use qoqo::{CircuitWrapper, QuantumProgramWrapper};
