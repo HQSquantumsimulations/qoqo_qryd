@@ -400,7 +400,7 @@ fn api_triangular() {
     } else {
         let server = MockServer::start();
         let qryd_job_status_completed = QRydJobStatus {
-            status: "Completed".to_string(),
+            status: "completed".to_string(),
             msg: "the job has been completed".to_string(),
         };
         let result_counts = ResultCounts {
@@ -453,7 +453,7 @@ fn api_triangular() {
         let job_status = api_backend_new.get_job_status(job_loc.clone()).unwrap();
         let job_result = api_backend_new.get_job_result(job_loc.clone()).unwrap();
 
-        assert_eq!(job_status.status, "Completed");
+        assert_eq!(job_status.status, "completed");
 
         let (bits, _, _) =
             APIBackend::counts_to_result(job_result.data, "ro".to_string(), number_qubits).unwrap();
