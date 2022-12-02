@@ -38,7 +38,7 @@ impl QrydEmuSquareDeviceWrapper {
     ///                                  If not provided will be set to (preliminary) hardware goal 2.13.
     ///
     /// Returns:
-    ///     QrydEmuTriangularDevice: New device
+    ///     QrydEmuSquareDevice: New device
     #[new]
     pub fn new(seed: Option<usize>, pcz_theta: Option<f64>) -> Self {
         Self {

@@ -13,14 +13,18 @@
 //! Integration test for public API of QRyd WebAPI backend
 
 use core::time;
+use httpmock::MockServer;
 use pyo3::prelude::*;
-use pyo3::types::PyType;
+use pyo3::types::{PyList, PyType};
 use pyo3::Python;
-use qoqo::QuantumProgramWrapper;
-use qoqo_qryd::api_backend::{APIBackendWrapper, Registers};
+use qoqo::measurements::CheatedWrapper;
+use qoqo::{CircuitWrapper, QuantumProgramWrapper};
+use qoqo_qryd::api_backend::{convert_into_backend, APIBackendWrapper, Registers};
 use qoqo_qryd::api_devices::{QrydEmuSquareDeviceWrapper, QrydEmuTriangularDeviceWrapper};
-use roqoqo::measurements::ClassicalRegister;
+use roqoqo::measurements::{Cheated, CheatedInput, ClassicalRegister};
 use roqoqo::{operations, Circuit, QuantumProgram};
+use roqoqo_qryd::api_devices::{QRydAPIDevice, QrydEmuSquareDevice};
+use roqoqo_qryd::{APIBackend, QRydJobResult, QRydJobStatus, ResultCounts};
 use std::collections::HashMap;
 use std::f64::consts::PI;
 use std::usize;
@@ -70,13 +74,36 @@ fn create_valid_backend_with_square_device(
     backend
 }
 
+fn create_valid_backend_with_square_device_mocked(
+    py: Python,
+    seed: Option<usize>,
+    mock_port: String,
+) -> &PyCell<APIBackendWrapper> {
+    let pcz_theta: f64 = PI / 4.0;
+    let device_type = py.get_type::<QrydEmuSquareDeviceWrapper>();
+    let device: &PyCell<QrydEmuSquareDeviceWrapper> = device_type
+        .call1((seed, pcz_theta))
+        .unwrap()
+        .cast_as::<PyCell<QrydEmuSquareDeviceWrapper>>()
+        .unwrap();
+
+    let backend_type: &PyType = py.get_type::<APIBackendWrapper>();
+    let none_string: Option<String> = None;
+    let backend: &PyCell<APIBackendWrapper> = backend_type
+        .call1((device, none_string, 30, mock_port))
+        .unwrap()
+        .cast_as::<PyCell<APIBackendWrapper>>()
+        .unwrap();
+    backend
+}
+
 fn create_quantum_program(valid: bool) -> QuantumProgramWrapper {
     let number_qubits = 2;
     let mut circuit = Circuit::new();
     circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
     circuit += operations::RotateX::new(0, 0.0.into());
-    // circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
-    circuit += operations::PragmaRepeatedMeasurement::new("ro".to_string(), 40, None); // assert!(api_backend_new.is_ok());
+    circuit += operations::MeasureQubit::new(0, "ro".to_string(), 0);
+    circuit += operations::PragmaSetNumberOfMeasurements::new(10, "ro".to_string());
     let measurement = if valid {
         ClassicalRegister {
             constant_circuit: None,
@@ -93,6 +120,23 @@ fn create_quantum_program(valid: bool) -> QuantumProgramWrapper {
         input_parameter_names: vec![],
     };
     QuantumProgramWrapper { internal: program }
+}
+
+fn create_cheated_measurement() -> CheatedWrapper {
+    let number_qubits = 2;
+    let mut circuit = Circuit::new();
+    circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
+    circuit += operations::RotateX::new(0, 0.0.into());
+    // circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
+    circuit += operations::MeasureQubit::new(0, "ro".to_string(), 0);
+    circuit += operations::PragmaSetNumberOfMeasurements::new(10, "ro".to_string());
+
+    let cheated = Cheated {
+        constant_circuit: None,
+        circuits: vec![circuit],
+        input: CheatedInput::new(2),
+    };
+    CheatedWrapper { internal: cheated }
 }
 
 // Test to create a new backend
@@ -118,6 +162,7 @@ fn test_new_square() {
     });
 }
 
+// Test to check a failed backend creation
 #[test]
 fn test_fail_new_square() {
     pyo3::prepare_freethreaded_python();
@@ -289,32 +334,316 @@ fn test_run_job() {
                 }
             }
         });
+    } else {
+        let server = MockServer::start();
+        let qryd_job_status_in_progress = QRydJobStatus {
+            status: "in progress".to_string(),
+            msg: "the job is still in progress".to_string(),
+        };
+        let qryd_job_status_completed = QRydJobStatus {
+            status: "completed".to_string(),
+            msg: "the job has been completed".to_string(),
+        };
+        let result_counts = ResultCounts {
+            counts: HashMap::from([("0x1".to_string(), 100), ("0x4".to_string(), 20)]),
+        };
+        let qryd_job_result_completed = QRydJobResult {
+            compilation_time: 1.0,
+            data: result_counts,
+            time_taken: 0.23,
+            noise: "noise".to_string(),
+            method: "method".to_string(),
+            device: "QrydEmuSquareDevice".to_string(),
+            num_qubits: 4,
+            num_clbits: 4,
+            fusion_max_qubits: 4,
+            fusion_avg_qubits: 4.0,
+            fusion_generated_gates: 100,
+            executed_single_qubit_gates: 50,
+            executed_two_qubit_gates: 50,
+        };
+        let mock_post = server.mock(|when, then| {
+            when.method("POST");
+            then.status(201).header(
+                "Location",
+                format!("http://127.0.0.1:{}/DummyLocation", server.port()),
+            );
+        });
+        let mut mock_status0 = server.mock(|when, then| {
+            when.method("GET").path("/DummyLocation/status");
+            then.status(200).json_body_obj(&qryd_job_status_in_progress);
+        });
+        let mock_result = server.mock(|when, then| {
+            when.method("GET").path("/DummyLocation/result");
+            then.status(200).json_body_obj(&qryd_job_result_completed);
+        });
+
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let backend = create_valid_backend_with_square_device_mocked(
+                py,
+                Some(11),
+                server.port().to_string(),
+            );
+            let program = create_quantum_program(true);
+            let job_loc = backend.call_method1("post_job", (program,)).unwrap();
+            let fifteen = time::Duration::from_millis(50);
+
+            let mut test_counter = 0;
+            let mut status = "".to_string();
+            while test_counter < 20 && status != "completed" {
+                test_counter += 1;
+                let status_report: HashMap<String, String> = backend
+                    .call_method1("get_job_status", (job_loc,))
+                    .unwrap()
+                    .extract()
+                    .unwrap();
+                let job_status = status_report.get("status").unwrap();
+                status = job_status.clone();
+                assert_eq!(job_status, "in progress");
+                thread::sleep(fifteen);
+            }
+
+            mock_status0.assert_hits(20);
+            mock_status0.delete();
+            let mock_status1 = server.mock(|when, then| {
+                when.method("GET").path("/DummyLocation/status");
+                then.status(200).json_body_obj(&qryd_job_status_completed);
+            });
+
+            let status_report: HashMap<String, String> = backend
+                .call_method1("get_job_status", (job_loc,))
+                .unwrap()
+                .extract()
+                .unwrap();
+            let job_status = status_report.get("status").unwrap();
+
+            assert_eq!(job_status, "completed");
+
+            let _job_result = backend.call_method1("get_job_result", (job_loc,)).unwrap();
+
+            mock_post.assert();
+            mock_status1.assert();
+            mock_result.assert();
+        });
     }
 }
 
 #[test]
-fn test_run_measuremt_registers() {
-    if env::var("QRYD_API_TOKEN").is_ok() {
-        pyo3::prepare_freethreaded_python();
-        Python::with_gil(|py| {
-            let backend = create_valid_backend_with_square_device(py, Some(11));
-            let program = create_quantum_program(true);
-            let failed_result = backend.call_method1("run_measurement_registers", (3_u32,));
-            assert!(failed_result.is_err());
-            let measurement = program.measurement();
-            let result: Registers = backend
-                .call_method1("run_measurement_registers", (measurement,))
-                .unwrap()
-                .extract()
-                .unwrap();
-            let (bits, floats, complex) = result;
-            assert!(floats.is_empty());
-            assert!(complex.is_empty());
-            assert!(bits.contains_key("ro"));
-            let bit = bits.get("ro").unwrap();
-            assert_eq!(bit.len(), 40);
-        });
-    }
+fn test_run_circuit() {
+    let server = MockServer::start();
+    let qryd_job_status_completed = QRydJobStatus {
+        status: "completed".to_string(),
+        msg: "the job has been completed".to_string(),
+    };
+    let result_counts = ResultCounts {
+        counts: HashMap::from([("0x0".to_string(), 40)]),
+    };
+    let qryd_job_result_completed = QRydJobResult {
+        compilation_time: 1.0,
+        data: result_counts,
+        time_taken: 0.23,
+        noise: "noise".to_string(),
+        method: "method".to_string(),
+        device: "QrydEmuSquareDevice".to_string(),
+        num_qubits: 2,
+        num_clbits: 2,
+        fusion_max_qubits: 2,
+        fusion_avg_qubits: 2.0,
+        fusion_generated_gates: 100,
+        executed_single_qubit_gates: 0,
+        executed_two_qubit_gates: 0,
+    };
+
+    let mock_post = server.mock(|when, then| {
+        when.method("POST");
+        then.status(201).header(
+            "Location",
+            format!("http://127.0.0.1:{}/DummyLocation", server.port()),
+        );
+    });
+    let mock_status1 = server.mock(|when, then| {
+        when.method("GET").path("/DummyLocation/status");
+        then.status(200).json_body_obj(&qryd_job_status_completed);
+    });
+    let mock_result = server.mock(|when, then| {
+        when.method("GET").path("/DummyLocation/result");
+        then.status(200).json_body_obj(&qryd_job_result_completed);
+    });
+
+    let mut circuit = Circuit::new();
+    circuit += operations::DefinitionBit::new("ro".to_string(), 2, true);
+    circuit += operations::RotateX::new(0, 0.0.into());
+    circuit += operations::MeasureQubit::new(0, "ro".to_string(), 0);
+    circuit += operations::PragmaSetNumberOfMeasurements::new(10, "ro".to_string());
+    let circuit_py = CircuitWrapper { internal: circuit };
+
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let backend: &PyCell<APIBackendWrapper> = if env::var("QRYD_API_TOKEN").is_ok() {
+            create_valid_backend_with_square_device(py, Some(11))
+        } else {
+            create_valid_backend_with_square_device_mocked(py, Some(11), server.port().to_string())
+        };
+
+        let result = backend.call_method1("run_circuit", (3usize,));
+        assert!(result.is_err());
+
+        backend.call_method1("run_circuit", (circuit_py,)).unwrap();
+
+        if env::var("QRYD_API_TOKEN").is_err() {
+            mock_post.assert();
+            mock_status1.assert();
+            mock_result.assert();
+        }
+    });
+}
+
+#[test]
+fn test_run_measurement_registers() {
+    let server = MockServer::start();
+    let qryd_job_status_completed = QRydJobStatus {
+        status: "completed".to_string(),
+        msg: "the job has been completed".to_string(),
+    };
+    let result_counts = ResultCounts {
+        counts: HashMap::from([("0x0".to_string(), 10)]),
+    };
+    let qryd_job_result_completed = QRydJobResult {
+        compilation_time: 1.0,
+        data: result_counts,
+        time_taken: 0.23,
+        noise: "noise".to_string(),
+        method: "method".to_string(),
+        device: "QrydEmuSquareDevice".to_string(),
+        num_qubits: 2,
+        num_clbits: 2,
+        fusion_max_qubits: 2,
+        fusion_avg_qubits: 2.0,
+        fusion_generated_gates: 100,
+        executed_single_qubit_gates: 0,
+        executed_two_qubit_gates: 0,
+    };
+
+    let mock_post = server.mock(|when, then| {
+        when.method("POST");
+        then.status(201).header(
+            "Location",
+            format!("http://127.0.0.1:{}/DummyLocation", server.port()),
+        );
+    });
+    let mock_status1 = server.mock(|when, then| {
+        when.method("GET").path("/DummyLocation/status");
+        then.status(200).json_body_obj(&qryd_job_status_completed);
+    });
+    let mock_result = server.mock(|when, then| {
+        when.method("GET").path("/DummyLocation/result");
+        then.status(200).json_body_obj(&qryd_job_result_completed);
+    });
+
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let backend: &PyCell<APIBackendWrapper> = if env::var("QRYD_API_TOKEN").is_ok() {
+            create_valid_backend_with_square_device(py, Some(11))
+        } else {
+            create_valid_backend_with_square_device_mocked(py, Some(11), server.port().to_string())
+        };
+
+        let failed_result = backend.call_method1("run_measurement_registers", (3_u32,));
+        assert!(failed_result.is_err());
+
+        let failed_program = create_quantum_program(false);
+        let measurement = failed_program.measurement();
+        let failed_result = backend.call_method1("run_measurement_registers", (measurement,));
+        assert!(failed_result.is_err());
+
+        let program = create_quantum_program(true);
+        let measurement = program.measurement();
+        let (bits, floats, complex): Registers = backend
+            .call_method1("run_measurement_registers", (measurement,))
+            .unwrap()
+            .extract()
+            .unwrap();
+        assert!(floats.is_empty());
+        assert!(complex.is_empty());
+        assert!(bits.contains_key("ro"));
+        let bit = bits.get("ro").unwrap();
+        assert_eq!(bit.len(), 10);
+        if env::var("QRYD_API_TOKEN").is_err() {
+            mock_post.assert();
+            mock_status1.assert();
+            mock_result.assert();
+        }
+    });
+}
+
+#[test]
+fn test_run_measurement() {
+    let server = MockServer::start();
+    let qryd_job_status_completed = QRydJobStatus {
+        status: "completed".to_string(),
+        msg: "the job has been completed".to_string(),
+    };
+    let result_counts = ResultCounts {
+        counts: HashMap::from([("0x0".to_string(), 40)]),
+    };
+    let qryd_job_result_completed = QRydJobResult {
+        compilation_time: 1.0,
+        data: result_counts,
+        time_taken: 0.23,
+        noise: "noise".to_string(),
+        method: "method".to_string(),
+        device: "QrydEmuSquareDevice".to_string(),
+        num_qubits: 2,
+        num_clbits: 2,
+        fusion_max_qubits: 2,
+        fusion_avg_qubits: 2.0,
+        fusion_generated_gates: 100,
+        executed_single_qubit_gates: 0,
+        executed_two_qubit_gates: 0,
+    };
+
+    let mock_post = server.mock(|when, then| {
+        when.method("POST");
+        then.status(201).header(
+            "Location",
+            format!("http://127.0.0.1:{}/DummyLocation", server.port()),
+        );
+    });
+    let mock_status1 = server.mock(|when, then| {
+        when.method("GET").path("/DummyLocation/status");
+        then.status(200).json_body_obj(&qryd_job_status_completed);
+    });
+    let mock_result = server.mock(|when, then| {
+        when.method("GET").path("/DummyLocation/result");
+        then.status(200).json_body_obj(&qryd_job_result_completed);
+    });
+
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let backend: &PyCell<APIBackendWrapper> = if env::var("QRYD_API_TOKEN").is_ok() {
+            create_valid_backend_with_square_device(py, Some(11))
+        } else {
+            create_valid_backend_with_square_device_mocked(py, Some(11), server.port().to_string())
+        };
+        let cheated = create_cheated_measurement();
+
+        let failed_result = backend.call_method1("run_measurement", (3_u32,));
+        assert!(failed_result.is_err());
+
+        let result: Option<HashMap<String, f64>> = backend
+            .call_method1("run_measurement", (cheated,))
+            .unwrap()
+            .extract()
+            .unwrap();
+
+        assert!(result.is_some());
+        if env::var("QRYD_API_TOKEN").is_err() {
+            mock_post.assert();
+            mock_status1.assert();
+            mock_result.assert();
+        }
+    });
 }
 
 #[test]
@@ -325,6 +654,43 @@ fn test_query_result_fail() {
 
         let failed_result_job = backend.call_method1("get_job_result", ("3",));
         assert!(failed_result_job.is_err());
+    });
+}
+
+#[test]
+fn test_convert_into_backend() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let pcz_theta: f64 = PI / 4.0;
+        let none_string: Option<String> = None;
+        let server = MockServer::start();
+        let initial: &PyCell<APIBackendWrapper> = if env::var("QRYD_API_TOKEN").is_ok() {
+            create_valid_backend_with_square_device(py, Some(11))
+        } else {
+            create_valid_backend_with_square_device_mocked(py, Some(11), server.port().to_string())
+        };
+
+        let converted = convert_into_backend(initial).unwrap();
+
+        let rust_dev: QrydEmuSquareDevice = QrydEmuSquareDevice::new(Some(11), Some(pcz_theta));
+        let rust_api: QRydAPIDevice = QRydAPIDevice::from(rust_dev);
+        let rust_backend: APIBackend = if env::var("QRYD_API_TOKEN").is_ok() {
+            APIBackend::new(rust_api, none_string.clone(), Some(30), none_string).unwrap()
+        } else {
+            APIBackend::new(
+                rust_api,
+                none_string,
+                Some(30),
+                Some(server.port().to_string()),
+            )
+            .unwrap()
+        };
+
+        assert_eq!(converted, rust_backend);
+
+        let wrong_param: &PyAny = PyList::empty(py);
+        let wrong_convert = convert_into_backend(wrong_param);
+        assert!(wrong_convert.is_err());
     });
 }
 
@@ -340,6 +706,10 @@ fn test_bincode_square() {
 
         let vec: Vec<u8> = Vec::new();
         let deserialised_error = backend.call_method1("from_bincode", (vec,));
+        assert!(deserialised_error.is_err());
+
+        let st: String = "test".to_string();
+        let deserialised_error = backend.call_method1("from_bincode", (st,));
         assert!(deserialised_error.is_err());
 
         let deserialised_error = deserialised.call_method0("from_bincode");

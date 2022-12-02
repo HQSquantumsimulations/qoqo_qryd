@@ -13,6 +13,8 @@
 use crate::api_devices::QRydAPIDevice;
 use bitvec::prelude::*;
 use num_complex::Complex64;
+use reqwest::blocking::Client;
+use reqwest::blocking::Response;
 use roqoqo::backends::RegisterResult;
 use roqoqo::measurements::ClassicalRegister;
 use roqoqo::operations::Define;
@@ -45,6 +47,8 @@ pub struct APIBackend {
     /// In synchronous operation the WebAPI is queried every 30 seconds until it has
     /// been queried `timeout` times.
     timeout: usize,
+    /// The address of the Mock server, used for testing purposes.
+    mock_port: Option<String>,
 }
 
 /// Local struct representing the body of the request message
@@ -82,13 +86,13 @@ struct QRydRunData {
 }
 
 /// Local struct representing the body of a validation error message
-#[derive(Debug, serde::Deserialize)]
+#[derive(Debug, serde::Serialize, serde::Deserialize)]
 struct ValidationError {
     detail: Vec<ValidationErrorDetail>,
 }
 
 /// Local struct representing the body of a validation error message
-#[derive(Debug, serde::Deserialize)]
+#[derive(Debug, serde::Serialize, serde::Deserialize)]
 struct ValidationErrorDetail {
     #[serde(default)]
     loc: Vec<String>,
@@ -100,7 +104,7 @@ struct ValidationErrorDetail {
 }
 
 /// Struct to represent QRyd response when calling for the Job status.
-#[derive(serde::Deserialize, Debug, Default)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Default)]
 pub struct QRydJobStatus {
     /// status of the job, e.g. "pending"
     #[serde(default)] // for optional fields
@@ -111,7 +115,7 @@ pub struct QRydJobStatus {
 }
 
 /// Convert from new roqoqo 1.1.0 QuantumProgram to 1.0.0
-fn downconvert_roqoqo_version(
+pub fn downconvert_roqoqo_version(
     program: QuantumProgram,
 ) -> Result<roqoqo_1_0::QuantumProgram, RoqoqoBackendError> {
     let (measurement, input_parameter_names) = match program {
@@ -254,7 +258,7 @@ fn check_for_api_compatability(program: &QuantumProgram) -> Result<(), RoqoqoBac
 }
 
 /// Struct to represent QRyd response on the result for the posted Job.
-#[derive(serde::Deserialize, Debug, Clone, Default)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, Default)]
 pub struct QRydJobResult {
     /// The actual measured data
     #[serde(default)]
@@ -312,7 +316,7 @@ pub struct QRydJobResult {
 /// qubit 0 was measured in state |1> while the same measurement gave |0> for
 /// qubits 1 and 2 and 20 times qubit 2 was measured in state |1>
 /// with qubits 1 and 0 in state |0>
-#[derive(serde::Deserialize, Debug, Default, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Default, Clone)]
 pub struct ResultCounts {
     /// The dictionary of counts for each measured string
     pub counts: HashMap<String, u64>,
@@ -335,21 +339,32 @@ impl APIBackend {
         device: QRydAPIDevice,
         access_token: Option<String>,
         timeout: Option<usize>,
+        mock_port: Option<String>,
     ) -> Result<Self, RoqoqoBackendError> {
-        let access_token_internal: String = match access_token {
-            Some(s) => s,
-            None => env::var("QRYD_API_TOKEN").map_err(|_| {
-                RoqoqoBackendError::MissingAuthentification {
-                    msg: "QRYD access token is missing".to_string(),
-                }
-            })?,
-        };
+        if mock_port.is_some() {
+            Ok(Self {
+                device,
+                access_token: "".to_string(),
+                timeout: timeout.unwrap_or(30),
+                mock_port,
+            })
+        } else {
+            let access_token_internal: String = match access_token {
+                Some(s) => s,
+                None => env::var("QRYD_API_TOKEN").map_err(|_| {
+                    RoqoqoBackendError::MissingAuthentification {
+                        msg: "QRYD access token is missing".to_string(),
+                    }
+                })?,
+            };
 
-        Ok(Self {
-            device,
-            access_token: access_token_internal,
-            timeout: timeout.unwrap_or(30),
-        })
+            Ok(Self {
+                device,
+                access_token: access_token_internal,
+                timeout: timeout.unwrap_or(30),
+                mock_port,
+            })
+        }
     }
 
     /// Post to add a new job to be run on the backend and return the location of the job.
@@ -405,24 +420,44 @@ impl APIBackend {
         };
 
         // Prepare WebAPI client
-        let client = reqwest::blocking::Client::builder()
-            .https_only(true)
-            .build()
-            .map_err(|x| RoqoqoBackendError::NetworkError {
-                msg: format!("could not create https client {:?}", x),
-            })?;
+        let client: Client = if self.mock_port.is_some() {
+            reqwest::blocking::Client::builder().build().map_err(|x| {
+                RoqoqoBackendError::NetworkError {
+                    msg: format!("could not create test client {:?}", x),
+                }
+            })?
+        } else {
+            reqwest::blocking::Client::builder()
+                .https_only(true)
+                .build()
+                .map_err(|x| RoqoqoBackendError::NetworkError {
+                    msg: format!("could not create https client {:?}", x),
+                })?
+        };
 
         // Call WebAPI client
         // here: value for put() temporarily fixed.
         // needs to be derived dynamically based on the provided parameter 'qrydbackend'
-        let resp = client
-            .post("https://api.qryddemo.itp3.uni-stuttgart.de/v3_0/jobs")
-            .header("X-API-KEY", self.access_token.clone())
-            .json(&data)
-            .send()
-            .map_err(|e| RoqoqoBackendError::NetworkError {
-                msg: format!("{:?}", e),
-            })?;
+        let resp: Response;
+        if let Some(mock_port) = &self.mock_port {
+            resp = client
+                .post(format!("http://127.0.0.1:{}", mock_port))
+                .json(&data)
+                .send()
+                .map_err(|e| RoqoqoBackendError::NetworkError {
+                    msg: format!("{:?}", e),
+                })?;
+        } else {
+            resp = client
+                .post("https://api.qryddemo.itp3.uni-stuttgart.de/v3_0/jobs")
+                .header("X-API-KEY", self.access_token.clone())
+                .json(&data)
+                .send()
+                .map_err(|e| RoqoqoBackendError::NetworkError {
+                    msg: format!("{:?}", e),
+                })?;
+        }
+
         let status_code = resp.status();
         if status_code != reqwest::StatusCode::CREATED {
             if status_code == reqwest::StatusCode::UNPROCESSABLE_ENTITY {
@@ -476,12 +511,20 @@ impl APIBackend {
         job_location: String,
     ) -> Result<QRydJobStatus, RoqoqoBackendError> {
         // Prepare WebAPI client
-        let client = reqwest::blocking::Client::builder()
-            .https_only(true)
-            .build()
-            .map_err(|x| RoqoqoBackendError::NetworkError {
-                msg: format!("could not create https client {:?}", x),
-            })?;
+        let client: Client = if self.mock_port.is_some() {
+            reqwest::blocking::Client::builder().build().map_err(|x| {
+                RoqoqoBackendError::NetworkError {
+                    msg: format!("could not create test client {:?}", x),
+                }
+            })?
+        } else {
+            reqwest::blocking::Client::builder()
+                .https_only(true)
+                .build()
+                .map_err(|x| RoqoqoBackendError::NetworkError {
+                    msg: format!("could not create https client {:?}", x),
+                })?
+        };
 
         let url_string: String = job_location + "/status";
 
@@ -540,12 +583,20 @@ impl APIBackend {
         job_location: String,
     ) -> Result<QRydJobResult, RoqoqoBackendError> {
         // Prepare WebAPI client
-        let client = reqwest::blocking::Client::builder()
-            .https_only(true)
-            .build()
-            .map_err(|x| RoqoqoBackendError::NetworkError {
-                msg: format!("could not create https client {:?}", x),
-            })?;
+        let client: Client = if self.mock_port.is_some() {
+            reqwest::blocking::Client::builder().build().map_err(|x| {
+                RoqoqoBackendError::NetworkError {
+                    msg: format!("could not create test client {:?}", x),
+                }
+            })?
+        } else {
+            reqwest::blocking::Client::builder()
+                .https_only(true)
+                .build()
+                .map_err(|x| RoqoqoBackendError::NetworkError {
+                    msg: format!("could not create https client {:?}", x),
+                })?
+        };
 
         // construct URL with {job_id} not required?
         let url_string: String = job_location + "/result";
@@ -601,12 +652,20 @@ impl APIBackend {
     ///
     pub fn delete_job(&self, job_location: String) -> Result<(), RoqoqoBackendError> {
         // Prepare WebAPI client
-        let client = reqwest::blocking::Client::builder()
-            .https_only(true)
-            .build()
-            .map_err(|x| RoqoqoBackendError::NetworkError {
-                msg: format!("could not create https client {:?}", x),
-            })?;
+        let client: Client = if self.mock_port.is_some() {
+            reqwest::blocking::Client::builder().build().map_err(|x| {
+                RoqoqoBackendError::NetworkError {
+                    msg: format!("could not create test client {:?}", x),
+                }
+            })?
+        } else {
+            reqwest::blocking::Client::builder()
+                .https_only(true)
+                .build()
+                .map_err(|x| RoqoqoBackendError::NetworkError {
+                    msg: format!("could not create https client {:?}", x),
+                })?
+        };
         // Call WebAPI client
         let resp = client
             .delete(job_location)
@@ -771,14 +830,18 @@ impl EvaluatingBackend for APIBackend {
 mod test {
     use super::*;
     use crate::api_devices::QrydEmuSquareDevice;
+    use httpmock::MockServer;
+    use roqoqo::operations;
     use roqoqo::{Circuit, QuantumProgram};
+
+    /// Test Debug, Clone and PartialEq of ApiBackend
     #[test]
     fn debug_and_clone() {
         let device: QRydAPIDevice = QrydEmuSquareDevice::new(None, None).into();
-        let backend = APIBackend::new(device.clone(), Some("".to_string()), Some(2)).unwrap();
+        let backend = APIBackend::new(device.clone(), Some("".to_string()), Some(2), None).unwrap();
         let a = format!("{:?}", backend);
         assert!(a.contains("QrydEmuSquareDevice"));
-        let backend2 = APIBackend::new(device, Some("a".to_string()), Some(2)).unwrap();
+        let backend2 = APIBackend::new(device, Some("a".to_string()), Some(2), None).unwrap();
         assert_eq!(backend.clone(), backend);
         assert_ne!(backend, backend2);
     }
@@ -837,5 +900,192 @@ mod test {
             compilation_time: 1.0,
         };
         assert_eq!(format!("{:?}", result), "QRydJobResult { data: ResultCounts { counts: {} }, time_taken: 0.0, noise: \"noise\", method: \"method\", device: \"device\", num_qubits: 2, num_clbits: 2, fusion_max_qubits: 0, fusion_avg_qubits: 0.0, fusion_generated_gates: 0, executed_single_qubit_gates: 0, executed_two_qubit_gates: 0, compilation_time: 1.0 }");
+    }
+
+    /// Test Debug of QRydJobStatus
+    #[test]
+    fn test_debug_validation() {
+        let status = QRydJobStatus {
+            status: "in progress".to_string(),
+            msg: "the job is still in progress".to_string(),
+        };
+        assert_eq!(
+            format!("{:?}", status),
+            "QRydJobStatus { status: \"in progress\", msg: \"the job is still in progress\" }"
+        );
+    }
+
+    /// Test error cases. Case 1: UnprocessableEntity
+    #[test]
+    fn api_backend_errorcase1() {
+        let detail = ValidationErrorDetail {
+            loc: vec!["DummyLoc".to_string()],
+            msg: "DummyMsg".to_string(),
+            internal_type: "DummyType".to_string(),
+        };
+        let error = ValidationError {
+            detail: vec![detail],
+        };
+        let server = MockServer::start();
+        let mock_status = server.mock(|when, then| {
+            when.method("GET").path("/DummyLocation/status");
+            then.status(422).json_body_obj(&error);
+        });
+        let mock_result = server.mock(|when, then| {
+            when.method("GET").path("/DummyLocation/result");
+            then.status(422).json_body_obj(&error);
+        });
+        let mock_delete = server.mock(|when, then| {
+            when.method("DELETE");
+            then.status(422).json_body_obj(&error);
+        });
+        let mock_post = server.mock(|when, then| {
+            when.method("POST");
+            then.status(422)
+                .header(
+                    "Location",
+                    format!("http://127.0.0.1:{}/DummyLocation", server.port()),
+                )
+                .json_body_obj(&error);
+        });
+        let number_qubits = 6;
+        let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
+        let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
+        let api_backend_new =
+            APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
+        let mut circuit = Circuit::new();
+        circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
+        circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
+        circuit += operations::RotateX::new(4, std::f64::consts::FRAC_PI_2.into());
+        circuit += operations::MeasureQubit::new(0, "ro".to_string(), 0);
+        circuit += operations::PragmaSetNumberOfMeasurements::new(10, "ro".to_string());
+        let measurement = ClassicalRegister {
+            constant_circuit: Some(circuit.clone()),
+            circuits: vec![circuit.clone()],
+        };
+        let program = QuantumProgram::ClassicalRegister {
+            measurement,
+            input_parameter_names: vec![],
+        };
+        let job_loc = api_backend_new.post_job(program);
+
+        mock_post.assert();
+        assert!(job_loc.is_err());
+        assert!(matches!(
+            job_loc.unwrap_err(),
+            RoqoqoBackendError::GenericError { .. }
+        ));
+
+        let job_status = api_backend_new
+            .get_job_status(format!("http://127.0.0.1:{}/DummyLocation", server.port()));
+
+        mock_status.assert();
+        assert!(job_status.is_err());
+        assert!(matches!(
+            job_status.unwrap_err(),
+            RoqoqoBackendError::GenericError { .. }
+        ));
+
+        let job_result = api_backend_new
+            .get_job_result(format!("http://127.0.0.1:{}/DummyLocation", server.port()));
+
+        mock_result.assert();
+        assert!(job_result.is_err());
+        assert!(matches!(
+            job_result.unwrap_err(),
+            RoqoqoBackendError::GenericError { .. }
+        ));
+
+        let job_delete =
+            api_backend_new.delete_job(format!("http://127.0.0.1:{}/DummyLocation", server.port()));
+
+        mock_delete.assert();
+        assert!(job_delete.is_err());
+        assert!(matches!(
+            job_delete.unwrap_err(),
+            RoqoqoBackendError::GenericError { .. }
+        ));
+    }
+
+    /// Test error cases. Case 2: ValidationError parsing error
+    #[test]
+    fn api_backend_errorcase2() {
+        let server = MockServer::start();
+        let mock_post = server.mock(|when, then| {
+            when.method("POST");
+            then.status(422).header(
+                "Location",
+                format!("http://127.0.0.1:{}/DummyLocation", server.port()),
+            );
+        });
+        let mock_status = server.mock(|when, then| {
+            when.method("GET").path("/DummyLocation/status");
+            then.status(422);
+        });
+        let mock_result = server.mock(|when, then| {
+            when.method("GET").path("/DummyLocation/result");
+            then.status(422);
+        });
+        let mock_delete = server.mock(|when, then| {
+            when.method("DELETE");
+            then.status(422);
+        });
+        let number_qubits = 6;
+        let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
+        let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
+        let api_backend_new =
+            APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
+        let mut circuit = Circuit::new();
+        circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
+        circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
+        circuit += operations::RotateX::new(4, std::f64::consts::FRAC_PI_2.into());
+        circuit += operations::MeasureQubit::new(0, "ro".to_string(), 0);
+        circuit += operations::PragmaSetNumberOfMeasurements::new(10, "ro".to_string());
+        let measurement = ClassicalRegister {
+            constant_circuit: Some(circuit.clone()),
+            circuits: vec![circuit.clone()],
+        };
+        let program = QuantumProgram::ClassicalRegister {
+            measurement,
+            input_parameter_names: vec![],
+        };
+        let job_loc = api_backend_new.post_job(program);
+
+        mock_post.assert();
+        assert!(job_loc.is_err());
+        assert!(matches!(
+            job_loc.unwrap_err(),
+            RoqoqoBackendError::NetworkError { .. }
+        ));
+
+        let job_status = api_backend_new
+            .get_job_status(format!("http://127.0.0.1:{}/DummyLocation", server.port()));
+
+        mock_status.assert();
+        assert!(job_status.is_err());
+        assert!(matches!(
+            job_status.unwrap_err(),
+            RoqoqoBackendError::NetworkError { .. }
+        ));
+
+        let job_result = api_backend_new
+            .get_job_result(format!("http://127.0.0.1:{}/DummyLocation", server.port()));
+
+        mock_result.assert();
+        assert!(job_result.is_err());
+        assert!(matches!(
+            job_result.unwrap_err(),
+            RoqoqoBackendError::NetworkError { .. }
+        ));
+
+        let job_delete =
+            api_backend_new.delete_job(format!("http://127.0.0.1:{}/DummyLocation", server.port()));
+
+        mock_delete.assert();
+        assert!(job_delete.is_err());
+        assert!(matches!(
+            job_delete.unwrap_err(),
+            RoqoqoBackendError::NetworkError { .. }
+        ));
     }
 }

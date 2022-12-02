@@ -15,6 +15,7 @@
 use pyo3::prelude::*;
 use pyo3::Python;
 use qoqo_qryd::api_devices::{QrydEmuSquareDeviceWrapper, QrydEmuTriangularDeviceWrapper};
+use std::collections::HashSet;
 use std::f64::consts::PI;
 use std::usize;
 
@@ -89,6 +90,10 @@ fn test_to_from_bincode_square() {
 
         let serialised = device.call_method0("to_bincode").unwrap();
         let deserialised = device.call_method1("from_bincode", (serialised,)).unwrap();
+
+        let not_correct: HashSet<usize> = HashSet::new();
+        let extract_error = device.call_method1("from_bincode", (not_correct,));
+        assert!(extract_error.is_err());
 
         let vec: Vec<u8> = Vec::new();
         let deserialised_error = device.call_method1("from_bincode", (vec,));
@@ -319,6 +324,10 @@ fn test_to_from_bincode_triangular() {
         let serialised = device.call_method0("to_bincode").unwrap();
         let deserialised = device.call_method1("from_bincode", (serialised,)).unwrap();
 
+        let not_correct: HashSet<usize> = HashSet::new();
+        let extract_error = device.call_method1("from_bincode", (not_correct,));
+        assert!(extract_error.is_err());
+
         let vec: Vec<u8> = Vec::new();
         let deserialised_error = device.call_method1("from_bincode", (vec,));
         assert!(deserialised_error.is_err());
@@ -492,4 +501,48 @@ fn test_twoqubitedges_triangular() {
         ];
         assert_eq!(twoqubitedges_get, two_qubit_edges);
     });
+}
+
+// Test generic_device() for square device
+#[test]
+fn test_generic_device_square() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let device = create_square_device(py);
+        let genericdevice = device.call_method0("generic_device").unwrap();
+
+        let num_gen = genericdevice
+            .call_method0("number_qubits")
+            .unwrap()
+            .extract::<usize>()
+            .unwrap();
+        let num_dev = device
+            .call_method0("number_qubits")
+            .unwrap()
+            .extract::<usize>()
+            .unwrap();
+        assert_eq!(num_gen, num_dev);
+    })
+}
+
+// Test generic_device() for triangular device
+#[test]
+fn test_generic_device_triangular() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let device = create_triangular_device(py);
+        let genericdevice = device.call_method0("generic_device").unwrap();
+
+        let num_gen = genericdevice
+            .call_method0("number_qubits")
+            .unwrap()
+            .extract::<usize>()
+            .unwrap();
+        let num_dev = device
+            .call_method0("number_qubits")
+            .unwrap()
+            .extract::<usize>()
+            .unwrap();
+        assert_eq!(num_gen, num_dev);
+    })
 }
