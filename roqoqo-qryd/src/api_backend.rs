@@ -24,7 +24,7 @@ use roqoqo::prelude::Operate;
 use roqoqo::Circuit;
 use roqoqo::QuantumProgram;
 use roqoqo::RoqoqoBackendError;
-use roqoqo_1_0;
+// use roqoqo_1_0;
 use std::collections::HashMap;
 use std::env;
 use std::{thread, time};
@@ -82,7 +82,7 @@ struct QRydRunData {
     /// Weight given to the extended set, default 0.5
     extended_set_weight: f64,
     /// Roqoqo QuantumProgram to be executed.
-    program: roqoqo_1_0::QuantumProgram,
+    program: QuantumProgram,
 }
 
 /// Local struct representing the body of a validation error message
@@ -114,90 +114,91 @@ pub struct QRydJobStatus {
     pub msg: String,
 }
 
-/// Convert from new roqoqo 1.1.0 QuantumProgram to 1.0.0
-pub fn downconvert_roqoqo_version(
-    program: QuantumProgram,
-) -> Result<roqoqo_1_0::QuantumProgram, RoqoqoBackendError> {
-    let (measurement, input_parameter_names) = match program {
-        QuantumProgram::ClassicalRegister {
-            measurement,
-            input_parameter_names,
-        } => Ok((measurement, input_parameter_names)),
-        _ => Err(RoqoqoBackendError::GenericError {
-            msg:
-                "Only ClassiclaRegister measurements are supported by the Qryd WebAPI at the moment"
-                    .to_string(),
-        }),
-    }?;
-    let mut downconverted_circuit = roqoqo_1_0::Circuit::new();
-    for op in measurement.circuits[0].iter() {
-        match op {
-            Operation::InputBit(_op) => {
-                return Err(RoqoqoBackendError::GenericError {
-                    msg: "InputBit operation not compatible with roqoqo 1.0 and QRyd Web API v2_0"
-                        .to_string(),
-                });
-            }
-            Operation::PragmaLoop(_op) => {
-                return Err(RoqoqoBackendError::GenericError {
-                    msg:
-                        "PragmaLoop operation not compatible with roqoqo 1.0 and QRyd Web API v2_0"
-                            .to_string(),
-                });
-            }
-            _ => {
-                let serialized_op =
-                    serde_json::to_string(&op).map_err(|err| RoqoqoBackendError::GenericError {
-                        msg: format!("Internal error cannot serialize operation {}", err),
-                    })?;
-                let new_op: roqoqo_1_0::operations::Operation = serde_json::from_str(&serialized_op).map_err(|err| RoqoqoBackendError::GenericError { msg: format!("Error could not convert Operation to roqoqo 1.0 compatible Operation. QRyd WebAPI only support roqoqo 1.0 compatible programs at the moment {}", err) })?;
-                downconverted_circuit += new_op;
-            }
-        }
-    }
+// /// Convert from new roqoqo 1.1.0 QuantumProgram to 1.0.0
+// #[allow(unused)]
+// pub fn downconvert_roqoqo_version(
+//     program: QuantumProgram,
+// ) -> Result<roqoqo_1_0::QuantumProgram, RoqoqoBackendError> {
+//     let (measurement, input_parameter_names) = match program {
+//         QuantumProgram::ClassicalRegister {
+//             measurement,
+//             input_parameter_names,
+//         } => Ok((measurement, input_parameter_names)),
+//         _ => Err(RoqoqoBackendError::GenericError {
+//             msg:
+//                 "Only ClassiclaRegister measurements are supported by the Qryd WebAPI at the moment"
+//                     .to_string(),
+//         }),
+//     }?;
+//     let mut downconverted_circuit = roqoqo_1_0::Circuit::new();
+//     for op in measurement.circuits[0].iter() {
+//         match op {
+//             Operation::InputBit(_op) => {
+//                 return Err(RoqoqoBackendError::GenericError {
+//                     msg: "InputBit operation not compatible with roqoqo 1.0 and QRyd Web API v2_0"
+//                         .to_string(),
+//                 });
+//             }
+//             Operation::PragmaLoop(_op) => {
+//                 return Err(RoqoqoBackendError::GenericError {
+//                     msg:
+//                         "PragmaLoop operation not compatible with roqoqo 1.0 and QRyd Web API v2_0"
+//                             .to_string(),
+//                 });
+//             }
+//             _ => {
+//                 let serialized_op =
+//                     serde_json::to_string(&op).map_err(|err| RoqoqoBackendError::GenericError {
+//                         msg: format!("Internal error cannot serialize operation {}", err),
+//                     })?;
+//                 let new_op: roqoqo_1_0::operations::Operation = serde_json::from_str(&serialized_op).map_err(|err| RoqoqoBackendError::GenericError { msg: format!("Error could not convert Operation to roqoqo 1.0 compatible Operation. QRyd WebAPI only support roqoqo 1.0 compatible programs at the moment {}", err) })?;
+//                 downconverted_circuit += new_op;
+//             }
+//         }
+//     }
 
-    let downconverted_const_circuit = if let Some(const_circ) = measurement.constant_circuit {
-        let mut new_circuit = roqoqo_1_0::Circuit::new();
-        for op in const_circ.iter() {
-            match op {
-                Operation::InputBit(_op) => {
-                    return Err(RoqoqoBackendError::GenericError {
-                    msg: "InputBit operation not compatible with roqoqo 1.0 and QRyd Web API v2_0"
-                        .to_string(),
-                });
-                }
-                Operation::PragmaLoop(_op) => {
-                    return Err(RoqoqoBackendError::GenericError {
-                    msg:
-                        "PragmaLoop operation not compatible with roqoqo 1.0 and QRyd Web API v2_0"
-                            .to_string(),
-                });
-                }
-                _ => {
-                    let serialized_op = serde_json::to_string(&op).map_err(|err| {
-                        RoqoqoBackendError::GenericError {
-                            msg: format!("Internal error cannot serialize operation {}", err),
-                        }
-                    })?;
-                    let new_op: roqoqo_1_0::operations::Operation = serde_json::from_str(&serialized_op).map_err(|err| RoqoqoBackendError::GenericError { msg: format!("Error could not convert Operation to roqoqo 1.0 compatible Operation. QRyd WebAPI only support roqoqo 1.0 compatible programs at the moment {}", err) })?;
-                    new_circuit += new_op;
-                }
-            }
-        }
-        Some(new_circuit)
-    } else {
-        None
-    };
-    let downconverted_measurement = roqoqo_1_0::measurements::ClassicalRegister {
-        constant_circuit: downconverted_const_circuit,
-        circuits: vec![downconverted_circuit],
-    };
-    let downconverted_program = roqoqo_1_0::QuantumProgram::ClassicalRegister {
-        measurement: downconverted_measurement,
-        input_parameter_names,
-    };
-    Ok(downconverted_program)
-}
+//     let downconverted_const_circuit = if let Some(const_circ) = measurement.constant_circuit {
+//         let mut new_circuit = roqoqo_1_0::Circuit::new();
+//         for op in const_circ.iter() {
+//             match op {
+//                 Operation::InputBit(_op) => {
+//                     return Err(RoqoqoBackendError::GenericError {
+//                     msg: "InputBit operation not compatible with roqoqo 1.0 and QRyd Web API v2_0"
+//                         .to_string(),
+//                 });
+//                 }
+//                 Operation::PragmaLoop(_op) => {
+//                     return Err(RoqoqoBackendError::GenericError {
+//                     msg:
+//                         "PragmaLoop operation not compatible with roqoqo 1.0 and QRyd Web API v2_0"
+//                             .to_string(),
+//                 });
+//                 }
+//                 _ => {
+//                     let serialized_op = serde_json::to_string(&op).map_err(|err| {
+//                         RoqoqoBackendError::GenericError {
+//                             msg: format!("Internal error cannot serialize operation {}", err),
+//                         }
+//                     })?;
+//                     let new_op: roqoqo_1_0::operations::Operation = serde_json::from_str(&serialized_op).map_err(|err| RoqoqoBackendError::GenericError { msg: format!("Error could not convert Operation to roqoqo 1.0 compatible Operation. QRyd WebAPI only support roqoqo 1.0 compatible programs at the moment {}", err) })?;
+//                     new_circuit += new_op;
+//                 }
+//             }
+//         }
+//         Some(new_circuit)
+//     } else {
+//         None
+//     };
+//     let downconverted_measurement = roqoqo_1_0::measurements::ClassicalRegister {
+//         constant_circuit: downconverted_const_circuit,
+//         circuits: vec![downconverted_circuit],
+//     };
+//     let downconverted_program = roqoqo_1_0::QuantumProgram::ClassicalRegister {
+//         measurement: downconverted_measurement,
+//         input_parameter_names,
+//     };
+//     Ok(downconverted_program)
+// }
 
 fn check_operation_compatability(op: &Operation) -> Result<(), RoqoqoBackendError> {
     match op {
@@ -401,8 +402,8 @@ impl APIBackend {
             }
         }
         check_for_api_compatability(&quantumprogram)?;
-        let quantumprogram: roqoqo_1_0::QuantumProgram =
-            downconvert_roqoqo_version(quantumprogram)?;
+        // let quantumprogram: roqoqo_1_0::QuantumProgram =
+        //     downconvert_roqoqo_version(quantumprogram)?;
         // dbg!(&serde_json::to_string(&quantumprogram).unwrap());
         let data = QRydRunData {
             backend: self.device.qrydbackend(),
@@ -858,7 +859,7 @@ mod test {
             measurement,
             input_parameter_names: vec!["test".to_string()],
         };
-        let program: roqoqo_1_0::QuantumProgram = downconvert_roqoqo_version(program).unwrap();
+        // let program: roqoqo_1_0::QuantumProgram = downconvert_roqoqo_version(program).unwrap();
 
         let test = QRydRunData {
             backend: "qryd_emu_cloudcomp_square".to_string(),

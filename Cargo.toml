@@ -9,3 +9,10 @@ lto = "thin"
 
 [profile.bench]
 lto = "thin"
+
+[patch.crates-io]
+roqoqo = {version="1.2.0", path="../qoqo/roqoqo"}
+qoqo = {version="1.2.0", path="../qoqo/qoqo"}
+roqoqo-test = {version="1.2.0", path="../qoqo/roqoqo-test"}
+roqoqo-derive = {version="1.2.0", path="../qoqo/roqoqo-derive"}
+roqoqo-quest = {version="0.9.0", path="../qoqo-quest/roqoqo-quest"}
