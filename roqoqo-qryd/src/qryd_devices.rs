@@ -441,6 +441,7 @@ impl Device for FirstDevice {
         // Check for type of gate
         match hqslang {
             "PhaseShiftedControlledZ" => (),
+            "PhaseShiftedControlledPhase" => (),
             _ => return None,
         }
         let control_position = self
@@ -515,7 +516,7 @@ impl Device for FirstDevice {
         for row in 0..self.number_qubits() {
             for column in row + 1..self.number_qubits() {
                 if self
-                    .two_qubit_gate_time("PhaseShiftedControlledZ", &row, &column)
+                    .two_qubit_gate_time("PhaseShiftedControlledPhase", &row, &column)
                     .is_some()
                 {
                     edges.push((row, column));
@@ -589,24 +590,24 @@ impl Device for FirstDevice {
         for row in 0..self.number_qubits() {
             for column in row + 1..self.number_qubits() {
                 if self
-                    .two_qubit_gate_time("PhaseShiftedControlledZ", &row, &column)
+                    .two_qubit_gate_time("PhaseShiftedControlledPhase", &row, &column)
                     .is_some()
                 {
                     new_generic_device
                         .set_two_qubit_gate_time(
-                            "PhaseShiftedControlledZ",
+                            "PhaseShiftedControlledPhase",
                             row,
                             column,
-                            self.two_qubit_gate_time("PhaseShiftedControlledZ", &row, &column)
+                            self.two_qubit_gate_time("PhaseShiftedControlledPhase", &row, &column)
                                 .unwrap(),
                         )
                         .unwrap();
                     new_generic_device
                         .set_two_qubit_gate_time(
-                            "PhaseShiftedControlledZ",
+                            "PhaseShiftedControlledPhase",
                             column,
                             row,
-                            self.two_qubit_gate_time("PhaseShiftedControlledZ", &row, &column)
+                            self.two_qubit_gate_time("PhaseShiftedControlledPhase", &row, &column)
                                 .unwrap(),
                         )
                         .unwrap();
