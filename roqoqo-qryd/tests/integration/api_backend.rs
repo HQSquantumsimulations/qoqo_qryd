@@ -19,7 +19,7 @@ use roqoqo::Circuit;
 use roqoqo::QuantumProgram;
 use roqoqo::RoqoqoBackendError;
 use roqoqo_qryd::api_devices::{QRydAPIDevice, QrydEmuSquareDevice, QrydEmuTriangularDevice};
-use roqoqo_qryd::downconvert_roqoqo_version;
+// use roqoqo_qryd::downconvert_roqoqo_version;
 use roqoqo_qryd::{APIBackend, QRydJobResult, QRydJobStatus, ResultCounts};
 
 use qoqo_calculator::CalculatorFloat;
@@ -1115,125 +1115,125 @@ fn api_backend_errorcase8() {
     );
 }
 
-/// Test downcovert_roqoqo_version function
-#[test]
-fn test_downconvert_roqoqo_version() {
-    let measurement = Cheated {
-        constant_circuit: None,
-        circuits: vec![],
-        input: CheatedInput::new(4),
-    };
-    let program = QuantumProgram::Cheated {
-        measurement,
-        input_parameter_names: vec![],
-    };
+// /// Test downcovert_roqoqo_version function
+// #[test]
+// fn test_downconvert_roqoqo_version() {
+//     let measurement = Cheated {
+//         constant_circuit: None,
+//         circuits: vec![],
+//         input: CheatedInput::new(4),
+//     };
+//     let program = QuantumProgram::Cheated {
+//         measurement,
+//         input_parameter_names: vec![],
+//     };
 
-    let wrong_downconverted_quantumprogram = downconvert_roqoqo_version(program);
-    assert!(wrong_downconverted_quantumprogram.is_err());
-    assert_eq!(
-        wrong_downconverted_quantumprogram.unwrap_err(),
-        RoqoqoBackendError::GenericError {
-            msg:
-                "Only ClassiclaRegister measurements are supported by the Qryd WebAPI at the moment"
-                    .to_string()
-        }
-    );
+//     let wrong_downconverted_quantumprogram = downconvert_roqoqo_version(program);
+//     assert!(wrong_downconverted_quantumprogram.is_err());
+//     assert_eq!(
+//         wrong_downconverted_quantumprogram.unwrap_err(),
+//         RoqoqoBackendError::GenericError {
+//             msg:
+//                 "Only ClassiclaRegister measurements are supported by the Qryd WebAPI at the moment"
+//                     .to_string()
+//         }
+//     );
 
-    let mut circuit = Circuit::new();
-    circuit += operations::InputBit::new("ro".to_string(), 0, true);
-    let measurement = ClassicalRegister {
-        constant_circuit: None,
-        circuits: vec![circuit.clone()],
-    };
-    let program = QuantumProgram::ClassicalRegister {
-        measurement,
-        input_parameter_names: vec![],
-    };
+//     let mut circuit = Circuit::new();
+//     circuit += operations::InputBit::new("ro".to_string(), 0, true);
+//     let measurement = ClassicalRegister {
+//         constant_circuit: None,
+//         circuits: vec![circuit.clone()],
+//     };
+//     let program = QuantumProgram::ClassicalRegister {
+//         measurement,
+//         input_parameter_names: vec![],
+//     };
 
-    let wrong_downconverted_quantumprogram = downconvert_roqoqo_version(program);
-    assert!(wrong_downconverted_quantumprogram.is_err());
-    assert_eq!(
-        wrong_downconverted_quantumprogram.unwrap_err(),
-        RoqoqoBackendError::GenericError {
-            msg: "InputBit operation not compatible with roqoqo 1.0 and QRyd Web API v2_0"
-                .to_string(),
-        }
-    );
+//     let wrong_downconverted_quantumprogram = downconvert_roqoqo_version(program);
+//     assert!(wrong_downconverted_quantumprogram.is_err());
+//     assert_eq!(
+//         wrong_downconverted_quantumprogram.unwrap_err(),
+//         RoqoqoBackendError::GenericError {
+//             msg: "InputBit operation not compatible with roqoqo 1.0 and QRyd Web API v2_0"
+//                 .to_string(),
+//         }
+//     );
 
-    let mut circuit = Circuit::new();
-    circuit += operations::PragmaLoop::new(CalculatorFloat::Float(0.23), Circuit::new());
-    let measurement = ClassicalRegister {
-        constant_circuit: None,
-        circuits: vec![circuit.clone()],
-    };
-    let program = QuantumProgram::ClassicalRegister {
-        measurement,
-        input_parameter_names: vec![],
-    };
+//     let mut circuit = Circuit::new();
+//     circuit += operations::PragmaLoop::new(CalculatorFloat::Float(0.23), Circuit::new());
+//     let measurement = ClassicalRegister {
+//         constant_circuit: None,
+//         circuits: vec![circuit.clone()],
+//     };
+//     let program = QuantumProgram::ClassicalRegister {
+//         measurement,
+//         input_parameter_names: vec![],
+//     };
 
-    let wrong_downconverted_quantumprogram = downconvert_roqoqo_version(program);
-    assert!(wrong_downconverted_quantumprogram.is_err());
-    assert_eq!(
-        wrong_downconverted_quantumprogram.unwrap_err(),
-        RoqoqoBackendError::GenericError {
-            msg: "PragmaLoop operation not compatible with roqoqo 1.0 and QRyd Web API v2_0"
-                .to_string(),
-        }
-    );
+//     let wrong_downconverted_quantumprogram = downconvert_roqoqo_version(program);
+//     assert!(wrong_downconverted_quantumprogram.is_err());
+//     assert_eq!(
+//         wrong_downconverted_quantumprogram.unwrap_err(),
+//         RoqoqoBackendError::GenericError {
+//             msg: "PragmaLoop operation not compatible with roqoqo 1.0 and QRyd Web API v2_0"
+//                 .to_string(),
+//         }
+//     );
 
-    let mut circuit = Circuit::new();
-    circuit += operations::InputBit::new("ro".to_string(), 0, true);
-    let measurement = ClassicalRegister {
-        constant_circuit: Some(circuit.clone()),
-        circuits: vec![Circuit::new()],
-    };
-    let program = QuantumProgram::ClassicalRegister {
-        measurement,
-        input_parameter_names: vec![],
-    };
+//     let mut circuit = Circuit::new();
+//     circuit += operations::InputBit::new("ro".to_string(), 0, true);
+//     let measurement = ClassicalRegister {
+//         constant_circuit: Some(circuit.clone()),
+//         circuits: vec![Circuit::new()],
+//     };
+//     let program = QuantumProgram::ClassicalRegister {
+//         measurement,
+//         input_parameter_names: vec![],
+//     };
 
-    let wrong_downconverted_quantumprogram = downconvert_roqoqo_version(program);
-    assert!(wrong_downconverted_quantumprogram.is_err());
-    assert_eq!(
-        wrong_downconverted_quantumprogram.unwrap_err(),
-        RoqoqoBackendError::GenericError {
-            msg: "InputBit operation not compatible with roqoqo 1.0 and QRyd Web API v2_0"
-                .to_string(),
-        }
-    );
+//     let wrong_downconverted_quantumprogram = downconvert_roqoqo_version(program);
+//     assert!(wrong_downconverted_quantumprogram.is_err());
+//     assert_eq!(
+//         wrong_downconverted_quantumprogram.unwrap_err(),
+//         RoqoqoBackendError::GenericError {
+//             msg: "InputBit operation not compatible with roqoqo 1.0 and QRyd Web API v2_0"
+//                 .to_string(),
+//         }
+//     );
 
-    let mut circuit = Circuit::new();
-    circuit += operations::PragmaLoop::new(CalculatorFloat::Float(0.23), Circuit::new());
-    let measurement = ClassicalRegister {
-        constant_circuit: Some(circuit.clone()),
-        circuits: vec![Circuit::new()],
-    };
-    let program = QuantumProgram::ClassicalRegister {
-        measurement,
-        input_parameter_names: vec![],
-    };
+//     let mut circuit = Circuit::new();
+//     circuit += operations::PragmaLoop::new(CalculatorFloat::Float(0.23), Circuit::new());
+//     let measurement = ClassicalRegister {
+//         constant_circuit: Some(circuit.clone()),
+//         circuits: vec![Circuit::new()],
+//     };
+//     let program = QuantumProgram::ClassicalRegister {
+//         measurement,
+//         input_parameter_names: vec![],
+//     };
 
-    let wrong_downconverted_quantumprogram = downconvert_roqoqo_version(program);
-    assert!(wrong_downconverted_quantumprogram.is_err());
-    assert_eq!(
-        wrong_downconverted_quantumprogram.unwrap_err(),
-        RoqoqoBackendError::GenericError {
-            msg: "PragmaLoop operation not compatible with roqoqo 1.0 and QRyd Web API v2_0"
-                .to_string(),
-        }
-    );
+//     let wrong_downconverted_quantumprogram = downconvert_roqoqo_version(program);
+//     assert!(wrong_downconverted_quantumprogram.is_err());
+//     assert_eq!(
+//         wrong_downconverted_quantumprogram.unwrap_err(),
+//         RoqoqoBackendError::GenericError {
+//             msg: "PragmaLoop operation not compatible with roqoqo 1.0 and QRyd Web API v2_0"
+//                 .to_string(),
+//         }
+//     );
 
-    let mut circuit = Circuit::new();
-    circuit += operations::RotateX::new(0, CalculatorFloat::Float(0.23));
-    let measurement = ClassicalRegister {
-        constant_circuit: None,
-        circuits: vec![circuit.clone()],
-    };
-    let program = QuantumProgram::ClassicalRegister {
-        measurement,
-        input_parameter_names: vec![],
-    };
+//     let mut circuit = Circuit::new();
+//     circuit += operations::RotateX::new(0, CalculatorFloat::Float(0.23));
+//     let measurement = ClassicalRegister {
+//         constant_circuit: None,
+//         circuits: vec![circuit.clone()],
+//     };
+//     let program = QuantumProgram::ClassicalRegister {
+//         measurement,
+//         input_parameter_names: vec![],
+//     };
 
-    let correct_downconverted_quantum_program = downconvert_roqoqo_version(program);
-    assert!(correct_downconverted_quantum_program.is_ok());
-}
+//     let correct_downconverted_quantum_program = downconvert_roqoqo_version(program);
+//     assert!(correct_downconverted_quantum_program.is_ok());
+// }

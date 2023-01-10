@@ -1,6 +1,6 @@
 [package]
 name = "roqoqo-qryd"
-version = "0.7.0"
+version = "0.7.1"
 authors = ["HQS Quantum Simulations <info@quantumsimulations.de>"]
 edition = "2021"
 license = "Apache-2.0"
@@ -22,11 +22,11 @@ doctest = false
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-roqoqo = {package = "roqoqo", version="1.1.0", features=["serialize"]}
+roqoqo = {package = "roqoqo", version="1.2.0", features=["serialize"]}
 # roqoqo_1_0 = {package = "roqoqo", version="=1.0.0", features=["serialize"], optional=true}
-roqoqo_1_0 = {package = "roqoqo", version="1.0.0", git = 'https://github.com/HQSquantumsimulations/qoqo', tag="v1.0.0", features=["serialize"], optional=true}
-roqoqo-derive = {package="roqoqo-derive", version="1.1"}
-roqoqo-quest = {version = "0.8.0-beta.5", default-features=false, optional=true}
+# roqoqo_1_0 = {package = "roqoqo", version="1.0.0", git = 'https://github.com/HQSquantumsimulations/qoqo', tag="v1.0.0", features=["serialize"], optional=true}
+roqoqo-derive = {package="roqoqo-derive", version="1.2"}
+roqoqo-quest = {version = "0.9.0", default-features=false, optional=true}
 qoqo_calculator = { version="1.1"}
 serde = {version="1.0", features=["derive"], optional=true}
 serde_json = "1.0"
@@ -41,11 +41,11 @@ itertools = "0.10.3"
 [dev-dependencies]
 test-case = "2.0.2"
 serde_test = {version="1.0"}
-roqoqo-test = {package="roqoqo-test", version="1.1"}
+roqoqo-test = {package="roqoqo-test", version="1.2"}
 httpmock = "0.6.7"
 
 [features]
 default = ["serialize", "simulator", "web-api"]
 serialize = ["serde"]
-web-api = ["reqwest", "hex", "bitvec", "roqoqo_1_0"]
+web-api = ["reqwest", "hex", "bitvec"]
 simulator = ["roqoqo-quest"]

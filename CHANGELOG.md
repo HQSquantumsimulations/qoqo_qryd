@@ -2,6 +2,10 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+## 0.7.1
+
+* Update to new version of qoqo (1.2.0)
+
 ## 0.7.0
 
 * Switches to new API version v3_0 of QRyd Web-API for the Web-API backend

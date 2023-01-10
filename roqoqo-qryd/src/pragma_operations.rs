@@ -58,6 +58,8 @@ impl Substitute for PragmaChangeQRydLayout {
     }
 }
 
+impl roqoqo::operations::SupportedVersion for PragmaChangeQRydLayout {}
+
 impl PragmaChangeQRydLayout {
     /// Wrap PragmaChangeQRydLayout in PragmaChangeDevice operation
     ///
@@ -166,3 +168,5 @@ impl InvolveQubits for PragmaShiftQRydQubit {
 #[allow(non_upper_case_globals)]
 const TAGS_PragmaShiftQRydQubit: &[&str; 3] =
     &["Operation", "PragmaOperation", "PragmaShiftQRydQubit"];
+
+impl roqoqo::operations::SupportedVersion for PragmaShiftQRydQubit {}
