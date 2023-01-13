@@ -573,3 +573,18 @@ fn test_to_generic_device_triangular() {
         }
     }
 }
+
+#[test]
+fn test_pscp_phi_theta_relation() {
+    let correct_phi: f64 = 3.6150744773365036;
+    let correct_triangular = QrydEmuTriangularDevice::new(Some(0), Some(correct_phi));
+    let correct_square = QrydEmuSquareDevice::new(Some(0), Some(correct_phi));
+
+    let incorrect_triangular = QrydEmuTriangularDevice::new(Some(0), Some(1.5));
+    let incorrect_square = QrydEmuSquareDevice::new(Some(0), Some(1.5));
+
+    assert!(correct_triangular.two_qubit_gate_time("PhaseShiftedControlledPhase", &0, &1).is_some());
+    assert!(correct_square.two_qubit_gate_time("PhaseShiftedControlledPhase", &0, &1).is_some());
+    assert!(incorrect_triangular.two_qubit_gate_time("PhaseShiftedControlledPhase", &0, &1).is_none());
+    assert!(incorrect_square.two_qubit_gate_time("PhaseShiftedControlledPhase", &0, &1).is_none());
+}

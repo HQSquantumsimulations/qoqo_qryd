@@ -458,7 +458,7 @@ fn test_qubit_gate_times() {
         &[3, 2],
         1.5,
         array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
-        None,
+        Some(3.6150744773365036),
     )
     .unwrap();
     device = device
@@ -490,6 +490,14 @@ fn test_qubit_gate_times() {
     assert_eq!(
         device.two_qubit_gate_time("PhaseShiftedControlledZ", &0, &2),
         None
+    );
+    assert_eq!(
+        device.two_qubit_gate_time("PhaseShiftedControlledPhase", &0, &7),
+        None
+    );
+    assert_eq!(
+        device.two_qubit_gate_time("PhaseShiftedControlledPhase", &0, &1),
+        Some(2e-6)
     );
     assert_eq!(device.two_qubit_gate_time("ControlledPauliZ", &0, &1), None);
 
@@ -573,7 +581,7 @@ fn test_qubit_edges() {
         &[3, 2],
         1.0,
         array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
-        None,
+        Some(3.6150744773365036),
     )
     .unwrap();
     device = device
@@ -789,7 +797,7 @@ fn test_qryd_qubit_gate_times() {
         &[3, 2],
         1.5,
         array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
-        None,
+        Some(3.6150744773365036),
     )
     .unwrap();
     device = device
@@ -907,6 +915,36 @@ fn test_qryd_change_device() {
             msg: "Wrapped operation not supported in QRydDevice".to_string()
         })
     );
+}
+
+#[test]
+fn test_pscp_phi_theta_relation() {
+    let correct_phi: f64 = 3.6150744773365036;
+    let correct_device = FirstDevice::new(
+        2,
+        3,
+        &[3, 2],
+        1.5,
+        array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
+        Some(correct_phi),
+    )
+    .unwrap();
+    let incorrect_device = FirstDevice::new(
+        2,
+        3,
+        &[3, 2],
+        1.5,
+        array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
+        None,
+    )
+    .unwrap();
+
+    assert!(correct_device
+        .two_qubit_gate_time("PhaseShiftedControlledPhase", &0, &1)
+        .is_some());
+    assert!(incorrect_device
+        .two_qubit_gate_time("PhaseShiftedControlledPhase", &0, &1)
+        .is_none());
 }
 
 // /// Test FirstDevice Serialization and Deserialization traits (readable)

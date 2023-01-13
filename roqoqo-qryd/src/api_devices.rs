@@ -10,6 +10,7 @@
 // express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 
+use crate::check_theta_phi_relation;
 use ndarray::Array2;
 use roqoqo::devices::{Device, GenericDevice};
 use roqoqo::RoqoqoBackendError;
@@ -361,6 +362,13 @@ impl Device for QrydEmuSquareDevice {
         if (larger - smaller == 1 && smaller % 5 != 4) || (larger - smaller == 5) {
             match hqslang {
                 "PhaseShiftedControlledZ" => Some(1e-6),
+                "PhaseShiftedControlledPhase" => {
+                    if !check_theta_phi_relation(self.pcz_theta, std::f64::consts::FRAC_PI_2) {
+                        None
+                    } else {
+                        Some(1e-6)
+                    }
+                }
                 _ => None,
             }
         } else {
@@ -663,6 +671,13 @@ impl Device for QrydEmuTriangularDevice {
             {
                 match hqslang {
                     "PhaseShiftedControlledZ" => Some(1e-6),
+                    "PhaseShiftedControlledPhase" => {
+                        if !check_theta_phi_relation(self.pcz_theta, std::f64::consts::FRAC_PI_2) {
+                            None
+                        } else {
+                            Some(1e-6)
+                        }
+                    }
                     _ => None,
                 }
             } else {

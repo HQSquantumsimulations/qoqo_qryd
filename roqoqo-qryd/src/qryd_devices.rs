@@ -17,7 +17,7 @@
 
 use std::collections::HashMap;
 
-use crate::{PragmaChangeQRydLayout, PragmaShiftQRydQubit};
+use crate::{PragmaChangeQRydLayout, PragmaShiftQRydQubit, check_theta_phi_relation};
 use bincode::deserialize;
 use itertools::Itertools;
 use ndarray::Array2;
@@ -438,10 +438,14 @@ impl Device for FirstDevice {
             .layout_register
             .get(&self.current_layout)
             .expect("Unexpectedly did not find current layout. Bug in roqoqo-qryd");
-        // Check for type of gate
+        // Check for type of gate (as well as checking phi-theta relation)
         match hqslang {
             "PhaseShiftedControlledZ" => (),
-            "PhaseShiftedControlledPhase" => (),
+            "PhaseShiftedControlledPhase" => {
+                if !check_theta_phi_relation(self.controlled_z_phase, std::f64::consts::FRAC_PI_2) {
+                    return None;
+                }
+            }
             _ => return None,
         }
         let control_position = self

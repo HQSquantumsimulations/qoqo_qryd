@@ -65,3 +65,18 @@ pub use simulator_backend::*;
 pub mod api_backend;
 #[cfg(feature = "web-api")]
 pub use api_backend::*;
+
+/// Check whether the given angle comply with the proper phi-theta relation.
+///
+/// # Arguments:
+///
+/// `phi` - The phi angle to check.
+/// `theta` - The theta angle to check.
+fn check_theta_phi_relation(phi: f64, theta: f64) -> bool {
+    (phi.abs()
+        - (5.11382
+            - 0.32933 * f64::ln(1.63085 * theta * theta * f64::exp(2.0 * theta) + theta + 0.02889))
+        .abs())
+    .abs()
+        < f64::EPSILON
+}
