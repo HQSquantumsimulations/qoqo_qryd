@@ -40,9 +40,19 @@ impl QrydEmuSquareDeviceWrapper {
     /// Returns:
     ///     QrydEmuSquareDevice: New device
     #[new]
-    pub fn new(seed: Option<usize>, pcz_theta: Option<f64>) -> Self {
+    pub fn new(
+        seed: Option<usize>,
+        pcz_theta: Option<f64>,
+        controlled_z_phase_relation: Option<String>,
+        controlled_phase_phase_relation: Option<String>,
+    ) -> Self {
         Self {
-            internal: QrydEmuSquareDevice::new(seed, pcz_theta),
+            internal: QrydEmuSquareDevice::new(
+                seed,
+                pcz_theta,
+                controlled_z_phase_relation,
+                controlled_phase_phase_relation,
+            ),
         }
     }
 
@@ -253,9 +263,19 @@ impl QrydEmuTriangularDeviceWrapper {
     /// Returns:
     ///     QrydEmuTriangularDevice: New device
     #[new]
-    pub fn new(seed: Option<usize>, pcz_theta: Option<f64>) -> Self {
+    pub fn new(
+        seed: Option<usize>,
+        pcz_theta: Option<f64>,
+        controlled_z_phase_relation: Option<String>,
+        controlled_phase_phase_relation: Option<String>,
+    ) -> Self {
         Self {
-            internal: QrydEmuTriangularDevice::new(seed, pcz_theta),
+            internal: QrydEmuTriangularDevice::new(
+                seed,
+                pcz_theta,
+                controlled_z_phase_relation,
+                controlled_phase_phase_relation,
+            ),
         }
     }
 

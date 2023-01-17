@@ -257,6 +257,10 @@ pub struct QrydEmuSquareDevice {
     seed: usize,
     // The phase shift in the native PhaseShiftedControlledZ gate
     pcz_theta: f64,
+    /// The specific PhaseShiftedControlledZ relation to use.
+    controlled_z_phase_relation: String,
+    /// The specific PhaseShiftedControlledPhase relation to use.
+    controlled_phase_phase_relation: String
 }
 
 /// Implements the trait to create a new QrydEmuSquareDevice and to return its field values.
@@ -268,11 +272,15 @@ impl QrydEmuSquareDevice {
     /// * `seed` - Seed, if not provided will be set to 0 per default (not recommended!)
     /// * `pcz_theta` - The phase shift angle in the native 'PhaseShiftedControlledZ' gate.
     ///                 The value defaults to "2.13" the (preliminary) hardware design goal
-    pub fn new(seed: Option<usize>, pcz_theta: Option<f64>) -> Self {
+    /// * `controlled_z_phase_relation` - The relation to use for the PhaseShiftedControlledZ gate.
+    /// * `controlled_phase_phase_relation` - The relation to use for the PhaseShiftedControlledPhase gate.
+    pub fn new(seed: Option<usize>, pcz_theta: Option<f64>, controlled_z_phase_relation: Option<String>, controlled_phase_phase_relation: Option<String>) -> Self {
         Self {
             local: false,
             seed: seed.unwrap_or_default(),
             pcz_theta: pcz_theta.unwrap_or(2.13),
+            controlled_z_phase_relation : controlled_z_phase_relation.unwrap_or("DefaultRelation".to_string()),
+            controlled_phase_phase_relation: controlled_phase_phase_relation.unwrap_or("DefaultRelation".to_string())
         }
     }
 
@@ -561,6 +569,10 @@ pub struct QrydEmuTriangularDevice {
     seed: usize,
     // The phase shift in the native PhaseShiftedControlledZ gate
     pcz_theta: f64,
+    /// The specific PhaseShiftedControlledZ relation to use.
+    controlled_z_phase_relation: String,
+    /// The specific PhaseShiftedControlledPhase relation to use.
+    controlled_phase_phase_relation: String
 }
 
 /// Implements the trait to create a new QrydEmuTriangularDevice and to return its field values.
@@ -572,11 +584,15 @@ impl QrydEmuTriangularDevice {
     /// * `seed` - Seed, if not provided will be set to 0 per default (not recommended!)
     /// * `pcz_theta` - The phase shift angle in the native 'PhaseShiftedControlledZ' gate.
     ///                 The value defaults to "2.13" the (preliminary) hardware design goal
-    pub fn new(seed: Option<usize>, pcz_theta: Option<f64>) -> Self {
+    /// * `controlled_z_phase_relation` - The relation to use for the PhaseShiftedControlledZ gate.
+    /// * `controlled_phase_phase_relation` - The relation to use for the PhaseShiftedControlledPhase gate.
+    pub fn new(seed: Option<usize>, pcz_theta: Option<f64>, controlled_z_phase_relation: Option<String>, controlled_phase_phase_relation: Option<String>) -> Self {
         Self {
             local: false,
             seed: seed.unwrap_or_default(),
             pcz_theta: pcz_theta.unwrap_or(2.13),
+            controlled_z_phase_relation : controlled_z_phase_relation.unwrap_or("DefaultRelation".to_string()),
+            controlled_phase_phase_relation: controlled_phase_phase_relation.unwrap_or("DefaultRelation".to_string())
         }
     }
 
