@@ -369,7 +369,7 @@ impl QrydEmuSquareDevice {
     pub fn gate_time_controlled_z(&self, control: &usize, target: &usize, phi: f64) -> Option<f64> {
         if let Some(_) = self.two_qubit_gate_time("PhaseShiftedControlledZ", control, target) {
             let relation_phi = self.phase_shift_controlled_z();
-            if relation_phi.abs() - phi.abs() < 0.0001 {
+            if (relation_phi.abs() - phi.abs()).abs() < 0.0001 {
                 Some(1e-6)
             } else {
                 None
@@ -402,7 +402,7 @@ impl QrydEmuSquareDevice {
     ) -> Option<f64> {
         if let Some(_) = self.two_qubit_gate_time("PhaseShiftedControlledPhase", control, target) {
             let relation_phi = self.phase_shift_controlled_phase(theta);
-            if relation_phi.abs() - phi.abs() < 0.0001 {
+            if (relation_phi.abs() - phi.abs()).abs() < 0.0001 {
                 Some(1e-6)
             } else {
                 None
@@ -750,7 +750,7 @@ impl QrydEmuTriangularDevice {
     pub fn gate_time_controlled_z(&self, control: &usize, target: &usize, phi: f64) -> Option<f64> {
         if let Some(_) = self.two_qubit_gate_time("PhaseShiftedControlledZ", control, target) {
             let relation_phi = self.phase_shift_controlled_z();
-            if relation_phi.abs() - phi.abs() < 0.0001 {
+            if (relation_phi.abs() - phi.abs()).abs() < 0.0001 {
                 Some(1e-6)
             } else {
                 None
@@ -783,7 +783,7 @@ impl QrydEmuTriangularDevice {
     ) -> Option<f64> {
         if let Some(_) = self.two_qubit_gate_time("PhaseShiftedControlledPhase", control, target) {
             let relation_phi = self.phase_shift_controlled_phase(theta);
-            if relation_phi.abs() - phi.abs() < 0.0001 {
+            if (relation_phi.abs() - phi.abs()).abs() < 0.0001 {
                 Some(1e-6)
             } else {
                 None

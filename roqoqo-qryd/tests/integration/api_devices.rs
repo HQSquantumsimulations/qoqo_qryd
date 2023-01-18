@@ -12,6 +12,7 @@
 
 use roqoqo::devices::Device;
 use roqoqo_qryd::api_devices::{QRydAPIDevice, QrydEmuSquareDevice, QrydEmuTriangularDevice};
+use roqoqo_qryd::phi_theta_relation;
 
 use ndarray::Array2;
 
@@ -573,24 +574,65 @@ fn test_to_generic_device_triangular() {
     }
 }
 
-// #[test]
-// fn test_pscp_phi_theta_relation() {
-//     let correct_triangular = QrydEmuTriangularDevice::new(Some(0), None, None);
-//     let correct_square = QrydEmuSquareDevice::new(Some(0), None, None);
+#[test]
+fn test_phi_theta_relation() {
+    let triangular = QrydEmuTriangularDevice::new(Some(0), None, None);
+    let square = QrydEmuSquareDevice::new(Some(0), None, None);
 
-//     let incorrect_triangular = QrydEmuTriangularDevice::new(Some(0), None, None);
-//     let incorrect_square = QrydEmuSquareDevice::new(Some(0), None, None);
+    assert_eq!(
+        triangular.phase_shift_controlled_z(),
+        phi_theta_relation("DefaultRelation", std::f64::consts::PI).unwrap()
+    );
+    assert_eq!(
+        square.phase_shift_controlled_z(),
+        phi_theta_relation("DefaultRelation", std::f64::consts::PI).unwrap()
+    );
+    assert_eq!(
+        triangular.phase_shift_controlled_phase(1.2),
+        phi_theta_relation("DefaultRelation", 1.2).unwrap()
+    );
+    assert_eq!(
+        square.phase_shift_controlled_phase(1.2),
+        phi_theta_relation("DefaultRelation", 1.2).unwrap()
+    );
 
-//     assert!(correct_triangular
-//         .two_qubit_gate_time("PhaseShiftedControlledPhase", &0, &1)
-//         .is_some());
-//     assert!(correct_square
-//         .two_qubit_gate_time("PhaseShiftedControlledPhase", &0, &1)
-//         .is_some());
-//     assert!(incorrect_triangular
-//         .two_qubit_gate_time("PhaseShiftedControlledPhase", &0, &1)
-//         .is_none());
-//     assert!(incorrect_square
-//         .two_qubit_gate_time("PhaseShiftedControlledPhase", &0, &1)
-//         .is_none());
-// }
+    assert!(triangular.gate_time_controlled_z(&0, &13, 1.4).is_none());
+    assert!(triangular
+        .gate_time_controlled_phase(&0, &13, 0.6, 1.4)
+        .is_none());
+    assert!(square.gate_time_controlled_z(&0, &13, 1.4).is_none());
+    assert!(square
+        .gate_time_controlled_phase(&0, &13, 0.6, 1.4)
+        .is_none());
+
+    assert!(triangular
+        .gate_time_controlled_z(&0, &1, triangular.phase_shift_controlled_z())
+        .is_some());
+    assert!(square
+        .gate_time_controlled_z(&0, &1, square.phase_shift_controlled_z())
+        .is_some());
+    assert!(triangular
+        .gate_time_controlled_phase(&0, &1, triangular.phase_shift_controlled_phase(0.1), 0.1)
+        .is_some());
+    assert!(square
+        .gate_time_controlled_phase(&0, &1, square.phase_shift_controlled_phase(0.1), 0.1)
+        .is_some());
+
+    assert!(triangular
+        .gate_time_controlled_z(&0, &1, triangular.phase_shift_controlled_z() + 0.2)
+        .is_none());
+    assert!(square
+        .gate_time_controlled_z(&0, &1, square.phase_shift_controlled_z() + 0.2)
+        .is_none());
+    assert!(triangular
+        .gate_time_controlled_phase(
+            &0,
+            &1,
+            triangular.phase_shift_controlled_phase(0.1) + 0.2,
+            0.1
+        )
+        .is_none());
+    assert!(square
+        .gate_time_controlled_phase(&0, &1, square.phase_shift_controlled_phase(0.1) + 0.2, 0.1)
+        .is_none());
+}

@@ -77,7 +77,7 @@ pub use api_backend::*;
 ///
 /// `f64` - The phi-theta relation.
 ///
-fn phi_theta_relation(relation_name: &str, theta: f64) -> Option<f64> {
+pub fn phi_theta_relation(relation_name: &str, theta: f64) -> Option<f64> {
     match relation_name {
         "DefaultRelation" => Some(
             5.11382
