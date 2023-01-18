@@ -479,7 +479,7 @@ mod test {
     use roqoqo_qryd::api_devices::*;
     #[test]
     fn debug_and_clone() {
-        let device: QRydAPIDevice = QrydEmuSquareDevice::new(None, None).into();
+        let device: QRydAPIDevice = QrydEmuSquareDevice::new(None, None, None).into();
         let backend = APIBackend::new(device.clone(), Some("".to_string()), Some(2), None).unwrap();
         let wrapper = APIBackendWrapper { internal: backend };
         let a = format!("{:?}", wrapper);

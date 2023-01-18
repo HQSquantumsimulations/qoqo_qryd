@@ -33,7 +33,7 @@ use std::{env, thread, time};
 fn api_backend() {
     if env::var("QRYD_API_TOKEN").is_ok() {
         let number_qubits = 6;
-        let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
+        let device = QrydEmuSquareDevice::new(Some(2), None, None);
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
         let api_backend_new = APIBackend::new(qryd_device, None, None, None).unwrap();
         // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
@@ -147,7 +147,7 @@ fn api_backend() {
         });
 
         let number_qubits = 6;
-        let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
+        let device = QrydEmuSquareDevice::new(Some(2), None, None);
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
         let api_backend_new =
             APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
@@ -213,7 +213,7 @@ fn api_backend() {
 fn api_backend_failing() {
     if env::var("QRYD_API_TOKEN").is_ok() {
         let number_qubits = 6;
-        let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
+        let device = QrydEmuSquareDevice::new(Some(2), None, None);
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
         let api_backend_new = APIBackend::new(qryd_device, None, None, None).unwrap();
         // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
@@ -244,7 +244,7 @@ fn api_backend_failing() {
 fn api_backend_with_constant_circuit() {
     if env::var("QRYD_API_TOKEN").is_ok() {
         let number_qubits = 6;
-        let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
+        let device = QrydEmuSquareDevice::new(Some(2), None, None);
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
         let api_backend_new = APIBackend::new(qryd_device, None, None, None).unwrap();
         // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
@@ -325,7 +325,7 @@ fn api_backend_with_constant_circuit() {
 #[test]
 fn api_triangular() {
     let number_qubits = 6;
-    let device = QrydEmuTriangularDevice::new(Some(2), Some(0.23));
+    let device = QrydEmuTriangularDevice::new(Some(2), None, None);
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
     let mut circuit = Circuit::new();
     circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
@@ -468,7 +468,7 @@ fn api_triangular() {
 #[test]
 fn evaluating_backend() {
     let number_qubits = 6;
-    let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
+    let device = QrydEmuSquareDevice::new(Some(2), None, None);
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
     let mut circuit = Circuit::new();
     circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
@@ -626,7 +626,7 @@ fn evaluating_backend() {
 /// Test api_delete successful functionality
 #[test]
 fn api_delete() {
-    let device = QrydEmuSquareDevice::new(Some(1), Some(0.23));
+    let device = QrydEmuSquareDevice::new(Some(1), None, None);
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
     let number_qubits = 6;
     let mut circuit = Circuit::new();
@@ -716,7 +716,7 @@ fn api_delete() {
 fn api_backend_errorcase_const() {
     let api_backend_new: APIBackend;
     let number_qubits = 6;
-    let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
+    let device = QrydEmuSquareDevice::new(Some(2), None, None);
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
     if env::var("QRYD_API_TOKEN").is_ok() {
         api_backend_new = APIBackend::new(qryd_device, None, None, None).unwrap();
@@ -751,7 +751,7 @@ fn api_backend_errorcase_const() {
 #[test]
 fn api_backend_errorcase3() {
     let number_qubits = 6;
-    let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
+    let device = QrydEmuSquareDevice::new(Some(2), None, None);
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
 
     if !env::var("QRYD_API_TOKEN").is_ok() {
@@ -799,7 +799,7 @@ fn api_backend_errorcase3() {
 #[test]
 fn api_backend_errorcase4() {
     let api_backend_new: APIBackend;
-    let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
+    let device = QrydEmuSquareDevice::new(Some(2), None, None);
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
 
     if env::var("QRYD_API_TOKEN").is_ok() {
@@ -824,7 +824,7 @@ fn api_backend_errorcase4() {
 /// Test error cases. Case 5: invalid QuantumProgram
 #[test]
 fn api_backend_errorcase5() {
-    let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
+    let device = QrydEmuSquareDevice::new(Some(2), None, None);
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
     let api_backend_new: APIBackend;
     if env::var("QRYD_API_TOKEN").is_ok() {
@@ -902,7 +902,7 @@ fn api_backend_errorcase6() {
         when.method("POST");
         then.status(201);
     });
-    let device = QrydEmuSquareDevice::new(Some(1), Some(0.23));
+    let device = QrydEmuSquareDevice::new(Some(1), None, None);
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
     let api_backend_new =
         APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
@@ -961,7 +961,7 @@ fn api_backend_errorcase6() {
 /// Test error case. Case 7: unreachable server
 #[test]
 fn api_backend_errorcase7() {
-    let device = QrydEmuSquareDevice::new(Some(1), Some(0.23));
+    let device = QrydEmuSquareDevice::new(Some(1), None, None);
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
     let api_backend_new =
         APIBackend::new(qryd_device, None, None, Some("12345".to_string())).unwrap();
@@ -1042,7 +1042,7 @@ fn api_backend_errorcase8() {
         then.status(404);
     });
 
-    let device = QrydEmuSquareDevice::new(Some(1), Some(0.23));
+    let device = QrydEmuSquareDevice::new(Some(1), None, None);
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
     let api_backend_new =
         APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
