@@ -44,11 +44,37 @@ impl QRydAPIDevice {
         }
     }
 
-    /// Returns the phase angle of the basis gate 'PhaseShiftedControllZ'.
+    /// Returns the phase angle of the basis gate 'PhaseShiftedControlledZ'.
     pub fn pcz_theta(&self) -> f64 {
         match self {
             Self::QrydEmuSquareDevice(x) => x.pcz_theta(),
             Self::QrydEmuTriangularDevice(x) => x.pcz_theta(),
+        }
+    }
+
+    /// Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.
+    pub fn gate_time_controlled_z(&self, control: usize, target: usize, phi: f64) -> Option<f64> {
+        match self {
+            Self::QrydEmuSquareDevice(x) => x.gate_time_controlled_z(control, target, phi),
+            Self::QrydEmuTriangularDevice(x) => x.gate_time_controlled_z(control, target, phi),
+        }
+    }
+
+    /// Returns the gate time of a PhaseShiftedControlledPhase operation with the given qubits and phi and theta angles.
+    pub fn gate_time_controlled_phase(
+        &self,
+        control: usize,
+        target: usize,
+        phi: f64,
+        theta: f64,
+    ) -> Option<f64> {
+        match self {
+            Self::QrydEmuSquareDevice(x) => {
+                x.gate_time_controlled_phase(control, target, phi, theta)
+            }
+            Self::QrydEmuTriangularDevice(x) => {
+                x.gate_time_controlled_phase(control, target, phi, theta)
+            }
         }
     }
 }
@@ -260,7 +286,7 @@ pub struct QrydEmuSquareDevice {
     /// The specific PhaseShiftedControlledZ relation to use.
     controlled_z_phase_relation: String,
     /// The specific PhaseShiftedControlledPhase relation to use.
-    controlled_phase_phase_relation: String
+    controlled_phase_phase_relation: String,
 }
 
 /// Implements the trait to create a new QrydEmuSquareDevice and to return its field values.
@@ -274,13 +300,20 @@ impl QrydEmuSquareDevice {
     ///                 The value defaults to "2.13" the (preliminary) hardware design goal
     /// * `controlled_z_phase_relation` - The relation to use for the PhaseShiftedControlledZ gate.
     /// * `controlled_phase_phase_relation` - The relation to use for the PhaseShiftedControlledPhase gate.
-    pub fn new(seed: Option<usize>, pcz_theta: Option<f64>, controlled_z_phase_relation: Option<String>, controlled_phase_phase_relation: Option<String>) -> Self {
+    pub fn new(
+        seed: Option<usize>,
+        pcz_theta: Option<f64>,
+        controlled_z_phase_relation: Option<String>,
+        controlled_phase_phase_relation: Option<String>,
+    ) -> Self {
         Self {
             local: false,
             seed: seed.unwrap_or_default(),
             pcz_theta: pcz_theta.unwrap_or(2.13),
-            controlled_z_phase_relation : controlled_z_phase_relation.unwrap_or("DefaultRelation".to_string()),
-            controlled_phase_phase_relation: controlled_phase_phase_relation.unwrap_or("DefaultRelation".to_string())
+            controlled_z_phase_relation: controlled_z_phase_relation
+                .unwrap_or("DefaultRelation".to_string()),
+            controlled_phase_phase_relation: controlled_phase_phase_relation
+                .unwrap_or("DefaultRelation".to_string()),
         }
     }
 
@@ -298,9 +331,50 @@ impl QrydEmuSquareDevice {
         self.seed
     }
 
-    /// Returns the phase angle of the basis gate 'PhaseShiftedControllZ'.
+    /// Returns the phase angle of the basis gate 'PhaseShiftedControlledZ'.
     pub fn pcz_theta(&self) -> f64 {
         self.pcz_theta
+    }
+
+    /// Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.
+    ///
+    /// # Arguments
+    ///
+    /// * `control` - The control qubit the gate acts on
+    /// * `target` - The target qubit the gate acts on
+    /// * `phi` - The phi angle to be checked.
+    ///
+    /// # Returns
+    ///
+    /// * `Some<f64>` - The gate time.
+    /// * `None` - The gate is not available on the device.
+    ///
+    pub fn gate_time_controlled_z(&self, control: usize, target: usize, phi: f64) -> Option<f64> {
+        todo!()
+    }
+
+    /// Returns the gate time of a PhaseShiftedControlledPhase operation with the given qubits and phi and theta angles.
+    ///
+    /// # Arguments
+    ///
+    /// * `control` - The control qubit the gate acts on
+    /// * `target` - The target qubit the gate acts on
+    /// * `phi` - The phi angle to be checked.
+    /// * `theta` - The theta angle to be checked.
+    ///
+    /// # Returns
+    ///
+    /// * `Some<f64>` - The gate time.
+    /// * `None` - The gate is not available on the device.
+    ///
+    pub fn gate_time_controlled_phase(
+        &self,
+        target: usize,
+        control: usize,
+        phi: f64,
+        theta: f64,
+    ) -> Option<f64> {
+        todo!()
     }
 }
 
@@ -370,13 +444,7 @@ impl Device for QrydEmuSquareDevice {
         if (larger - smaller == 1 && smaller % 5 != 4) || (larger - smaller == 5) {
             match hqslang {
                 "PhaseShiftedControlledZ" => Some(1e-6),
-                "PhaseShiftedControlledPhase" => {
-                    if !check_theta_phi_relation(self.pcz_theta, std::f64::consts::FRAC_PI_2) {
-                        None
-                    } else {
-                        Some(1e-6)
-                    }
-                }
+                "PhaseShiftedControlledPhase" => Some(1e-6),
                 _ => None,
             }
         } else {
@@ -572,7 +640,7 @@ pub struct QrydEmuTriangularDevice {
     /// The specific PhaseShiftedControlledZ relation to use.
     controlled_z_phase_relation: String,
     /// The specific PhaseShiftedControlledPhase relation to use.
-    controlled_phase_phase_relation: String
+    controlled_phase_phase_relation: String,
 }
 
 /// Implements the trait to create a new QrydEmuTriangularDevice and to return its field values.
@@ -586,13 +654,20 @@ impl QrydEmuTriangularDevice {
     ///                 The value defaults to "2.13" the (preliminary) hardware design goal
     /// * `controlled_z_phase_relation` - The relation to use for the PhaseShiftedControlledZ gate.
     /// * `controlled_phase_phase_relation` - The relation to use for the PhaseShiftedControlledPhase gate.
-    pub fn new(seed: Option<usize>, pcz_theta: Option<f64>, controlled_z_phase_relation: Option<String>, controlled_phase_phase_relation: Option<String>) -> Self {
+    pub fn new(
+        seed: Option<usize>,
+        pcz_theta: Option<f64>,
+        controlled_z_phase_relation: Option<String>,
+        controlled_phase_phase_relation: Option<String>,
+    ) -> Self {
         Self {
             local: false,
             seed: seed.unwrap_or_default(),
             pcz_theta: pcz_theta.unwrap_or(2.13),
-            controlled_z_phase_relation : controlled_z_phase_relation.unwrap_or("DefaultRelation".to_string()),
-            controlled_phase_phase_relation: controlled_phase_phase_relation.unwrap_or("DefaultRelation".to_string())
+            controlled_z_phase_relation: controlled_z_phase_relation
+                .unwrap_or("DefaultRelation".to_string()),
+            controlled_phase_phase_relation: controlled_phase_phase_relation
+                .unwrap_or("DefaultRelation".to_string()),
         }
     }
 
@@ -613,6 +688,47 @@ impl QrydEmuTriangularDevice {
     /// Returns the phase angle of the basis gate 'PhaseShiftedControllZ'.
     pub fn pcz_theta(&self) -> f64 {
         self.pcz_theta
+    }
+
+    /// Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.
+    ///
+    /// # Arguments
+    ///
+    /// * `control` - The control qubit the gate acts on
+    /// * `target` - The target qubit the gate acts on
+    /// * `phi` - The phi angle to be checked.
+    ///
+    /// # Returns
+    ///
+    /// * `Some<f64>` - The gate time.
+    /// * `None` - The gate is not available on the device.
+    ///
+    pub fn gate_time_controlled_z(&self, control: usize, target: usize, phi: f64) -> Option<f64> {
+        todo!()
+    }
+
+    /// Returns the gate time of a PhaseShiftedControlledPhase operation with the given qubits and phi and theta angles.
+    ///
+    /// # Arguments
+    ///
+    /// * `control` - The control qubit the gate acts on
+    /// * `target` - The target qubit the gate acts on
+    /// * `phi` - The phi angle to be checked.
+    /// * `theta` - The theta angle to be checked.
+    ///
+    /// # Returns
+    ///
+    /// * `Some<f64>` - The gate time.
+    /// * `None` - The gate is not available on the device.
+    ///
+    pub fn gate_time_controlled_phase(
+        &self,
+        target: usize,
+        control: usize,
+        phi: f64,
+        theta: f64,
+    ) -> Option<f64> {
+        todo!()
     }
 }
 
@@ -687,13 +803,7 @@ impl Device for QrydEmuTriangularDevice {
             {
                 match hqslang {
                     "PhaseShiftedControlledZ" => Some(1e-6),
-                    "PhaseShiftedControlledPhase" => {
-                        if !check_theta_phi_relation(self.pcz_theta, std::f64::consts::FRAC_PI_2) {
-                            None
-                        } else {
-                            Some(1e-6)
-                        }
-                    }
+                    "PhaseShiftedControlledPhase" => Some(1e-6),
                     _ => None,
                 }
             } else {

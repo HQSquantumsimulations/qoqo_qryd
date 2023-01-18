@@ -17,7 +17,7 @@
 
 use std::collections::HashMap;
 
-use crate::{PragmaChangeQRydLayout, PragmaShiftQRydQubit, check_theta_phi_relation};
+use crate::{check_theta_phi_relation, PragmaChangeQRydLayout, PragmaShiftQRydQubit};
 use bincode::deserialize;
 use itertools::Itertools;
 use ndarray::Array2;
@@ -441,11 +441,7 @@ impl Device for FirstDevice {
         // Check for type of gate (as well as checking phi-theta relation)
         match hqslang {
             "PhaseShiftedControlledZ" => (),
-            "PhaseShiftedControlledPhase" => {
-                if !check_theta_phi_relation(self.controlled_z_phase, std::f64::consts::FRAC_PI_2) {
-                    return None;
-                }
-            }
+            "PhaseShiftedControlledPhase" => (),
             _ => return None,
         }
         let control_position = self
