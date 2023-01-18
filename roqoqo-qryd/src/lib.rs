@@ -66,21 +66,25 @@ pub mod api_backend;
 #[cfg(feature = "web-api")]
 pub use api_backend::*;
 
-/// Check whether the given angles comply with the proper phi-theta relation.
+/// Compute the angle according to the appropriate relation and phi/theta values.
 ///
-/// # Arguments:
+/// # Arguments
 ///
+/// `relation_name` - The name of the relation to refer to.
 /// `phi` - The phi angle to check.
 /// `theta` - The theta angle to check.
-fn check_theta_phi_relation(relation_name: String, phi: f64, theta: f64) -> f64 {
-    if relation_name == "DefaultRelation" {
-        (phi.abs()
-            - (5.11382
+///
+/// # Returns
+///
+/// `f64` - The phi-theta relation.
+///
+fn phi_theta_relation(relation_name: String, phi: f64, theta: f64) -> Option<f64> {
+    match relation_name.as_str() {
+        "DefaultRelation" => Some(
+            phi - 5.11382
                 - 0.32933
-                    * f64::ln(1.63085 * theta * theta * f64::exp(2.0 * theta) + theta + 0.02889))
-            .abs())
-        .abs()
-    } else {
-        0.0
+                    * f64::ln(1.63085 * theta * theta * f64::exp(2.0 * theta) + theta + 0.02889),
+        ),
+        _ => None,
     }
 }
