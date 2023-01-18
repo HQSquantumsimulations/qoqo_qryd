@@ -342,7 +342,7 @@ impl QrydEmuSquareDevice {
     /// * `f64` - The PhaseShiftedControlledZ phase shift.
     ///
     pub fn phase_shift_controlled_z(&self) -> f64 {
-        todo!()
+        phi_theta_relation(&self.controlled_z_phase_relation, std::f64::consts::PI).unwrap()
     }
 
     /// Returns the PhaseShiftedControlledPhase phase shift according to the device's relation.
@@ -352,7 +352,7 @@ impl QrydEmuSquareDevice {
     /// * `f64` - The PhaseShiftedControlledPhase phase shift.
     ///
     pub fn phase_shift_controlled_phase(&self, theta: f64) -> f64 {
-        todo!()
+        phi_theta_relation(&self.controlled_phase_phase_relation, theta).unwrap()
     }
 
     /// Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.
@@ -370,7 +370,12 @@ impl QrydEmuSquareDevice {
     ///
     pub fn gate_time_controlled_z(&self, control: &usize, target: &usize, phi: f64) -> Option<f64> {
         if let Some(_) = self.two_qubit_gate_time("PhaseShiftedControlledZ", control, target) {
-            todo!()
+            let relation_phi = self.phase_shift_controlled_z();
+            if relation_phi.abs() - phi.abs() < 0.0001 {
+                Some(1e-6)
+            } else {
+                None
+            }
         } else {
             None
         }
@@ -398,7 +403,12 @@ impl QrydEmuSquareDevice {
         theta: f64,
     ) -> Option<f64> {
         if let Some(_) = self.two_qubit_gate_time("PhaseShiftedControlledPhase", control, target) {
-            todo!()
+            let relation_phi = self.phase_shift_controlled_phase(theta);
+            if relation_phi.abs() - phi.abs() < 0.0001 {
+                Some(1e-6)
+            } else {
+                None
+            }
         } else {
             None
         }
@@ -715,7 +725,7 @@ impl QrydEmuTriangularDevice {
     /// * `f64` - The PhaseShiftedControlledZ phase shift.
     ///
     pub fn phase_shift_controlled_z(&self) -> f64 {
-        todo!()
+        phi_theta_relation(&self.controlled_z_phase_relation, std::f64::consts::PI).unwrap()
     }
 
     /// Returns the PhaseShiftedControlledPhase phase shift according to the device's relation.
@@ -725,7 +735,7 @@ impl QrydEmuTriangularDevice {
     /// * `f64` - The PhaseShiftedControlledPhase phase shift.
     ///
     pub fn phase_shift_controlled_phase(&self, theta: f64) -> f64 {
-        todo!()
+        phi_theta_relation(&self.controlled_phase_phase_relation, theta).unwrap()
     }
 
     /// Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.
@@ -743,7 +753,12 @@ impl QrydEmuTriangularDevice {
     ///
     pub fn gate_time_controlled_z(&self, control: &usize, target: &usize, phi: f64) -> Option<f64> {
         if let Some(_) = self.two_qubit_gate_time("PhaseShiftedControlledZ", control, target) {
-            todo!()
+            let relation_phi = self.phase_shift_controlled_z();
+            if relation_phi.abs() - phi.abs() < 0.0001 {
+                Some(1e-6)
+            } else {
+                None
+            }
         } else {
             None
         }
@@ -771,7 +786,12 @@ impl QrydEmuTriangularDevice {
         theta: f64,
     ) -> Option<f64> {
         if let Some(_) = self.two_qubit_gate_time("PhaseShiftedControlledPhase", control, target) {
-            todo!()
+            let relation_phi = self.phase_shift_controlled_phase(theta);
+            if relation_phi.abs() - phi.abs() < 0.0001 {
+                Some(1e-6)
+            } else {
+                None
+            }
         } else {
             None
         }

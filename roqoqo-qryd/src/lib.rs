@@ -71,17 +71,16 @@ pub use api_backend::*;
 /// # Arguments
 ///
 /// `relation_name` - The name of the relation to refer to.
-/// `phi` - The phi angle to check.
 /// `theta` - The theta angle to check.
 ///
 /// # Returns
 ///
 /// `f64` - The phi-theta relation.
 ///
-fn phi_theta_relation(relation_name: &str, phi: f64, theta: f64) -> Option<f64> {
+fn phi_theta_relation(relation_name: &str, theta: f64) -> Option<f64> {
     match relation_name {
         "DefaultRelation" => Some(
-            phi - 5.11382
+            5.11382
                 - 0.32933
                     * f64::ln(1.63085 * theta * theta * f64::exp(2.0 * theta) + theta + 0.02889),
         ),
