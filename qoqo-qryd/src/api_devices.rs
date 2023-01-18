@@ -243,8 +243,11 @@ impl QrydEmuSquareDeviceWrapper {
     }
 
     /// Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.
-    pub fn gate_time_controlled_z(&self, control: usize, target: usize, phi: f64) -> Option<f64> {
-        self.internal.gate_time_controlled_z(&control, &target, phi)
+    pub fn gate_time_controlled_z(&self, control: usize, target: usize, phi: f64) -> PyResult<f64> {
+        Ok(self
+            .internal
+            .gate_time_controlled_z(&control, &target, phi)
+            .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))?)
     }
 
     /// Returns the gate time of a PhaseShiftedControlledPhase operation with the given qubits and phi and theta angles.
@@ -254,9 +257,11 @@ impl QrydEmuSquareDeviceWrapper {
         target: usize,
         phi: f64,
         theta: f64,
-    ) -> Option<f64> {
-        self.internal
+    ) -> PyResult<f64> {
+        Ok(self
+            .internal
             .gate_time_controlled_phase(&target, &control, phi, theta)
+            .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))?)
     }
 }
 
@@ -489,8 +494,11 @@ impl QrydEmuTriangularDeviceWrapper {
     }
 
     /// Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.
-    pub fn gate_time_controlled_z(&self, control: usize, target: usize, phi: f64) -> Option<f64> {
-        self.internal.gate_time_controlled_z(&control, &target, phi)
+    pub fn gate_time_controlled_z(&self, control: usize, target: usize, phi: f64) -> PyResult<f64> {
+        Ok(self
+            .internal
+            .gate_time_controlled_z(&control, &target, phi)
+            .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))?)
     }
 
     /// Returns the gate time of a PhaseShiftedControlledPhase operation with the given qubits and phi and theta angles.
@@ -500,9 +508,11 @@ impl QrydEmuTriangularDeviceWrapper {
         target: usize,
         phi: f64,
         theta: f64,
-    ) -> Option<f64> {
-        self.internal
+    ) -> PyResult<f64> {
+        Ok(self
+            .internal
             .gate_time_controlled_phase(&target, &control, phi, theta)
+            .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))?)
     }
 }
 

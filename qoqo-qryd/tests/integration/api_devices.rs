@@ -529,3 +529,75 @@ fn test_generic_device_triangular() {
         assert_eq!(num_gen, num_dev);
     })
 }
+
+// Test phi-theta relation methods.
+#[test]
+fn test_phi_theta_relation() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let triangular = create_triangular_device(py);
+        let square = create_square_device(py);
+
+        let pscz_tr = triangular
+            .call_method0("phase_shift_controlled_z")
+            .unwrap()
+            .extract::<f64>()
+            .unwrap();
+        let pscz_sq = square
+            .call_method0("phase_shift_controlled_z")
+            .unwrap()
+            .extract::<f64>()
+            .unwrap();
+        assert!(pscz_tr.is_finite());
+        assert!(pscz_sq.is_finite());
+
+        let pscp_tr = triangular
+            .call_method1("phase_shift_controlled_phase", (1.0,))
+            .unwrap()
+            .extract::<f64>()
+            .unwrap();
+        let pscp_sq = square
+            .call_method1("phase_shift_controlled_phase", (1.0,))
+            .unwrap()
+            .extract::<f64>()
+            .unwrap();
+        assert!(pscp_tr.is_finite());
+        assert!(pscp_sq.is_finite());
+
+        let gtcz_tr_err = triangular.call_method1("gate_time_controlled_z", (0, 1, 0.3));
+        let gtcz_sq_err = square.call_method1("gate_time_controlled_z", (0, 1, 0.3));
+        assert!(gtcz_tr_err.is_err());
+        assert!(gtcz_sq_err.is_err());
+
+        let gtcz_tr_ok = triangular
+            .call_method1("gate_time_controlled_z", (0, 1, pscz_tr))
+            .unwrap()
+            .extract::<f64>()
+            .unwrap();
+        let gtcz_sq_ok = square
+            .call_method1("gate_time_controlled_z", (0, 1, pscz_sq))
+            .unwrap()
+            .extract::<f64>()
+            .unwrap();
+        assert!(gtcz_tr_ok.is_finite());
+        assert!(gtcz_sq_ok.is_finite());
+
+        let gtcp_tr_err = triangular.call_method1("gate_time_controlled_phase", (0, 1, 0.3, 0.7));
+        let gtcp_sq_err = square.call_method1("gate_time_controlled_phase", (0, 1, 0.3, 0.7));
+        assert!(gtcp_tr_err.is_err());
+        assert!(gtcp_sq_err.is_err());
+
+        let gtcp_tr_ok = triangular
+            .call_method1("gate_time_controlled_phase", (0, 1, pscp_tr, 1.0,))
+            .unwrap()
+            .extract::<f64>()
+            .unwrap();
+        let gtcp_sq_ok = square
+            .call_method1("gate_time_controlled_phase", (0, 1, pscp_sq, 1.0,))
+            .unwrap()
+            .extract::<f64>()
+            .unwrap();
+        assert!(gtcp_tr_ok.is_finite());
+        assert!(gtcp_sq_ok.is_finite());
+    })
+}
