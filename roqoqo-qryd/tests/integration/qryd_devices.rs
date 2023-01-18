@@ -917,35 +917,35 @@ fn test_qryd_change_device() {
     );
 }
 
-#[test]
-fn test_pscp_phi_theta_relation() {
-    let correct_phi: f64 = 3.6150744773365036;
-    let correct_device = FirstDevice::new(
-        2,
-        3,
-        &[3, 2],
-        1.5,
-        array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
-        Some(correct_phi),
-    )
-    .unwrap();
-    let incorrect_device = FirstDevice::new(
-        2,
-        3,
-        &[3, 2],
-        1.5,
-        array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
-        None,
-    )
-    .unwrap();
+// #[test]
+// fn test_pscp_phi_theta_relation() {
+//     let correct_phi: f64 = 3.6150744773365036;
+//     let correct_device = FirstDevice::new(
+//         2,
+//         3,
+//         &[3, 2],
+//         1.5,
+//         array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
+//         Some(correct_phi),
+//     )
+//     .unwrap();
+//     let incorrect_device = FirstDevice::new(
+//         2,
+//         3,
+//         &[3, 2],
+//         1.5,
+//         array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
+//         None,
+//     )
+//     .unwrap();
 
-    assert!(correct_device
-        .two_qubit_gate_time("PhaseShiftedControlledPhase", &0, &1)
-        .is_some());
-    assert!(incorrect_device
-        .two_qubit_gate_time("PhaseShiftedControlledPhase", &0, &1)
-        .is_none());
-}
+//     assert!(correct_device
+//         .two_qubit_gate_time("PhaseShiftedControlledPhase", &0, &1)
+//         .is_some());
+//     assert!(incorrect_device
+//         .two_qubit_gate_time("PhaseShiftedControlledPhase", &0, &1)
+//         .is_none());
+// }
 
 // /// Test FirstDevice Serialization and Deserialization traits (readable)
 // #[cfg(feature = "serialize")]

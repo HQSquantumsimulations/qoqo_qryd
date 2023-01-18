@@ -16,16 +16,14 @@ use pyo3::prelude::*;
 use pyo3::Python;
 use qoqo_qryd::api_devices::{QrydEmuSquareDeviceWrapper, QrydEmuTriangularDeviceWrapper};
 use std::collections::HashSet;
-use std::f64::consts::PI;
 use std::usize;
 
 // Helper function to create a python object of square device
 fn create_square_device(py: Python) -> &PyCell<QrydEmuSquareDeviceWrapper> {
     let seed: Option<usize> = Some(11);
-    let pcz_theta: f64 = PI / 4.0;
     let device_type = py.get_type::<QrydEmuSquareDeviceWrapper>();
     let device: &PyCell<QrydEmuSquareDeviceWrapper> = device_type
-        .call1((seed, pcz_theta))
+        .call1((seed,))
         .unwrap()
         .cast_as::<PyCell<QrydEmuSquareDeviceWrapper>>()
         .unwrap();
@@ -38,7 +36,7 @@ fn test_new_square() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let device_type = py.get_type::<QrydEmuSquareDeviceWrapper>();
-        let result = device_type.call1((Some(10), PI));
+        let result = device_type.call1((Some(10),));
         assert!(result.is_ok());
         let device = result
             .unwrap()
@@ -160,13 +158,6 @@ fn test_fields_square() {
     Python::with_gil(|py| {
         let device = create_square_device(py);
 
-        let controlled_z_phase = device
-            .call_method0("pcz_theta")
-            .unwrap()
-            .extract::<f64>()
-            .unwrap();
-        assert_eq!(controlled_z_phase, PI / 4.0);
-
         let seed = device
             .call_method0("seed")
             .unwrap()
@@ -253,10 +244,9 @@ fn test_twoqubitedges_square() {
 // Helper function to create a python object of triangular device
 fn create_triangular_device(py: Python) -> &PyCell<QrydEmuTriangularDeviceWrapper> {
     let seed: Option<usize> = Some(11);
-    let pcz_theta: f64 = PI / 4.0;
     let device_type = py.get_type::<QrydEmuTriangularDeviceWrapper>();
     let device: &PyCell<QrydEmuTriangularDeviceWrapper> = device_type
-        .call1((seed, pcz_theta))
+        .call1((seed,))
         .unwrap()
         .cast_as::<PyCell<QrydEmuTriangularDeviceWrapper>>()
         .unwrap();
@@ -269,7 +259,7 @@ fn test_new_triangular() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let device_type = py.get_type::<QrydEmuTriangularDeviceWrapper>();
-        let result = device_type.call1((Some(10), PI));
+        let result = device_type.call1((Some(10),));
         assert!(result.is_ok());
         let device = result
             .unwrap()
@@ -392,13 +382,6 @@ fn test_fields_triangular() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let device = create_triangular_device(py);
-
-        let controlled_z_phase = device
-            .call_method0("pcz_theta")
-            .unwrap()
-            .extract::<f64>()
-            .unwrap();
-        assert_eq!(controlled_z_phase, PI / 4.0);
 
         let seed = device
             .call_method0("seed")

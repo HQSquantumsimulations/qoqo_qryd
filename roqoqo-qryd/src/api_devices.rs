@@ -302,8 +302,6 @@ impl QrydEmuSquareDevice {
     /// # Arguments
     ///
     /// * `seed` - Seed, if not provided will be set to 0 per default (not recommended!)
-    /// * `pcz_theta` - The phase shift angle in the native 'PhaseShiftedControlledZ' gate.
-    ///                 The value defaults to "2.13" the (preliminary) hardware design goal
     /// * `controlled_z_phase_relation` - The relation to use for the PhaseShiftedControlledZ gate.
     /// * `controlled_phase_phase_relation` - The relation to use for the PhaseShiftedControlledPhase gate.
     pub fn new(
@@ -685,8 +683,6 @@ impl QrydEmuTriangularDevice {
     /// # Arguments
     ///
     /// * `seed` - Seed, if not provided will be set to 0 per default (not recommended!)
-    /// * `pcz_theta` - The phase shift angle in the native 'PhaseShiftedControlledZ' gate.
-    ///                 The value defaults to "2.13" the (preliminary) hardware design goal
     /// * `controlled_z_phase_relation` - The relation to use for the PhaseShiftedControlledZ gate.
     /// * `controlled_phase_phase_relation` - The relation to use for the PhaseShiftedControlledPhase gate.
     pub fn new(

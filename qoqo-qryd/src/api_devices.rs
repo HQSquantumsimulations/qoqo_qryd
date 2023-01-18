@@ -42,14 +42,12 @@ impl QrydEmuSquareDeviceWrapper {
     #[new]
     pub fn new(
         seed: Option<usize>,
-        pcz_theta: Option<f64>,
         controlled_z_phase_relation: Option<String>,
         controlled_phase_phase_relation: Option<String>,
     ) -> Self {
         Self {
             internal: QrydEmuSquareDevice::new(
                 seed,
-                pcz_theta,
                 controlled_z_phase_relation,
                 controlled_phase_phase_relation,
             ),
@@ -233,11 +231,6 @@ impl QrydEmuSquareDeviceWrapper {
     pub fn seed(&self) -> usize {
         self.internal.seed()
     }
-
-    /// Returns the phase angle of the basis gate 'PhaseShiftedControllZ'.
-    pub fn pcz_theta(&self) -> f64 {
-        self.internal.pcz_theta()
-    }
 }
 
 /// Collection of all QRyd devices for WebAPI.
@@ -265,14 +258,12 @@ impl QrydEmuTriangularDeviceWrapper {
     #[new]
     pub fn new(
         seed: Option<usize>,
-        pcz_theta: Option<f64>,
         controlled_z_phase_relation: Option<String>,
         controlled_phase_phase_relation: Option<String>,
     ) -> Self {
         Self {
             internal: QrydEmuTriangularDevice::new(
                 seed,
-                pcz_theta,
                 controlled_z_phase_relation,
                 controlled_phase_phase_relation,
             ),
@@ -458,11 +449,6 @@ impl QrydEmuTriangularDeviceWrapper {
     /// Returns the seed usized for the API.
     pub fn seed(&self) -> usize {
         self.internal.seed()
-    }
-
-    /// Returns the phase angle of the basis gate 'PhaseShiftedControllZ'.
-    pub fn pcz_theta(&self) -> f64 {
-        self.internal.pcz_theta()
     }
 }
 
