@@ -78,8 +78,8 @@ pub use api_backend::*;
 ///
 /// `f64` - The phi-theta relation.
 ///
-fn phi_theta_relation(relation_name: String, phi: f64, theta: f64) -> Option<f64> {
-    match relation_name.as_str() {
+fn phi_theta_relation(relation_name: &str, phi: f64, theta: f64) -> Option<f64> {
+    match relation_name {
         "DefaultRelation" => Some(
             phi - 5.11382
                 - 0.32933

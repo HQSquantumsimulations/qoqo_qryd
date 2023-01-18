@@ -44,14 +44,6 @@ impl QRydAPIDevice {
         }
     }
 
-    /// Returns the phase angle of the basis gate 'PhaseShiftedControlledZ'.
-    pub fn pcz_theta(&self) -> f64 {
-        match self {
-            Self::QrydEmuSquareDevice(x) => x.pcz_theta(),
-            Self::QrydEmuTriangularDevice(x) => x.pcz_theta(),
-        }
-    }
-
     /// Returns the PhaseShiftedControlledZ phase shift according to the device's relation.
     pub fn phase_shift_controlled_z(&self) -> f64 {
         match self {
@@ -297,8 +289,6 @@ pub struct QrydEmuSquareDevice {
     local: bool,
     /// Seed, if not provided will be set to 0 per default (not recommended!)
     seed: usize,
-    // The phase shift in the native PhaseShiftedControlledZ gate
-    pcz_theta: f64,
     /// The specific PhaseShiftedControlledZ relation to use.
     controlled_z_phase_relation: String,
     /// The specific PhaseShiftedControlledPhase relation to use.
@@ -318,14 +308,12 @@ impl QrydEmuSquareDevice {
     /// * `controlled_phase_phase_relation` - The relation to use for the PhaseShiftedControlledPhase gate.
     pub fn new(
         seed: Option<usize>,
-        pcz_theta: Option<f64>,
         controlled_z_phase_relation: Option<String>,
         controlled_phase_phase_relation: Option<String>,
     ) -> Self {
         Self {
             local: false,
             seed: seed.unwrap_or_default(),
-            pcz_theta: pcz_theta.unwrap_or(2.13),
             controlled_z_phase_relation: controlled_z_phase_relation
                 .unwrap_or("DefaultRelation".to_string()),
             controlled_phase_phase_relation: controlled_phase_phase_relation
@@ -345,11 +333,6 @@ impl QrydEmuSquareDevice {
     /// Returns the seed usized for the API.
     pub fn seed(&self) -> usize {
         self.seed
-    }
-
-    /// Returns the phase angle of the basis gate 'PhaseShiftedControlledZ'.
-    pub fn pcz_theta(&self) -> f64 {
-        self.pcz_theta
     }
 
     /// Returns the PhaseShiftedControlledZ phase shift according to the device's relation.
@@ -679,8 +662,6 @@ pub struct QrydEmuTriangularDevice {
     local: bool,
     /// Seed, if not provided will be set to 0 per default (not recommended!)
     seed: usize,
-    // The phase shift in the native PhaseShiftedControlledZ gate
-    pcz_theta: f64,
     /// The specific PhaseShiftedControlledZ relation to use.
     controlled_z_phase_relation: String,
     /// The specific PhaseShiftedControlledPhase relation to use.
@@ -700,14 +681,12 @@ impl QrydEmuTriangularDevice {
     /// * `controlled_phase_phase_relation` - The relation to use for the PhaseShiftedControlledPhase gate.
     pub fn new(
         seed: Option<usize>,
-        pcz_theta: Option<f64>,
         controlled_z_phase_relation: Option<String>,
         controlled_phase_phase_relation: Option<String>,
     ) -> Self {
         Self {
             local: false,
             seed: seed.unwrap_or_default(),
-            pcz_theta: pcz_theta.unwrap_or(2.13),
             controlled_z_phase_relation: controlled_z_phase_relation
                 .unwrap_or("DefaultRelation".to_string()),
             controlled_phase_phase_relation: controlled_phase_phase_relation
@@ -727,11 +706,6 @@ impl QrydEmuTriangularDevice {
     /// Returns the seed usized for the API.
     pub fn seed(&self) -> usize {
         self.seed
-    }
-
-    /// Returns the phase angle of the basis gate 'PhaseShiftedControllZ'.
-    pub fn pcz_theta(&self) -> f64 {
-        self.pcz_theta
     }
 
     /// Returns the PhaseShiftedControlledZ phase shift according to the device's relation.
