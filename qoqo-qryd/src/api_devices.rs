@@ -231,6 +231,33 @@ impl QrydEmuSquareDeviceWrapper {
     pub fn seed(&self) -> usize {
         self.internal.seed()
     }
+
+    /// Returns the PhaseShiftedControlledZ phase shift according to the device's relation.
+    pub fn phase_shift_controlled_z(&self) -> f64 {
+        self.internal.phase_shift_controlled_z()
+    }
+
+    /// Returns the PhaseShiftedControlledPhase phase shift according to the device's relation.
+    pub fn phase_shift_controlled_phase(&self, theta: f64) -> f64 {
+        self.internal.phase_shift_controlled_phase(theta)
+    }
+
+    /// Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.
+    pub fn gate_time_controlled_z(&self, control: usize, target: usize, phi: f64) -> Option<f64> {
+        self.internal.gate_time_controlled_z(&control, &target, phi)
+    }
+
+    /// Returns the gate time of a PhaseShiftedControlledPhase operation with the given qubits and phi and theta angles.
+    pub fn gate_time_controlled_phase(
+        &self,
+        control: usize,
+        target: usize,
+        phi: f64,
+        theta: f64,
+    ) -> Option<f64> {
+        self.internal
+            .gate_time_controlled_phase(&target, &control, phi, theta)
+    }
 }
 
 /// Collection of all QRyd devices for WebAPI.
@@ -449,6 +476,33 @@ impl QrydEmuTriangularDeviceWrapper {
     /// Returns the seed usized for the API.
     pub fn seed(&self) -> usize {
         self.internal.seed()
+    }
+
+    /// Returns the PhaseShiftedControlledZ phase shift according to the device's relation.
+    pub fn phase_shift_controlled_z(&self) -> f64 {
+        self.internal.phase_shift_controlled_z()
+    }
+
+    /// Returns the PhaseShiftedControlledPhase phase shift according to the device's relation.
+    pub fn phase_shift_controlled_phase(&self, theta: f64) -> f64 {
+        self.internal.phase_shift_controlled_phase(theta)
+    }
+
+    /// Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.
+    pub fn gate_time_controlled_z(&self, control: usize, target: usize, phi: f64) -> Option<f64> {
+        self.internal.gate_time_controlled_z(&control, &target, phi)
+    }
+
+    /// Returns the gate time of a PhaseShiftedControlledPhase operation with the given qubits and phi and theta angles.
+    pub fn gate_time_controlled_phase(
+        &self,
+        control: usize,
+        target: usize,
+        phi: f64,
+        theta: f64,
+    ) -> Option<f64> {
+        self.internal
+            .gate_time_controlled_phase(&target, &control, phi, theta)
     }
 }
 

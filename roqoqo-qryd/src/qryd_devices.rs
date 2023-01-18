@@ -17,7 +17,7 @@
 
 use std::collections::HashMap;
 
-use crate::{phi_theta_relation, PragmaChangeQRydLayout, PragmaShiftQRydQubit};
+use crate::{PragmaChangeQRydLayout, PragmaShiftQRydQubit};
 use bincode::deserialize;
 use itertools::Itertools;
 use ndarray::Array2;
