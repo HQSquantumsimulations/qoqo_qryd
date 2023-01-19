@@ -75,7 +75,8 @@ pub use api_backend::*;
 ///
 /// # Returns
 ///
-/// `f64` - The phi-theta relation.
+/// `Some<f64>` - The phi-theta relation.
+/// 'None' - The relation does not exist.
 ///
 pub fn phi_theta_relation(relation_name: &str, theta: f64) -> Option<f64> {
     match relation_name {
