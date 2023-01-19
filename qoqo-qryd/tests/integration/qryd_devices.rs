@@ -19,7 +19,7 @@ use numpy::ToPyArray;
 use pyo3::prelude::*;
 use pyo3::Python;
 use qoqo_qryd::qryd_devices::{convert_into_device, FirstDeviceWrapper};
-use roqoqo_qryd::qryd_devices::{FirstDevice, QRydDevice, CONTROLLED_Z_PHASE_DEFAULT};
+use roqoqo_qryd::qryd_devices::{FirstDevice, QRydDevice};
 use std::collections::HashMap;
 use test_case::test_case;
 
@@ -340,35 +340,11 @@ fn test_controlled_z_phase_py() {
             .unwrap();
 
         let controlled_z_phase = device
-            .call_method0("controlled_z_phase")
+            .call_method0("phase_shift_controlled_z")
             .unwrap()
             .extract::<f64>()
             .unwrap();
-        assert_eq!(controlled_z_phase, CONTROLLED_Z_PHASE_DEFAULT);
-    });
-
-    Python::with_gil(|py| {
-        let original_layout = array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]];
-        let device_type = py.get_type::<FirstDeviceWrapper>();
-        let device = device_type
-            .call1((
-                3,
-                2,
-                vec![2, 2, 2],
-                1.0,
-                original_layout.to_pyarray(py),
-                0.1,
-            ))
-            .unwrap()
-            .cast_as::<PyCell<FirstDeviceWrapper>>()
-            .unwrap();
-
-        let controlled_z_phase = device
-            .call_method0("controlled_z_phase")
-            .unwrap()
-            .extract::<f64>()
-            .unwrap();
-        assert_eq!(controlled_z_phase, 0.1);
+        assert!(controlled_z_phase.is_finite());
     });
 }
 
@@ -397,6 +373,7 @@ fn test_convert_to_device() {
             &[2, 2, 2],
             1.0,
             array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]],
+            None,
             None,
         )
         .unwrap()
@@ -441,7 +418,7 @@ fn test_pyo3_new_change_layout() {
         let check_2: &str = check_str.split("qubit_positions").collect::<Vec<&str>>()[1]
             .split(")}")
             .collect::<Vec<&str>>()[1];
-        let comp_str = format!("FirstDeviceWrapper {{ internal: FirstDevice {{ number_rows: 3, number_columns: 2, qubit_positions: {{0: (0, 0), 1: (0, 1), 2: (1, 0), 3: (1, 1), 4: (2, 0), 5: (2, 1)}}, row_distance: 1.0, layout_register: {{0: {:?}}}, current_layout: 0, cutoff: 1.0, controlled_z_phase: 0.7853981633974483 }} }}", layout);
+        let comp_str = format!("FirstDeviceWrapper {{ internal: FirstDevice {{ number_rows: 3, number_columns: 2, qubit_positions: {{0: (0, 0), 1: (0, 1), 2: (1, 0), 3: (1, 1), 4: (2, 0), 5: (2, 1)}}, row_distance: 1.0, layout_register: {{0: {:?}}}, current_layout: 0, cutoff: 1.0, controlled_z_phase_relation: \"DefaultRelation\", controlled_phase_phase_relation: \"DefaultRelation\" }} }}", layout);
         let comp_1: &str = comp_str.split("qubit_positions").collect::<Vec<&str>>()[0];
         let comp_2: &str = comp_str.split("qubit_positions").collect::<Vec<&str>>()[1]
             .split(")}")

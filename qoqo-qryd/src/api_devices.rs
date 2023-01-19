@@ -34,8 +34,7 @@ impl QrydEmuSquareDeviceWrapper {
     ///
     /// Args:
     ///     seed (int): Seed, if not provided will be set to 0 per default (not recommended!)
-    ///     pcz_theta (Optional[float]): Phase angle for the basis gate 'PhaseShiftedControllZ'.
-    ///                                  If not provided will be set to (preliminary) hardware goal 2.13.
+    /// todo!()
     ///
     /// Returns:
     ///     QrydEmuSquareDevice: New device

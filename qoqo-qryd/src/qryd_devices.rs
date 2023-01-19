@@ -60,7 +60,8 @@ impl FirstDeviceWrapper {
     ///                                 At the moment assumes that number of qubits in the traps is fixed. No loading/unloading once device is created.
     ///     row_distance (float): Fixed distance between rows.
     ///     initial_layout (np.ndarray): The starting layout (always had the index 0).
-    ///     controlled_z_phase (Optional[float]): The phase shift in the native PhaseShiftedControlledZ gate. Defaults to pi/4.
+    ///     controlled_z_phase_relation (Optional[str]): The relation to use for the PhaseShiftedControlledZ gate.
+    ///     controlled_phase_phase_relation (Optional[str]): The relation to use for the PhaseShiftedControlledPhase gate.
     /// Raises:
     ///     PyValueError
     #[new]
@@ -70,7 +71,8 @@ impl FirstDeviceWrapper {
         qubits_per_row: Vec<usize>,
         row_distance: f64,
         initial_layout: PyReadonlyArray2<f64>,
-        controlled_z_phase: Option<f64>,
+        controlled_z_phase_relation: Option<String>,
+        controlled_phase_phase_relation: Option<String>,
     ) -> PyResult<Self> {
         Ok(Self {
             internal: FirstDevice::new(
@@ -79,18 +81,25 @@ impl FirstDeviceWrapper {
                 &qubits_per_row,
                 row_distance,
                 initial_layout.as_array().to_owned(),
-                controlled_z_phase,
+                controlled_z_phase_relation,
+                controlled_phase_phase_relation,
             )
             .map_err(|err| PyValueError::new_err(format!("{:?}", err)))?,
         })
     }
 
-    /// Returns the phase shift in the native PhaseShiftedControlledZ gate.
-    ///
-    /// Returns:
-    ///     Optional[float]
-    pub fn controlled_z_phase(&self) -> f64 {
-        self.internal.controlled_z_phase()
+    /// Returns the PhaseShiftedControlledZ phase shift according to the device's relation.
+    pub fn phase_shift_controlled_z(&self) -> PyResult<f64> {
+        self.internal
+            .phase_shift_controlled_z()
+            .ok_or_else(|| PyValueError::new_err("Error in relation selection."))
+    }
+
+    /// Returns the PhaseShiftedControlledPhase phase shift according to the device's relation.
+    pub fn phase_shift_controlled_phase(&self, theta: f64) -> PyResult<f64> {
+        self.internal
+            .phase_shift_controlled_phase(theta)
+            .ok_or_else(|| PyValueError::new_err("Error in relation selection."))
     }
 
     /// Turns Device into GenericDevice

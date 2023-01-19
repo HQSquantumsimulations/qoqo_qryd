@@ -20,8 +20,16 @@ use roqoqo_test::prepare_monte_carlo_gate_test;
 #[test]
 #[cfg(feature = "simulator")]
 fn init_backend() {
-    let device =
-        FirstDevice::new(2, 2, &[1, 1], 3.0, array![[0.0, 1.0], [0.0, 1.0]], None).unwrap();
+    let device = FirstDevice::new(
+        2,
+        2,
+        &[1, 1],
+        3.0,
+        array![[0.0, 1.0], [0.0, 1.0]],
+        None,
+        None,
+    )
+    .unwrap();
     let _backend = SimulatorBackend::new(device.into());
 }
 
@@ -32,10 +40,18 @@ fn test_to_qryd_json() {}
 #[test]
 fn pragma_shift_qryd_qubit_simple_traits() {
     let layout: Array2<f64> = array![[0.0, 1.0], [0.0, 1.0]];
-    let device = FirstDevice::new(2, 2, &[1, 1], 3.0, array![[0.0, 1.0], [0.0, 1.0]], None)
-        .unwrap()
-        .add_layout(1, layout.clone())
-        .unwrap();
+    let device = FirstDevice::new(
+        2,
+        2,
+        &[1, 1],
+        3.0,
+        array![[0.0, 1.0], [0.0, 1.0]],
+        None,
+        None,
+    )
+    .unwrap()
+    .add_layout(1, layout.clone())
+    .unwrap();
     let backend = SimulatorBackend::new(device.clone().into());
 
     // Test Debug trait
@@ -48,15 +64,31 @@ fn pragma_shift_qryd_qubit_simple_traits() {
     assert_eq!(backend.clone(), backend);
 
     // Test PartialEq trait
-    let device_0 = FirstDevice::new(2, 2, &[1, 1], 3.0, array![[0.0, 1.0], [0.0, 1.0]], None)
-        .unwrap()
-        .add_layout(1, layout.clone())
-        .unwrap();
+    let device_0 = FirstDevice::new(
+        2,
+        2,
+        &[1, 1],
+        3.0,
+        array![[0.0, 1.0], [0.0, 1.0]],
+        None,
+        None,
+    )
+    .unwrap()
+    .add_layout(1, layout.clone())
+    .unwrap();
     let backend_0 = SimulatorBackend::new(device_0.into());
-    let device_1 = FirstDevice::new(2, 2, &[1, 1], 2.0, array![[0.0, 1.0], [0.0, 1.0]], None)
-        .unwrap()
-        .add_layout(1, layout)
-        .unwrap();
+    let device_1 = FirstDevice::new(
+        2,
+        2,
+        &[1, 1],
+        2.0,
+        array![[0.0, 1.0], [0.0, 1.0]],
+        None,
+        None,
+    )
+    .unwrap()
+    .add_layout(1, layout)
+    .unwrap();
     let backend_1 = SimulatorBackend::new(device_1.into());
     assert!(backend_0 == backend);
     assert!(backend == backend_0);
@@ -68,10 +100,18 @@ fn pragma_shift_qryd_qubit_simple_traits() {
 #[cfg(feature = "simulator")]
 fn run_simple_circuit() {
     let layout: Array2<f64> = array![[0.0, 1.0], [0.0, 1.0]];
-    let mut device = FirstDevice::new(2, 2, &[1, 1], 3.0, array![[0.0, 1.0], [0.0, 1.0]], None)
-        .unwrap()
-        .add_layout(1, layout)
-        .unwrap();
+    let mut device = FirstDevice::new(
+        2,
+        2,
+        &[1, 1],
+        3.0,
+        array![[0.0, 1.0], [0.0, 1.0]],
+        None,
+        None,
+    )
+    .unwrap()
+    .add_layout(1, layout)
+    .unwrap();
     device.switch_layout(&1).unwrap();
     let backend = SimulatorBackend::new(device.into());
     let mut circuit = Circuit::new();
@@ -100,7 +140,7 @@ fn test_measurement() {
         vec![RotateY::new(0, std::f64::consts::FRAC_PI_2.into()).into()];
     let (measurement, exp_vals) =
         prepare_monte_carlo_gate_test(gate, preparation_gates, basis_rotation_gates, None, 1, 200);
-    let device = FirstDevice::new(1, 1, &[1], 3.0, array![[0.0],], None).unwrap();
+    let device = FirstDevice::new(1, 1, &[1], 3.0, array![[0.0],], None, None).unwrap();
     let backend = SimulatorBackend::new(device.into());
     let measured_exp_vals = backend.run_measurement(&measurement).unwrap().unwrap();
     for (key, val) in exp_vals.iter() {
@@ -125,7 +165,7 @@ fn test_full_simple_gate() {
     let (measurement, exp_vals) =
         prepare_monte_carlo_gate_test(gate, preparation_gates, basis_rotation_gates, None, 5, 200);
 
-    let device = FirstDevice::new(1, 1, &[1], 3.0, array![[0.0,],], Some(0.1)).unwrap();
+    let device = FirstDevice::new(1, 1, &[1], 3.0, array![[0.0,],], None, None).unwrap();
     let backend = SimulatorBackend::new(device.into());
     let measured_exp_vals = backend.run_measurement(&measurement).unwrap().unwrap();
     for (key, val) in exp_vals.iter() {
