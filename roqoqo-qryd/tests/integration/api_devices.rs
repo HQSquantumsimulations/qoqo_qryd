@@ -580,19 +580,19 @@ fn test_phi_theta_relation() {
     let square = QrydEmuSquareDevice::new(Some(0), None, None);
 
     assert_eq!(
-        triangular.phase_shift_controlled_z(),
+        triangular.phase_shift_controlled_z().unwrap(),
         phi_theta_relation("DefaultRelation", std::f64::consts::PI).unwrap()
     );
     assert_eq!(
-        square.phase_shift_controlled_z(),
+        square.phase_shift_controlled_z().unwrap(),
         phi_theta_relation("DefaultRelation", std::f64::consts::PI).unwrap()
     );
     assert_eq!(
-        triangular.phase_shift_controlled_phase(1.2),
+        triangular.phase_shift_controlled_phase(1.2).unwrap(),
         phi_theta_relation("DefaultRelation", 1.2).unwrap()
     );
     assert_eq!(
-        square.phase_shift_controlled_phase(1.2),
+        square.phase_shift_controlled_phase(1.2).unwrap(),
         phi_theta_relation("DefaultRelation", 1.2).unwrap()
     );
 
@@ -606,33 +606,48 @@ fn test_phi_theta_relation() {
         .is_none());
 
     assert!(triangular
-        .gate_time_controlled_z(&0, &1, triangular.phase_shift_controlled_z())
+        .gate_time_controlled_z(&0, &1, triangular.phase_shift_controlled_z().unwrap())
         .is_some());
     assert!(square
-        .gate_time_controlled_z(&0, &1, square.phase_shift_controlled_z())
+        .gate_time_controlled_z(&0, &1, square.phase_shift_controlled_z().unwrap())
         .is_some());
     assert!(triangular
-        .gate_time_controlled_phase(&0, &1, triangular.phase_shift_controlled_phase(0.1), 0.1)
+        .gate_time_controlled_phase(
+            &0,
+            &1,
+            triangular.phase_shift_controlled_phase(0.1).unwrap(),
+            0.1
+        )
         .is_some());
     assert!(square
-        .gate_time_controlled_phase(&0, &1, square.phase_shift_controlled_phase(0.1), 0.1)
+        .gate_time_controlled_phase(
+            &0,
+            &1,
+            square.phase_shift_controlled_phase(0.1).unwrap(),
+            0.1
+        )
         .is_some());
 
     assert!(triangular
-        .gate_time_controlled_z(&0, &1, triangular.phase_shift_controlled_z() + 0.2)
+        .gate_time_controlled_z(&0, &1, triangular.phase_shift_controlled_z().unwrap() + 0.2)
         .is_none());
     assert!(square
-        .gate_time_controlled_z(&0, &1, square.phase_shift_controlled_z() + 0.2)
+        .gate_time_controlled_z(&0, &1, square.phase_shift_controlled_z().unwrap() + 0.2)
         .is_none());
     assert!(triangular
         .gate_time_controlled_phase(
             &0,
             &1,
-            triangular.phase_shift_controlled_phase(0.1) + 0.2,
+            triangular.phase_shift_controlled_phase(0.1).unwrap() + 0.2,
             0.1
         )
         .is_none());
     assert!(square
-        .gate_time_controlled_phase(&0, &1, square.phase_shift_controlled_phase(0.1) + 0.2, 0.1)
+        .gate_time_controlled_phase(
+            &0,
+            &1,
+            square.phase_shift_controlled_phase(0.1).unwrap() + 0.2,
+            0.1
+        )
         .is_none());
 }

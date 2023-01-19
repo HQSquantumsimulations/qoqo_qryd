@@ -18,7 +18,7 @@ use roqoqo::RoqoqoBackendError;
 /// Collection of all QRyd devices for WebAPI.
 ///
 /// At the moment only contains a square and a triangular device.
-#[derive(Debug, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, PartialEq, Eq, Clone, serde::Serialize, serde::Deserialize)]
 pub enum QRydAPIDevice {
     /// Square Device
     QrydEmuSquareDevice(QrydEmuSquareDevice),
@@ -45,7 +45,7 @@ impl QRydAPIDevice {
     }
 
     /// Returns the PhaseShiftedControlledZ phase shift according to the device's relation.
-    pub fn phase_shift_controlled_z(&self) -> f64 {
+    pub fn phase_shift_controlled_z(&self) -> Option<f64> {
         match self {
             Self::QrydEmuSquareDevice(x) => x.phase_shift_controlled_z(),
             Self::QrydEmuTriangularDevice(x) => x.phase_shift_controlled_z(),
@@ -53,7 +53,7 @@ impl QRydAPIDevice {
     }
 
     /// Returns the PhaseShiftedControlledPhase phase shift according to the device's relation.
-    pub fn phase_shift_controlled_phase(&self, theta: f64) -> f64 {
+    pub fn phase_shift_controlled_phase(&self, theta: f64) -> Option<f64> {
         match self {
             Self::QrydEmuSquareDevice(x) => x.phase_shift_controlled_phase(theta),
             Self::QrydEmuTriangularDevice(x) => x.phase_shift_controlled_phase(theta),
@@ -283,7 +283,7 @@ impl From<QrydEmuTriangularDevice> for QRydAPIDevice {
 /// For more detailed information about the device an qubit layout see the
 /// documentation of the QRyd WebAPI: https://thequantumlaend.de/get-access/
 #[doc(hidden)]
-#[derive(Debug, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, PartialEq, Eq, Clone, serde::Serialize, serde::Deserialize)]
 pub struct QrydEmuSquareDevice {
     /// Use local or cloud computation for transpilation
     local: bool,
@@ -313,9 +313,9 @@ impl QrydEmuSquareDevice {
             local: false,
             seed: seed.unwrap_or_default(),
             controlled_z_phase_relation: controlled_z_phase_relation
-                .unwrap_or("DefaultRelation".to_string()),
+                .unwrap_or_else(|| "DefaultRelation".to_string()),
             controlled_phase_phase_relation: controlled_phase_phase_relation
-                .unwrap_or("DefaultRelation".to_string()),
+                .unwrap_or_else(|| "DefaultRelation".to_string()),
         }
     }
 
@@ -339,8 +339,8 @@ impl QrydEmuSquareDevice {
     ///
     /// * `f64` - The PhaseShiftedControlledZ phase shift.
     ///
-    pub fn phase_shift_controlled_z(&self) -> f64 {
-        phi_theta_relation(&self.controlled_z_phase_relation, std::f64::consts::PI).unwrap()
+    pub fn phase_shift_controlled_z(&self) -> Option<f64> {
+        phi_theta_relation(&self.controlled_z_phase_relation, std::f64::consts::PI)
     }
 
     /// Returns the PhaseShiftedControlledPhase phase shift according to the device's relation.
@@ -349,8 +349,8 @@ impl QrydEmuSquareDevice {
     ///
     /// * `f64` - The PhaseShiftedControlledPhase phase shift.
     ///
-    pub fn phase_shift_controlled_phase(&self, theta: f64) -> f64 {
-        phi_theta_relation(&self.controlled_phase_phase_relation, theta).unwrap()
+    pub fn phase_shift_controlled_phase(&self, theta: f64) -> Option<f64> {
+        phi_theta_relation(&self.controlled_phase_phase_relation, theta)
     }
 
     /// Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.
@@ -367,16 +367,14 @@ impl QrydEmuSquareDevice {
     /// * `None` - The gate is not available on the device.
     ///
     pub fn gate_time_controlled_z(&self, control: &usize, target: &usize, phi: f64) -> Option<f64> {
-        if let Some(_) = self.two_qubit_gate_time("PhaseShiftedControlledZ", control, target) {
-            let relation_phi = self.phase_shift_controlled_z();
-            if (relation_phi.abs() - phi.abs()).abs() < 0.0001 {
-                Some(1e-6)
-            } else {
-                None
+        if self.two_qubit_gate_time("PhaseShiftedControlledZ", control, target).is_some() {
+            if let Some(relation_phi) = self.phase_shift_controlled_z() {
+                if (relation_phi.abs() - phi.abs()).abs() < 0.0001 {
+                    return Some(1e-6);
+                }
             }
-        } else {
-            None
         }
+        None
     }
 
     /// Returns the gate time of a PhaseShiftedControlledPhase operation with the given qubits and phi and theta angles.
@@ -400,10 +398,13 @@ impl QrydEmuSquareDevice {
         phi: f64,
         theta: f64,
     ) -> Option<f64> {
-        if let Some(_) = self.two_qubit_gate_time("PhaseShiftedControlledPhase", control, target) {
-            let relation_phi = self.phase_shift_controlled_phase(theta);
-            if (relation_phi.abs() - phi.abs()).abs() < 0.0001 {
-                Some(1e-6)
+        if self.two_qubit_gate_time("PhaseShiftedControlledPhase", control, target).is_some() {
+            if let Some(relation_phi) = self.phase_shift_controlled_phase(theta) {
+                if (relation_phi.abs() - phi.abs()).abs() < 0.0001 {
+                    Some(1e-6)
+                } else {
+                    None
+                }
             } else {
                 None
             }
@@ -664,7 +665,7 @@ impl Device for QrydEmuSquareDevice {
 /// For more detailed information about the device an qubit layout see the
 /// documentation of the QRyd WebAPI: https://thequantumlaend.de/get-access/
 #[doc(hidden)]
-#[derive(Debug, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, PartialEq, Eq, Clone, serde::Serialize, serde::Deserialize)]
 pub struct QrydEmuTriangularDevice {
     /// Use local or cloud computation for transpilation
     local: bool,
@@ -694,9 +695,9 @@ impl QrydEmuTriangularDevice {
             local: false,
             seed: seed.unwrap_or_default(),
             controlled_z_phase_relation: controlled_z_phase_relation
-                .unwrap_or("DefaultRelation".to_string()),
+                .unwrap_or_else(|| "DefaultRelation".to_string()),
             controlled_phase_phase_relation: controlled_phase_phase_relation
-                .unwrap_or("DefaultRelation".to_string()),
+                .unwrap_or_else(|| "DefaultRelation".to_string()),
         }
     }
 
@@ -720,8 +721,8 @@ impl QrydEmuTriangularDevice {
     ///
     /// * `f64` - The PhaseShiftedControlledZ phase shift.
     ///
-    pub fn phase_shift_controlled_z(&self) -> f64 {
-        phi_theta_relation(&self.controlled_z_phase_relation, std::f64::consts::PI).unwrap()
+    pub fn phase_shift_controlled_z(&self) -> Option<f64> {
+        phi_theta_relation(&self.controlled_z_phase_relation, std::f64::consts::PI)
     }
 
     /// Returns the PhaseShiftedControlledPhase phase shift according to the device's relation.
@@ -730,8 +731,8 @@ impl QrydEmuTriangularDevice {
     ///
     /// * `f64` - The PhaseShiftedControlledPhase phase shift.
     ///
-    pub fn phase_shift_controlled_phase(&self, theta: f64) -> f64 {
-        phi_theta_relation(&self.controlled_phase_phase_relation, theta).unwrap()
+    pub fn phase_shift_controlled_phase(&self, theta: f64) -> Option<f64> {
+        phi_theta_relation(&self.controlled_phase_phase_relation, theta)
     }
 
     /// Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.
@@ -748,16 +749,14 @@ impl QrydEmuTriangularDevice {
     /// * `None` - The gate is not available on the device.
     ///
     pub fn gate_time_controlled_z(&self, control: &usize, target: &usize, phi: f64) -> Option<f64> {
-        if let Some(_) = self.two_qubit_gate_time("PhaseShiftedControlledZ", control, target) {
-            let relation_phi = self.phase_shift_controlled_z();
-            if (relation_phi.abs() - phi.abs()).abs() < 0.0001 {
-                Some(1e-6)
-            } else {
-                None
+        if self.two_qubit_gate_time("PhaseShiftedControlledZ", control, target).is_some() {
+            if let Some(relation_phi) = self.phase_shift_controlled_z() {
+                if (relation_phi.abs() - phi.abs()).abs() < 0.0001 {
+                    return Some(1e-6);
+                }
             }
-        } else {
-            None
         }
+        None
     }
 
     /// Returns the gate time of a PhaseShiftedControlledPhase operation with the given qubits and phi and theta angles.
@@ -781,16 +780,14 @@ impl QrydEmuTriangularDevice {
         phi: f64,
         theta: f64,
     ) -> Option<f64> {
-        if let Some(_) = self.two_qubit_gate_time("PhaseShiftedControlledPhase", control, target) {
-            let relation_phi = self.phase_shift_controlled_phase(theta);
-            if (relation_phi.abs() - phi.abs()).abs() < 0.0001 {
-                Some(1e-6)
-            } else {
-                None
+        if self.two_qubit_gate_time("PhaseShiftedControlledPhase", control, target).is_some() {
+            if let Some(relation_phi) = self.phase_shift_controlled_phase(theta) {
+                if (relation_phi.abs() - phi.abs()).abs() < 0.0001 {
+                    return Some(1e-6);
+                }
             }
-        } else {
-            None
         }
+        None
     }
 }
 
