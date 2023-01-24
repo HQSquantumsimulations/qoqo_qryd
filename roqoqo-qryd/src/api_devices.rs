@@ -367,7 +367,10 @@ impl QrydEmuSquareDevice {
     /// * `None` - The gate is not available on the device.
     ///
     pub fn gate_time_controlled_z(&self, control: &usize, target: &usize, phi: f64) -> Option<f64> {
-        if self.two_qubit_gate_time("PhaseShiftedControlledZ", control, target).is_some() {
+        if self
+            .two_qubit_gate_time("PhaseShiftedControlledZ", control, target)
+            .is_some()
+        {
             if let Some(relation_phi) = self.phase_shift_controlled_z() {
                 if (relation_phi.abs() - phi.abs()).abs() < 0.0001 {
                     return Some(1e-6);
@@ -398,7 +401,10 @@ impl QrydEmuSquareDevice {
         phi: f64,
         theta: f64,
     ) -> Option<f64> {
-        if self.two_qubit_gate_time("PhaseShiftedControlledPhase", control, target).is_some() {
+        if self
+            .two_qubit_gate_time("PhaseShiftedControlledPhase", control, target)
+            .is_some()
+        {
             if let Some(relation_phi) = self.phase_shift_controlled_phase(theta) {
                 if (relation_phi.abs() - phi.abs()).abs() < 0.0001 {
                     Some(1e-6)
@@ -749,7 +755,10 @@ impl QrydEmuTriangularDevice {
     /// * `None` - The gate is not available on the device.
     ///
     pub fn gate_time_controlled_z(&self, control: &usize, target: &usize, phi: f64) -> Option<f64> {
-        if self.two_qubit_gate_time("PhaseShiftedControlledZ", control, target).is_some() {
+        if self
+            .two_qubit_gate_time("PhaseShiftedControlledZ", control, target)
+            .is_some()
+        {
             if let Some(relation_phi) = self.phase_shift_controlled_z() {
                 if (relation_phi.abs() - phi.abs()).abs() < 0.0001 {
                     return Some(1e-6);
@@ -780,7 +789,10 @@ impl QrydEmuTriangularDevice {
         phi: f64,
         theta: f64,
     ) -> Option<f64> {
-        if self.two_qubit_gate_time("PhaseShiftedControlledPhase", control, target).is_some() {
+        if self
+            .two_qubit_gate_time("PhaseShiftedControlledPhase", control, target)
+            .is_some()
+        {
             if let Some(relation_phi) = self.phase_shift_controlled_phase(theta) {
                 if (relation_phi.abs() - phi.abs()).abs() < 0.0001 {
                     return Some(1e-6);

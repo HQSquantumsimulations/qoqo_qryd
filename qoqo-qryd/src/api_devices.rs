@@ -236,24 +236,21 @@ impl QrydEmuSquareDeviceWrapper {
 
     /// Returns the PhaseShiftedControlledZ phase shift according to the device's relation.
     pub fn phase_shift_controlled_z(&self) -> PyResult<f64> {
-        self
-            .internal
+        self.internal
             .phase_shift_controlled_z()
             .ok_or_else(|| PyValueError::new_err("Error in relation selection."))
     }
 
     /// Returns the PhaseShiftedControlledPhase phase shift according to the device's relation.
     pub fn phase_shift_controlled_phase(&self, theta: f64) -> PyResult<f64> {
-        self
-            .internal
+        self.internal
             .phase_shift_controlled_phase(theta)
             .ok_or_else(|| PyValueError::new_err("Error in relation selection."))
     }
 
     /// Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.
     pub fn gate_time_controlled_z(&self, control: usize, target: usize, phi: f64) -> PyResult<f64> {
-        self
-            .internal
+        self.internal
             .gate_time_controlled_z(&control, &target, phi)
             .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))
     }
@@ -266,8 +263,7 @@ impl QrydEmuSquareDeviceWrapper {
         phi: f64,
         theta: f64,
     ) -> PyResult<f64> {
-        self
-            .internal
+        self.internal
             .gate_time_controlled_phase(&target, &control, phi, theta)
             .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))
     }
@@ -495,24 +491,21 @@ impl QrydEmuTriangularDeviceWrapper {
 
     /// Returns the PhaseShiftedControlledZ phase shift according to the device's relation.
     pub fn phase_shift_controlled_z(&self) -> PyResult<f64> {
-        self
-            .internal
+        self.internal
             .phase_shift_controlled_z()
             .ok_or_else(|| PyValueError::new_err("Error in relation selection."))
     }
 
     /// Returns the PhaseShiftedControlledPhase phase shift according to the device's relation.
     pub fn phase_shift_controlled_phase(&self, theta: f64) -> PyResult<f64> {
-        self
-            .internal
+        self.internal
             .phase_shift_controlled_phase(theta)
             .ok_or_else(|| PyValueError::new_err("Error in relation selection."))
     }
 
     /// Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.
     pub fn gate_time_controlled_z(&self, control: usize, target: usize, phi: f64) -> PyResult<f64> {
-        self
-            .internal
+        self.internal
             .gate_time_controlled_z(&control, &target, phi)
             .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))
     }
@@ -525,8 +518,7 @@ impl QrydEmuTriangularDeviceWrapper {
         phi: f64,
         theta: f64,
     ) -> PyResult<f64> {
-        self
-            .internal
+        self.internal
             .gate_time_controlled_phase(&target, &control, phi, theta)
             .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))
     }

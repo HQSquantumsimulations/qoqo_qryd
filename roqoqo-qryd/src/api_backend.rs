@@ -334,6 +334,8 @@ impl APIBackend {
     /// * `timeout` - Timeout for synchronous EvaluatingBackend trait. In the evaluating trait.
     ///               In synchronous operation the WebAPI is queried every 30 seconds until it has
     ///               been queried `timeout` times.
+    /// * `mock_port` - Server port to be used for testing purposes.
+    ///
     pub fn new(
         device: QRydAPIDevice,
         access_token: Option<String>,
@@ -705,6 +707,7 @@ impl APIBackend {
     ///             cannont be extrected from returned result
     /// `number_qubits` - The number of measured qubits. Needs to be specified based on original circuit
     ///                   cannont be extrected from returned result
+    ///
     pub fn counts_to_result(
         counts: ResultCounts,
         readout: String,

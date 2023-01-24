@@ -499,10 +499,17 @@ fn test_convert_to_device() {
             .unwrap();
 
         let converted = convert_into_backend(backend).unwrap();
-        let rust_dev: QRydDevice =
-            FirstDevice::new(2, 2, &[1, 1], 1.0, array![[0.0, 1.0,], [0.0, 1.0]], None, None)
-                .unwrap()
-                .into();
+        let rust_dev: QRydDevice = FirstDevice::new(
+            2,
+            2,
+            &[1, 1],
+            1.0,
+            array![[0.0, 1.0,], [0.0, 1.0]],
+            None,
+            None,
+        )
+        .unwrap()
+        .into();
         let rust_backend = SimulatorBackend::new(rust_dev);
         assert_eq!(converted, rust_backend);
     });

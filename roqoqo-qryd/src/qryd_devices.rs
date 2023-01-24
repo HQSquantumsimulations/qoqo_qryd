@@ -17,13 +17,12 @@
 
 use std::collections::HashMap;
 
-use crate::{PragmaChangeQRydLayout, PragmaShiftQRydQubit, phi_theta_relation};
+use crate::{phi_theta_relation, PragmaChangeQRydLayout, PragmaShiftQRydQubit};
 use bincode::deserialize;
 use itertools::Itertools;
 use ndarray::Array2;
 use roqoqo::devices::{Device, GenericDevice};
 use roqoqo::RoqoqoBackendError;
-
 
 /// Collection of all QRyd devices
 ///
@@ -265,10 +264,10 @@ impl FirstDevice {
         }
         let layout_register: HashMap<usize, Array2<f64>> = HashMap::new();
         let current_layout = 0;
-        let controlled_z_phase_relation = controlled_z_phase_relation
-                .unwrap_or_else(|| "DefaultRelation".to_string());
-        let controlled_phase_phase_relation = controlled_phase_phase_relation
-                .unwrap_or_else(|| "DefaultRelation".to_string());
+        let controlled_z_phase_relation =
+            controlled_z_phase_relation.unwrap_or_else(|| "DefaultRelation".to_string());
+        let controlled_phase_phase_relation =
+            controlled_phase_phase_relation.unwrap_or_else(|| "DefaultRelation".to_string());
         let return_self = Self {
             number_rows,
             number_columns,

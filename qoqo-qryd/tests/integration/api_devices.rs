@@ -588,12 +588,12 @@ fn test_phi_theta_relation() {
         assert!(gtcp_sq_err.is_err());
 
         let gtcp_tr_ok = triangular
-            .call_method1("gate_time_controlled_phase", (0, 1, pscp_tr, 1.0,))
+            .call_method1("gate_time_controlled_phase", (0, 1, pscp_tr, 1.0))
             .unwrap()
             .extract::<f64>()
             .unwrap();
         let gtcp_sq_ok = square
-            .call_method1("gate_time_controlled_phase", (0, 1, pscp_sq, 1.0,))
+            .call_method1("gate_time_controlled_phase", (0, 1, pscp_sq, 1.0))
             .unwrap()
             .extract::<f64>()
             .unwrap();
