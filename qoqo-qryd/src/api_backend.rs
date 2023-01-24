@@ -35,7 +35,7 @@ use std::collections::HashMap;
 /// For simulations of the QRyd quantum computer use the Backend simulator [crate::Backend].
 ///
 #[pyclass(name = "APIBackend", module = "qoqo_qryd")]
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 #[pyo3(text_signature = "(device, access_token, timeout, mock_port)")]
 pub struct APIBackendWrapper {
     /// Internal storage of [roqoqo_qryd::APIBackend]

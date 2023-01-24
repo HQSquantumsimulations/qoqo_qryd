@@ -197,7 +197,7 @@ fn api_backend() {
 
         assert_eq!(job_status.status, "completed");
 
-        let job_result = api_backend_new.get_job_result(job_loc.clone()).unwrap();
+        let job_result = api_backend_new.get_job_result(job_loc).unwrap();
         let (bits, _, _) =
             APIBackend::counts_to_result(job_result.data, "ro".to_string(), number_qubits).unwrap();
         assert!(!bits.is_empty());
@@ -452,7 +452,7 @@ fn api_triangular() {
         assert!(!job_loc.is_empty());
 
         let job_status = api_backend_new.get_job_status(job_loc.clone()).unwrap();
-        let job_result = api_backend_new.get_job_result(job_loc.clone()).unwrap();
+        let job_result = api_backend_new.get_job_result(job_loc).unwrap();
 
         assert_eq!(job_status.status, "completed");
 
@@ -576,8 +576,8 @@ fn evaluating_backend() {
             program_result.unwrap_err(),
             RoqoqoBackendError::GenericError {
                 msg: format!(
-                    "WebAPI returned an error status for the job {}.",
-                    format!("http://127.0.0.1:{}/DummyLocation", server.port())
+                    "WebAPI returned an error status for the job http://127.0.0.1:{}/DummyLocation.",
+                    server.port()
                 )
             }
         );
@@ -595,8 +595,8 @@ fn evaluating_backend() {
             program_result.unwrap_err(),
             RoqoqoBackendError::GenericError {
                 msg: format!(
-                    "Job {} got cancelled.",
-                    format!("http://127.0.0.1:{}/DummyLocation", server.port())
+                    "Job http://127.0.0.1:{}/DummyLocation got cancelled.",
+                    server.port()
                 )
             }
         );
@@ -714,18 +714,16 @@ fn api_delete() {
 // Test error cases. Case const: invalid constant_circuit
 #[test]
 fn api_backend_errorcase_const() {
-    let api_backend_new: APIBackend;
     let number_qubits = 6;
     let device = QrydEmuSquareDevice::new(Some(2), None, None);
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-    if env::var("QRYD_API_TOKEN").is_ok() {
-        api_backend_new = APIBackend::new(qryd_device, None, None, None).unwrap();
+    let api_backend_new: APIBackend = if env::var("QRYD_API_TOKEN").is_ok() {
+        APIBackend::new(qryd_device, None, None, None).unwrap()
     } else {
         let server = MockServer::start();
 
-        api_backend_new =
-            APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
-    }
+        APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap()
+    };
     // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
     let qubit_mapping: HashMap<usize, usize> =
         (0..number_qubits).into_iter().map(|x| (x, x)).collect();
@@ -754,7 +752,7 @@ fn api_backend_errorcase3() {
     let device = QrydEmuSquareDevice::new(Some(2), None, None);
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
 
-    if !env::var("QRYD_API_TOKEN").is_ok() {
+    if env::var("QRYD_API_TOKEN").is_err() {
         let api_backend_err = APIBackend::new(qryd_device.clone(), None, None, None);
         assert!(api_backend_err.is_err());
         assert_eq!(
@@ -798,18 +796,16 @@ fn api_backend_errorcase3() {
 /// Test error cases. Case 4: invalid job_id
 #[test]
 fn api_backend_errorcase4() {
-    let api_backend_new: APIBackend;
     let device = QrydEmuSquareDevice::new(Some(2), None, None);
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
 
-    if env::var("QRYD_API_TOKEN").is_ok() {
-        api_backend_new = APIBackend::new(qryd_device, None, None, None).unwrap();
+    let api_backend_new: APIBackend = if env::var("QRYD_API_TOKEN").is_ok() {
+        APIBackend::new(qryd_device, None, None, None).unwrap()
     } else {
         let server = MockServer::start();
 
-        api_backend_new =
-            APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
-    }
+        APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap()
+    };
     let job_loc: String = "DummyString".to_string();
     let job_status = api_backend_new.get_job_status(job_loc.clone());
     assert!(job_status.is_err());
@@ -826,15 +822,13 @@ fn api_backend_errorcase4() {
 fn api_backend_errorcase5() {
     let device = QrydEmuSquareDevice::new(Some(2), None, None);
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-    let api_backend_new: APIBackend;
-    if env::var("QRYD_API_TOKEN").is_ok() {
-        api_backend_new = APIBackend::new(qryd_device, None, None, None).unwrap();
+    let api_backend_new: APIBackend = if env::var("QRYD_API_TOKEN").is_ok() {
+        APIBackend::new(qryd_device, None, None, None).unwrap()
     } else {
         let server = MockServer::start();
 
-        api_backend_new =
-            APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
-    }
+        APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap()
+    };
     let measurement = ClassicalRegister {
         constant_circuit: None,
         circuits: vec![],

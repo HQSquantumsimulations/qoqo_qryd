@@ -37,7 +37,7 @@ use std::{thread, time};
 /// This limitation is introduced by design to check the compatability of quantum programs with a model of the QRyd hardware.
 /// For simulations of the QRyd quantum computer use the backend simulator [crate::Backend].
 ///
-#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct APIBackend {
     /// Device representing the model of a QRyd device.
     pub device: QRydAPIDevice,
