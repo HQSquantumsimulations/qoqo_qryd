@@ -34,7 +34,10 @@ impl QrydEmuSquareDeviceWrapper {
     ///
     /// Args:
     ///     seed (int): Seed, if not provided will be set to 0 per default (not recommended!)
-    /// todo!()
+    ///     controlled_z_phase_relation (Optinal[str]): The String used to choose what kind of phi-theta relation
+    ///                                                 to use for the PhaseShiftedControlledZ gate
+    ///     controlled_phase_phase_relation (Optinal[str]): The String used to choose what kind of phi-theta relation
+    ///                                                     to use for the PhaseShiftedControlledPhase gate
     ///
     /// Returns:
     ///     QrydEmuSquareDevice: New device
@@ -287,8 +290,10 @@ impl QrydEmuTriangularDeviceWrapper {
     ///
     /// Args:
     ///     seed (int): Seed, if not provided will be set to 0 per default (not recommended!)
-    ///     pcz_theta (Optional[float]): Phase angle for the basis gate 'PhaseShiftedControllZ'.
-    ///                                  If not provided will be set to (preliminary) hardware goal 2.13.
+    ///     controlled_z_phase_relation (Optinal[str]): The String used to choose what kind of phi-theta relation
+    ///                                                 to use for the PhaseShiftedControlledZ gate
+    ///     controlled_phase_phase_relation (Optinal[str]): The String used to choose what kind of phi-theta relation
+    ///                                                     to use for the PhaseShiftedControlledPhase gate
     ///
     /// Returns:
     ///     QrydEmuTriangularDevice: New device
@@ -369,7 +374,7 @@ impl QrydEmuTriangularDeviceWrapper {
     ///     TypeError: Input cannot be converted to byte array.
     ///     ValueError: Input cannot be deserialized to QrydEmuTriangularDevice.
     #[staticmethod]
-    #[pyo3(text_signature = "(input)")]
+    #[pyo3(text_signature = "(input, /)")]
     pub fn from_bincode(input: &PyAny) -> PyResult<QrydEmuTriangularDeviceWrapper> {
         let bytes = input
             .extract::<Vec<u8>>()
@@ -407,7 +412,7 @@ impl QrydEmuTriangularDeviceWrapper {
     /// Raises:
     ///     ValueError: Input cannot be deserialized to QrydEmuTriangularDevice.
     #[staticmethod]
-    #[pyo3(text_signature = "(input)")]
+    #[pyo3(text_signature = "(input, /)")]
     fn from_json(input: &str) -> PyResult<QrydEmuTriangularDeviceWrapper> {
         Ok(QrydEmuTriangularDeviceWrapper {
             internal: serde_json::from_str(input).map_err(|_| {
