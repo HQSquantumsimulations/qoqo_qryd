@@ -35,14 +35,15 @@ use std::collections::HashMap;
 ///                                 At the moment assumes that number of qubits in the traps is fixed. No loading/unloading once device is created.
 ///     row_distance (float): Fixed distance between rows.
 ///     initial_layout (np.ndarray): The starting layout (always had the index 0).
-///     controlled_z_phase (Optional[float]): The phase shift in the native PhaseShiftedControlledZ gate. Defaults to pi/4.
+///     controlled_z_phase_relation (Optional[str]): The relation to use for the PhaseShiftedControlledZ gate.
+///     controlled_phase_phase_relation (Optional[str]): The relation to use for the PhaseShiftedControlledPhase gate.
 ///
 /// Raises:
 ///     PyValueError
 #[pyclass(name = "FirstDevice", module = "qoqo_qryd")]
 #[derive(Clone, Debug, PartialEq)]
 #[pyo3(
-    text_signature = "(number_rows, number_columns, qubits_per_row, row_distance, initial_layour, /)"
+    text_signature = "(number_rows, number_columns, qubits_per_row, row_distance, initial_layour, controlled_z_phase_relation, controlled_phase_phase_relation, /)"
 )]
 pub struct FirstDeviceWrapper {
     /// Internal storage of [roqoqo_qryd::FirstDevice]
@@ -163,6 +164,7 @@ impl FirstDeviceWrapper {
     ///     TypeError: Input cannot be converted to byte array.
     ///     ValueError: Input cannot be deserialized to FirstDevice.
     #[staticmethod]
+    #[pyo3(text_signature = "(input, /)")]
     pub fn from_bincode(input: &PyAny) -> PyResult<FirstDeviceWrapper> {
         let bytes = input
             .extract::<Vec<u8>>()
@@ -199,6 +201,7 @@ impl FirstDeviceWrapper {
     /// Raises:
     ///     ValueError: Input cannot be deserialized to FirstDevice.
     #[staticmethod]
+    #[pyo3(text_signature = "(input, /)")]
     fn from_json(input: &str) -> PyResult<FirstDeviceWrapper> {
         Ok(FirstDeviceWrapper {
             internal: serde_json::from_str(input).map_err(|_| {

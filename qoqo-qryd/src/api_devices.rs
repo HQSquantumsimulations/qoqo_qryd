@@ -117,7 +117,7 @@ impl QrydEmuSquareDeviceWrapper {
     ///     TypeError: Input cannot be converted to byte array.
     ///     ValueError: Input cannot be deserialized to QrydEmuSquareDevice.
     #[staticmethod]
-    #[pyo3(text_signature = "(input)")]
+    #[pyo3(text_signature = "(input, /)")]
     pub fn from_bincode(input: &PyAny) -> PyResult<QrydEmuSquareDeviceWrapper> {
         let bytes = input
             .extract::<Vec<u8>>()
@@ -154,7 +154,7 @@ impl QrydEmuSquareDeviceWrapper {
     /// Raises:
     ///     ValueError: Input cannot be deserialized to QrydEmuSquareDevice.
     #[staticmethod]
-    #[pyo3(text_signature = "(input)")]
+    #[pyo3(text_signature = "(input, /)")]
     fn from_json(input: &str) -> PyResult<QrydEmuSquareDeviceWrapper> {
         Ok(QrydEmuSquareDeviceWrapper {
             internal: serde_json::from_str(input).map_err(|_| {
