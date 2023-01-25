@@ -328,7 +328,7 @@ fn test_change_qubit_positions() {
 }
 
 #[test]
-fn test_controlled_z_phase_py() {
+fn test_phi_theta_relation() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let original_layout = array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]];
@@ -338,13 +338,34 @@ fn test_controlled_z_phase_py() {
             .unwrap()
             .cast_as::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
+        let new_layout: Array2<f64> = array![[0.5, 0.5], [0.5, 0.4], [0.4, 0.3]];
+        let updated_device = device
+            .call_method1("add_layout", (1, new_layout.to_pyarray(py)))
+            .unwrap();
+        updated_device.call_method1("switch_layout", (1,)).unwrap();
 
-        let controlled_z_phase = device
+        let pscz_phase = device
             .call_method0("phase_shift_controlled_z")
             .unwrap()
             .extract::<f64>()
             .unwrap();
-        assert!(controlled_z_phase.is_finite());
+        let pscp_phase = device
+            .call_method1("phase_shift_controlled_phase", (1.0,))
+            .unwrap()
+            .extract::<f64>()
+            .unwrap();
+        assert!(pscz_phase.is_finite());
+        assert!(pscp_phase.is_finite());
+
+        let gtcz_err = device.call_method1("gate_time_controlled_z", (0, 1, 0.3));
+        let gtcz_ok = device.call_method1("gate_time_controlled_z", (0, 1, pscz_phase));
+        assert!(gtcz_err.is_err());
+        assert!(gtcz_ok.is_ok());
+
+        let gtcp_err = device.call_method1("gate_time_controlled_phase", (0, 1, 0.3, 0.7));
+        let gtcp_ok = device.call_method1("gate_time_controlled_phase", (0, 1, pscp_phase, 1.0));
+        assert!(gtcp_err.is_err());
+        assert!(gtcp_ok.is_ok());
     });
 }
 

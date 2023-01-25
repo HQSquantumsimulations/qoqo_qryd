@@ -125,8 +125,8 @@ fn test_new_large() {
 }
 
 #[test]
-fn test_controlled_z_phase() {
-    let device = FirstDevice::new(
+fn test_phi_theta_relation() {
+    let mut device = FirstDevice::new(
         2,
         3,
         &[3, 2],
@@ -136,16 +136,41 @@ fn test_controlled_z_phase() {
         None,
     )
     .unwrap();
+    device = device
+        .add_layout(1, array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]])
+        .unwrap();
+    device.switch_layout(&1).unwrap();
 
     assert_eq!(
         device.phase_shift_controlled_z().unwrap(),
         phi_theta_relation("DefaultRelation", std::f64::consts::PI).unwrap()
     );
+    assert_eq!(
+        device.phase_shift_controlled_phase(1.2).unwrap(),
+        phi_theta_relation("DefaultRelation", 1.2).unwrap()
+    );
+
+    assert!(device.gate_time_controlled_z(&0, &1, 1.4).is_none());
+    assert!(device
+        .gate_time_controlled_phase(&0, &1, 1.4, 2.4)
+        .is_none());
+    assert!(device.gate_time_controlled_z(&0, &7, 1.4).is_none());
+    assert!(device
+        .gate_time_controlled_phase(&0, &7, 1.4, 2.3)
+        .is_none());
+    assert!(device.gate_time_controlled_z(&0, &1, device.phase_shift_controlled_z().unwrap()).is_some());
+    assert!(device.gate_time_controlled_z(&0, &7, device.phase_shift_controlled_z().unwrap()).is_none());
+    assert!(device.gate_time_controlled_phase(&0, &1, device.phase_shift_controlled_phase(0.1).unwrap(), 0.1).is_some());
+    assert!(device.gate_time_controlled_phase(&0, &7, device.phase_shift_controlled_phase(0.1).unwrap(), 0.1).is_none());
 
     let d = QRydDevice::FirstDevice(device);
     assert_eq!(
         d.phase_shift_controlled_z().unwrap(),
         phi_theta_relation("DefaultRelation", std::f64::consts::PI).unwrap()
+    );
+    assert_eq!(
+        d.phase_shift_controlled_phase(1.2).unwrap(),
+        phi_theta_relation("DefaultRelation", 1.2).unwrap()
     );
 }
 

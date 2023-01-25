@@ -324,6 +324,72 @@ impl FirstDevice {
         phi_theta_relation(&self.controlled_phase_phase_relation, theta)
     }
 
+    /// Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.
+    ///
+    /// # Arguments
+    ///
+    /// * `control` - The control qubit the gate acts on
+    /// * `target` - The target qubit the gate acts on
+    /// * `phi` - The phi angle to be checked.
+    ///
+    /// # Returns
+    ///
+    /// * `Some<f64>` - The gate time.
+    /// * `None` - The gate is not available on the device.
+    ///
+    pub fn gate_time_controlled_z(&self, control: &usize, target: &usize, phi: f64) -> Option<f64> {
+        if self
+            .two_qubit_gate_time("PhaseShiftedControlledZ", control, target)
+            .is_some()
+        {
+            if let Some(relation_phi) = self.phase_shift_controlled_z() {
+                if (relation_phi.abs() - phi.abs()).abs() < 0.0001 {
+                    return Some(1e-6);
+                }
+            }
+        }
+        None
+    }
+
+    /// Returns the gate time of a PhaseShiftedControlledPhase operation with the given qubits and phi and theta angles.
+    ///
+    /// # Arguments
+    ///
+    /// * `control` - The control qubit the gate acts on
+    /// * `target` - The target qubit the gate acts on
+    /// * `phi` - The phi angle to be checked.
+    /// * `theta` - The theta angle to be checked.
+    ///
+    /// # Returns
+    ///
+    /// * `Some<f64>` - The gate time.
+    /// * `None` - The gate is not available on the device.
+    ///
+    pub fn gate_time_controlled_phase(
+        &self,
+        target: &usize,
+        control: &usize,
+        phi: f64,
+        theta: f64,
+    ) -> Option<f64> {
+        if self
+            .two_qubit_gate_time("PhaseShiftedControlledPhase", control, target)
+            .is_some()
+        {
+            if let Some(relation_phi) = self.phase_shift_controlled_phase(theta) {
+                if (relation_phi.abs() - phi.abs()).abs() < 0.0001 {
+                    Some(1e-6)
+                } else {
+                    None
+                }
+            } else {
+                None
+            }
+        } else {
+            None
+        }
+    }
+
     /// Add a new layout to the device.
     ///
     /// A layout is a two-dimensional representation of the y-positions of the tweezers in each row.
