@@ -95,6 +95,26 @@ impl QRydDevice {
         }
     }
 
+    /// Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.
+    pub fn gate_time_controlled_z(&self, control: &usize, target: &usize, phi: f64) -> Option<f64> {
+        match self {
+            Self::FirstDevice(x) => x.gate_time_controlled_z(control, target, phi),
+        }
+    }
+
+    /// Returns the gate time of a PhaseShiftedControlledPhase operation with the given qubits and phi and theta angles.
+    pub fn gate_time_controlled_phase(
+        &self,
+        control: &usize,
+        target: &usize,
+        phi: f64,
+        theta: f64,
+    ) -> Option<f64> {
+        match self {
+            Self::FirstDevice(x) => x.gate_time_controlled_phase(control, target, phi, theta),
+        }
+    }
+
     /// Add a new layout to the device.
     ///
     /// A layout is a two-dimensional representation of the y-positions of the tweezers in each row.

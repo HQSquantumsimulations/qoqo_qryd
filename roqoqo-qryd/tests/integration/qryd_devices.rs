@@ -158,10 +158,28 @@ fn test_phi_theta_relation() {
     assert!(device
         .gate_time_controlled_phase(&0, &7, 1.4, 2.3)
         .is_none());
-    assert!(device.gate_time_controlled_z(&0, &1, device.phase_shift_controlled_z().unwrap()).is_some());
-    assert!(device.gate_time_controlled_z(&0, &7, device.phase_shift_controlled_z().unwrap()).is_none());
-    assert!(device.gate_time_controlled_phase(&0, &1, device.phase_shift_controlled_phase(0.1).unwrap(), 0.1).is_some());
-    assert!(device.gate_time_controlled_phase(&0, &7, device.phase_shift_controlled_phase(0.1).unwrap(), 0.1).is_none());
+    assert!(device
+        .gate_time_controlled_z(&0, &1, device.phase_shift_controlled_z().unwrap())
+        .is_some());
+    assert!(device
+        .gate_time_controlled_z(&0, &7, device.phase_shift_controlled_z().unwrap())
+        .is_none());
+    assert!(device
+        .gate_time_controlled_phase(
+            &0,
+            &1,
+            device.phase_shift_controlled_phase(0.1).unwrap(),
+            0.1
+        )
+        .is_some());
+    assert!(device
+        .gate_time_controlled_phase(
+            &0,
+            &7,
+            device.phase_shift_controlled_phase(0.1).unwrap(),
+            0.1
+        )
+        .is_none());
 
     let d = QRydDevice::FirstDevice(device);
     assert_eq!(
@@ -172,6 +190,22 @@ fn test_phi_theta_relation() {
         d.phase_shift_controlled_phase(1.2).unwrap(),
         phi_theta_relation("DefaultRelation", 1.2).unwrap()
     );
+    assert!(d.gate_time_controlled_z(&0, &1, 1.4).is_none());
+    assert!(d.gate_time_controlled_phase(&0, &1, 1.4, 2.4).is_none());
+    assert!(d.gate_time_controlled_z(&0, &7, 1.4).is_none());
+    assert!(d.gate_time_controlled_phase(&0, &7, 1.4, 2.3).is_none());
+    assert!(d
+        .gate_time_controlled_z(&0, &1, d.phase_shift_controlled_z().unwrap())
+        .is_some());
+    assert!(d
+        .gate_time_controlled_z(&0, &7, d.phase_shift_controlled_z().unwrap())
+        .is_none());
+    assert!(d
+        .gate_time_controlled_phase(&0, &1, d.phase_shift_controlled_phase(0.1).unwrap(), 0.1)
+        .is_some());
+    assert!(d
+        .gate_time_controlled_phase(&0, &7, d.phase_shift_controlled_phase(0.1).unwrap(), 0.1)
+        .is_none());
 }
 
 #[test]
