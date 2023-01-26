@@ -2,6 +2,11 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+## 0.8.0
+
+* Support for PhaseShiftedControlledPhase operation in devices
+* Switch from given phase shift for two-qubit gates to selecting phase realtions for PhaseShiftedControlledPhase and PhaseShiftedControlledZ
+
 ## 0.7.1
 
 * Update to new version of qoqo (1.2.0)

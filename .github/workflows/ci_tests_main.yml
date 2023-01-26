@@ -1,39 +1,10 @@
 name: ci_tests_main
 
 on:
-  push:
+  pull_request:
     branches: [main]
 
 jobs:
-
-  test_pyproject_install:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-python@v2
-      with:
-        python-version: 3.9
-    - uses: actions-rs/toolchain@v1
-      with:
-        profile: minimal
-        toolchain: stable
-        default: true
-    - uses: Swatinem/rust-cache@v1.4.0
-    - name: Install dependencies
-      run: |
-        pip install maturin pytest numpy qoqo
-        pip install ./qoqo-qryd
-  
-  cargo-deny:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - uses: EmbarkStudios/cargo-deny-action@v1
-      with:
-        log-level: warn
-        command: check
-        arguments: --all-features
-        command-arguments: ""
 
   unittests_check_linux:
     name: unittests_check-${{ matrix.combinations.runs_on }}
@@ -99,55 +70,39 @@ jobs:
           default: true
       - uses: Swatinem/rust-cache@v1.4.0
       - run: |
-          cd qoqo-qryd
+          cd roqoqo-qryd
           cargo test --doc --package=roqoqo-qryd
-  
-  build_documentation:
+
+  test_check:
+    name: unittests_check-${{ matrix.combinations.runs_on }}
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-    - uses: actions-rs/toolchain@v1
-      with:
-        profile: minimal
-        toolchain: stable
-        default: true
-    - uses: Swatinem/rust-cache@v1.4.0
-    - name: Install dependencies
-      run: |
-        sudo apt install make
-        pip install ./qoqo-qryd
-        python -m pip install -r ./userdoc/requirements.txt
-    - name: build
-      run: |
-        cd ./userdoc
-        make html
-        make html
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          target: x86_64-unknown-linux-gnu
+          default: true
+      - uses: Swatinem/rust-cache@v1.4.0
+      - run: |
+          cargo test --no-default-features --workspace
 
-  # code_coverage_roqoqo_qryd:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@master
-  #     - uses: actions-rs/toolchain@v1
-  #       with:
-  #           toolchain: stable
-  #           components: llvm-tools-preview
-  #           override: true
-  #     - run: |
-  #         cd interfaces/
-  #         export RUSTFLAGS="-Cinstrument-coverage"
-  #         export RUSTDOCFLAGS="-Cinstrument-coverage"
-  #         cargo build --verbose
-  #         LLVM_PROFILE_FILE="coverage-%p-%m.profraw" cargo test --package=roqoqo-qryd --no-default-features
-  #         cd roqoqo-qryd/
-  #         cargo install grcov
-  #         grcov . --binary-path ../target/debug/ -s . -t lcov --branch --ignore-not-existing --ignore "cargo" --ignore "/mod.rs" --ignore "/lib.rs" --ignore "*/_auto_generated_operations.rs" --keep-only "src/*" -o lcov.info
-  #     - name: Upload coverage to Codecov
-  #       uses: codecov/codecov-action@v2
-  #       with:
-  #         token: ${{ secrets.CODECOV_TOKEN }}
-  #         files: lcov.info
-  #         flags: unittests
-  #         name: codecov-umbrella
-  #         fail_ci_if_error: true
-  #         verbose: true
+  test_check:
+    name: unittests_check-${{ matrix.combinations.runs_on }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          target: x86_64-unknown-linux-gnu
+          default: true
+      - uses: Swatinem/rust-cache@v1.4.0
+      - name: test_with_api
+        env:
+        run: |
+          QRYD_API_TOKEN: ${{ secrets.QRYD_API_TOKEN }}
+          cd roqoqo-qryd
+          cargo test --package=roqoqo-qryd
