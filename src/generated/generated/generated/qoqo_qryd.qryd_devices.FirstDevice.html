@@ -221,7 +221,7 @@
 <h1>qoqo_qryd.qryd_devices.FirstDevice<a class="headerlink" href="#qoqo-qryd-qryd-devices-firstdevice" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="qoqo_qryd.qryd_devices.FirstDevice">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.qryd_devices.</span></span><span class="sig-name descname"><span class="pre">FirstDevice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number_rows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qubits_per_row</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">row_distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_layour</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.qryd_devices.FirstDevice" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.qryd_devices.</span></span><span class="sig-name descname"><span class="pre">FirstDevice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number_rows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qubits_per_row</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">row_distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_layour</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlled_z_phase_relation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlled_phase_phase_relation</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.qryd_devices.FirstDevice" title="Permalink to this definition">¶</a></dt>
 <dd><p>First example of a QRyd quantum device.</p>
 <p>At the moment, it is only a prototype showcasing the fundamental design.
 The device has a 2D grid of tweezer positions with a fixed number of rows and columns
@@ -236,7 +236,8 @@ The distance between neighbouring rows are fixed but in each row the tweezer pos
 At the moment assumes that number of qubits in the traps is fixed. No loading/unloading once device is created.</p></li>
 <li><p><strong>row_distance</strong> (<em>float</em>) -- Fixed distance between rows.</p></li>
 <li><p><strong>initial_layout</strong> (<em>np.ndarray</em>) -- The starting layout (always had the index 0).</p></li>
-<li><p><strong>controlled_z_phase</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) -- The phase shift in the native PhaseShiftedControlledZ gate. Defaults to pi/4.</p></li>
+<li><p><strong>controlled_z_phase_relation</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) -- The relation to use for the PhaseShiftedControlledZ gate.</p></li>
+<li><p><strong>controlled_phase_phase_relation</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) -- The relation to use for the PhaseShiftedControlledPhase gate.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
@@ -260,43 +261,52 @@ At the moment assumes that number of qubits in the traps is fixed. No loading/un
 <tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.qryd_devices.html#qoqo_qryd.qryd_devices.FirstDevice.change_qubit_positions" title="qoqo_qryd.qryd_devices.FirstDevice.change_qubit_positions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">change_qubit_positions</span></code></a>()</p></td>
 <td><p>Change the positions of the qubits in their rows.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.qryd_devices.html#qoqo_qryd.qryd_devices.FirstDevice.controlled_z_phase" title="qoqo_qryd.qryd_devices.FirstDevice.controlled_z_phase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">controlled_z_phase</span></code></a></p></td>
-<td><p>Returns the phase shift in the native PhaseShiftedControlledZ gate.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.qryd_devices.html#qoqo_qryd.qryd_devices.FirstDevice.from_bincode" title="qoqo_qryd.qryd_devices.FirstDevice.from_bincode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_bincode</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.qryd_devices.html#qoqo_qryd.qryd_devices.FirstDevice.from_bincode" title="qoqo_qryd.qryd_devices.FirstDevice.from_bincode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_bincode</span></code></a>(input, /)</p></td>
 <td><p>Convert the bincode representation of the FirstDevice to a FirstDevice using the bincode crate.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.qryd_devices.html#qoqo_qryd.qryd_devices.FirstDevice.from_json" title="qoqo_qryd.qryd_devices.FirstDevice.from_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_json</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.qryd_devices.html#qoqo_qryd.qryd_devices.FirstDevice.from_json" title="qoqo_qryd.qryd_devices.FirstDevice.from_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_json</span></code></a>(input, /)</p></td>
 <td><p>Convert the json representation of a FirstDevice to a FirstDevice.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.qryd_devices.html#qoqo_qryd.qryd_devices.FirstDevice.generic_device" title="qoqo_qryd.qryd_devices.FirstDevice.generic_device"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generic_device</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.qryd_devices.html#qoqo_qryd.qryd_devices.FirstDevice.gate_time_controlled_phase" title="qoqo_qryd.qryd_devices.FirstDevice.gate_time_controlled_phase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gate_time_controlled_phase</span></code></a></p></td>
+<td><p>Returns the gate time of a PhaseShiftedControlledPhase operation with the given qubits and phi and theta angles.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.qryd_devices.html#qoqo_qryd.qryd_devices.FirstDevice.gate_time_controlled_z" title="qoqo_qryd.qryd_devices.FirstDevice.gate_time_controlled_z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gate_time_controlled_z</span></code></a></p></td>
+<td><p>Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.qryd_devices.html#qoqo_qryd.qryd_devices.FirstDevice.generic_device" title="qoqo_qryd.qryd_devices.FirstDevice.generic_device"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generic_device</span></code></a></p></td>
 <td><p>Turns Device into GenericDevice</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.qryd_devices.html#qoqo_qryd.qryd_devices.FirstDevice.number_columns" title="qoqo_qryd.qryd_devices.FirstDevice.number_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">number_columns</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.qryd_devices.html#qoqo_qryd.qryd_devices.FirstDevice.number_columns" title="qoqo_qryd.qryd_devices.FirstDevice.number_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">number_columns</span></code></a></p></td>
 <td><p>Return number of columns in device.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.qryd_devices.html#qoqo_qryd.qryd_devices.FirstDevice.number_qubits" title="qoqo_qryd.qryd_devices.FirstDevice.number_qubits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">number_qubits</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.qryd_devices.html#qoqo_qryd.qryd_devices.FirstDevice.number_qubits" title="qoqo_qryd.qryd_devices.FirstDevice.number_qubits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">number_qubits</span></code></a></p></td>
 <td><p>Return number of qubits in device.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.qryd_devices.html#qoqo_qryd.qryd_devices.FirstDevice.number_rows" title="qoqo_qryd.qryd_devices.FirstDevice.number_rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">number_rows</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.qryd_devices.html#qoqo_qryd.qryd_devices.FirstDevice.number_rows" title="qoqo_qryd.qryd_devices.FirstDevice.number_rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">number_rows</span></code></a></p></td>
 <td><p>Return the number of rows of optical tweezers in the two-dimensional grid of potential qubit positions.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.qryd_devices.html#qoqo_qryd.qryd_devices.FirstDevice.qubit_positions" title="qoqo_qryd.qryd_devices.FirstDevice.qubit_positions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">qubit_positions</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.qryd_devices.html#qoqo_qryd.qryd_devices.FirstDevice.phase_shift_controlled_phase" title="qoqo_qryd.qryd_devices.FirstDevice.phase_shift_controlled_phase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">phase_shift_controlled_phase</span></code></a></p></td>
+<td><p>Returns the PhaseShiftedControlledPhase phase shift according to the device's relation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.qryd_devices.html#qoqo_qryd.qryd_devices.FirstDevice.phase_shift_controlled_z" title="qoqo_qryd.qryd_devices.FirstDevice.phase_shift_controlled_z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">phase_shift_controlled_z</span></code></a></p></td>
+<td><p>Returns the PhaseShiftedControlledZ phase shift according to the device's relation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.qryd_devices.html#qoqo_qryd.qryd_devices.FirstDevice.qubit_positions" title="qoqo_qryd.qryd_devices.FirstDevice.qubit_positions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">qubit_positions</span></code></a></p></td>
 <td><p>Return the position of each qubit in the row-column grid of tweezer positions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.qryd_devices.html#qoqo_qryd.qryd_devices.FirstDevice.set_cutoff" title="qoqo_qryd.qryd_devices.FirstDevice.set_cutoff"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_cutoff</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.qryd_devices.html#qoqo_qryd.qryd_devices.FirstDevice.set_cutoff" title="qoqo_qryd.qryd_devices.FirstDevice.set_cutoff"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_cutoff</span></code></a>()</p></td>
 <td><p>Set distance cutoff for two-qubit gate operations.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.qryd_devices.html#qoqo_qryd.qryd_devices.FirstDevice.switch_layout" title="qoqo_qryd.qryd_devices.FirstDevice.switch_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">switch_layout</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.qryd_devices.html#qoqo_qryd.qryd_devices.FirstDevice.switch_layout" title="qoqo_qryd.qryd_devices.FirstDevice.switch_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">switch_layout</span></code></a>()</p></td>
 <td><p>Switch to a different pre-defined layout.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.qryd_devices.html#qoqo_qryd.qryd_devices.FirstDevice.to_bincode" title="qoqo_qryd.qryd_devices.FirstDevice.to_bincode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_bincode</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.qryd_devices.html#qoqo_qryd.qryd_devices.FirstDevice.to_bincode" title="qoqo_qryd.qryd_devices.FirstDevice.to_bincode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_bincode</span></code></a></p></td>
 <td><p>Return the bincode representation of the FirstDevice using the bincode crate.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.qryd_devices.html#qoqo_qryd.qryd_devices.FirstDevice.to_json" title="qoqo_qryd.qryd_devices.FirstDevice.to_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_json</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.qryd_devices.html#qoqo_qryd.qryd_devices.FirstDevice.to_json" title="qoqo_qryd.qryd_devices.FirstDevice.to_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_json</span></code></a></p></td>
 <td><p>Return the json representation of the FirstDevice.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.qryd_devices.html#qoqo_qryd.qryd_devices.FirstDevice.two_qubit_edges" title="qoqo_qryd.qryd_devices.FirstDevice.two_qubit_edges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">two_qubit_edges</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.qryd_devices.html#qoqo_qryd.qryd_devices.FirstDevice.two_qubit_edges" title="qoqo_qryd.qryd_devices.FirstDevice.two_qubit_edges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">two_qubit_edges</span></code></a></p></td>
 <td><p>Return the list of pairs of qubits linked by a native two-qubit-gate in the device.</p></td>
 </tr>
 </tbody>
@@ -337,19 +347,8 @@ This allows us to change the positions of the qubits in each row.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="qoqo_qryd.qryd_devices.FirstDevice.controlled_z_phase">
-<span class="sig-name descname"><span class="pre">controlled_z_phase</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.qryd_devices.FirstDevice.controlled_z_phase" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the phase shift in the native PhaseShiftedControlledZ gate.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Optional[float]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.qryd_devices.FirstDevice.from_bincode">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_bincode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.qryd_devices.FirstDevice.from_bincode" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_bincode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.qryd_devices.FirstDevice.from_bincode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert the bincode representation of the FirstDevice to a FirstDevice using the bincode crate.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -372,7 +371,7 @@ This allows us to change the positions of the qubits in each row.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.qryd_devices.FirstDevice.from_json">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.qryd_devices.FirstDevice.from_json" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.qryd_devices.FirstDevice.from_json" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert the json representation of a FirstDevice to a FirstDevice.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -388,6 +387,18 @@ This allows us to change the positions of the qubits in each row.</p>
 <dd class="field-even"><p><strong>ValueError</strong> -- Input cannot be deserialized to FirstDevice.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.qryd_devices.FirstDevice.gate_time_controlled_phase">
+<span class="sig-name descname"><span class="pre">gate_time_controlled_phase</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.qryd_devices.FirstDevice.gate_time_controlled_phase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the gate time of a PhaseShiftedControlledPhase operation with the given qubits and phi and theta angles.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.qryd_devices.FirstDevice.gate_time_controlled_z">
+<span class="sig-name descname"><span class="pre">gate_time_controlled_z</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.qryd_devices.FirstDevice.gate_time_controlled_z" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -451,6 +462,18 @@ The memory usage will be inefficient for devices with large qubit numbers.</p>
 <dd class="field-even"><p>int</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.qryd_devices.FirstDevice.phase_shift_controlled_phase">
+<span class="sig-name descname"><span class="pre">phase_shift_controlled_phase</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.qryd_devices.FirstDevice.phase_shift_controlled_phase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the PhaseShiftedControlledPhase phase shift according to the device's relation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.qryd_devices.FirstDevice.phase_shift_controlled_z">
+<span class="sig-name descname"><span class="pre">phase_shift_controlled_z</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.qryd_devices.FirstDevice.phase_shift_controlled_z" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the PhaseShiftedControlledZ phase shift according to the device's relation.</p>
 </dd></dl>
 
 <dl class="py method">

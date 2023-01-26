@@ -16,13 +16,16 @@ qoqo\_qryd.qryd\_devices.FirstDevice
       ~FirstDevice.__init__
       ~FirstDevice.add_layout
       ~FirstDevice.change_qubit_positions
-      ~FirstDevice.controlled_z_phase
       ~FirstDevice.from_bincode
       ~FirstDevice.from_json
+      ~FirstDevice.gate_time_controlled_phase
+      ~FirstDevice.gate_time_controlled_z
       ~FirstDevice.generic_device
       ~FirstDevice.number_columns
       ~FirstDevice.number_qubits
       ~FirstDevice.number_rows
+      ~FirstDevice.phase_shift_controlled_phase
+      ~FirstDevice.phase_shift_controlled_z
       ~FirstDevice.qubit_positions
       ~FirstDevice.set_cutoff
       ~FirstDevice.switch_layout

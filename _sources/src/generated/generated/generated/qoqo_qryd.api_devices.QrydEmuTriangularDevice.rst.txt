@@ -16,9 +16,12 @@ qoqo\_qryd.api\_devices.QrydEmuTriangularDevice
       ~QrydEmuTriangularDevice.__init__
       ~QrydEmuTriangularDevice.from_bincode
       ~QrydEmuTriangularDevice.from_json
+      ~QrydEmuTriangularDevice.gate_time_controlled_phase
+      ~QrydEmuTriangularDevice.gate_time_controlled_z
       ~QrydEmuTriangularDevice.generic_device
       ~QrydEmuTriangularDevice.number_qubits
-      ~QrydEmuTriangularDevice.pcz_theta
+      ~QrydEmuTriangularDevice.phase_shift_controlled_phase
+      ~QrydEmuTriangularDevice.phase_shift_controlled_z
       ~QrydEmuTriangularDevice.qrydbackend
       ~QrydEmuTriangularDevice.seed
       ~QrydEmuTriangularDevice.to_bincode

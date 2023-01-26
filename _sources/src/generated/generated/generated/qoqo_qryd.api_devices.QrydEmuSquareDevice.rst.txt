@@ -16,9 +16,12 @@ qoqo\_qryd.api\_devices.QrydEmuSquareDevice
       ~QrydEmuSquareDevice.__init__
       ~QrydEmuSquareDevice.from_bincode
       ~QrydEmuSquareDevice.from_json
+      ~QrydEmuSquareDevice.gate_time_controlled_phase
+      ~QrydEmuSquareDevice.gate_time_controlled_z
       ~QrydEmuSquareDevice.generic_device
       ~QrydEmuSquareDevice.number_qubits
-      ~QrydEmuSquareDevice.pcz_theta
+      ~QrydEmuSquareDevice.phase_shift_controlled_phase
+      ~QrydEmuSquareDevice.phase_shift_controlled_z
       ~QrydEmuSquareDevice.qrydbackend
       ~QrydEmuSquareDevice.seed
       ~QrydEmuSquareDevice.to_bincode
