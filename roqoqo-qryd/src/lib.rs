@@ -65,3 +65,26 @@ pub use simulator_backend::*;
 pub mod api_backend;
 #[cfg(feature = "web-api")]
 pub use api_backend::*;
+
+/// Compute the angle according to the appropriate relation and phi/theta values.
+///
+/// # Arguments
+///
+/// `relation_name` - The name of the relation to refer to.
+/// `theta` - The theta angle to check.
+///
+/// # Returns
+///
+/// `Some<f64>` - The phi-theta relation.
+/// 'None' - The relation does not exist.
+///
+pub fn phi_theta_relation(relation_name: &str, theta: f64) -> Option<f64> {
+    match relation_name {
+        "DefaultRelation" => Some(
+            5.11382
+                - 0.32933
+                    * f64::ln(1.63085 * theta * theta * f64::exp(2.0 * theta) + theta + 0.02889),
+        ),
+        _ => None,
+    }
+}

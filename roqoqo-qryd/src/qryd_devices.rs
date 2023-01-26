@@ -17,15 +17,12 @@
 
 use std::collections::HashMap;
 
-use crate::{PragmaChangeQRydLayout, PragmaShiftQRydQubit};
+use crate::{phi_theta_relation, PragmaChangeQRydLayout, PragmaShiftQRydQubit};
 use bincode::deserialize;
 use itertools::Itertools;
 use ndarray::Array2;
 use roqoqo::devices::{Device, GenericDevice};
 use roqoqo::RoqoqoBackendError;
-
-/// Default value for the phase shift of PhaseShiftedControlledZ
-pub const CONTROLLED_Z_PHASE_DEFAULT: f64 = std::f64::consts::PI / 4.0;
 
 /// Collection of all QRyd devices
 ///
@@ -84,10 +81,37 @@ impl QRydDevice {
         }
     }
 
-    /// Returns the phase shift in the native PhaseShiftedControlledZ gate.
-    pub fn controlled_z_phase(&self) -> f64 {
+    /// Returns the PhaseShiftedControlledZ phase shift according to the device's relation.
+    pub fn phase_shift_controlled_z(&self) -> Option<f64> {
         match self {
-            QRydDevice::FirstDevice(x) => x.controlled_z_phase(),
+            Self::FirstDevice(x) => x.phase_shift_controlled_z(),
+        }
+    }
+
+    /// Returns the PhaseShiftedControlledPhase phase shift according to the device's relation.
+    pub fn phase_shift_controlled_phase(&self, theta: f64) -> Option<f64> {
+        match self {
+            Self::FirstDevice(x) => x.phase_shift_controlled_phase(theta),
+        }
+    }
+
+    /// Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.
+    pub fn gate_time_controlled_z(&self, control: &usize, target: &usize, phi: f64) -> Option<f64> {
+        match self {
+            Self::FirstDevice(x) => x.gate_time_controlled_z(control, target, phi),
+        }
+    }
+
+    /// Returns the gate time of a PhaseShiftedControlledPhase operation with the given qubits and phi and theta angles.
+    pub fn gate_time_controlled_phase(
+        &self,
+        control: &usize,
+        target: &usize,
+        phi: f64,
+        theta: f64,
+    ) -> Option<f64> {
+        match self {
+            Self::FirstDevice(x) => x.gate_time_controlled_phase(control, target, phi, theta),
         }
     }
 
@@ -199,8 +223,10 @@ pub struct FirstDevice {
     current_layout: usize,
     /// The distance cut-off above which two-qubit gates are not possible
     cutoff: f64,
-    // The phase shift in the native PhaseShiftedControlledZ gate
-    controlled_z_phase: f64,
+    /// The specific PhaseShiftedControlledZ relation to use.
+    controlled_z_phase_relation: String,
+    /// The specific PhaseShiftedControlledPhase relation to use.
+    controlled_phase_phase_relation: String,
     // Controls if multi_qubit_operations are present
     // multi_qubit_operations: bool,
 }
@@ -216,14 +242,16 @@ impl FirstDevice {
     ///                    At the moment assumes that number of qubits in the traps is fixed. No loading/unloading once device is created
     /// `row_distance` - Fixed distance between rows.
     /// `initial_layout` - The device needs at least one layout. After creation the device will be in this layout with layout number 0.
-    /// `controlled_z_phase` - The phase shift in the native PhaseShiftedControlledZ gate. Defaults to pi/4 for None.
+    /// * `controlled_z_phase_relation` - The relation to use for the PhaseShiftedControlledZ gate.
+    /// * `controlled_phase_phase_relation` - The relation to use for the PhaseShiftedControlledPhase gate.
     pub fn new(
         number_rows: usize,
         number_columns: usize,
         qubits_per_row: &[usize],
         row_distance: f64,
         initial_layout: Array2<f64>,
-        controlled_z_phase: Option<f64>,
+        controlled_z_phase_relation: Option<String>,
+        controlled_phase_phase_relation: Option<String>,
     ) -> Result<Self, RoqoqoBackendError> {
         if qubits_per_row.len() != number_rows {
             return Err(RoqoqoBackendError::GenericError {
@@ -256,7 +284,10 @@ impl FirstDevice {
         }
         let layout_register: HashMap<usize, Array2<f64>> = HashMap::new();
         let current_layout = 0;
-        let controlled_z_phase = controlled_z_phase.unwrap_or(CONTROLLED_Z_PHASE_DEFAULT);
+        let controlled_z_phase_relation =
+            controlled_z_phase_relation.unwrap_or_else(|| "DefaultRelation".to_string());
+        let controlled_phase_phase_relation =
+            controlled_phase_phase_relation.unwrap_or_else(|| "DefaultRelation".to_string());
         let return_self = Self {
             number_rows,
             number_columns,
@@ -265,7 +296,8 @@ impl FirstDevice {
             layout_register,
             current_layout,
             cutoff: 1.0,
-            controlled_z_phase,
+            controlled_z_phase_relation,
+            controlled_phase_phase_relation,
             // multi_qubit_operations: true,
         }
         .add_layout(0, initial_layout)?;
@@ -292,9 +324,90 @@ impl FirstDevice {
         &self.qubit_positions
     }
 
-    /// Returns the phase shift in the native PhaseShiftedControlledZ gate.
-    pub fn controlled_z_phase(&self) -> f64 {
-        self.controlled_z_phase
+    /// Returns the PhaseShiftedControlledZ phase shift according to the device's relation.
+    ///
+    /// # Returns
+    ///
+    /// * `f64` - The PhaseShiftedControlledZ phase shift.
+    ///
+    pub fn phase_shift_controlled_z(&self) -> Option<f64> {
+        phi_theta_relation(&self.controlled_z_phase_relation, std::f64::consts::PI)
+    }
+
+    /// Returns the PhaseShiftedControlledPhase phase shift according to the device's relation.
+    ///
+    /// # Returns
+    ///
+    /// * `f64` - The PhaseShiftedControlledPhase phase shift.
+    ///
+    pub fn phase_shift_controlled_phase(&self, theta: f64) -> Option<f64> {
+        phi_theta_relation(&self.controlled_phase_phase_relation, theta)
+    }
+
+    /// Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.
+    ///
+    /// # Arguments
+    ///
+    /// * `control` - The control qubit the gate acts on
+    /// * `target` - The target qubit the gate acts on
+    /// * `phi` - The phi angle to be checked.
+    ///
+    /// # Returns
+    ///
+    /// * `Some<f64>` - The gate time.
+    /// * `None` - The gate is not available on the device.
+    ///
+    pub fn gate_time_controlled_z(&self, control: &usize, target: &usize, phi: f64) -> Option<f64> {
+        if self
+            .two_qubit_gate_time("PhaseShiftedControlledZ", control, target)
+            .is_some()
+        {
+            if let Some(relation_phi) = self.phase_shift_controlled_z() {
+                if (relation_phi.abs() - phi.abs()).abs() < 0.0001 {
+                    return Some(1e-6);
+                }
+            }
+        }
+        None
+    }
+
+    /// Returns the gate time of a PhaseShiftedControlledPhase operation with the given qubits and phi and theta angles.
+    ///
+    /// # Arguments
+    ///
+    /// * `control` - The control qubit the gate acts on
+    /// * `target` - The target qubit the gate acts on
+    /// * `phi` - The phi angle to be checked.
+    /// * `theta` - The theta angle to be checked.
+    ///
+    /// # Returns
+    ///
+    /// * `Some<f64>` - The gate time.
+    /// * `None` - The gate is not available on the device.
+    ///
+    pub fn gate_time_controlled_phase(
+        &self,
+        target: &usize,
+        control: &usize,
+        phi: f64,
+        theta: f64,
+    ) -> Option<f64> {
+        if self
+            .two_qubit_gate_time("PhaseShiftedControlledPhase", control, target)
+            .is_some()
+        {
+            if let Some(relation_phi) = self.phase_shift_controlled_phase(theta) {
+                if (relation_phi.abs() - phi.abs()).abs() < 0.0001 {
+                    Some(1e-6)
+                } else {
+                    None
+                }
+            } else {
+                None
+            }
+        } else {
+            None
+        }
     }
 
     /// Add a new layout to the device.
@@ -438,7 +551,7 @@ impl Device for FirstDevice {
             .layout_register
             .get(&self.current_layout)
             .expect("Unexpectedly did not find current layout. Bug in roqoqo-qryd");
-        // Check for type of gate
+        // Check for type of gate (as well as checking phi-theta relation)
         match hqslang {
             "PhaseShiftedControlledZ" => (),
             "PhaseShiftedControlledPhase" => (),

@@ -16,16 +16,14 @@ use pyo3::prelude::*;
 use pyo3::Python;
 use qoqo_qryd::api_devices::{QrydEmuSquareDeviceWrapper, QrydEmuTriangularDeviceWrapper};
 use std::collections::HashSet;
-use std::f64::consts::PI;
 use std::usize;
 
 // Helper function to create a python object of square device
 fn create_square_device(py: Python) -> &PyCell<QrydEmuSquareDeviceWrapper> {
     let seed: Option<usize> = Some(11);
-    let pcz_theta: f64 = PI / 4.0;
     let device_type = py.get_type::<QrydEmuSquareDeviceWrapper>();
     let device: &PyCell<QrydEmuSquareDeviceWrapper> = device_type
-        .call1((seed, pcz_theta))
+        .call1((seed,))
         .unwrap()
         .cast_as::<PyCell<QrydEmuSquareDeviceWrapper>>()
         .unwrap();
@@ -38,7 +36,7 @@ fn test_new_square() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let device_type = py.get_type::<QrydEmuSquareDeviceWrapper>();
-        let result = device_type.call1((Some(10), PI));
+        let result = device_type.call1((Some(10),));
         assert!(result.is_ok());
         let device = result
             .unwrap()
@@ -160,13 +158,6 @@ fn test_fields_square() {
     Python::with_gil(|py| {
         let device = create_square_device(py);
 
-        let controlled_z_phase = device
-            .call_method0("pcz_theta")
-            .unwrap()
-            .extract::<f64>()
-            .unwrap();
-        assert_eq!(controlled_z_phase, PI / 4.0);
-
         let seed = device
             .call_method0("seed")
             .unwrap()
@@ -253,10 +244,9 @@ fn test_twoqubitedges_square() {
 // Helper function to create a python object of triangular device
 fn create_triangular_device(py: Python) -> &PyCell<QrydEmuTriangularDeviceWrapper> {
     let seed: Option<usize> = Some(11);
-    let pcz_theta: f64 = PI / 4.0;
     let device_type = py.get_type::<QrydEmuTriangularDeviceWrapper>();
     let device: &PyCell<QrydEmuTriangularDeviceWrapper> = device_type
-        .call1((seed, pcz_theta))
+        .call1((seed,))
         .unwrap()
         .cast_as::<PyCell<QrydEmuTriangularDeviceWrapper>>()
         .unwrap();
@@ -269,7 +259,7 @@ fn test_new_triangular() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let device_type = py.get_type::<QrydEmuTriangularDeviceWrapper>();
-        let result = device_type.call1((Some(10), PI));
+        let result = device_type.call1((Some(10),));
         assert!(result.is_ok());
         let device = result
             .unwrap()
@@ -392,13 +382,6 @@ fn test_fields_triangular() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let device = create_triangular_device(py);
-
-        let controlled_z_phase = device
-            .call_method0("pcz_theta")
-            .unwrap()
-            .extract::<f64>()
-            .unwrap();
-        assert_eq!(controlled_z_phase, PI / 4.0);
 
         let seed = device
             .call_method0("seed")
@@ -544,5 +527,77 @@ fn test_generic_device_triangular() {
             .extract::<usize>()
             .unwrap();
         assert_eq!(num_gen, num_dev);
+    })
+}
+
+// Test phi-theta relation methods.
+#[test]
+fn test_phi_theta_relation() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let triangular = create_triangular_device(py);
+        let square = create_square_device(py);
+
+        let pscz_tr = triangular
+            .call_method0("phase_shift_controlled_z")
+            .unwrap()
+            .extract::<f64>()
+            .unwrap();
+        let pscz_sq = square
+            .call_method0("phase_shift_controlled_z")
+            .unwrap()
+            .extract::<f64>()
+            .unwrap();
+        assert!(pscz_tr.is_finite());
+        assert!(pscz_sq.is_finite());
+
+        let pscp_tr = triangular
+            .call_method1("phase_shift_controlled_phase", (1.0,))
+            .unwrap()
+            .extract::<f64>()
+            .unwrap();
+        let pscp_sq = square
+            .call_method1("phase_shift_controlled_phase", (1.0,))
+            .unwrap()
+            .extract::<f64>()
+            .unwrap();
+        assert!(pscp_tr.is_finite());
+        assert!(pscp_sq.is_finite());
+
+        let gtcz_tr_err = triangular.call_method1("gate_time_controlled_z", (0, 1, 0.3));
+        let gtcz_sq_err = square.call_method1("gate_time_controlled_z", (0, 1, 0.3));
+        assert!(gtcz_tr_err.is_err());
+        assert!(gtcz_sq_err.is_err());
+
+        let gtcz_tr_ok = triangular
+            .call_method1("gate_time_controlled_z", (0, 1, pscz_tr))
+            .unwrap()
+            .extract::<f64>()
+            .unwrap();
+        let gtcz_sq_ok = square
+            .call_method1("gate_time_controlled_z", (0, 1, pscz_sq))
+            .unwrap()
+            .extract::<f64>()
+            .unwrap();
+        assert!(gtcz_tr_ok.is_finite());
+        assert!(gtcz_sq_ok.is_finite());
+
+        let gtcp_tr_err = triangular.call_method1("gate_time_controlled_phase", (0, 1, 0.3, 0.7));
+        let gtcp_sq_err = square.call_method1("gate_time_controlled_phase", (0, 1, 0.3, 0.7));
+        assert!(gtcp_tr_err.is_err());
+        assert!(gtcp_sq_err.is_err());
+
+        let gtcp_tr_ok = triangular
+            .call_method1("gate_time_controlled_phase", (0, 1, pscp_tr, 1.0))
+            .unwrap()
+            .extract::<f64>()
+            .unwrap();
+        let gtcp_sq_ok = square
+            .call_method1("gate_time_controlled_phase", (0, 1, pscp_sq, 1.0))
+            .unwrap()
+            .extract::<f64>()
+            .unwrap();
+        assert!(gtcp_tr_ok.is_finite());
+        assert!(gtcp_sq_ok.is_finite());
     })
 }

@@ -26,7 +26,6 @@ use roqoqo::{operations, Circuit, QuantumProgram};
 use roqoqo_qryd::api_devices::{QRydAPIDevice, QrydEmuSquareDevice};
 use roqoqo_qryd::{APIBackend, QRydJobResult, QRydJobStatus, ResultCounts};
 use std::collections::HashMap;
-use std::f64::consts::PI;
 use std::usize;
 use std::{env, thread};
 
@@ -35,10 +34,9 @@ fn create_backend_with_square_device(
     py: Python,
     seed: Option<usize>,
 ) -> &PyCell<APIBackendWrapper> {
-    let pcz_theta: f64 = PI / 4.0;
     let device_type = py.get_type::<QrydEmuSquareDeviceWrapper>();
     let device: &PyCell<QrydEmuSquareDeviceWrapper> = device_type
-        .call1((seed, pcz_theta))
+        .call1((seed,))
         .unwrap()
         .cast_as::<PyCell<QrydEmuSquareDeviceWrapper>>()
         .unwrap();
@@ -56,10 +54,9 @@ fn create_valid_backend_with_square_device(
     py: Python,
     seed: Option<usize>,
 ) -> &PyCell<APIBackendWrapper> {
-    let pcz_theta: f64 = PI / 4.0;
     let device_type = py.get_type::<QrydEmuSquareDeviceWrapper>();
     let device: &PyCell<QrydEmuSquareDeviceWrapper> = device_type
-        .call1((seed, pcz_theta))
+        .call1((seed,))
         .unwrap()
         .cast_as::<PyCell<QrydEmuSquareDeviceWrapper>>()
         .unwrap();
@@ -79,10 +76,9 @@ fn create_valid_backend_with_square_device_mocked(
     seed: Option<usize>,
     mock_port: String,
 ) -> &PyCell<APIBackendWrapper> {
-    let pcz_theta: f64 = PI / 4.0;
     let device_type = py.get_type::<QrydEmuSquareDeviceWrapper>();
     let device: &PyCell<QrydEmuSquareDeviceWrapper> = device_type
-        .call1((seed, pcz_theta))
+        .call1((seed,))
         .unwrap()
         .cast_as::<PyCell<QrydEmuSquareDeviceWrapper>>()
         .unwrap();
@@ -145,10 +141,9 @@ fn test_new_square() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let seed: Option<usize> = Some(11);
-        let pcz_theta: f64 = PI / 4.0;
         let device_type = py.get_type::<QrydEmuSquareDeviceWrapper>();
         let device: &PyCell<QrydEmuSquareDeviceWrapper> = device_type
-            .call1((seed, pcz_theta))
+            .call1((seed,))
             .unwrap()
             .cast_as::<PyCell<QrydEmuSquareDeviceWrapper>>()
             .unwrap();
@@ -168,10 +163,9 @@ fn test_fail_new_square() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let seed: Option<usize> = Some(11);
-        let pcz_theta: f64 = PI / 4.0;
         let device_type = py.get_type::<QrydEmuSquareDeviceWrapper>();
         let device: &PyCell<QrydEmuSquareDeviceWrapper> = device_type
-            .call1((seed, pcz_theta))
+            .call1((seed,))
             .unwrap()
             .cast_as::<PyCell<QrydEmuSquareDeviceWrapper>>()
             .unwrap();
@@ -197,10 +191,9 @@ fn test_new_triangle() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let seed: Option<usize> = Some(11);
-        let pcz_theta: f64 = PI / 4.0;
         let device_type = py.get_type::<QrydEmuTriangularDeviceWrapper>();
         let device: &PyCell<QrydEmuTriangularDeviceWrapper> = device_type
-            .call1((seed, pcz_theta))
+            .call1((seed,))
             .unwrap()
             .cast_as::<PyCell<QrydEmuTriangularDeviceWrapper>>()
             .unwrap();
@@ -661,7 +654,6 @@ fn test_query_result_fail() {
 fn test_convert_into_backend() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let pcz_theta: f64 = PI / 4.0;
         let none_string: Option<String> = None;
         let server = MockServer::start();
         let initial: &PyCell<APIBackendWrapper> = if env::var("QRYD_API_TOKEN").is_ok() {
@@ -672,7 +664,7 @@ fn test_convert_into_backend() {
 
         let converted = convert_into_backend(initial).unwrap();
 
-        let rust_dev: QrydEmuSquareDevice = QrydEmuSquareDevice::new(Some(11), Some(pcz_theta));
+        let rust_dev: QrydEmuSquareDevice = QrydEmuSquareDevice::new(Some(11), None, None);
         let rust_api: QRydAPIDevice = QRydAPIDevice::from(rust_dev);
         let rust_backend: APIBackend = if env::var("QRYD_API_TOKEN").is_ok() {
             APIBackend::new(rust_api, none_string.clone(), Some(30), none_string).unwrap()

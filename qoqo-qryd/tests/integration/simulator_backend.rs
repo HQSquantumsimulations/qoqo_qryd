@@ -499,10 +499,17 @@ fn test_convert_to_device() {
             .unwrap();
 
         let converted = convert_into_backend(backend).unwrap();
-        let rust_dev: QRydDevice =
-            FirstDevice::new(2, 2, &[1, 1], 1.0, array![[0.0, 1.0,], [0.0, 1.0]], None)
-                .unwrap()
-                .into();
+        let rust_dev: QRydDevice = FirstDevice::new(
+            2,
+            2,
+            &[1, 1],
+            1.0,
+            array![[0.0, 1.0,], [0.0, 1.0]],
+            None,
+            None,
+        )
+        .unwrap()
+        .into();
         let rust_backend = SimulatorBackend::new(rust_dev);
         assert_eq!(converted, rust_backend);
     });
@@ -561,7 +568,7 @@ fn test_pyo3_new_change_layout() {
         let check_2: &str = check_str.split("qubit_positions").collect::<Vec<&str>>()[1]
             .split(")}")
             .collect::<Vec<&str>>()[1];
-        let comp_str = format!("SimulatorBackendWrapper {{ internal: SimulatorBackend {{ device: FirstDevice(FirstDevice {{ number_rows: 2, number_columns: 2, qubit_positions: {{0: (0, 0), 1: (1, 0)}}, row_distance: 1.0, layout_register: {{0: {:?}}}, current_layout: 0, cutoff: 1.0, controlled_z_phase: 0.7853981633974483 }}) }} }}", layout);
+        let comp_str = format!("SimulatorBackendWrapper {{ internal: SimulatorBackend {{ device: FirstDevice(FirstDevice {{ number_rows: 2, number_columns: 2, qubit_positions: {{0: (0, 0), 1: (1, 0)}}, row_distance: 1.0, layout_register: {{0: {:?}}}, current_layout: 0, cutoff: 1.0, controlled_z_phase_relation: \"DefaultRelation\", controlled_phase_phase_relation: \"DefaultRelation\" }}) }} }}", layout);
         let comp_1: &str = comp_str.split("qubit_positions").collect::<Vec<&str>>()[0];
         let comp_2: &str = comp_str.split("qubit_positions").collect::<Vec<&str>>()[1]
             .split(")}")

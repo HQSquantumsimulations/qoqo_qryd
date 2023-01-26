@@ -21,8 +21,8 @@ use roqoqo_qryd::api_devices::{QRydAPIDevice, QrydEmuSquareDevice, QrydEmuTriang
 ///
 /// At the moment only contains a square and a triangular device.
 #[pyclass(name = "QrydEmuSquareDevice", module = "qoqo_qryd")]
-#[derive(Clone, Debug, PartialEq)]
-#[pyo3(text_signature = "(seed, pcz_theta)")]
+#[derive(Clone, Debug, PartialEq, Eq)]
+#[pyo3(text_signature = "(seed, controlled_z_phase_relation, controlled_phase_phase_relation)")]
 pub struct QrydEmuSquareDeviceWrapper {
     /// Internal storage of [roqoqo_qryd::QRydAPIDevice]
     pub internal: QrydEmuSquareDevice,
@@ -34,15 +34,25 @@ impl QrydEmuSquareDeviceWrapper {
     ///
     /// Args:
     ///     seed (int): Seed, if not provided will be set to 0 per default (not recommended!)
-    ///     pcz_theta (Optional[float]): Phase angle for the basis gate 'PhaseShiftedControllZ'.
-    ///                                  If not provided will be set to (preliminary) hardware goal 2.13.
+    ///     controlled_z_phase_relation (Optinal[str]): The String used to choose what kind of phi-theta relation
+    ///                                                 to use for the PhaseShiftedControlledZ gate
+    ///     controlled_phase_phase_relation (Optinal[str]): The String used to choose what kind of phi-theta relation
+    ///                                                     to use for the PhaseShiftedControlledPhase gate
     ///
     /// Returns:
     ///     QrydEmuSquareDevice: New device
     #[new]
-    pub fn new(seed: Option<usize>, pcz_theta: Option<f64>) -> Self {
+    pub fn new(
+        seed: Option<usize>,
+        controlled_z_phase_relation: Option<String>,
+        controlled_phase_phase_relation: Option<String>,
+    ) -> Self {
         Self {
-            internal: QrydEmuSquareDevice::new(seed, pcz_theta),
+            internal: QrydEmuSquareDevice::new(
+                seed,
+                controlled_z_phase_relation,
+                controlled_phase_phase_relation,
+            ),
         }
     }
 
@@ -107,7 +117,7 @@ impl QrydEmuSquareDeviceWrapper {
     ///     TypeError: Input cannot be converted to byte array.
     ///     ValueError: Input cannot be deserialized to QrydEmuSquareDevice.
     #[staticmethod]
-    #[pyo3(text_signature = "(input)")]
+    #[pyo3(text_signature = "(input, /)")]
     pub fn from_bincode(input: &PyAny) -> PyResult<QrydEmuSquareDeviceWrapper> {
         let bytes = input
             .extract::<Vec<u8>>()
@@ -144,7 +154,7 @@ impl QrydEmuSquareDeviceWrapper {
     /// Raises:
     ///     ValueError: Input cannot be deserialized to QrydEmuSquareDevice.
     #[staticmethod]
-    #[pyo3(text_signature = "(input)")]
+    #[pyo3(text_signature = "(input, /)")]
     fn from_json(input: &str) -> PyResult<QrydEmuSquareDeviceWrapper> {
         Ok(QrydEmuSquareDeviceWrapper {
             internal: serde_json::from_str(input).map_err(|_| {
@@ -224,9 +234,38 @@ impl QrydEmuSquareDeviceWrapper {
         self.internal.seed()
     }
 
-    /// Returns the phase angle of the basis gate 'PhaseShiftedControllZ'.
-    pub fn pcz_theta(&self) -> f64 {
-        self.internal.pcz_theta()
+    /// Returns the PhaseShiftedControlledZ phase shift according to the device's relation.
+    pub fn phase_shift_controlled_z(&self) -> PyResult<f64> {
+        self.internal
+            .phase_shift_controlled_z()
+            .ok_or_else(|| PyValueError::new_err("Error in relation selection."))
+    }
+
+    /// Returns the PhaseShiftedControlledPhase phase shift according to the device's relation.
+    pub fn phase_shift_controlled_phase(&self, theta: f64) -> PyResult<f64> {
+        self.internal
+            .phase_shift_controlled_phase(theta)
+            .ok_or_else(|| PyValueError::new_err("Error in relation selection."))
+    }
+
+    /// Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.
+    pub fn gate_time_controlled_z(&self, control: usize, target: usize, phi: f64) -> PyResult<f64> {
+        self.internal
+            .gate_time_controlled_z(&control, &target, phi)
+            .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))
+    }
+
+    /// Returns the gate time of a PhaseShiftedControlledPhase operation with the given qubits and phi and theta angles.
+    pub fn gate_time_controlled_phase(
+        &self,
+        control: usize,
+        target: usize,
+        phi: f64,
+        theta: f64,
+    ) -> PyResult<f64> {
+        self.internal
+            .gate_time_controlled_phase(&target, &control, phi, theta)
+            .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))
     }
 }
 
@@ -234,8 +273,8 @@ impl QrydEmuSquareDeviceWrapper {
 ///
 /// At the moment only contains a square and a triangular device.
 #[pyclass(name = "QrydEmuTriangularDevice", module = "qoqo_qryd")]
-#[derive(Clone, Debug, PartialEq)]
-#[pyo3(text_signature = "(seed, pcz_theta)")]
+#[derive(Clone, Debug, PartialEq, Eq)]
+#[pyo3(text_signature = "(seed, controlled_z_phase_relation, controlled_phase_phase_relation)")]
 pub struct QrydEmuTriangularDeviceWrapper {
     /// Internal storage of [roqoqo_qryd::QRydAPIDevice]
     pub internal: QrydEmuTriangularDevice,
@@ -247,15 +286,25 @@ impl QrydEmuTriangularDeviceWrapper {
     ///
     /// Args:
     ///     seed (int): Seed, if not provided will be set to 0 per default (not recommended!)
-    ///     pcz_theta (Optional[float]): Phase angle for the basis gate 'PhaseShiftedControllZ'.
-    ///                                  If not provided will be set to (preliminary) hardware goal 2.13.
+    ///     controlled_z_phase_relation (Optinal[str]): The String used to choose what kind of phi-theta relation
+    ///                                                 to use for the PhaseShiftedControlledZ gate
+    ///     controlled_phase_phase_relation (Optinal[str]): The String used to choose what kind of phi-theta relation
+    ///                                                     to use for the PhaseShiftedControlledPhase gate
     ///
     /// Returns:
     ///     QrydEmuTriangularDevice: New device
     #[new]
-    pub fn new(seed: Option<usize>, pcz_theta: Option<f64>) -> Self {
+    pub fn new(
+        seed: Option<usize>,
+        controlled_z_phase_relation: Option<String>,
+        controlled_phase_phase_relation: Option<String>,
+    ) -> Self {
         Self {
-            internal: QrydEmuTriangularDevice::new(seed, pcz_theta),
+            internal: QrydEmuTriangularDevice::new(
+                seed,
+                controlled_z_phase_relation,
+                controlled_phase_phase_relation,
+            ),
         }
     }
 
@@ -321,7 +370,7 @@ impl QrydEmuTriangularDeviceWrapper {
     ///     TypeError: Input cannot be converted to byte array.
     ///     ValueError: Input cannot be deserialized to QrydEmuTriangularDevice.
     #[staticmethod]
-    #[pyo3(text_signature = "(input)")]
+    #[pyo3(text_signature = "(input, /)")]
     pub fn from_bincode(input: &PyAny) -> PyResult<QrydEmuTriangularDeviceWrapper> {
         let bytes = input
             .extract::<Vec<u8>>()
@@ -359,7 +408,7 @@ impl QrydEmuTriangularDeviceWrapper {
     /// Raises:
     ///     ValueError: Input cannot be deserialized to QrydEmuTriangularDevice.
     #[staticmethod]
-    #[pyo3(text_signature = "(input)")]
+    #[pyo3(text_signature = "(input, /)")]
     fn from_json(input: &str) -> PyResult<QrydEmuTriangularDeviceWrapper> {
         Ok(QrydEmuTriangularDeviceWrapper {
             internal: serde_json::from_str(input).map_err(|_| {
@@ -440,9 +489,38 @@ impl QrydEmuTriangularDeviceWrapper {
         self.internal.seed()
     }
 
-    /// Returns the phase angle of the basis gate 'PhaseShiftedControllZ'.
-    pub fn pcz_theta(&self) -> f64 {
-        self.internal.pcz_theta()
+    /// Returns the PhaseShiftedControlledZ phase shift according to the device's relation.
+    pub fn phase_shift_controlled_z(&self) -> PyResult<f64> {
+        self.internal
+            .phase_shift_controlled_z()
+            .ok_or_else(|| PyValueError::new_err("Error in relation selection."))
+    }
+
+    /// Returns the PhaseShiftedControlledPhase phase shift according to the device's relation.
+    pub fn phase_shift_controlled_phase(&self, theta: f64) -> PyResult<f64> {
+        self.internal
+            .phase_shift_controlled_phase(theta)
+            .ok_or_else(|| PyValueError::new_err("Error in relation selection."))
+    }
+
+    /// Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.
+    pub fn gate_time_controlled_z(&self, control: usize, target: usize, phi: f64) -> PyResult<f64> {
+        self.internal
+            .gate_time_controlled_z(&control, &target, phi)
+            .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))
+    }
+
+    /// Returns the gate time of a PhaseShiftedControlledPhase operation with the given qubits and phi and theta angles.
+    pub fn gate_time_controlled_phase(
+        &self,
+        control: usize,
+        target: usize,
+        phi: f64,
+        theta: f64,
+    ) -> PyResult<f64> {
+        self.internal
+            .gate_time_controlled_phase(&target, &control, phi, theta)
+            .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))
     }
 }
 

@@ -37,7 +37,7 @@ use std::{thread, time};
 /// This limitation is introduced by design to check the compatability of quantum programs with a model of the QRyd hardware.
 /// For simulations of the QRyd quantum computer use the backend simulator [crate::Backend].
 ///
-#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct APIBackend {
     /// Device representing the model of a QRyd device.
     pub device: QRydAPIDevice,
@@ -67,8 +67,6 @@ struct QRydRunData {
     seed_simulator: Option<usize>,
     /// Random seed for the compiler default none
     seed_compiler: Option<usize>,
-    /// Phase angle for the basis gate 'PhaseShiftedControllZ'.
-    pcz_theta: f64,
     /// Use the extended set in SABRE routing
     /// default true
     use_extended_set: bool,
@@ -336,6 +334,8 @@ impl APIBackend {
     /// * `timeout` - Timeout for synchronous EvaluatingBackend trait. In the evaluating trait.
     ///               In synchronous operation the WebAPI is queried every 30 seconds until it has
     ///               been queried `timeout` times.
+    /// * `mock_port` - Server port to be used for testing purposes.
+    ///
     pub fn new(
         device: QRydAPIDevice,
         access_token: Option<String>,
@@ -384,7 +384,6 @@ impl APIBackend {
     pub fn post_job(&self, quantumprogram: QuantumProgram) -> Result<String, RoqoqoBackendError> {
         // Prepare data that need to be passed to the WebAPI client
         let seed_param: usize = self.device.seed(); // seed.unwrap_or(0);
-        let theta_param: f64 = self.device.pcz_theta(); // pcz_theta.unwrap_or(0.0);
         match &quantumprogram {
             QuantumProgram::ClassicalRegister { measurement, .. } => {
                 if measurement.circuits.len() != 1 {
@@ -407,7 +406,6 @@ impl APIBackend {
         // dbg!(&serde_json::to_string(&quantumprogram).unwrap());
         let data = QRydRunData {
             backend: self.device.qrydbackend(),
-            pcz_theta: theta_param,
             program: quantumprogram,
             dev: false,
             fusion_max_qubits: 4,
@@ -709,6 +707,7 @@ impl APIBackend {
     ///             cannont be extrected from returned result
     /// `number_qubits` - The number of measured qubits. Needs to be specified based on original circuit
     ///                   cannont be extrected from returned result
+    ///
     pub fn counts_to_result(
         counts: ResultCounts,
         readout: String,
@@ -838,7 +837,7 @@ mod test {
     /// Test Debug, Clone and PartialEq of ApiBackend
     #[test]
     fn debug_and_clone() {
-        let device: QRydAPIDevice = QrydEmuSquareDevice::new(None, None).into();
+        let device: QRydAPIDevice = QrydEmuSquareDevice::new(None, None, None).into();
         let backend = APIBackend::new(device.clone(), Some("".to_string()), Some(2), None).unwrap();
         let a = format!("{:?}", backend);
         assert!(a.contains("QrydEmuSquareDevice"));
@@ -863,7 +862,6 @@ mod test {
 
         let test = QRydRunData {
             backend: "qryd_emu_cloudcomp_square".to_string(),
-            pcz_theta: 0.0,
             program,
             dev: false,
             fusion_max_qubits: 4,
@@ -875,7 +873,7 @@ mod test {
             extended_set_weight: 0.5,
             reverse_traversal_iterations: 2,
         };
-        assert_eq!(format!("{:?}", test), "QRydRunData { backend: \"qryd_emu_cloudcomp_square\", dev: false, fusion_max_qubits: 4, seed_simulator: None, seed_compiler: None, pcz_theta: 0.0, use_extended_set: true, use_reverse_traversal: true, reverse_traversal_iterations: 2, extended_set_size: 5, extended_set_weight: 0.5, program: ClassicalRegister { measurement: ClassicalRegister { constant_circuit: None, circuits: [Circuit { definitions: [], operations: [], _roqoqo_version: RoqoqoVersion }] }, input_parameter_names: [\"test\"] } }");
+        assert_eq!(format!("{:?}", test), "QRydRunData { backend: \"qryd_emu_cloudcomp_square\", dev: false, fusion_max_qubits: 4, seed_simulator: None, seed_compiler: None, use_extended_set: true, use_reverse_traversal: true, reverse_traversal_iterations: 2, extended_set_size: 5, extended_set_weight: 0.5, program: ClassicalRegister { measurement: ClassicalRegister { constant_circuit: None, circuits: [Circuit { definitions: [], operations: [], _roqoqo_version: RoqoqoVersion }] }, input_parameter_names: [\"test\"] } }");
     }
 
     /// Test Debug of QRydJobResult
@@ -950,7 +948,7 @@ mod test {
                 .json_body_obj(&error);
         });
         let number_qubits = 6;
-        let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
+        let device = QrydEmuSquareDevice::new(Some(2), None, None);
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
         let api_backend_new =
             APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
@@ -1032,7 +1030,7 @@ mod test {
             then.status(422);
         });
         let number_qubits = 6;
-        let device = QrydEmuSquareDevice::new(Some(2), Some(0.23));
+        let device = QrydEmuSquareDevice::new(Some(2), None, None);
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
         let api_backend_new =
             APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();

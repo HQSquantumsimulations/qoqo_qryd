@@ -35,7 +35,7 @@ use std::collections::HashMap;
 /// For simulations of the QRyd quantum computer use the Backend simulator [crate::Backend].
 ///
 #[pyclass(name = "APIBackend", module = "qoqo_qryd")]
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 #[pyo3(text_signature = "(device, access_token, timeout, mock_port)")]
 pub struct APIBackendWrapper {
     /// Internal storage of [roqoqo_qryd::APIBackend]
@@ -57,9 +57,10 @@ impl APIBackendWrapper {
     ///     device (Device): QRydAPIDevice providing information about the endpoint running Circuits.
     ///     access_token (Optional[str]): Optional access token to QRyd endpoints.
     ///                                   When None access token is read from QRYD_API_TOKEN environmental variable.
-    ///     timeout (Optional[int]) - Timeout for synchronous EvaluatingBackend trait. In the evaluating trait.
+    ///     timeout (Optional[int]): Timeout for synchronous EvaluatingBackend trait. In the evaluating trait.
     ///               In synchronous operation the WebAPI is queried every 30 seconds until it has
     ///               been queried `timeout` times.
+    ///     mock_port (Optional[str]): Server port to be used for testing purposes.
     ///
     /// Raises:
     ///     TypeError: Device Parameter is not QRydAPIDevice
@@ -95,7 +96,7 @@ impl APIBackendWrapper {
     ///
     /// Returns:
     ///     str: URL of the location of the job.
-    #[pyo3(text_signature = "($self, quantumprogram)")]
+    #[pyo3(text_signature = "($self, quantumprogram, /)")]
     pub fn post_job(&self, quantumprogram: &PyAny) -> PyResult<String> {
         let program = convert_into_quantum_program(quantumprogram).map_err(|err| {
             PyTypeError::new_err(format!(
@@ -118,7 +119,7 @@ impl APIBackendWrapper {
     /// Returns:
     ///     QRydJobStatus(dict): status and message of the job.
     ///
-    #[pyo3(text_signature = "($self, job_location)")]
+    #[pyo3(text_signature = "($self, job_location, /)")]
     pub fn get_job_status(&self, job_location: String) -> PyResult<HashMap<&'static str, String>> {
         let status = self.internal.get_job_status(job_location).map_err(|err| {
             PyRuntimeError::new_err(format!("Error retrieving job status: {}", err))
@@ -137,7 +138,7 @@ impl APIBackendWrapper {
     /// Returns
     ///     dict: Result of the job.
     ///
-    #[pyo3(text_signature = "($self, job_location)")]
+    #[pyo3(text_signature = "($self, job_location, /)")]
     pub fn get_job_result(&self, job_location: String) -> PyResult<PyObject> {
         let job_result = self.internal.get_job_result(job_location).map_err(|err| {
             PyRuntimeError::new_err(format!("Error retrieving job result: {}", err))
@@ -176,7 +177,7 @@ impl APIBackendWrapper {
     /// Raises:
     ///     RuntimeError: Could not delete job.
     ///
-    #[pyo3(text_signature = "($self, job_location)")]
+    #[pyo3(text_signature = "($self, job_location, /)")]
     pub fn delete_job(&self, job_location: String) -> PyResult<()> {
         self.internal
             .delete_job(job_location)
@@ -229,7 +230,7 @@ impl APIBackendWrapper {
     ///     TypeError: Input cannot be converted to byte array.
     ///     ValueError: Input cannot be deserialized to APIBackend.
     #[staticmethod]
-    #[pyo3(text_signature = "(input)")]
+    #[pyo3(text_signature = "(input, /)")]
     pub fn from_bincode(input: &PyAny) -> PyResult<APIBackendWrapper> {
         let bytes = input
             .extract::<Vec<u8>>()
@@ -265,7 +266,7 @@ impl APIBackendWrapper {
     /// Raises:
     ///     ValueError: Input cannot be deserialized to APIBackend.
     #[staticmethod]
-    #[pyo3(text_signature = "(input)")]
+    #[pyo3(text_signature = "(input, /)")]
     fn from_json(input: &str) -> PyResult<APIBackendWrapper> {
         Ok(APIBackendWrapper {
             internal: serde_json::from_str(input)
@@ -293,7 +294,7 @@ impl APIBackendWrapper {
     /// Raises:
     ///     TypeError: Circuit argument cannot be converted to qoqo Circuit
     ///     RuntimeError: Running Circuit failed
-    #[pyo3(text_signature = "($self, circuit)")]
+    #[pyo3(text_signature = "($self, circuit, /)")]
     pub fn run_circuit(&self, circuit: &PyAny) -> PyResult<Registers> {
         let circuit = convert_into_circuit(circuit).map_err(|err| {
             PyTypeError::new_err(format!(
@@ -327,7 +328,7 @@ impl APIBackendWrapper {
     /// Raises:
     ///     TypeError: Circuit argument cannot be converted to qoqo Circuit
     ///     RuntimeError: Running Circuit failed
-    #[pyo3(text_signature = "($self, measurement)")]
+    #[pyo3(text_signature = "($self, measurement, /)")]
     pub fn run_measurement_registers(&self, measurement: &PyAny) -> PyResult<Registers> {
         let mut run_circuits: Vec<Circuit> = Vec::new();
 
@@ -429,7 +430,7 @@ impl APIBackendWrapper {
     /// Raises:
     ///     TypeError: Measurement evaluate function could not be used
     ///     RuntimeError: Internal error measurement.evaluation returned unknown type
-    #[pyo3(text_signature = "($self, measurement)")]
+    #[pyo3(text_signature = "($self, measurement, /)")]
     pub fn run_measurement(&self, measurement: &PyAny) -> PyResult<Option<HashMap<String, f64>>> {
         let (bit_registers, float_registers, complex_registers) =
             self.run_measurement_registers(measurement)?;
@@ -479,7 +480,7 @@ mod test {
     use roqoqo_qryd::api_devices::*;
     #[test]
     fn debug_and_clone() {
-        let device: QRydAPIDevice = QrydEmuSquareDevice::new(None, None).into();
+        let device: QRydAPIDevice = QrydEmuSquareDevice::new(None, None, None).into();
         let backend = APIBackend::new(device.clone(), Some("".to_string()), Some(2), None).unwrap();
         let wrapper = APIBackendWrapper { internal: backend };
         let a = format!("{:?}", wrapper);
