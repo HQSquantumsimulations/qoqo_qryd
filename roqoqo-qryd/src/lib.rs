@@ -78,7 +78,10 @@ pub use api_backend::*;
 /// `Some<f64>` - The phi-theta relation.
 /// 'None' - The relation does not exist.
 ///
-pub fn phi_theta_relation(relation_name: &str, theta: f64) -> Option<f64> {
+pub fn phi_theta_relation(relation_name: &str, mut theta: f64) -> Option<f64> {
+    while theta < 0.0 {
+        theta += std::f64::consts::PI;
+    }
     match relation_name {
         "DefaultRelation" => Some(
             5.11382

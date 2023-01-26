@@ -2,6 +2,10 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+## 0.8.1
+
+* Fixes in the phi-theta relation computation
+
 ## 0.8.0
 
 * Support for PhaseShiftedControlledPhase operation in devices
