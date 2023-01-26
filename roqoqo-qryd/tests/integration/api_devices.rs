@@ -650,5 +650,4 @@ fn test_phi_theta_relation() {
             0.1
         )
         .is_none());
-    println!("{:?}", phi_theta_relation("DefaultRelation", -std::f64::consts::FRAC_PI_2));
 }
