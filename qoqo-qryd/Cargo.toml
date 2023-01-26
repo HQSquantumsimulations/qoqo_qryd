@@ -46,7 +46,7 @@ test-case = "2.0"
 httpmock = "0.6.7"
 
 [build-dependencies]
-pyo3-build-config = "0.17"
+pyo3-build-config = "0.18"
 
 [features]
 extension-module = ["pyo3/extension-module", "simulator", "web-api"]
