@@ -530,6 +530,41 @@ fn test_generic_device_triangular() {
     })
 }
 
+// Test gate time methods
+#[test]
+fn test_gate_times() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let triangular = create_triangular_device(py);
+        let square = create_square_device(py);
+
+        let sing_tr_ok = triangular.call_method1("single_qubit_gate_time", ("RotateX", 0));
+        let sing_sq_ok = square.call_method1("single_qubit_gate_time", ("RotateX", 0));
+        let sing_tr_err = triangular.call_method1("single_qubit_gate_time", ("Hadamard", 0));
+        let sing_sq_err = square.call_method1("single_qubit_gate_time", ("Hadamard", 0));
+        assert!(sing_tr_ok.is_ok());
+        assert!(sing_sq_ok.is_ok());
+        assert!(sing_tr_err.is_err());
+        assert!(sing_sq_err.is_err());
+
+        let two_tr_ok =
+            triangular.call_method1("two_qubit_gate_time", ("PhaseShiftedControlledZ", 0, 1));
+        let two_sq_ok =
+            square.call_method1("two_qubit_gate_time", ("PhaseShiftedControlledZ", 0, 1));
+        let two_tr_err = triangular.call_method1("two_qubit_gate_time", ("CNOT", 0, 1));
+        let two_sq_err = square.call_method1("two_qubit_gate_time", ("CNOT", 0, 1));
+        assert!(two_tr_ok.is_ok());
+        assert!(two_sq_ok.is_ok());
+        assert!(two_tr_err.is_err());
+        assert!(two_sq_err.is_err());
+
+        let mult_tr = triangular.call_method1("multi_qubit_gate_time", ("MultiQubitZZ", (0, 1, 2)));
+        let mult_sq = square.call_method1("multi_qubit_gate_time", ("MultiQubitZZ", (0, 1, 2)));
+        assert!(mult_tr.is_err());
+        assert!(mult_sq.is_err());
+    })
+}
+
 // Test phi-theta relation methods.
 #[test]
 fn test_phi_theta_relation() {
