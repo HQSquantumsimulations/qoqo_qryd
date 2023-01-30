@@ -451,7 +451,13 @@ impl Device for QrydEmuSquareDevice {
             "PhaseShiftState1" => Some(1e-6),
             "RotateX" => Some(1e-6),
             "RotateY" => Some(1e-6), // Updated gate definition as of April 2022
+            "RotateZ" => Some(1e-6), // Updated gate definition as of February 2023
             "RotateXY" => Some(1e-6), // Updated gate definition as of April 2022
+            "PauliX" => Some(1e-6),  // Updated gate definition as of February 2023
+            "PauliY" => Some(1e-6),  // Updated gate definition as of February 2023
+            "PauliZ" => Some(1e-6),  // Updated gate definition as of February 2023
+            "SqrtPauliX" => Some(1e-6), // Updated gate definition as of February 2023
+            "InvSqrtPauliX" => Some(1e-6), // Updated gate definition as of February 2023
             // still needs to be implemented in qoqo
             // All other single qubit gates are not available on the hardware
             _ => None,
@@ -835,7 +841,13 @@ impl Device for QrydEmuTriangularDevice {
             "PhaseShiftState1" => Some(1e-6),
             "RotateX" => Some(1e-6),
             "RotateY" => Some(1e-6), // Updated gate definition as of April 2022
+            "RotateZ" => Some(1e-6), // Updated gate definition as of February 2023
             "RotateXY" => Some(1e-6), // Updated gate definition as of April 2022
+            "PauliX" => Some(1e-6),  // Updated gate definition as of February 2023
+            "PauliY" => Some(1e-6),  // Updated gate definition as of February 2023
+            "PauliZ" => Some(1e-6),  // Updated gate definition as of February 2023
+            "SqrtPauliX" => Some(1e-6), // Updated gate definition as of February 2023
+            "InvSqrtPauliX" => Some(1e-6), // Updated gate definition as of February 2023
             // still needs to be implemented in qoqo
             // All other single qubit gates are not available on the hardware
             _ => None,
