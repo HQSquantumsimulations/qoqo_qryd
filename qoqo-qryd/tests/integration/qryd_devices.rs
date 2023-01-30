@@ -327,6 +327,34 @@ fn test_change_qubit_positions() {
     });
 }
 
+// Test gate time methods
+#[test]
+fn test_gate_times() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let original_layout = array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]];
+        let device_type = py.get_type::<FirstDeviceWrapper>();
+        let device = device_type
+            .call1((3, 2, vec![2, 2, 2], 1.0, original_layout.to_pyarray(py)))
+            .unwrap()
+            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .unwrap();
+
+        let sing_ok = device.call_method1("single_qubit_gate_time", ("RotateX", 0));
+        let sing_err = device.call_method1("single_qubit_gate_time", ("Hadamard", 0));
+        assert!(sing_ok.is_ok());
+        assert!(sing_err.is_err());
+
+        let two_ok = device.call_method1("two_qubit_gate_time", ("PhaseShiftedControlledZ", 0, 1));
+        let two_err = device.call_method1("two_qubit_gate_time", ("CNOT", 0, 1));
+        assert!(two_ok.is_ok());
+        assert!(two_err.is_err());
+
+        let mult = device.call_method1("multi_qubit_gate_time", ("MultiQubitZZ", (0, 1, 2)));
+        assert!(mult.is_err());
+    })
+}
+
 #[test]
 fn test_phi_theta_relation() {
     pyo3::prepare_freethreaded_python();
