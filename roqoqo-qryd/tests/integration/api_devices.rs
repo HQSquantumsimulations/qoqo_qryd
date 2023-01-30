@@ -328,6 +328,57 @@ fn test_gatetimes_triangular() {
     );
 }
 
+// Test gatetime gate category
+#[test]
+fn test_gatetime_type() {
+    let sq_device = QrydEmuSquareDevice::new(None, None, None);
+    let tr_device = QrydEmuTriangularDevice::new(None, None, None);
+
+    assert!(sq_device
+        .single_qubit_gate_time("PhaseShiftState1", &0)
+        .is_some());
+    assert!(sq_device.single_qubit_gate_time("RotateX", &0).is_some());
+    assert!(sq_device.single_qubit_gate_time("RotateY", &0).is_some());
+    assert!(sq_device.single_qubit_gate_time("RotateZ", &0).is_some());
+    assert!(sq_device.single_qubit_gate_time("RotateXY", &0).is_some());
+    assert!(sq_device.single_qubit_gate_time("PauliX", &0).is_some());
+    assert!(sq_device.single_qubit_gate_time("PauliY", &0).is_some());
+    assert!(sq_device.single_qubit_gate_time("PauliZ", &0).is_some());
+    assert!(sq_device.single_qubit_gate_time("SqrtPauliX", &0).is_some());
+    assert!(sq_device
+        .single_qubit_gate_time("InvSqrtPauliX", &0)
+        .is_some());
+
+    assert!(tr_device
+        .single_qubit_gate_time("PhaseShiftState1", &0)
+        .is_some());
+    assert!(tr_device.single_qubit_gate_time("RotateX", &0).is_some());
+    assert!(tr_device.single_qubit_gate_time("RotateY", &0).is_some());
+    assert!(tr_device.single_qubit_gate_time("RotateZ", &0).is_some());
+    assert!(tr_device.single_qubit_gate_time("RotateXY", &0).is_some());
+    assert!(tr_device.single_qubit_gate_time("PauliX", &0).is_some());
+    assert!(tr_device.single_qubit_gate_time("PauliY", &0).is_some());
+    assert!(tr_device.single_qubit_gate_time("PauliZ", &0).is_some());
+    assert!(tr_device.single_qubit_gate_time("SqrtPauliX", &0).is_some());
+    assert!(tr_device
+        .single_qubit_gate_time("InvSqrtPauliX", &0)
+        .is_some());
+
+    assert!(sq_device
+        .two_qubit_gate_time("PhaseShiftedControlledZ", &0, &1)
+        .is_some());
+    assert!(sq_device
+        .two_qubit_gate_time("PhaseShiftedControlledPhase", &0, &1)
+        .is_some());
+
+    assert!(tr_device
+        .two_qubit_gate_time("PhaseShiftedControlledZ", &0, &1)
+        .is_some());
+    assert!(tr_device
+        .two_qubit_gate_time("PhaseShiftedControlledPhase", &0, &1)
+        .is_some());
+}
+
 // Test the functions from device trait of the triangular device emulator
 // Changing the device is not allowed for the WebAPI emulators in the current version
 #[test]

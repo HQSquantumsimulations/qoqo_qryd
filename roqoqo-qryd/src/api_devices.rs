@@ -898,6 +898,7 @@ impl Device for QrydEmuTriangularDevice {
         {
             match hqslang {
                 "PhaseShiftedControlledZ" => Some(1e-6),
+                "PhaseShiftedControlledPhase" => Some(1e-6),
                 _ => None,
             }
         } else {

@@ -557,10 +557,16 @@ fn test_qubit_gate_times() {
     );
     assert_eq!(device.single_qubit_gate_time("RotateX", &0), Some(1e-6));
     assert_eq!(device.single_qubit_gate_time("RotateY", &0), Some(1e-6));
+    assert_eq!(device.single_qubit_gate_time("RotateZ", &0), Some(1e-6));
+    assert_eq!(device.single_qubit_gate_time("PauliX", &0), Some(1e-6));
+    assert_eq!(device.single_qubit_gate_time("PauliY", &0), Some(1e-6));
+    assert_eq!(device.single_qubit_gate_time("PauliZ", &0), Some(1e-6));
     assert_eq!(device.single_qubit_gate_time("RotateXY", &0), Some(1e-6));
-
-    assert_eq!(device.single_qubit_gate_time("PauliY", &0), None);
-    assert_eq!(device.single_qubit_gate_time("PauliX", &0), None);
+    assert_eq!(device.single_qubit_gate_time("SqrtPauliX", &0), Some(1e-6));
+    assert_eq!(
+        device.single_qubit_gate_time("InvSqrtPauliX", &0),
+        Some(1e-6)
+    );
 
     assert_eq!(
         device.two_qubit_gate_time("PhaseShiftedControlledZ", &7, &1),
