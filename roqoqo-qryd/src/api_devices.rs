@@ -14,6 +14,7 @@ use crate::phi_theta_relation;
 use ndarray::Array2;
 use roqoqo::devices::{Device, GenericDevice};
 use roqoqo::RoqoqoBackendError;
+use std::str::FromStr;
 
 /// Collection of all QRyd devices for WebAPI.
 ///
@@ -303,7 +304,9 @@ impl QrydEmuSquareDevice {
     ///
     /// * `seed` - Seed, if not provided will be set to 0 per default (not recommended!)
     /// * `controlled_z_phase_relation` - The relation to use for the PhaseShiftedControlledZ gate.
+    ///                                   It can be hardcoded to a specific value if a float is passed in as String.
     /// * `controlled_phase_phase_relation` - The relation to use for the PhaseShiftedControlledPhase gate.
+    ///                                       It can be hardcoded to a specific value if a float is passed in as String.
     pub fn new(
         seed: Option<usize>,
         controlled_z_phase_relation: Option<String>,
@@ -340,7 +343,11 @@ impl QrydEmuSquareDevice {
     /// * `f64` - The PhaseShiftedControlledZ phase shift.
     ///
     pub fn phase_shift_controlled_z(&self) -> Option<f64> {
-        phi_theta_relation(&self.controlled_z_phase_relation, std::f64::consts::PI)
+        if let Ok(phase_shift_value) = f64::from_str(&self.controlled_z_phase_relation) {
+            Some(phase_shift_value)
+        } else {
+            phi_theta_relation(&self.controlled_z_phase_relation, std::f64::consts::PI)
+        }
     }
 
     /// Returns the PhaseShiftedControlledPhase phase shift according to the device's relation.
@@ -350,7 +357,11 @@ impl QrydEmuSquareDevice {
     /// * `f64` - The PhaseShiftedControlledPhase phase shift.
     ///
     pub fn phase_shift_controlled_phase(&self, theta: f64) -> Option<f64> {
-        phi_theta_relation(&self.controlled_phase_phase_relation, theta)
+        if let Ok(phase_shift_value) = f64::from_str(&self.controlled_phase_phase_relation) {
+            Some(phase_shift_value)
+        } else {
+            phi_theta_relation(&self.controlled_phase_phase_relation, theta)
+        }
     }
 
     /// Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.
@@ -697,7 +708,9 @@ impl QrydEmuTriangularDevice {
     ///
     /// * `seed` - Seed, if not provided will be set to 0 per default (not recommended!)
     /// * `controlled_z_phase_relation` - The relation to use for the PhaseShiftedControlledZ gate.
+    ///                                   It can be hardcoded to a specific value if a float is passed in as String.
     /// * `controlled_phase_phase_relation` - The relation to use for the PhaseShiftedControlledPhase gate.
+    ///                                       It can be hardcoded to a specific value if a float is passed in as String.
     pub fn new(
         seed: Option<usize>,
         controlled_z_phase_relation: Option<String>,
@@ -734,7 +747,11 @@ impl QrydEmuTriangularDevice {
     /// * `f64` - The PhaseShiftedControlledZ phase shift.
     ///
     pub fn phase_shift_controlled_z(&self) -> Option<f64> {
-        phi_theta_relation(&self.controlled_z_phase_relation, std::f64::consts::PI)
+        if let Ok(phase_shift_value) = f64::from_str(&self.controlled_z_phase_relation) {
+            Some(phase_shift_value)
+        } else {
+            phi_theta_relation(&self.controlled_z_phase_relation, std::f64::consts::PI)
+        }
     }
 
     /// Returns the PhaseShiftedControlledPhase phase shift according to the device's relation.
@@ -744,7 +761,11 @@ impl QrydEmuTriangularDevice {
     /// * `f64` - The PhaseShiftedControlledPhase phase shift.
     ///
     pub fn phase_shift_controlled_phase(&self, theta: f64) -> Option<f64> {
-        phi_theta_relation(&self.controlled_phase_phase_relation, theta)
+        if let Ok(phase_shift_value) = f64::from_str(&self.controlled_phase_phase_relation) {
+            Some(phase_shift_value)
+        } else {
+            phi_theta_relation(&self.controlled_phase_phase_relation, theta)
+        }
     }
 
     /// Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.
