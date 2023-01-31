@@ -141,6 +141,17 @@ fn test_phi_theta_relation() {
         .unwrap();
     device.switch_layout(&1).unwrap();
 
+    let device_f = FirstDevice::new(
+        2,
+        3,
+        &[3, 2],
+        1.5,
+        array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
+        Some("2.13".to_string()),
+        Some("2.25".to_string()),
+    )
+    .unwrap();
+
     assert_eq!(
         device.phase_shift_controlled_z().unwrap(),
         phi_theta_relation("DefaultRelation", std::f64::consts::PI).unwrap()
@@ -149,6 +160,8 @@ fn test_phi_theta_relation() {
         device.phase_shift_controlled_phase(1.2).unwrap(),
         phi_theta_relation("DefaultRelation", 1.2).unwrap()
     );
+    assert_eq!(device_f.phase_shift_controlled_z(), Some(2.13));
+    assert_eq!(device_f.phase_shift_controlled_phase(0.0), Some(2.25));
 
     assert!(device.gate_time_controlled_z(&0, &1, 1.4).is_none());
     assert!(device
@@ -719,7 +732,10 @@ fn test_qubit_gate_times_with_layout() {
         updated_device.single_qubit_gate_time("RotateY", &0),
         Some(1e-6)
     );
-    assert_eq!(updated_device.single_qubit_gate_time("PauliY", &0), None);
+    assert_eq!(
+        updated_device.single_qubit_gate_time("PauliY", &0),
+        Some(1e-6)
+    );
     assert_eq!(
         updated_device.single_qubit_gate_time("RotateXY", &0),
         Some(1e-6)
@@ -1010,36 +1026,6 @@ fn test_qryd_change_device() {
         })
     );
 }
-
-// #[test]
-// fn test_pscp_phi_theta_relation() {
-//     let correct_phi: f64 = 3.6150744773365036;
-//     let correct_device = FirstDevice::new(
-//         2,
-//         3,
-//         &[3, 2],
-//         1.5,
-//         array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
-//         Some(correct_phi),
-//     )
-//     .unwrap();
-//     let incorrect_device = FirstDevice::new(
-//         2,
-//         3,
-//         &[3, 2],
-//         1.5,
-//         array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
-//         None,
-//     )
-//     .unwrap();
-
-//     assert!(correct_device
-//         .two_qubit_gate_time("PhaseShiftedControlledPhase", &0, &1)
-//         .is_some());
-//     assert!(incorrect_device
-//         .two_qubit_gate_time("PhaseShiftedControlledPhase", &0, &1)
-//         .is_none());
-// }
 
 // /// Test FirstDevice Serialization and Deserialization traits (readable)
 // #[cfg(feature = "serialize")]

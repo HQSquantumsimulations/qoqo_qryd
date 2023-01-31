@@ -629,6 +629,10 @@ fn test_to_generic_device_triangular() {
 fn test_phi_theta_relation() {
     let triangular = QrydEmuTriangularDevice::new(Some(0), None, None);
     let square = QrydEmuSquareDevice::new(Some(0), None, None);
+    let triangular_f =
+        QrydEmuTriangularDevice::new(Some(0), Some("2.13".to_string()), Some("2.25".to_string()));
+    let square_f =
+        QrydEmuSquareDevice::new(Some(0), Some("2.13".to_string()), Some("2.25".to_string()));
 
     assert_eq!(
         triangular.phase_shift_controlled_z().unwrap(),
@@ -646,6 +650,10 @@ fn test_phi_theta_relation() {
         square.phase_shift_controlled_phase(1.2).unwrap(),
         phi_theta_relation("DefaultRelation", 1.2).unwrap()
     );
+    assert_eq!(triangular_f.phase_shift_controlled_z(), Some(2.13));
+    assert_eq!(triangular_f.phase_shift_controlled_phase(0.0), Some(2.25));
+    assert_eq!(square_f.phase_shift_controlled_z(), Some(2.13));
+    assert_eq!(square_f.phase_shift_controlled_phase(0.0), Some(2.25));
 
     assert!(triangular.gate_time_controlled_z(&0, &13, 1.4).is_none());
     assert!(triangular
