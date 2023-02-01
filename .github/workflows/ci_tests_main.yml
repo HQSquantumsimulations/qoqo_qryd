@@ -31,7 +31,7 @@ jobs:
           default: true
           components: rustfmt
       - uses: Swatinem/rust-cache@v1.4.0
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v4.5.0
         with:
           python-version: ${{ matrix.python.py }}
       - run: |
