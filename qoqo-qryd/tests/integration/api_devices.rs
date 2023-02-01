@@ -580,9 +580,8 @@ fn test_phi_theta_relation() {
     Python::with_gil(|py| {
         let triangular = create_triangular_device(py, None, None);
         let square = create_square_device(py, None, None);
-        let triangular_f =
-            create_triangular_device(py, Some("2.15".to_string()), Some("2.25".to_string()));
-        let square_f = create_square_device(py, Some("2.15".to_string()), Some("2.25".to_string()));
+        let triangular_f = create_triangular_device(py, Some("2.15".to_string()), None);
+        let square_f = create_square_device(py, Some("2.15".to_string()), None);
 
         let pscz_tr = triangular
             .call_method0("phase_shift_controlled_z")
@@ -622,19 +621,6 @@ fn test_phi_theta_relation() {
             .unwrap();
         assert!(pscp_tr.is_finite());
         assert!(pscp_sq.is_finite());
-
-        let pscp_tr_f = triangular_f
-            .call_method1("phase_shift_controlled_phase", (0.0,))
-            .unwrap()
-            .extract::<f64>()
-            .unwrap();
-        let pscp_sq_f = square_f
-            .call_method1("phase_shift_controlled_phase", (0.0,))
-            .unwrap()
-            .extract::<f64>()
-            .unwrap();
-        assert_eq!(pscp_tr_f, 2.25);
-        assert_eq!(pscp_sq_f, 2.25);
 
         let gtcz_tr_err = triangular.call_method1("gate_time_controlled_z", (0, 1, 0.3));
         let gtcz_sq_err = square.call_method1("gate_time_controlled_z", (0, 1, 0.3));

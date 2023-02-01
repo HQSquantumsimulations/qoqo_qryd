@@ -380,7 +380,7 @@ fn test_phi_theta_relation() {
                 1.0,
                 original_layout.to_pyarray(py),
                 Some("2.15".to_string()),
-                Some("2.25".to_string()),
+                Option::<String>::None,
             ))
             .unwrap()
             .cast_as::<PyCell<FirstDeviceWrapper>>()
@@ -404,13 +404,7 @@ fn test_phi_theta_relation() {
             .unwrap()
             .extract::<f64>()
             .unwrap();
-        let pscp_phase_f = device_f
-            .call_method1("phase_shift_controlled_phase", (0.0,))
-            .unwrap()
-            .extract::<f64>()
-            .unwrap();
         assert_eq!(pscz_phase_f, 2.15);
-        assert_eq!(pscp_phase_f, 2.25);
 
         let gtcz_err = device.call_method1("gate_time_controlled_z", (0, 1, 0.3));
         let gtcz_ok = device.call_method1("gate_time_controlled_z", (0, 1, pscz_phase));

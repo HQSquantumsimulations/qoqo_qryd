@@ -148,7 +148,7 @@ fn test_phi_theta_relation() {
         1.5,
         array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
         Some("2.13".to_string()),
-        Some("2.25".to_string()),
+        None,
     )
     .unwrap();
 
@@ -161,7 +161,6 @@ fn test_phi_theta_relation() {
         phi_theta_relation("DefaultRelation", 1.2).unwrap()
     );
     assert_eq!(device_f.phase_shift_controlled_z(), Some(2.13));
-    assert_eq!(device_f.phase_shift_controlled_phase(0.0), Some(2.25));
 
     assert!(device.gate_time_controlled_z(&0, &1, 1.4).is_none());
     assert!(device

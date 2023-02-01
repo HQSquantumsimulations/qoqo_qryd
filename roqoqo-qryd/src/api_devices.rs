@@ -357,11 +357,7 @@ impl QrydEmuSquareDevice {
     /// * `f64` - The PhaseShiftedControlledPhase phase shift.
     ///
     pub fn phase_shift_controlled_phase(&self, theta: f64) -> Option<f64> {
-        if let Ok(phase_shift_value) = f64::from_str(&self.controlled_phase_phase_relation) {
-            Some(phase_shift_value)
-        } else {
-            phi_theta_relation(&self.controlled_phase_phase_relation, theta)
-        }
+        phi_theta_relation(&self.controlled_phase_phase_relation, theta)
     }
 
     /// Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.
@@ -761,11 +757,7 @@ impl QrydEmuTriangularDevice {
     /// * `f64` - The PhaseShiftedControlledPhase phase shift.
     ///
     pub fn phase_shift_controlled_phase(&self, theta: f64) -> Option<f64> {
-        if let Ok(phase_shift_value) = f64::from_str(&self.controlled_phase_phase_relation) {
-            Some(phase_shift_value)
-        } else {
-            phi_theta_relation(&self.controlled_phase_phase_relation, theta)
-        }
+        phi_theta_relation(&self.controlled_phase_phase_relation, theta)
     }
 
     /// Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.
