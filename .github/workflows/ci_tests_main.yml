@@ -73,8 +73,8 @@ jobs:
           cd roqoqo-qryd
           cargo test --doc --package=roqoqo-qryd
 
-  test_check:
-    name: unittests_check-${{ matrix.combinations.runs_on }}
+  test_check_workspace:
+    name: unittests_check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
