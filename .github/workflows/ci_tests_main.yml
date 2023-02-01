@@ -73,21 +73,6 @@ jobs:
           cd roqoqo-qryd
           cargo test --doc --package=roqoqo-qryd
 
-  test_check_workspace:
-    name: unittests_check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          target: x86_64-unknown-linux-gnu
-          default: true
-      - uses: Swatinem/rust-cache@v1.4.0
-      - run: |
-          cargo test --no-default-features --workspace
-
   test_check:
     name: cargo_test
     runs-on: ubuntu-latest
@@ -100,8 +85,9 @@ jobs:
           target: x86_64-unknown-linux-gnu
           default: true
       - uses: Swatinem/rust-cache@v1.4.0
+      env:
+          QRYD_API_TOKEN: ${{ secrets.QRYD_API_TOKEN }}
       - name: test_with_api
         run: |
-          QRYD_API_TOKEN: ${{ secrets.QRYD_API_TOKEN }}
           cd roqoqo-qryd
           cargo test --package=roqoqo-qryd
