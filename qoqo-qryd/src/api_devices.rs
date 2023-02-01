@@ -36,6 +36,7 @@ impl QrydEmuSquareDeviceWrapper {
     ///     seed (int): Seed, if not provided will be set to 0 per default (not recommended!)
     ///     controlled_z_phase_relation (Optinal[str]): The String used to choose what kind of phi-theta relation
     ///                                                 to use for the PhaseShiftedControlledZ gate
+    ///                                                 It can be hardcoded to a specific value if a float is passed in as String
     ///     controlled_phase_phase_relation (Optinal[str]): The String used to choose what kind of phi-theta relation
     ///                                                     to use for the PhaseShiftedControlledPhase gate
     ///
@@ -331,6 +332,7 @@ impl QrydEmuTriangularDeviceWrapper {
     ///     seed (int): Seed, if not provided will be set to 0 per default (not recommended!)
     ///     controlled_z_phase_relation (Optinal[str]): The String used to choose what kind of phi-theta relation
     ///                                                 to use for the PhaseShiftedControlledZ gate
+    ///                                                 It can be hardcoded to a specific value if a float is passed in as String
     ///     controlled_phase_phase_relation (Optinal[str]): The String used to choose what kind of phi-theta relation
     ///                                                     to use for the PhaseShiftedControlledPhase gate
     ///

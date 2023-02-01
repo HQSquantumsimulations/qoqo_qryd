@@ -62,6 +62,7 @@ impl FirstDeviceWrapper {
     ///     row_distance (float): Fixed distance between rows.
     ///     initial_layout (np.ndarray): The starting layout (always had the index 0).
     ///     controlled_z_phase_relation (Optional[str]): The relation to use for the PhaseShiftedControlledZ gate.
+    ///                                                  It can be hardcoded to a specific value if a float is passed in as String.
     ///     controlled_phase_phase_relation (Optional[str]): The relation to use for the PhaseShiftedControlledPhase gate.
     /// Raises:
     ///     PyValueError

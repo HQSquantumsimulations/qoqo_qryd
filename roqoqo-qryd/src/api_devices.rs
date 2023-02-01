@@ -306,7 +306,6 @@ impl QrydEmuSquareDevice {
     /// * `controlled_z_phase_relation` - The relation to use for the PhaseShiftedControlledZ gate.
     ///                                   It can be hardcoded to a specific value if a float is passed in as String.
     /// * `controlled_phase_phase_relation` - The relation to use for the PhaseShiftedControlledPhase gate.
-    ///                                       It can be hardcoded to a specific value if a float is passed in as String.
     pub fn new(
         seed: Option<usize>,
         controlled_z_phase_relation: Option<String>,
@@ -706,7 +705,6 @@ impl QrydEmuTriangularDevice {
     /// * `controlled_z_phase_relation` - The relation to use for the PhaseShiftedControlledZ gate.
     ///                                   It can be hardcoded to a specific value if a float is passed in as String.
     /// * `controlled_phase_phase_relation` - The relation to use for the PhaseShiftedControlledPhase gate.
-    ///                                       It can be hardcoded to a specific value if a float is passed in as String.
     pub fn new(
         seed: Option<usize>,
         controlled_z_phase_relation: Option<String>,
