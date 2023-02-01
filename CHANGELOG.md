@@ -2,6 +2,10 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+## 0.8.2
+
+* Updated supported gates
+
 ## 0.8.1
 
 * Fixes in the phi-theta relation computation
