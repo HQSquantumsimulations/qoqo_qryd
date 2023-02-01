@@ -69,7 +69,7 @@ jobs:
 
   build_maturin_builds_linux_src:
     # needs: deploy_cratesio
-    name: maturin_build-${{ matrix.combinations.runs_on }}
+    name: maturin_build-src-${{ matrix.combinations.runs_on }}
     runs-on: ${{ matrix.combinations.runs_on }}
     strategy:
       matrix:
@@ -104,44 +104,6 @@ jobs:
         with:
           name: py_wheels
           path: wheels
-  
-  # build_maturin_builds_windows:
-  #   name: maturin_build-${{ matrix.combinations.runs_on }}
-  #   needs: deploy_cratesio
-  #   runs-on: ${{ matrix.combinations.runs_on }}
-  #   strategy:
-  #     matrix:
-  #       combinations: [
-  #         { runs_on: 'windows-latest', rust: "x86_64-pc-windows-msvc" },
-  #       ]
-  #       python: [
-  #           {py: '3.7', interpreter: "python3.7"},
-  #           {py: '3.8', interpreter: "python3.8"},
-  #           {py: '3.9', interpreter: "python3.9"},
-  #           {py: '3.10', interpreter: "python3.10"}  
-  #       ]
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - uses: actions-rs/toolchain@v1
-  #       with:
-  #         profile: minimal
-  #         toolchain: stable
-  #         target: ${{ matrix.combinations.rust }}
-  #         default: true
-  #     - uses: actions/setup-python@v3.1.2
-  #       with:
-  #         python-version: ${{ matrix.python.py }}
-  #     - name: windows wheels
-  #       uses: messense/maturin-action@v1
-  #       with:
-  #         maturin-version: latest
-  #         command: build
-  #         args: -i python --out wheels  -m qoqo-qryd/Cargo.toml --release --locked
-  #     - name: store artifact
-  #       uses: actions/upload-artifact@v3
-  #       with:
-  #         name: py_wheels
-  #         path: wheels
   
   build_maturin_builds_macos:
     name: maturin_build-${{ matrix.combinations.runs_on }}

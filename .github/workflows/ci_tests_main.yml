@@ -89,7 +89,7 @@ jobs:
           cargo test --no-default-features --workspace
 
   test_check:
-    name: unittests_check-${{ matrix.combinations.runs_on }}
+    name: cargo_test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
