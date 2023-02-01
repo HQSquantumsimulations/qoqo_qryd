@@ -62,6 +62,7 @@ impl FirstDeviceWrapper {
     ///     row_distance (float): Fixed distance between rows.
     ///     initial_layout (np.ndarray): The starting layout (always had the index 0).
     ///     controlled_z_phase_relation (Optional[str]): The relation to use for the PhaseShiftedControlledZ gate.
+    ///                                                  It can be hardcoded to a specific value if a float is passed in as String.
     ///     controlled_phase_phase_relation (Optional[str]): The relation to use for the PhaseShiftedControlledPhase gate.
     /// Raises:
     ///     PyValueError
@@ -87,6 +88,50 @@ impl FirstDeviceWrapper {
             )
             .map_err(|err| PyValueError::new_err(format!("{:?}", err)))?,
         })
+    }
+
+    /// Returns the gate time of a single qubit operation on this device.
+    ///
+    /// Returns:
+    ///     f64: The gate time.
+    ///
+    /// Raises:
+    ///     ValueError: The gate is not available in the device.
+    pub fn single_qubit_gate_time(&self, hqslang: &str, qubit: usize) -> PyResult<f64> {
+        self.internal
+            .single_qubit_gate_time(hqslang, &qubit)
+            .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))
+    }
+
+    /// Returns the gate time of a two qubit operation on this device.
+    ///
+    /// Returns:
+    ///     f64: The gate time.
+    ///
+    /// Raises:
+    ///     ValueError: The gate is not available in the device.
+    pub fn two_qubit_gate_time(
+        &self,
+        hqslang: &str,
+        control: usize,
+        target: usize,
+    ) -> PyResult<f64> {
+        self.internal
+            .two_qubit_gate_time(hqslang, &control, &target)
+            .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))
+    }
+
+    /// Returns the gate time of a multi qubit operation on this device.
+    ///
+    /// Returns:
+    ///     f64: The gate time.
+    ///
+    /// Raises:
+    ///     ValueError: The gate is not available in the device.
+    pub fn multi_qubit_gate_time(&self, hqslang: &str, qubits: Vec<usize>) -> PyResult<f64> {
+        self.internal
+            .multi_qubit_gate_time(hqslang, &qubits)
+            .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))
     }
 
     /// Returns the PhaseShiftedControlledZ phase shift according to the device's relation.

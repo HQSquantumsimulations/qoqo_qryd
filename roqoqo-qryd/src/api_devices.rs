@@ -14,6 +14,7 @@ use crate::phi_theta_relation;
 use ndarray::Array2;
 use roqoqo::devices::{Device, GenericDevice};
 use roqoqo::RoqoqoBackendError;
+use std::str::FromStr;
 
 /// Collection of all QRyd devices for WebAPI.
 ///
@@ -303,6 +304,7 @@ impl QrydEmuSquareDevice {
     ///
     /// * `seed` - Seed, if not provided will be set to 0 per default (not recommended!)
     /// * `controlled_z_phase_relation` - The relation to use for the PhaseShiftedControlledZ gate.
+    ///                                   It can be hardcoded to a specific value if a float is passed in as String.
     /// * `controlled_phase_phase_relation` - The relation to use for the PhaseShiftedControlledPhase gate.
     pub fn new(
         seed: Option<usize>,
@@ -340,7 +342,11 @@ impl QrydEmuSquareDevice {
     /// * `f64` - The PhaseShiftedControlledZ phase shift.
     ///
     pub fn phase_shift_controlled_z(&self) -> Option<f64> {
-        phi_theta_relation(&self.controlled_z_phase_relation, std::f64::consts::PI)
+        if let Ok(phase_shift_value) = f64::from_str(&self.controlled_z_phase_relation) {
+            Some(phase_shift_value)
+        } else {
+            phi_theta_relation(&self.controlled_z_phase_relation, std::f64::consts::PI)
+        }
     }
 
     /// Returns the PhaseShiftedControlledPhase phase shift according to the device's relation.
@@ -451,7 +457,13 @@ impl Device for QrydEmuSquareDevice {
             "PhaseShiftState1" => Some(1e-6),
             "RotateX" => Some(1e-6),
             "RotateY" => Some(1e-6), // Updated gate definition as of April 2022
+            "RotateZ" => Some(1e-6), // Updated gate definition as of February 2023
             "RotateXY" => Some(1e-6), // Updated gate definition as of April 2022
+            "PauliX" => Some(1e-6),  // Updated gate definition as of February 2023
+            "PauliY" => Some(1e-6),  // Updated gate definition as of February 2023
+            "PauliZ" => Some(1e-6),  // Updated gate definition as of February 2023
+            "SqrtPauliX" => Some(1e-6), // Updated gate definition as of February 2023
+            "InvSqrtPauliX" => Some(1e-6), // Updated gate definition as of February 2023
             // still needs to be implemented in qoqo
             // All other single qubit gates are not available on the hardware
             _ => None,
@@ -691,6 +703,7 @@ impl QrydEmuTriangularDevice {
     ///
     /// * `seed` - Seed, if not provided will be set to 0 per default (not recommended!)
     /// * `controlled_z_phase_relation` - The relation to use for the PhaseShiftedControlledZ gate.
+    ///                                   It can be hardcoded to a specific value if a float is passed in as String.
     /// * `controlled_phase_phase_relation` - The relation to use for the PhaseShiftedControlledPhase gate.
     pub fn new(
         seed: Option<usize>,
@@ -728,7 +741,11 @@ impl QrydEmuTriangularDevice {
     /// * `f64` - The PhaseShiftedControlledZ phase shift.
     ///
     pub fn phase_shift_controlled_z(&self) -> Option<f64> {
-        phi_theta_relation(&self.controlled_z_phase_relation, std::f64::consts::PI)
+        if let Ok(phase_shift_value) = f64::from_str(&self.controlled_z_phase_relation) {
+            Some(phase_shift_value)
+        } else {
+            phi_theta_relation(&self.controlled_z_phase_relation, std::f64::consts::PI)
+        }
     }
 
     /// Returns the PhaseShiftedControlledPhase phase shift according to the device's relation.
@@ -835,7 +852,13 @@ impl Device for QrydEmuTriangularDevice {
             "PhaseShiftState1" => Some(1e-6),
             "RotateX" => Some(1e-6),
             "RotateY" => Some(1e-6), // Updated gate definition as of April 2022
+            "RotateZ" => Some(1e-6), // Updated gate definition as of February 2023
             "RotateXY" => Some(1e-6), // Updated gate definition as of April 2022
+            "PauliX" => Some(1e-6),  // Updated gate definition as of February 2023
+            "PauliY" => Some(1e-6),  // Updated gate definition as of February 2023
+            "PauliZ" => Some(1e-6),  // Updated gate definition as of February 2023
+            "SqrtPauliX" => Some(1e-6), // Updated gate definition as of February 2023
+            "InvSqrtPauliX" => Some(1e-6), // Updated gate definition as of February 2023
             // still needs to be implemented in qoqo
             // All other single qubit gates are not available on the hardware
             _ => None,
@@ -886,6 +909,7 @@ impl Device for QrydEmuTriangularDevice {
         {
             match hqslang {
                 "PhaseShiftedControlledZ" => Some(1e-6),
+                "PhaseShiftedControlledPhase" => Some(1e-6),
                 _ => None,
             }
         } else {
