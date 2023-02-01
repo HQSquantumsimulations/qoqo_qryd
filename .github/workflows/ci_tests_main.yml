@@ -101,7 +101,6 @@ jobs:
           default: true
       - uses: Swatinem/rust-cache@v1.4.0
       - name: test_with_api
-        env:
         run: |
           QRYD_API_TOKEN: ${{ secrets.QRYD_API_TOKEN }}
           cd roqoqo-qryd
