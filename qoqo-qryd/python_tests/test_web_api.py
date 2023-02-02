@@ -30,7 +30,7 @@ from typing import (
 from copy import copy
 
 def test():
-    device = QrydEmuSquareDevice(pcz_theta=0.23, seed=1)
+    device = QrydEmuSquareDevice(seed=1)
     backend = APIBackend(device=device, timeout=20)
     circuit = Circuit()
   
