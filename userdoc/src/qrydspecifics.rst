@@ -31,14 +31,13 @@ Devices
 Each type of QRydDemo hardware or Simulator device can be represented by a Device class.
 The available hardware operations are defined in the devices. They save the 2D connectivity and can be queried for the availability of certain gate operations on the qubit.
 At the moment there is only an example Device class ``FirstDevice``, that can be used for simulations. More devices will be added as the hardware specifications are finalized.
-The fundamental gates that are available on the QRydDemo devices are the ``RotateX``, ``PhaseShiftState0``, ``PhaseShiftState1`` and ``PhaseShiftedControlledZ`` qoqo operations.
-The three single qubit gates are assumed to be available on all qubits. 
-The ``PhaseShiftedControlledZ`` is available between a subset of qubit pairs.
+The fundamental gates that are available on the QRydDemo devices are the following qoqo operations: ``RotateX``, ``RotateY``, ``RotateZ``, ``RotateXY``, ``PauliX``,  ``PauliY``,  ``PauliZ``, ``PhaseShiftState1`` ,  ``SqrtPauliX``,  ``InvSqrtPauliX``, ``PhaseShiftedControlledZ`` and ``PhaseShiftedControlledPhase``.
+The single-qubit gates are assumed to be available on all qubits. 
+The ``PhaseShiftedControlledZ`` and ``PhaseShiftedControlledPhase`` are available between a subset of qubit pairs.
 The ``PhaseShiftedControlledZ`` is a ControlledPauliZ gate that also applies single qubit phases.
+The ``PhaseShiftedControlledPhase`` is equivalent ``PhaseShiftedControlledZ`` but with a variable phase rotation.
 The phase shifts can in principle be device dependent.
-The devices can optionally contain the ``controlled_z_phase`` parameter, that defines the phase shift of the two-qubit gate for the device.
-
-For the example model of ``FirstDevice`` the two qubit gate is available between qubits that are closer than a physical cut-off distance of ``1.0``.
+The devices can optionally contain the ``controlled_z_phase_relation`` and ``controlled_phase_phase_relation`` parameters, that define the phase shift realations of the two-qubit gates for the device.
 
 .. code-block:: python
 
@@ -59,10 +58,7 @@ For the example model of ``FirstDevice`` the two qubit gate is available between
       # by the physical positions of the tweezers in each row
       initial_layout=np.array([
          [0.0, 1.0, 2.0, 3.0],
-         [0.0, 1.0, 2.0, 3.0]])
-      # This parameter is optional. When provided it defines the phase shift 
-      # in the PhaseShiftedControlledZ gate
-      controlled_z_phase=0.1)
+         [0.0, 1.0, 2.0, 3.0]]))
 
    # Print the two-qubit-operation connectivity graph of the device
    print(device.two_qubit_edges())
