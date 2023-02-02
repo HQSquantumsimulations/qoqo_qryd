@@ -323,6 +323,23 @@ The memory usage will be inefficient for devices with large qubit numbers.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuSquareDevice.multi_qubit_gate_time">
+<span class="sig-name descname"><span class="pre">multi_qubit_gate_time</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice.multi_qubit_gate_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the gate time of a multi qubit operation on this device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The gate time.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>f64</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> -- The gate is not available in the device.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuSquareDevice.number_qubits">
 <span class="sig-name descname"><span class="pre">number_qubits</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice.number_qubits" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return number of qubits in device.</p>
@@ -358,6 +375,23 @@ The memory usage will be inefficient for devices with large qubit numbers.</p>
 <dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuSquareDevice.seed">
 <span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice.seed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the seed usized for the API.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuSquareDevice.single_qubit_gate_time">
+<span class="sig-name descname"><span class="pre">single_qubit_gate_time</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice.single_qubit_gate_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the gate time of a single qubit operation on this device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The gate time.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>f64</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> -- The gate is not available in the device.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -424,6 +458,23 @@ choice from a list of edges and can be used for applications like routing in qua
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>Sequence[(int, int)]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuSquareDevice.two_qubit_gate_time">
+<span class="sig-name descname"><span class="pre">two_qubit_gate_time</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice.two_qubit_gate_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the gate time of a two qubit operation on this device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The gate time.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>f64</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> -- The gate is not available in the device.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -512,6 +563,23 @@ The memory usage will be inefficient for devices with large qubit numbers.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuTriangularDevice.multi_qubit_gate_time">
+<span class="sig-name descname"><span class="pre">multi_qubit_gate_time</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuTriangularDevice.multi_qubit_gate_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the gate time of a multi qubit operation on this device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The gate time.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>f64</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> -- The gate is not available in the device.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuTriangularDevice.number_qubits">
 <span class="sig-name descname"><span class="pre">number_qubits</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuTriangularDevice.number_qubits" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return number of qubits in device.</p>
@@ -547,6 +615,23 @@ The memory usage will be inefficient for devices with large qubit numbers.</p>
 <dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuTriangularDevice.seed">
 <span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuTriangularDevice.seed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the seed usized for the API.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuTriangularDevice.single_qubit_gate_time">
+<span class="sig-name descname"><span class="pre">single_qubit_gate_time</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuTriangularDevice.single_qubit_gate_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the gate time of a single qubit operation on this device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The gate time.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>f64</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> -- The gate is not available in the device.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -613,6 +698,23 @@ choice from a list of edges and can be used for applications like routing in qua
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>Sequence[(int, int)]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuTriangularDevice.two_qubit_gate_time">
+<span class="sig-name descname"><span class="pre">two_qubit_gate_time</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuTriangularDevice.two_qubit_gate_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the gate time of a two qubit operation on this device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The gate time.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>f64</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> -- The gate is not available in the device.</p>
 </dd>
 </dl>
 </dd></dl>

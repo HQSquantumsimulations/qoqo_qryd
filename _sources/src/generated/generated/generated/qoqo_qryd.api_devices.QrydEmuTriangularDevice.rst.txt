@@ -19,14 +19,17 @@ qoqo\_qryd.api\_devices.QrydEmuTriangularDevice
       ~QrydEmuTriangularDevice.gate_time_controlled_phase
       ~QrydEmuTriangularDevice.gate_time_controlled_z
       ~QrydEmuTriangularDevice.generic_device
+      ~QrydEmuTriangularDevice.multi_qubit_gate_time
       ~QrydEmuTriangularDevice.number_qubits
       ~QrydEmuTriangularDevice.phase_shift_controlled_phase
       ~QrydEmuTriangularDevice.phase_shift_controlled_z
       ~QrydEmuTriangularDevice.qrydbackend
       ~QrydEmuTriangularDevice.seed
+      ~QrydEmuTriangularDevice.single_qubit_gate_time
       ~QrydEmuTriangularDevice.to_bincode
       ~QrydEmuTriangularDevice.to_json
       ~QrydEmuTriangularDevice.two_qubit_edges
+      ~QrydEmuTriangularDevice.two_qubit_gate_time
    
    
 

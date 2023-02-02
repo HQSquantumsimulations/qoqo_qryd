@@ -21,6 +21,7 @@ qoqo\_qryd.qryd\_devices.FirstDevice
       ~FirstDevice.gate_time_controlled_phase
       ~FirstDevice.gate_time_controlled_z
       ~FirstDevice.generic_device
+      ~FirstDevice.multi_qubit_gate_time
       ~FirstDevice.number_columns
       ~FirstDevice.number_qubits
       ~FirstDevice.number_rows
@@ -28,10 +29,12 @@ qoqo\_qryd.qryd\_devices.FirstDevice
       ~FirstDevice.phase_shift_controlled_z
       ~FirstDevice.qubit_positions
       ~FirstDevice.set_cutoff
+      ~FirstDevice.single_qubit_gate_time
       ~FirstDevice.switch_layout
       ~FirstDevice.to_bincode
       ~FirstDevice.to_json
       ~FirstDevice.two_qubit_edges
+      ~FirstDevice.two_qubit_gate_time
    
    
 
