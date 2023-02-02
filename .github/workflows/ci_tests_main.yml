@@ -86,8 +86,8 @@ jobs:
           default: true
       - uses: Swatinem/rust-cache@v1.4.0
       - name: test_with_api
-        env:
-          QRYD_API_TOKEN: ${{ secrets.QRYD_API_TOKEN }}
+        # env:
+        #   QRYD_API_TOKEN: ${{ secrets.QRYD_API_TOKEN }}
         run: |
           cd roqoqo-qryd
           cargo test --package=roqoqo-qryd
