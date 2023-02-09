@@ -3,26 +3,27 @@
 name: Build and deploy
 
 on:
+  workflow_dispatch:
   release:
     types: [created]
 
 jobs:
-  deploy_cratesio:
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    steps:
-    - uses: actions/checkout@v3
-    - uses: actions-rs/toolchain@v1
-      with:
-        profile: minimal
-        toolchain: stable
-        default: true
-    - name: setup cargo
-      run: |
-        cargo login ${{ secrets.CRATES_IO_API_TOKEN }}
-        cargo publish --manifest-path=roqoqo-qryd/Cargo.toml
-        sleep 30
-        cargo publish --manifest-path=qoqo-qryd/Cargo.toml
+#   deploy_cratesio:
+#     runs-on: ubuntu-latest
+#     continue-on-error: true
+#     steps:
+#     - uses: actions/checkout@v3
+#     - uses: actions-rs/toolchain@v1
+#       with:
+#         profile: minimal
+#         toolchain: stable
+#         default: true
+#     - name: setup cargo
+#       run: |
+#         cargo login ${{ secrets.CRATES_IO_API_TOKEN }}
+#         cargo publish --manifest-path=roqoqo-qryd/Cargo.toml
+#         sleep 30
+#         cargo publish --manifest-path=qoqo-qryd/Cargo.toml
 
   build_maturin_builds_linux:
     # needs: deploy_cratesio
@@ -126,7 +127,6 @@ jobs:
         with:
           profile: minimal
           toolchain: stable
-          target: ${{ matrix.combinations.rust }}
           default: true
       - uses: actions/setup-python@v4.5.0
         with:
@@ -142,9 +142,6 @@ jobs:
         if: ${{ matrix.combinations.runs_on == 'macOS-latest' && matrix.python-version >= '3.8' }}
         run: |
           RUSTFLAGS="-C link-arg=-undefined -C link-arg=dynamic_lookup" maturin build -i ${{ matrix.python.interpreter }} --universal2 --out wheels  -m qoqo-qryd/Cargo.toml --release --locked
-      - name: test install
-        run: |
-          pip install wheels/* --force-reinstall
       - name: store artifact
         uses: actions/upload-artifact@v3
         with:
