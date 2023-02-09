@@ -44,7 +44,7 @@ fn test_creating_device(
                 initial_layout.to_pyarray(py),
             ))
             .unwrap()
-            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
 
         let number_qubits: i32 = qubits_per_row.iter().sum();
@@ -86,7 +86,7 @@ fn test_copy_deepcopy() {
                 array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]].to_pyarray(py),
             ))
             .unwrap()
-            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
 
         let copy_op = device.call_method0("__copy__").unwrap();
@@ -115,7 +115,7 @@ fn test_to_from_bincode() {
                 array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]].to_pyarray(py),
             ))
             .unwrap()
-            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
 
         let serialised = device.call_method0("to_bincode").unwrap();
@@ -152,7 +152,7 @@ fn test_enum_to_bincode() {
                 array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]].to_pyarray(py),
             ))
             .unwrap()
-            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
 
         let serialised = device.call_method0("_enum_to_bincode");
@@ -175,7 +175,7 @@ fn test_to_from_json() {
                 array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]].to_pyarray(py),
             ))
             .unwrap()
-            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
 
         let serialised = device.call_method0("to_json").unwrap();
@@ -206,7 +206,7 @@ fn test_switch_layout() {
         let device = device_type
             .call1((3, 2, vec![2, 2, 2], 1.0, original_layout.to_pyarray(py)))
             .unwrap()
-            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
 
         let new_layout: Array2<f64> = array![[0.5, 0.5], [0.5, 0.4], [0.4, 0.3]];
@@ -218,7 +218,7 @@ fn test_switch_layout() {
         let comp_device = device_type
             .call1((3, 2, vec![2, 2, 2], 1.0, new_layout.to_pyarray(py)))
             .unwrap()
-            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
 
         let number_qubits_get = updated_device
@@ -280,7 +280,7 @@ fn test_set_cutoff() {
         let device = device_type
             .call1((3, 2, vec![2, 2, 2], 1.0, original_layout.to_pyarray(py)))
             .unwrap()
-            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
         let _ = device.call_method1("set_cutoff", (3.0,));
         let number_qubits_get = device
@@ -304,7 +304,7 @@ fn test_change_qubit_positions() {
         let device = device_type
             .call1((3, 2, vec![2, 2, 2], 1.0, original_layout.to_pyarray(py)))
             .unwrap()
-            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
 
         let mut new_qubits: HashMap<usize, (usize, usize)> = HashMap::new();
@@ -337,7 +337,7 @@ fn test_gate_times() {
         let device = device_type
             .call1((3, 2, vec![2, 2, 2], 1.0, original_layout.to_pyarray(py)))
             .unwrap()
-            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
 
         let sing_ok = device.call_method1("single_qubit_gate_time", ("RotateX", 0));
@@ -364,7 +364,7 @@ fn test_phi_theta_relation() {
         let device = device_type
             .call1((3, 2, vec![2, 2, 2], 1.0, original_layout.to_pyarray(py)))
             .unwrap()
-            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
         let new_layout: Array2<f64> = array![[0.5, 0.5], [0.5, 0.4], [0.4, 0.3]];
         let updated_device = device
@@ -383,7 +383,7 @@ fn test_phi_theta_relation() {
                 Option::<String>::None,
             ))
             .unwrap()
-            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
 
         let pscz_phase = device
@@ -433,7 +433,7 @@ fn test_convert_to_device() {
                 array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]].to_pyarray(py),
             ))
             .unwrap()
-            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
 
         let converted = convert_into_device(device).unwrap();
@@ -462,7 +462,7 @@ fn test_pyo3_new_change_layout() {
         let device = device_type
             .call1((3, 2, vec![2, 2, 2], 1.0, layout.to_pyarray(py)))
             .unwrap()
-            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
 
         let pragma_wrapper = device.extract::<FirstDeviceWrapper>().unwrap();
@@ -475,7 +475,7 @@ fn test_pyo3_new_change_layout() {
                 array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]].to_pyarray(py),
             ))
             .unwrap()
-            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
         let pragma_wrapper_diff = new_op_diff.extract::<FirstDeviceWrapper>().unwrap();
         let helper_ne: bool = pragma_wrapper_diff != pragma_wrapper;

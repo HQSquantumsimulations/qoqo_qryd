@@ -38,14 +38,14 @@ fn create_backend_with_square_device(
     let device: &PyCell<QrydEmuSquareDeviceWrapper> = device_type
         .call1((seed,))
         .unwrap()
-        .cast_as::<PyCell<QrydEmuSquareDeviceWrapper>>()
+        .downcast::<PyCell<QrydEmuSquareDeviceWrapper>>()
         .unwrap();
 
     let backend_type: &PyType = py.get_type::<APIBackendWrapper>();
     let backend: &PyCell<APIBackendWrapper> = backend_type
         .call1((device, ""))
         .unwrap()
-        .cast_as::<PyCell<APIBackendWrapper>>()
+        .downcast::<PyCell<APIBackendWrapper>>()
         .unwrap();
     backend
 }
@@ -58,7 +58,7 @@ fn create_valid_backend_with_square_device(
     let device: &PyCell<QrydEmuSquareDeviceWrapper> = device_type
         .call1((seed,))
         .unwrap()
-        .cast_as::<PyCell<QrydEmuSquareDeviceWrapper>>()
+        .downcast::<PyCell<QrydEmuSquareDeviceWrapper>>()
         .unwrap();
 
     let backend_type: &PyType = py.get_type::<APIBackendWrapper>();
@@ -66,7 +66,7 @@ fn create_valid_backend_with_square_device(
     let backend: &PyCell<APIBackendWrapper> = backend_type
         .call1((device, none_string))
         .unwrap()
-        .cast_as::<PyCell<APIBackendWrapper>>()
+        .downcast::<PyCell<APIBackendWrapper>>()
         .unwrap();
     backend
 }
@@ -80,7 +80,7 @@ fn create_valid_backend_with_square_device_mocked(
     let device: &PyCell<QrydEmuSquareDeviceWrapper> = device_type
         .call1((seed,))
         .unwrap()
-        .cast_as::<PyCell<QrydEmuSquareDeviceWrapper>>()
+        .downcast::<PyCell<QrydEmuSquareDeviceWrapper>>()
         .unwrap();
 
     let backend_type: &PyType = py.get_type::<APIBackendWrapper>();
@@ -88,7 +88,7 @@ fn create_valid_backend_with_square_device_mocked(
     let backend: &PyCell<APIBackendWrapper> = backend_type
         .call1((device, none_string, 30, mock_port))
         .unwrap()
-        .cast_as::<PyCell<APIBackendWrapper>>()
+        .downcast::<PyCell<APIBackendWrapper>>()
         .unwrap();
     backend
 }
@@ -145,14 +145,14 @@ fn test_new_square() {
         let device: &PyCell<QrydEmuSquareDeviceWrapper> = device_type
             .call1((seed,))
             .unwrap()
-            .cast_as::<PyCell<QrydEmuSquareDeviceWrapper>>()
+            .downcast::<PyCell<QrydEmuSquareDeviceWrapper>>()
             .unwrap();
 
         let backend_type: &PyType = py.get_type::<APIBackendWrapper>();
         let backend = backend_type
             .call1((device, ""))
             .unwrap()
-            .cast_as::<PyCell<APIBackendWrapper>>();
+            .downcast::<PyCell<APIBackendWrapper>>();
         assert!(backend.is_ok());
     });
 }
@@ -167,7 +167,7 @@ fn test_fail_new_square() {
         let device: &PyCell<QrydEmuSquareDeviceWrapper> = device_type
             .call1((seed,))
             .unwrap()
-            .cast_as::<PyCell<QrydEmuSquareDeviceWrapper>>()
+            .downcast::<PyCell<QrydEmuSquareDeviceWrapper>>()
             .unwrap();
 
         let backend_type: &PyType = py.get_type::<APIBackendWrapper>();
@@ -195,14 +195,14 @@ fn test_new_triangle() {
         let device: &PyCell<QrydEmuTriangularDeviceWrapper> = device_type
             .call1((seed,))
             .unwrap()
-            .cast_as::<PyCell<QrydEmuTriangularDeviceWrapper>>()
+            .downcast::<PyCell<QrydEmuTriangularDeviceWrapper>>()
             .unwrap();
 
         let backend_type: &PyType = py.get_type::<APIBackendWrapper>();
         let backend = backend_type
             .call1((device, ""))
             .unwrap()
-            .cast_as::<PyCell<APIBackendWrapper>>();
+            .downcast::<PyCell<APIBackendWrapper>>();
         assert!(backend.is_ok());
     });
 }

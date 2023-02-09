@@ -24,7 +24,7 @@ fn new_pragma_layout(py: Python, layout: usize) -> &PyCell<PragmaChangeQRydLayou
     operation_type
         .call1((layout,))
         .unwrap()
-        .cast_as::<PyCell<PragmaChangeQRydLayoutWrapper>>()
+        .downcast::<PyCell<PragmaChangeQRydLayoutWrapper>>()
         .unwrap()
 }
 
@@ -35,7 +35,7 @@ fn new_pragma_shift(py: Python, qubit: usize) -> &PyCell<PragmaShiftQRydQubitWra
     operation_type
         .call1((positions,))
         .unwrap()
-        .cast_as::<PyCell<PragmaShiftQRydQubitWrapper>>()
+        .downcast::<PyCell<PragmaShiftQRydQubitWrapper>>()
         .unwrap()
 }
 
@@ -49,7 +49,7 @@ fn test_pyo3_new_change_layout() {
         let new_op = operation
             .call1((0,))
             .unwrap()
-            .cast_as::<PyCell<PragmaChangeQRydLayoutWrapper>>()
+            .downcast::<PyCell<PragmaChangeQRydLayoutWrapper>>()
             .unwrap();
 
         let comparison_copy = bool::extract(
@@ -64,7 +64,7 @@ fn test_pyo3_new_change_layout() {
         let new_op_diff = operation
             .call1((1,))
             .unwrap()
-            .cast_as::<PyCell<PragmaChangeQRydLayoutWrapper>>()
+            .downcast::<PyCell<PragmaChangeQRydLayoutWrapper>>()
             .unwrap();
         let pragma_wrapper_diff = new_op_diff
             .extract::<PragmaChangeQRydLayoutWrapper>()
@@ -91,7 +91,7 @@ fn test_pyo3_new_shift_positions() {
         let new_op = operation
             .call1((positions,))
             .unwrap()
-            .cast_as::<PyCell<PragmaShiftQRydQubitWrapper>>()
+            .downcast::<PyCell<PragmaShiftQRydQubitWrapper>>()
             .unwrap();
 
         let comparison_copy = bool::extract(
@@ -108,7 +108,7 @@ fn test_pyo3_new_shift_positions() {
         let new_op_diff = operation
             .call1((positions,))
             .unwrap()
-            .cast_as::<PyCell<PragmaShiftQRydQubitWrapper>>()
+            .downcast::<PyCell<PragmaShiftQRydQubitWrapper>>()
             .unwrap();
         let pragma_wrapper_diff = new_op_diff
             .extract::<PragmaShiftQRydQubitWrapper>()
@@ -147,7 +147,7 @@ fn test_change_layout_to_change_device() {
         let pragma_change_device = operation
             .call_method0("to_pragma_change_device")
             .unwrap()
-            .cast_as::<PyCell<PragmaChangeDeviceWrapper>>();
+            .downcast::<PyCell<PragmaChangeDeviceWrapper>>();
         assert!(pragma_change_device.is_ok())
     });
 }
@@ -176,7 +176,7 @@ fn test_shift_positions_to_change_device() {
         let pragma_change_device = operation
             .call_method0("to_pragma_change_device")
             .unwrap()
-            .cast_as::<PyCell<PragmaChangeDeviceWrapper>>();
+            .downcast::<PyCell<PragmaChangeDeviceWrapper>>();
         assert!(pragma_change_device.is_ok())
     });
 }

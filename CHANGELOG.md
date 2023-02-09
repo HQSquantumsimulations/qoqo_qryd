@@ -2,6 +2,10 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+## 0.8.3
+
+* Updated dependencies
+
 ## 0.8.2
 
 * Updated supported gates
