@@ -39,14 +39,14 @@ fn test_creating_backend() {
                 array![[0.0, 1.0], [0.0, 1.0]].to_pyarray(py),
             ))
             .unwrap()
-            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
         let _ = device.call_method1("switch_layout", (0,)).unwrap();
         let backend_type = py.get_type::<SimulatorBackendWrapper>();
         let _backend = backend_type
             .call1((device,))
             .unwrap()
-            .cast_as::<PyCell<SimulatorBackendWrapper>>()
+            .downcast::<PyCell<SimulatorBackendWrapper>>()
             .unwrap();
     });
 
@@ -61,13 +61,13 @@ fn test_creating_backend() {
                 array![[0.0, 1.0], [0.0, 1.0]].to_pyarray(py),
             ))
             .unwrap()
-            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
         let backend_type = py.get_type::<SimulatorBackendWrapper>();
         let _backend = backend_type
             .call1((device,))
             .unwrap()
-            .cast_as::<PyCell<SimulatorBackendWrapper>>()
+            .downcast::<PyCell<SimulatorBackendWrapper>>()
             .unwrap();
     })
 }
@@ -104,14 +104,14 @@ fn test_running_circuit() {
                 array![[0.0, 1.0], [0.0, 1.0]].to_pyarray(py),
             ))
             .unwrap()
-            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
         let _ = device.call_method1("switch_layout", (0,)).unwrap();
         let backend_type = py.get_type::<SimulatorBackendWrapper>();
         let backend = backend_type
             .call1((device,))
             .unwrap()
-            .cast_as::<PyCell<SimulatorBackendWrapper>>()
+            .downcast::<PyCell<SimulatorBackendWrapper>>()
             .unwrap();
         let _ = backend
             .call_method1("run_circuit", (circuit_wrapper,))
@@ -133,14 +133,14 @@ fn test_running_circuit_error() {
                 array![[0.0, 1.0], [0.0, 1.0]].to_pyarray(py),
             ))
             .unwrap()
-            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
         let _ = device.call_method1("switch_layout", (0,)).unwrap();
         let backend_type = py.get_type::<SimulatorBackendWrapper>();
         let backend = backend_type
             .call1((device,))
             .unwrap()
-            .cast_as::<PyCell<SimulatorBackendWrapper>>()
+            .downcast::<PyCell<SimulatorBackendWrapper>>()
             .unwrap();
         let error = backend.call_method1("run_circuit", (vec!["error"],));
         assert!(error.is_err());
@@ -175,14 +175,14 @@ fn test_running_measurement_registers() {
                 array![[0.0, 1.0], [0.0, 1.0]].to_pyarray(py),
             ))
             .unwrap()
-            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
         let _ = device.call_method1("switch_layout", (0,)).unwrap();
         let backend_type = py.get_type::<SimulatorBackendWrapper>();
         let backend = backend_type
             .call1((device,))
             .unwrap()
-            .cast_as::<PyCell<SimulatorBackendWrapper>>()
+            .downcast::<PyCell<SimulatorBackendWrapper>>()
             .unwrap();
         let _ = backend
             .call_method1("run_measurement_registers", (crm_wrapper,))
@@ -204,14 +204,14 @@ fn test_running_measurement_registers_error_1() {
                 array![[0.0, 1.0], [0.0, 1.0]].to_pyarray(py),
             ))
             .unwrap()
-            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
         let _ = device.call_method1("switch_layout", (0,)).unwrap();
         let backend_type = py.get_type::<SimulatorBackendWrapper>();
         let backend = backend_type
             .call1((device,))
             .unwrap()
-            .cast_as::<PyCell<SimulatorBackendWrapper>>()
+            .downcast::<PyCell<SimulatorBackendWrapper>>()
             .unwrap();
         let error = backend.call_method1("run_measurement_registers", (vec!["error"],));
         assert!(error.is_err());
@@ -239,14 +239,14 @@ fn test_running_measurement_registers_some() {
                 array![[0.0, 1.0], [0.0, 1.0]].to_pyarray(py),
             ))
             .unwrap()
-            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
         let _ = device.call_method1("switch_layout", (0,)).unwrap();
         let backend_type = py.get_type::<SimulatorBackendWrapper>();
         let backend = backend_type
             .call1((device,))
             .unwrap()
-            .cast_as::<PyCell<SimulatorBackendWrapper>>()
+            .downcast::<PyCell<SimulatorBackendWrapper>>()
             .unwrap();
         let _ = backend
             .call_method1("run_measurement_registers", (crm_wrapper,))
@@ -287,14 +287,14 @@ fn test_running_measurement_registers_all_registers() {
                 array![[0.0, 1.0], [0.0, 1.0]].to_pyarray(py),
             ))
             .unwrap()
-            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
         let _ = device.call_method1("switch_layout", (0,)).unwrap();
         let backend_type = py.get_type::<SimulatorBackendWrapper>();
         let backend = backend_type
             .call1((device,))
             .unwrap()
-            .cast_as::<PyCell<SimulatorBackendWrapper>>()
+            .downcast::<PyCell<SimulatorBackendWrapper>>()
             .unwrap();
         let _ = backend
             .call_method1("run_measurement_registers", (crm_wrapper,))
@@ -337,14 +337,14 @@ fn test_running_measurement() {
                 array![[0.0, 1.0], [0.0, 1.0]].to_pyarray(py),
             ))
             .unwrap()
-            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
         let _ = device.call_method1("switch_layout", (0,)).unwrap();
         let backend_type = py.get_type::<SimulatorBackendWrapper>();
         let backend = backend_type
             .call1((device,))
             .unwrap()
-            .cast_as::<PyCell<SimulatorBackendWrapper>>()
+            .downcast::<PyCell<SimulatorBackendWrapper>>()
             .unwrap();
         let _ = backend
             .call_method1("run_measurement", (crm_wrapper,))
@@ -367,13 +367,13 @@ fn test_copy_deepcopy() {
                 array![[0.0, 1.0], [0.0, 1.0]].to_pyarray(py),
             ))
             .unwrap()
-            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
         let backend_type = py.get_type::<SimulatorBackendWrapper>();
         let backend = backend_type
             .call1((device,))
             .unwrap()
-            .cast_as::<PyCell<SimulatorBackendWrapper>>()
+            .downcast::<PyCell<SimulatorBackendWrapper>>()
             .unwrap();
 
         let copy_op = backend.call_method0("__copy__").unwrap();
@@ -402,13 +402,13 @@ fn test_to_from_bincode() {
                 array![[0.0, 1.0], [0.0, 1.0]].to_pyarray(py),
             ))
             .unwrap()
-            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
         let backend_type = py.get_type::<SimulatorBackendWrapper>();
         let backend = backend_type
             .call1((device,))
             .unwrap()
-            .cast_as::<PyCell<SimulatorBackendWrapper>>()
+            .downcast::<PyCell<SimulatorBackendWrapper>>()
             .unwrap();
 
         let serialised = backend.call_method0("to_bincode").unwrap();
@@ -445,13 +445,13 @@ fn test_to_from_json() {
                 array![[0.0, 1.0], [0.0, 1.0]].to_pyarray(py),
             ))
             .unwrap()
-            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
         let backend_type = py.get_type::<SimulatorBackendWrapper>();
         let backend = backend_type
             .call1((device,))
             .unwrap()
-            .cast_as::<PyCell<SimulatorBackendWrapper>>()
+            .downcast::<PyCell<SimulatorBackendWrapper>>()
             .unwrap();
 
         let serialised = backend.call_method0("to_json").unwrap();
@@ -489,13 +489,13 @@ fn test_convert_to_device() {
                 array![[0.0, 1.0], [0.0, 1.0]].to_pyarray(py),
             ))
             .unwrap()
-            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
         let backend_type = py.get_type::<SimulatorBackendWrapper>();
         let backend = backend_type
             .call1((device,))
             .unwrap()
-            .cast_as::<PyCell<SimulatorBackendWrapper>>()
+            .downcast::<PyCell<SimulatorBackendWrapper>>()
             .unwrap();
 
         let converted = convert_into_backend(backend).unwrap();
@@ -531,13 +531,13 @@ fn test_pyo3_new_change_layout() {
                 array![[0.0, 1.0], [0.0, 1.0]].to_pyarray(py),
             ))
             .unwrap()
-            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
         let backend_type = py.get_type::<SimulatorBackendWrapper>();
         let backend = backend_type
             .call1((device,))
             .unwrap()
-            .cast_as::<PyCell<SimulatorBackendWrapper>>()
+            .downcast::<PyCell<SimulatorBackendWrapper>>()
             .unwrap();
 
         let pragma_wrapper = backend.extract::<SimulatorBackendWrapper>().unwrap();
@@ -550,12 +550,12 @@ fn test_pyo3_new_change_layout() {
                 array![[0.0, 1.0], [0.0, 1.0]].to_pyarray(py),
             ))
             .unwrap()
-            .cast_as::<PyCell<FirstDeviceWrapper>>()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
         let new_op_diff = backend_type
             .call1((device_diff,))
             .unwrap()
-            .cast_as::<PyCell<SimulatorBackendWrapper>>()
+            .downcast::<PyCell<SimulatorBackendWrapper>>()
             .unwrap();
         let pragma_wrapper_diff = new_op_diff.extract::<SimulatorBackendWrapper>().unwrap();
         let helper_ne: bool = pragma_wrapper_diff != pragma_wrapper;

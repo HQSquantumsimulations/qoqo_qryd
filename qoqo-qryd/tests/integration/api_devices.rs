@@ -29,7 +29,7 @@ fn create_square_device(
     let device: &PyCell<QrydEmuSquareDeviceWrapper> = device_type
         .call1((seed, rel1, rel2))
         .unwrap()
-        .cast_as::<PyCell<QrydEmuSquareDeviceWrapper>>()
+        .downcast::<PyCell<QrydEmuSquareDeviceWrapper>>()
         .unwrap();
     device
 }
@@ -44,7 +44,7 @@ fn test_new_square() {
         assert!(result.is_ok());
         let device = result
             .unwrap()
-            .cast_as::<PyCell<QrydEmuSquareDeviceWrapper>>();
+            .downcast::<PyCell<QrydEmuSquareDeviceWrapper>>();
         assert!(device.is_ok());
     });
 }
@@ -256,7 +256,7 @@ fn create_triangular_device(
     let device: &PyCell<QrydEmuTriangularDeviceWrapper> = device_type
         .call1((seed, rel1, rel2))
         .unwrap()
-        .cast_as::<PyCell<QrydEmuTriangularDeviceWrapper>>()
+        .downcast::<PyCell<QrydEmuTriangularDeviceWrapper>>()
         .unwrap();
     device
 }
@@ -271,7 +271,7 @@ fn test_new_triangular() {
         assert!(result.is_ok());
         let device = result
             .unwrap()
-            .cast_as::<PyCell<QrydEmuTriangularDeviceWrapper>>();
+            .downcast::<PyCell<QrydEmuTriangularDeviceWrapper>>();
         assert!(device.is_ok());
     });
 }
