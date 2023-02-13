@@ -1,0 +1,6 @@
+[book]
+authors = ["mlodi-hqs"]
+language = "en"
+multilingual = false
+src = "src"
+title = "HQS qoqo-qryd User Documentation"
