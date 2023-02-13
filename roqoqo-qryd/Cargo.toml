@@ -39,7 +39,7 @@ hex = {version="0.4", optional=true}
 itertools = "0.10.3"
 
 [dev-dependencies]
-test-case = "2.0.2"
+test-case = "3.0.0"
 serde_test = {version="1.0"}
 roqoqo-test = {package="roqoqo-test", version="1.2"}
 httpmock = "0.6.7"
