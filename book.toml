@@ -1,0 +1,21 @@
+[book]
+title = "HQS qoqo-qryd User Documentation"
+author = "HQS Quantum Simulations GmbH"
+description = "User guide for the roqoqo-qryd/qoqo-qryd packages."
+src = "documentation/src"
+
+[rust]
+edition="2021"
+
+[build]
+build-dir = "documentation/book"
+create-missing = false
+
+[output.html]
+mathjax-support = true
+
+[output.html.search]
+limit-results = 15
+
+[output.html.playground]
+runnable = false

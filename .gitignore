@@ -16,3 +16,4 @@ doc/generated*
 *generated*
 tmp*
 *.ipynb_checkpoints*
+*/book/*

@@ -1,5 +1,5 @@
 [book]
-authors = ["mlodi-hqs"]
+authors = ["HQS Quantum Simulations", "mlodi-hqs"]
 language = "en"
 multilingual = false
 src = "src"
