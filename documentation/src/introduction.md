@@ -25,6 +25,7 @@ To extract information from a quantum computer results must be measured.
 For measurements qoqo defines classical registers in the quantum circuits.
 The classical measurement results will be written to the classical registers.
 The definition of classical registers is similar to a variable declaration in normal programs.
+
 The measurement of a qubit (on hardware) is always a projective measurement in the ``Z``-basis yielding ``0`` or ``1``.
 
 ```python
@@ -55,7 +56,7 @@ The combination of the results of each quantum circuit happens in a post-process
 A qoqo measurement combines one ``constant_circuit`` that is always executed first, a list of ``circuits`` that are executed after the constant circuit, and a ``measurement_input`` that encodes the classical post-processing.
 
 As an example take the measurement of a Hamiltonian ``H = 0.1 * X + 0.2 * Z`` where ``X`` and ``Z`` are Pauli operators. We want to measure ``H`` with respect to a state ``|psi> = (|0> + |1>)/sqrt(2)``. 
-We will use a Hadamard gate in the ``constant_circuit`` to prepare ``|psi>``. Since we cannot measure ``X`` and ``Z`` at the same time the ``circuits`` list will include one quantum circuit that does not apply any additional gate and one circuit that rotates the qubit basis into the ``X``-basis so that the expectation value ``<X>`` is equivalent to the measurement of ``<Z>`` in the new basis.
+We will use a Hadamard gate in the ``constant_circuit`` to prepare ``|psi>``. Since we cannot measure ``X`` and ``Z`` at the same time, the ``circuits`` list will include one quantum circuit that does not apply any additional gate and one circuit that rotates the qubit basis into the ``X``-basis so that the expectation value ``<X>`` is equivalent to the measurement of ``<Z>`` in the new basis.
 This kind of measurement is referred to as a PauliZProduct measurement because each qubit is rotated in the correct basis for the readout. 
 For the post-processing the PauliZProduct measurement needs two more details to be added to the input (``PauliZProductInput``): Which qubits to combine into expectation values (``add_pauliz_product()``) and which weight to use for each result (``add_linear_exp_val()``).
 
@@ -68,7 +69,7 @@ The PauliZProductInput also defines the weights of the products in the final res
    from qoqo import operations as ops
    from qoqo.measurements import PauliZProduct, PauliZProductInput
    from qoqo import QuantumProgram
-   # initialize |psi>
+   # Initialize |psi>
    init_circuit = Circuit()
    init_circuit += ops.Hadamard(0)
    # Z-basis measurement circuit with 1000 shots
@@ -83,7 +84,7 @@ The PauliZProductInput also defines the weights of the products in the final res
    x_circuit += ops.PragmaRepeatedMeasurement("ro_x", 1000, None)
 
    # Preparing the measurement input for one qubit
-   # The PauliZProductInput starts with just the number of qubtis
+   # The PauliZProductInput starts with just the number of qubits
    # and if to use a flipped measurements set.
    measurement_input = PauliZProductInput(1, False)
    # Next, pauli products are added to the PauliZProductInput
@@ -93,7 +94,7 @@ The PauliZProductInput also defines the weights of the products in the final res
    # (after basis change effectively a <X> measurement)
    x_basis_index = measurement_input.add_pauliz_product("ro_x", [0,])
    
-   # Last, instructions how to combine the single expectation values
+   # Last, instructions on how to combine the single expectation values
    # into the total result are provided.
    # Add a result (the expectation value of H) that is a combination of
    # the PauliProduct expectation values.

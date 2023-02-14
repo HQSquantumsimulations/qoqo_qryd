@@ -20,20 +20,20 @@ Devices
 At the moment the QrydDemo WebAPI supports two device emulators. Both support 30 qubits, one in a square and another with a triangular topology.
 
 
-![](square.png "Square Topology") | ![](triangle.png "Triangular Topology")
+![](square.png "Square topology") | ![](triangle.png "Triangular topology")
 :--------------------------------:|:--------------------------------------:
-Square Topology                   | Triangular Topology
+Square topology                   | Triangular topology
 
-The Emulators allow the user to set the phase shift in the ``PhaseShiftedControlledZ`` native gate and the seed for the random number generator. In qoqo-qryd these are set when creating the devices.
+The Emulators allow the user to set the phase shifts in the ``PhaseShiftedControlledZ`` and ``PhaseShiftedControlledPhase`` native gates and the seed for the random number generator. In qoqo-qryd these are set when creating the devices.
 
 ```python
     import numpy as np
     from qoqo_qryd.api_devices import QrydEmuSquareDevice
     from qoqo_qryd import APIBackend
-    # Creating a new device. All calculations on this device
-    # will use 1 as the random seed and 0.23 as the phase shift
-    # in the controlled Phase 
-    device = QrydEmuSquareDevice(pcz_theta=0.23, seed=1)
+    # Creating a new device.
+    # All calculations on this device will use 1 as the random seed
+    # and 0.23 as the phase shift in the PhaseShiftedControlledZ gate 
+    device = QrydEmuSquareDevice(seed=1, controlled_z_phase_relation="0.23")
     # Create a new backend that will use the device.
     # Timeout controls how often the backend is queried 
     # for a result when backend is used as an evaluating backend.
@@ -48,8 +48,8 @@ APIBackend
 The ``APIBackend`` of qoqo-qryd supports the four direct API-calls of the QRydDemo WebAPI:
 
 1. Queueing a job of running a qoqo QuantumProgram with a ClassicalRegister measurement (``post_job(quantumprogram)``).
-2. Querying the status of the job (``get_job_status(job)```).
-3. Retrieving the results of the job (``get_job_result(job)```).
+2. Querying the status of the job (``get_job_status(job)``).
+3. Retrieving the results of the job (``get_job_result(job)``).
 4. Deleting a posted job (``delete_job(job)``).
 
 Additional information can be found on the [API documentation](https://thequantumlaend.de/qryddemo/)
@@ -66,10 +66,10 @@ The four API calls can be used to obtain a result the following way:
     from time import sleep
     from qoqo_qryd import APIBackend
 
-    # Creating a new device. All calculations on this device
-    # will use 1 as the random seed and 0.23 as the phase shift
-    # in the controlled Phase 
-    device = QrydEmuSquareDevice(pcz_theta=0.23, seed=1)
+    # Creating a new device.
+    # All calculations on this device will use 1 as the random seed
+    # and 0.23 as the phase shift in the PhaseShiftedControlledZ gate 
+    device = QrydEmuSquareDevice(seed=1, controlled_z_phase_relation="0.23")
     # Create a new backend that will use the device.
     # Timeout controls how often the backend is queried 
     # for a result when backend is used as an evaluating backend.

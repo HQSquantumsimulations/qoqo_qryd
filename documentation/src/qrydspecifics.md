@@ -32,13 +32,14 @@ Devices
 Each type of QRydDemo hardware or Simulator device can be represented by a Device class.
 The available hardware operations are defined in the devices. They save the 2D connectivity and can be queried for the availability of certain gate operations on the qubit.
 At the moment there is only an example Device class ``FirstDevice``, that can be used for simulations. More devices will be added as the hardware specifications are finalized.
+
 The fundamental gates that are available on the QRydDemo devices are the following qoqo operations: ``RotateX``, ``RotateY``, ``RotateZ``, ``RotateXY``, ``PauliX``,  ``PauliY``,  ``PauliZ``, ``PhaseShiftState1`` ,  ``SqrtPauliX``,  ``InvSqrtPauliX``, ``PhaseShiftedControlledZ`` and ``PhaseShiftedControlledPhase``.
 The single-qubit gates are assumed to be available on all qubits. 
 The ``PhaseShiftedControlledZ`` and ``PhaseShiftedControlledPhase`` are available between a subset of qubit pairs.
-The ``PhaseShiftedControlledZ`` is a ControlledPauliZ gate that also applies single qubit phases.
-The ``PhaseShiftedControlledPhase`` is equivalent ``PhaseShiftedControlledZ`` but with a variable phase rotation.
+The ``PhaseShiftedControlledZ`` is a ControlledPauliZ gate that also applies single qubit phases whereas the  ``PhaseShiftedControlledPhase`` is equivalent to ``PhaseShiftedControlledZ`` but with a variable phase rotation.
 The phase shifts can in principle be device dependent.
-The devices can optionally contain the ``controlled_z_phase_relation`` and ``controlled_phase_phase_relation`` parameters, that define the phase shift relations of the two-qubit gates for the device.
+
+The devices can optionally contain the ``controlled_z_phase_relation`` and ``controlled_phase_phase_relation`` parameters that define the phase shift relations of the two-qubit gates for the device. The first parameter can also be set explicitly by putting a string defining a float value as input.
 
 ```python
    from qoqo_qryd import devices
@@ -58,7 +59,12 @@ The devices can optionally contain the ``controlled_z_phase_relation`` and ``con
       # by the physical positions of the tweezers in each row
       initial_layout=np.array([
          [0.0, 1.0, 2.0, 3.0],
-         [0.0, 1.0, 2.0, 3.0]]))
+         [0.0, 1.0, 2.0, 3.0]]),
+      # The phase shift value related to the PhaseShiftedControlledZ gate
+      # Using a string that defines a relation is also possible
+      controlled_z_phase_relation="0.23",
+      # The relation to use for the PhaseShiftedControlledPhase phase shift value
+      controlled_phase_phase_relation="DefaultRelation")
 
    # Print the two-qubit-operation connectivity graph of the device
    print(device.two_qubit_edges())

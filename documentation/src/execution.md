@@ -16,12 +16,11 @@ An ``EvaluatingBackend`` can run:
 As an example we will use the quantum program from [Introduction](introduction.md) and the [qoqo-quest](https://github.com/HQSquantumsimulations/qoqo-quest) simulator backend. Here we show three alternative options that can be ran: a single circuit, a measurement, and a quantum program.
 
 ```python
-   from qoqo import Circuit
+   from qoqo import Circuit, QuantumProgram
    from qoqo import operations as ops
    from qoqo.measurements import PauliZProduct, PauliZProductInput
-   from qoqo import QuantumProgram
    from qoqo_quest import Backend
-   # initialize |psi>
+   # Initialize |psi>
    init_circuit = Circuit()
    # Apply a RotateY gate with a symbolic angle
    # To execute the circuit this symbolic parameter needs to be replaced 
@@ -67,8 +66,8 @@ As an example we will use the quantum program from [Introduction](introduction.m
 
    # b) To run a measurement we need to replace the free parameter by hand
    executable_measurement = measurement.substitute_parameters({"angle": 0.2})
-   expecation_values = backend.run_measurement(executable_measurement)
-   print(expecation_values)
+   expectation_values = backend.run_measurement(executable_measurement)
+   print(expectation_values)
 
    # c) Run a quantum program
    # The QuantumProgram now has one free parameter that needs to bet set when executing it.
@@ -76,7 +75,7 @@ As an example we will use the quantum program from [Introduction](introduction.m
    # during execution.
    program = QuantumProgram(measurement=measurement, input_parameter_names=["angle"])
    # Run the program with  0.1 substituting `angle`
-   expecation_values = program.run(backend, [0.1])
+   expectation_values = program.run(backend, [0.1])
 ```
 
 Note: The QuantumProgram can be run in the same way with the qoqo_qryd ``SimulatorBackend`` when all quantum operations are replaced by sequences of operations directly supported by the QRydDemo hardware. However, in order to use the qoqo_qryd ``SimulatorBackend``, a device needs to be defined first, as shown in the SimulatorBackend subsection of [QRyd Specifics](qrydspecifics.md).
@@ -90,7 +89,7 @@ In general, to distinguish between a command returning expectation values and a 
    from qoqo.measurements import ClassicalRegister
    from qoqo import QuantumProgram
    from qoqo_quest import Backend
-   # initialize |psi>
+   # Initialize |psi>
    init_circuit = Circuit()
    # Apply a RotateY gate with a symbolic angle
    # To execute the circuit this symbolic parameter needs to be replaced 
