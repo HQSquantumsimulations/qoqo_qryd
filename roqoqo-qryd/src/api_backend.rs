@@ -742,7 +742,7 @@ impl APIBackend {
                 ),
             })?;
             let qubit_results = bit_representation.view_bits::<Lsb0>();
-            let mut tmp_vec: Vec<bool> = (0..number_qubits).into_iter().map(|_| false).collect();
+            let mut tmp_vec: Vec<bool> = (0..number_qubits).map(|_| false).collect();
             // only iterating over qubits in number_qubits returns of larger qubits will be ignored
             for (mut_val, tmp_val) in (tmp_vec.iter_mut()).zip(qubit_results.iter()) {
                 *mut_val = *tmp_val
