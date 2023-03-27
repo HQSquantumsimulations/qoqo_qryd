@@ -726,7 +726,7 @@ fn api_backend_errorcase_const() {
     };
     // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
     let qubit_mapping: HashMap<usize, usize> =
-        (0..number_qubits).into_iter().map(|x| (x, x)).collect();
+        (0..number_qubits).map(|x| (x, x)).collect();
     let mut circuit = Circuit::new();
     circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
     circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
