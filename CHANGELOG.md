@@ -2,6 +2,10 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+## 0.8.4
+
+* Updated dependencies
+
 ## 0.8.3
 
 * Updated dependencies
