@@ -12,9 +12,6 @@
   <![endif]-->
   
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -86,31 +83,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  
-<style>
-/* CSS overrides for sphinx_rtd_theme */
-
-/* 24px margin */
-.nbinput.nblast.container,
-.nboutput.nblast.container {
-    margin-bottom: 19px;  /* padding has already 5px */
-}
-
-/* ... except between code cells! */
-.nblast.container + .nbinput.container {
-    margin-top: -19px;
-}
-
-.admonition > p:before {
-    margin-right: 4px;  /* make room for the exclamation icon */
-}
-
-/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
-.math {
-    text-align: unset;
-}
-</style>
-<section id="executing-quantum-programs">
+  <section id="executing-quantum-programs">
 <h1>Executing quantum programs<a class="headerlink" href="#executing-quantum-programs" title="Permalink to this heading"></a></h1>
 <p>To obtain results from a QuantumProgram, Measurement or Circuit it needs to be executed on real quantum computing hardware or run on a simulator.</p>
 <p>Qoqo uses separate backends for this evaluation. For each hardware or simulator a backend can be created that implements qoqo's <code class="docutils literal notranslate"><span class="pre">EvaluatingBackend</span></code> interface and runs QuantumPrograms. For an overview of backends see the <a class="reference external" href="https://github.com/HQSquantumsimulations/qoqo">qoqo</a> website. Backends which provide the functionality to run a single circuit are so-called <code class="docutils literal notranslate"><span class="pre">EvaluatingBackend</span></code>. The QRydDemo backends fall in this category.</p>
