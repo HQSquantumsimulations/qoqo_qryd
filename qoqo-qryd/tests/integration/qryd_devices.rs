@@ -372,20 +372,6 @@ fn test_phi_theta_relation() {
             .unwrap();
         updated_device.call_method1("switch_layout", (1,)).unwrap();
 
-        let device_f = device_type
-            .call1((
-                3,
-                2,
-                vec![2, 2, 2],
-                1.0,
-                original_layout.to_pyarray(py),
-                Some("2.15".to_string()),
-                Option::<String>::None,
-            ))
-            .unwrap()
-            .downcast::<PyCell<FirstDeviceWrapper>>()
-            .unwrap();
-
         let pscz_phase = device
             .call_method0("phase_shift_controlled_z")
             .unwrap()
@@ -399,13 +385,6 @@ fn test_phi_theta_relation() {
         assert!(pscz_phase.is_finite());
         assert!(pscp_phase.is_finite());
 
-        let pscz_phase_f = device_f
-            .call_method0("phase_shift_controlled_z")
-            .unwrap()
-            .extract::<f64>()
-            .unwrap();
-        assert_eq!(pscz_phase_f, 2.15);
-
         let gtcz_err = device.call_method1("gate_time_controlled_z", (0, 1, 0.3));
         let gtcz_ok = device.call_method1("gate_time_controlled_z", (0, 1, pscz_phase));
         assert!(gtcz_err.is_err());
@@ -415,6 +394,71 @@ fn test_phi_theta_relation() {
         let gtcp_ok = device.call_method1("gate_time_controlled_phase", (0, 1, pscp_phase, 1.0));
         assert!(gtcp_err.is_err());
         assert!(gtcp_ok.is_ok());
+
+        let device_f_0 = device_type
+            .call1((
+                3,
+                2,
+                vec![2, 2, 2],
+                1.0,
+                original_layout.to_pyarray(py),
+                Some("2.15".to_string()),
+                Option::<String>::None,
+            ))
+            .unwrap()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
+            .unwrap();
+        let device_f_1 = device_type
+            .call1((
+                3,
+                2,
+                vec![2, 2, 2],
+                1.0,
+                original_layout.to_pyarray(py),
+                2.15,
+                1.36,
+            ))
+            .unwrap()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
+            .unwrap();
+        let device_f_2 = device_type
+            .call1((
+                3,
+                2,
+                vec![2, 2, 2],
+                1.0,
+                original_layout.to_pyarray(py),
+                2.15,
+                Some(1.36.to_string()),
+            ))
+            .unwrap()
+            .downcast::<PyCell<FirstDeviceWrapper>>()
+            .unwrap();
+
+        let pscz_phase_f_0 = device_f_0
+            .call_method0("phase_shift_controlled_z")
+            .unwrap()
+            .extract::<f64>()
+            .unwrap();
+        let pscz_phase_f_1 = device_f_1
+            .call_method0("phase_shift_controlled_z")
+            .unwrap()
+            .extract::<f64>()
+            .unwrap();
+        let pscp_phase_f_1 = device_f_1
+            .call_method1("phase_shift_controlled_phase", (1.0,))
+            .unwrap()
+            .extract::<f64>()
+            .unwrap();
+        let pscp_phase_f_2 = device_f_2
+            .call_method1("phase_shift_controlled_phase", (1.0,))
+            .unwrap()
+            .extract::<f64>()
+            .unwrap();
+        assert_eq!(pscz_phase_f_0, 2.15);
+        assert_eq!(pscz_phase_f_1, 2.15);
+        assert_eq!(pscp_phase_f_1, 1.36);
+        assert_eq!(pscp_phase_f_2, 1.36)
     });
 }
 
@@ -455,7 +499,6 @@ fn test_convert_to_device() {
 #[test]
 fn test_pyo3_new_change_layout() {
     pyo3::prepare_freethreaded_python();
-
     Python::with_gil(|py| {
         let layout = array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]];
         let device_type = py.get_type::<FirstDeviceWrapper>();
