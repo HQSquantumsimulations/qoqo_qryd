@@ -17,6 +17,7 @@ use pyo3::prelude::*;
 use pyo3::types::PyByteArray;
 use qoqo::devices::GenericDeviceWrapper;
 use qoqo::QoqoBackendError;
+use qoqo_calculator_pyo3::convert_into_calculator_float;
 use roqoqo::devices::Device;
 use roqoqo_qryd::qryd_devices::{FirstDevice, QRydDevice};
 use std::collections::HashMap;
@@ -73,9 +74,23 @@ impl FirstDeviceWrapper {
         qubits_per_row: Vec<usize>,
         row_distance: f64,
         initial_layout: PyReadonlyArray2<f64>,
-        controlled_z_phase_relation: Option<String>,
-        controlled_phase_phase_relation: Option<String>,
+        controlled_z_phase_relation: Option<&PyAny>,
+        controlled_phase_phase_relation: Option<&PyAny>,
     ) -> PyResult<Self> {
+        let cast_f_zpr = Python::with_gil(|_| {
+            convert_into_calculator_float(controlled_z_phase_relation.unwrap())
+        });
+        let cast_f_ppr = Python::with_gil(|_| {
+            convert_into_calculator_float(controlled_phase_phase_relation.unwrap())
+        });
+        let czpr = match cast_f_zpr.is_ok() {
+            true => Some(cast_f_zpr.unwrap().to_string()),
+            false => Some(controlled_z_phase_relation.unwrap().extract::<String>().unwrap()),
+        };
+        let cppr = match cast_f_ppr.is_ok() {
+            true => Some(cast_f_ppr.unwrap().to_string()),
+            false => Some(controlled_phase_phase_relation.unwrap().extract::<String>().unwrap()),
+        };
         Ok(Self {
             internal: FirstDevice::new(
                 number_rows,
@@ -83,8 +98,8 @@ impl FirstDeviceWrapper {
                 &qubits_per_row,
                 row_distance,
                 initial_layout.as_array().to_owned(),
-                controlled_z_phase_relation,
-                controlled_phase_phase_relation,
+                czpr,
+                cppr,
             )
             .map_err(|err| PyValueError::new_err(format!("{:?}", err)))?,
         })
