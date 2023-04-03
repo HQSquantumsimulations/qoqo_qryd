@@ -77,29 +77,33 @@ impl FirstDeviceWrapper {
         controlled_z_phase_relation: Option<&PyAny>,
         controlled_phase_phase_relation: Option<&PyAny>,
     ) -> PyResult<Self> {
-        let cast_f_zpr = Python::with_gil(|_| {
-            convert_into_calculator_float(controlled_z_phase_relation.unwrap())
-        });
-        let cast_f_ppr = Python::with_gil(|_| {
-            convert_into_calculator_float(controlled_phase_phase_relation.unwrap())
-        });
-        let czpr = match cast_f_zpr.is_ok() {
-            true => Some(cast_f_zpr.unwrap().to_string()),
-            false => Some(
-                controlled_z_phase_relation
-                    .unwrap()
-                    .extract::<String>()
-                    .unwrap(),
-            ),
+        let czpr = if let Some(value) = controlled_z_phase_relation {
+            if convert_into_calculator_float(value).is_ok() {
+                Some(convert_into_calculator_float(value).unwrap().to_string())
+            } else {
+                Some(
+                    controlled_z_phase_relation
+                        .unwrap()
+                        .extract::<String>()
+                        .unwrap(),
+                )
+            }
+        } else {
+            None
         };
-        let cppr = match cast_f_ppr.is_ok() {
-            true => Some(cast_f_ppr.unwrap().to_string()),
-            false => Some(
-                controlled_phase_phase_relation
-                    .unwrap()
-                    .extract::<String>()
-                    .unwrap(),
-            ),
+        let cppr = if let Some(value) = controlled_phase_phase_relation {
+            if convert_into_calculator_float(value).is_ok() {
+                Some(convert_into_calculator_float(value).unwrap().to_string())
+            } else {
+                Some(
+                    controlled_phase_phase_relation
+                        .unwrap()
+                        .extract::<String>()
+                        .unwrap(),
+                )
+            }
+        } else {
+            None
         };
         Ok(Self {
             internal: FirstDevice::new(
