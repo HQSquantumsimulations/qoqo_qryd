@@ -14,6 +14,7 @@ use pyo3::prelude::*;
 use pyo3::types::PyByteArray;
 use qoqo::devices::GenericDeviceWrapper;
 use qoqo::QoqoBackendError;
+use qoqo_calculator_pyo3::convert_into_calculator_float;
 use roqoqo::devices::Device;
 use roqoqo_qryd::api_devices::{QRydAPIDevice, QrydEmuSquareDevice, QrydEmuTriangularDevice};
 
@@ -45,15 +46,35 @@ impl QrydEmuSquareDeviceWrapper {
     #[new]
     pub fn new(
         seed: Option<usize>,
-        controlled_z_phase_relation: Option<String>,
-        controlled_phase_phase_relation: Option<String>,
+        controlled_z_phase_relation: Option<&PyAny>,
+        controlled_phase_phase_relation: Option<&PyAny>,
     ) -> Self {
-        Self {
-            internal: QrydEmuSquareDevice::new(
-                seed,
-                controlled_z_phase_relation,
-                controlled_phase_phase_relation,
+        let cast_f_zpr = Python::with_gil(|_| {
+            convert_into_calculator_float(controlled_z_phase_relation.unwrap())
+        });
+        let cast_f_ppr = Python::with_gil(|_| {
+            convert_into_calculator_float(controlled_phase_phase_relation.unwrap())
+        });
+        let czpr = match cast_f_zpr.is_ok() {
+            true => Some(cast_f_zpr.unwrap().to_string()),
+            false => Some(
+                controlled_z_phase_relation
+                    .unwrap()
+                    .extract::<String>()
+                    .unwrap(),
             ),
+        };
+        let cppr = match cast_f_ppr.is_ok() {
+            true => Some(cast_f_ppr.unwrap().to_string()),
+            false => Some(
+                controlled_phase_phase_relation
+                    .unwrap()
+                    .extract::<String>()
+                    .unwrap(),
+            ),
+        };
+        Self {
+            internal: QrydEmuSquareDevice::new(seed, czpr, cppr),
         }
     }
 
@@ -341,15 +362,35 @@ impl QrydEmuTriangularDeviceWrapper {
     #[new]
     pub fn new(
         seed: Option<usize>,
-        controlled_z_phase_relation: Option<String>,
-        controlled_phase_phase_relation: Option<String>,
+        controlled_z_phase_relation: Option<&PyAny>,
+        controlled_phase_phase_relation: Option<&PyAny>,
     ) -> Self {
-        Self {
-            internal: QrydEmuTriangularDevice::new(
-                seed,
-                controlled_z_phase_relation,
-                controlled_phase_phase_relation,
+        let cast_f_zpr = Python::with_gil(|_| {
+            convert_into_calculator_float(controlled_z_phase_relation.unwrap())
+        });
+        let cast_f_ppr = Python::with_gil(|_| {
+            convert_into_calculator_float(controlled_phase_phase_relation.unwrap())
+        });
+        let czpr = match cast_f_zpr.is_ok() {
+            true => Some(cast_f_zpr.unwrap().to_string()),
+            false => Some(
+                controlled_z_phase_relation
+                    .unwrap()
+                    .extract::<String>()
+                    .unwrap(),
             ),
+        };
+        let cppr = match cast_f_ppr.is_ok() {
+            true => Some(cast_f_ppr.unwrap().to_string()),
+            false => Some(
+                controlled_phase_phase_relation
+                    .unwrap()
+                    .extract::<String>()
+                    .unwrap(),
+            ),
+        };
+        Self {
+            internal: QrydEmuTriangularDevice::new(seed, czpr, cppr),
         }
     }
 

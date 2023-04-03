@@ -85,11 +85,21 @@ impl FirstDeviceWrapper {
         });
         let czpr = match cast_f_zpr.is_ok() {
             true => Some(cast_f_zpr.unwrap().to_string()),
-            false => Some(controlled_z_phase_relation.unwrap().extract::<String>().unwrap()),
+            false => Some(
+                controlled_z_phase_relation
+                    .unwrap()
+                    .extract::<String>()
+                    .unwrap(),
+            ),
         };
         let cppr = match cast_f_ppr.is_ok() {
             true => Some(cast_f_ppr.unwrap().to_string()),
-            false => Some(controlled_phase_phase_relation.unwrap().extract::<String>().unwrap()),
+            false => Some(
+                controlled_phase_phase_relation
+                    .unwrap()
+                    .extract::<String>()
+                    .unwrap(),
+            ),
         };
         Ok(Self {
             internal: FirstDevice::new(
