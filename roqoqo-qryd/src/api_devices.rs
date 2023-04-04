@@ -131,6 +131,37 @@ impl Device for QRydAPIDevice {
         }
     }
 
+    /// Returns the gate time of a three qubit operation on this device.
+    ///
+    /// # Arguments
+    ///
+    /// * `hqslang` - The hqslang name of a three-qubit gate as defined in roqoqo.
+    /// * `control_0` - The first control qubit the gate acts on.
+    /// * `control_1` - The second control qubit the gate acts on.
+    /// * `target` - The target qubit the gate acts on.
+    ///
+    /// # Returns
+    ///
+    /// * `Some<f64>` - The gate time.
+    /// * `None` - The gate is not available on the device.
+    ///
+    fn three_qubit_gate_time(
+        &self,
+        hqslang: &str,
+        control_0: &usize,
+        control_1: &usize,
+        target: &usize,
+    ) -> Option<f64> {
+        match self {
+            Self::QrydEmuSquareDevice(d) => {
+                d.three_qubit_gate_time(hqslang, control_0, control_1, target)
+            }
+            Self::QrydEmuTriangularDevice(d) => {
+                d.three_qubit_gate_time(hqslang, control_0, control_1, target)
+            }
+        }
+    }
+
     /// Returns the gate time of a multi qubit operation on this device.
     ///
     /// # Arguments
@@ -508,6 +539,31 @@ impl Device for QrydEmuSquareDevice {
         } else {
             None
         }
+    }
+
+    /// Returns the gate time of a three qubit operation on this device.
+    ///
+    /// # Arguments
+    ///
+    /// * `hqslang` - The hqslang name of a three-qubit gate as defined in roqoqo.
+    /// * `control_0` - The first control qubit the gate acts on.
+    /// * `control_1` - The second control qubit the gate acts on.
+    /// * `target` - The target qubit the gate acts on.
+    ///
+    /// # Returns
+    ///
+    /// * `Some<f64>` - The gate time.
+    /// * `None` - The gate is not available on the device.
+    ///
+    #[allow(unused_variables)]
+    fn three_qubit_gate_time(
+        &self,
+        hqslang: &str,
+        control_0: &usize,
+        control_1: &usize,
+        target: &usize,
+    ) -> Option<f64> {
+        None
     }
 
     /// Returns the gate time of a multi qubit operation on this device.
@@ -923,6 +979,31 @@ impl Device for QrydEmuTriangularDevice {
         } else {
             None
         }
+    }
+
+    /// Returns the gate time of a three qubit operation on this device.
+    ///
+    /// # Arguments
+    ///
+    /// * `hqslang` - The hqslang name of a three-qubit gate as defined in roqoqo.
+    /// * `control_0` - The first control qubit the gate acts on.
+    /// * `control_1` - The second control qubit the gate acts on.
+    /// * `target` - The target qubit the gate acts on.
+    ///
+    /// # Returns
+    ///
+    /// * `Some<f64>` - The gate time.
+    /// * `None` - The gate is not available on the device.
+    ///
+    #[allow(unused_variables)]
+    fn three_qubit_gate_time(
+        &self,
+        hqslang: &str,
+        control_0: &usize,
+        control_1: &usize,
+        target: &usize,
+    ) -> Option<f64> {
+        None
     }
 
     /// Returns the gate time of a multi qubit operation on this device.

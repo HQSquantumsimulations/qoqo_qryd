@@ -155,6 +155,17 @@ impl Device for QRydDevice {
             Self::FirstDevice(d) => d.two_qubit_gate_time(hqslang, control, target),
         }
     }
+    fn three_qubit_gate_time(
+        &self,
+        hqslang: &str,
+        control_0: &usize,
+        control_1: &usize,
+        target: &usize,
+    ) -> Option<f64> {
+        match self {
+            Self::FirstDevice(d) => d.three_qubit_gate_time(hqslang, control_0, control_1, target),
+        }
+    }
     fn multi_qubit_gate_time(&self, hqslang: &str, qubits: &[usize]) -> Option<f64> {
         match self {
             Self::FirstDevice(d) => d.multi_qubit_gate_time(hqslang, qubits),
@@ -594,6 +605,16 @@ impl Device for FirstDevice {
             // Example of gate time dependence on distance. Here gate time increases with the square of the distance.
             Some(2e-6 * total_distance.powi(2))
         }
+    }
+    #[allow(unused_variables)]
+    fn three_qubit_gate_time(
+        &self,
+        hqslang: &str,
+        control_0: &usize,
+        control_1: &usize,
+        target: &usize,
+    ) -> Option<f64> {
+        None
     }
     #[allow(unused_variables)]
     fn multi_qubit_gate_time(&self, hqslang: &str, qubits: &[usize]) -> Option<f64> {

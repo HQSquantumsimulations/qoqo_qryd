@@ -289,6 +289,25 @@ impl QrydEmuSquareDeviceWrapper {
             .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))
     }
 
+    /// Returns the gate time of a three qubit operation on this device.
+    ///
+    /// Returns:
+    ///     f64: The gate time.
+    ///
+    /// Raises:
+    ///     ValueError: The gate is not available in the device.
+    fn three_qubit_gate_time(
+        &self,
+        hqslang: &str,
+        control_0: usize,
+        control_1: usize,
+        target: usize,
+    ) -> PyResult<f64> {
+        self.internal
+            .three_qubit_gate_time(hqslang, &control_0, &control_1, &target)
+            .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))
+    }
+
     /// Returns the gate time of a multi qubit operation on this device.
     ///
     /// Returns:
@@ -609,6 +628,25 @@ impl QrydEmuTriangularDeviceWrapper {
     ) -> PyResult<f64> {
         self.internal
             .two_qubit_gate_time(hqslang, &control, &target)
+            .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))
+    }
+
+    /// Returns the gate time of a three qubit operation on this device.
+    ///
+    /// Returns:
+    ///     f64: The gate time.
+    ///
+    /// Raises:
+    ///     ValueError: The gate is not available in the device.
+    fn three_qubit_gate_time(
+        &self,
+        hqslang: &str,
+        control_0: usize,
+        control_1: usize,
+        target: usize,
+    ) -> PyResult<f64> {
+        self.internal
+            .three_qubit_gate_time(hqslang, &control_0, &control_1, &target)
             .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))
     }
 
