@@ -196,6 +196,8 @@ fn test_gatetimes_square() {
         apidevice.two_qubit_gate_time("CNOT", &0, &5),
         device.two_qubit_gate_time("CNOT", &0, &5)
     );
+    // three qubit gates
+    assert_eq!(device.three_qubit_gate_time("Toffoli", &0, &1, &2), None);
     // multi qubit gates
     assert_eq!(device.multi_qubit_gate_time("MultiQubitMS", &[0, 1]), None);
     assert_eq!(
@@ -320,6 +322,8 @@ fn test_gatetimes_triangular() {
         apidevice.two_qubit_gate_time("CNOT", &0, &5),
         device.two_qubit_gate_time("CNOT", &0, &5)
     );
+    // three qubit gates
+    assert_eq!(device.three_qubit_gate_time("Toffoli", &0, &1, &2), None);
     // multi qubit gates
     assert_eq!(device.multi_qubit_gate_time("MultiQubitMS", &[0, 1]), None);
     assert_eq!(

@@ -350,6 +350,9 @@ fn test_gate_times() {
         assert!(two_ok.is_ok());
         assert!(two_err.is_err());
 
+        let three_err = device.call_method1("three_qubit_gate_time", ("Toffoli", 0, 1, 2));
+        assert!(three_err.is_err());
+
         let mult = device.call_method1("multi_qubit_gate_time", ("MultiQubitZZ", (0, 1, 2)));
         assert!(mult.is_err());
     })

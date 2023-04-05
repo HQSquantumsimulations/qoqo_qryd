@@ -592,6 +592,11 @@ fn test_gate_times() {
         assert!(two_tr_err.is_err());
         assert!(two_sq_err.is_err());
 
+        let three_tr = triangular.call_method1("three_qubit_gate_time", ("Toffoli", 0, 1, 2));
+        let three_sq = square.call_method1("three_qubit_gate_time", ("Toffoli", 0, 1, 2));
+        assert!(three_tr.is_err());
+        assert!(three_sq.is_err());
+
         let mult_tr = triangular.call_method1("multi_qubit_gate_time", ("MultiQubitZZ", (0, 1, 2)));
         let mult_sq = square.call_method1("multi_qubit_gate_time", ("MultiQubitZZ", (0, 1, 2)));
         assert!(mult_tr.is_err());
