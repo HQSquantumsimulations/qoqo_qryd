@@ -7,7 +7,6 @@ jobs:
 
   build_maturin_builds_linux:
     name: maturin_build-linux
-    needs: deploy_cratesio
     uses: HQSquantumsimulations/reusable_workflows/.github/workflows/reusable_build_maturin_linux.yml@main
     with: 
       py_interface_folder: "qoqo-qryd"
@@ -19,7 +18,6 @@ jobs:
 # Build macos wheels and upload them to PyPi
   build_maturin_builds_macos:
     name: maturin_build-macos
-    needs: deploy_cratesio
     uses: HQSquantumsimulations/reusable_workflows/.github/workflows/reusable_build_maturin_macos.yml@main
     with: 
       py_interface_folder: "qoqo-qryd"
@@ -29,7 +27,6 @@ jobs:
 # Build windows wheels and upload them to PyPi
   build_maturin_builds_windows:
     name: maturin_build-windows
-    needs: deploy_cratesio
     uses: HQSquantumsimulations/reusable_workflows/.github/workflows/reusable_build_maturin_windows.yml@main
     with: 
       py_interface_folder: "qoqo-qryd"
