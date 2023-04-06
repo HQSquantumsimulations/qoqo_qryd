@@ -1,5 +1,8 @@
 name: manual_build_maturin
 
+on:
+  workflow_dispatch:
+
 build_maturin_builds_linux:
     name: maturin_build-linux
     needs: deploy_cratesio
