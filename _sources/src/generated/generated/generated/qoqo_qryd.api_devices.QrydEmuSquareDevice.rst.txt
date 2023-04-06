@@ -26,6 +26,7 @@ qoqo\_qryd.api\_devices.QrydEmuSquareDevice
       ~QrydEmuSquareDevice.qrydbackend
       ~QrydEmuSquareDevice.seed
       ~QrydEmuSquareDevice.single_qubit_gate_time
+      ~QrydEmuSquareDevice.three_qubit_gate_time
       ~QrydEmuSquareDevice.to_bincode
       ~QrydEmuSquareDevice.to_json
       ~QrydEmuSquareDevice.two_qubit_edges

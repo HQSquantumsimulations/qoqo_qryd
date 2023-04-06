@@ -132,8 +132,8 @@ The distance between neighbouring rows are fixed but in each row the tweezer pos
 At the moment assumes that number of qubits in the traps is fixed. No loading/unloading once device is created.</p></li>
 <li><p><strong>row_distance</strong> (<em>float</em>) -- Fixed distance between rows.</p></li>
 <li><p><strong>initial_layout</strong> (<em>np.ndarray</em>) -- The starting layout (always had the index 0).</p></li>
-<li><p><strong>controlled_z_phase_relation</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) -- The relation to use for the PhaseShiftedControlledZ gate.</p></li>
-<li><p><strong>controlled_phase_phase_relation</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) -- The relation to use for the PhaseShiftedControlledPhase gate.</p></li>
+<li><p><strong>controlled_z_phase_relation</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em><em>]</em>) -- The relation to use for the PhaseShiftedControlledZ gate.</p></li>
+<li><p><strong>controlled_phase_phase_relation</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em><em>]</em>) -- The relation to use for the PhaseShiftedControlledPhase gate.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
@@ -378,6 +378,23 @@ The cutoff defaults to 1.0 but can be changed with the set_cutoff function.</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>PyValueError</strong> -- </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.qryd_devices.FirstDevice.three_qubit_gate_time">
+<span class="sig-name descname"><span class="pre">three_qubit_gate_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hqslang</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">control_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">control_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.qryd_devices.FirstDevice.three_qubit_gate_time" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the gate time of a three qubit operation on this device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The gate time.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>f64</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> -- The gate is not available in the device.</p>
 </dd>
 </dl>
 </dd></dl>
