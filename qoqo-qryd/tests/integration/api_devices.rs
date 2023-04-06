@@ -34,6 +34,17 @@ fn create_square_device(
     device
 }
 
+fn create_square_device_f(py: Python, rel1: f64, rel2: f64) -> &PyCell<QrydEmuSquareDeviceWrapper> {
+    let seed: Option<usize> = Some(11);
+    let device_type = py.get_type::<QrydEmuSquareDeviceWrapper>();
+    let device: &PyCell<QrydEmuSquareDeviceWrapper> = device_type
+        .call1((seed, rel1, rel2))
+        .unwrap()
+        .downcast::<PyCell<QrydEmuSquareDeviceWrapper>>()
+        .unwrap();
+    device
+}
+
 // Test to create a new device
 #[test]
 fn test_new_square() {
@@ -250,6 +261,21 @@ fn create_triangular_device(
     py: Python,
     rel1: Option<String>,
     rel2: Option<String>,
+) -> &PyCell<QrydEmuTriangularDeviceWrapper> {
+    let seed: Option<usize> = Some(11);
+    let device_type = py.get_type::<QrydEmuTriangularDeviceWrapper>();
+    let device: &PyCell<QrydEmuTriangularDeviceWrapper> = device_type
+        .call1((seed, rel1, rel2))
+        .unwrap()
+        .downcast::<PyCell<QrydEmuTriangularDeviceWrapper>>()
+        .unwrap();
+    device
+}
+
+fn create_triangular_device_f(
+    py: Python,
+    rel1: f64,
+    rel2: f64,
 ) -> &PyCell<QrydEmuTriangularDeviceWrapper> {
     let seed: Option<usize> = Some(11);
     let device_type = py.get_type::<QrydEmuTriangularDeviceWrapper>();
@@ -566,6 +592,11 @@ fn test_gate_times() {
         assert!(two_tr_err.is_err());
         assert!(two_sq_err.is_err());
 
+        let three_tr = triangular.call_method1("three_qubit_gate_time", ("Toffoli", 0, 1, 2));
+        let three_sq = square.call_method1("three_qubit_gate_time", ("Toffoli", 0, 1, 2));
+        assert!(three_tr.is_err());
+        assert!(three_sq.is_err());
+
         let mult_tr = triangular.call_method1("multi_qubit_gate_time", ("MultiQubitZZ", (0, 1, 2)));
         let mult_sq = square.call_method1("multi_qubit_gate_time", ("MultiQubitZZ", (0, 1, 2)));
         assert!(mult_tr.is_err());
@@ -582,6 +613,8 @@ fn test_phi_theta_relation() {
         let square = create_square_device(py, None, None);
         let triangular_f = create_triangular_device(py, Some("2.15".to_string()), None);
         let square_f = create_square_device(py, Some("2.15".to_string()), None);
+        let triangular_f_1 = create_triangular_device_f(py, 2.15, 1.36);
+        let square_f_1 = create_square_device_f(py, 2.15, 1.36);
 
         let pscz_tr = triangular
             .call_method0("phase_shift_controlled_z")
@@ -657,5 +690,30 @@ fn test_phi_theta_relation() {
             .unwrap();
         assert!(gtcp_tr_ok.is_finite());
         assert!(gtcp_sq_ok.is_finite());
+
+        let pscz_phase_f_t = triangular_f_1
+            .call_method0("phase_shift_controlled_z")
+            .unwrap()
+            .extract::<f64>()
+            .unwrap();
+        let pscz_phase_f_q = square_f_1
+            .call_method0("phase_shift_controlled_z")
+            .unwrap()
+            .extract::<f64>()
+            .unwrap();
+        let pscp_phase_f_t = triangular_f_1
+            .call_method1("phase_shift_controlled_phase", (1.0,))
+            .unwrap()
+            .extract::<f64>()
+            .unwrap();
+        let pscp_phase_f_q = square_f_1
+            .call_method1("phase_shift_controlled_phase", (1.0,))
+            .unwrap()
+            .extract::<f64>()
+            .unwrap();
+        assert_eq!(pscz_phase_f_t, 2.15);
+        assert_eq!(pscz_phase_f_q, 2.15);
+        assert_eq!(pscp_phase_f_t, 1.36);
+        assert_eq!(pscp_phase_f_q, 1.36);
     })
 }

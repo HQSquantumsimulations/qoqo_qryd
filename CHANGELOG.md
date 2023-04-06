@@ -2,6 +2,11 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+## 0.8.5
+
+* Updated to qoqo 1.3
+* Updated qoqo_qryd devices initialization signature
+
 ## 0.8.4
 
 * Updated dependencies addressing open-ssl security advisory

@@ -17,6 +17,7 @@ use pyo3::prelude::*;
 use pyo3::types::PyByteArray;
 use qoqo::devices::GenericDeviceWrapper;
 use qoqo::QoqoBackendError;
+use qoqo_calculator_pyo3::convert_into_calculator_float;
 use roqoqo::devices::Device;
 use roqoqo_qryd::qryd_devices::{FirstDevice, QRydDevice};
 use std::collections::HashMap;
@@ -35,8 +36,8 @@ use std::collections::HashMap;
 ///                                 At the moment assumes that number of qubits in the traps is fixed. No loading/unloading once device is created.
 ///     row_distance (float): Fixed distance between rows.
 ///     initial_layout (np.ndarray): The starting layout (always had the index 0).
-///     controlled_z_phase_relation (Optional[str]): The relation to use for the PhaseShiftedControlledZ gate.
-///     controlled_phase_phase_relation (Optional[str]): The relation to use for the PhaseShiftedControlledPhase gate.
+///     controlled_z_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledZ gate.
+///     controlled_phase_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledPhase gate.
 ///
 /// Raises:
 ///     PyValueError
@@ -61,9 +62,8 @@ impl FirstDeviceWrapper {
     ///                                 At the moment assumes that number of qubits in the traps is fixed. No loading/unloading once device is created.
     ///     row_distance (float): Fixed distance between rows.
     ///     initial_layout (np.ndarray): The starting layout (always had the index 0).
-    ///     controlled_z_phase_relation (Optional[str]): The relation to use for the PhaseShiftedControlledZ gate.
-    ///                                                  It can be hardcoded to a specific value if a float is passed in as String.
-    ///     controlled_phase_phase_relation (Optional[str]): The relation to use for the PhaseShiftedControlledPhase gate.
+    ///     controlled_z_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledZ gate.
+    ///     controlled_phase_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledPhase gate.
     /// Raises:
     ///     PyValueError
     #[new]
@@ -73,9 +73,37 @@ impl FirstDeviceWrapper {
         qubits_per_row: Vec<usize>,
         row_distance: f64,
         initial_layout: PyReadonlyArray2<f64>,
-        controlled_z_phase_relation: Option<String>,
-        controlled_phase_phase_relation: Option<String>,
+        controlled_z_phase_relation: Option<&PyAny>,
+        controlled_phase_phase_relation: Option<&PyAny>,
     ) -> PyResult<Self> {
+        let czpr = if let Some(value) = controlled_z_phase_relation {
+            if convert_into_calculator_float(value).is_ok() {
+                Some(convert_into_calculator_float(value).unwrap().to_string())
+            } else {
+                Some(
+                    controlled_z_phase_relation
+                        .unwrap()
+                        .extract::<String>()
+                        .unwrap(),
+                )
+            }
+        } else {
+            None
+        };
+        let cppr = if let Some(value) = controlled_phase_phase_relation {
+            if convert_into_calculator_float(value).is_ok() {
+                Some(convert_into_calculator_float(value).unwrap().to_string())
+            } else {
+                Some(
+                    controlled_phase_phase_relation
+                        .unwrap()
+                        .extract::<String>()
+                        .unwrap(),
+                )
+            }
+        } else {
+            None
+        };
         Ok(Self {
             internal: FirstDevice::new(
                 number_rows,
@@ -83,8 +111,8 @@ impl FirstDeviceWrapper {
                 &qubits_per_row,
                 row_distance,
                 initial_layout.as_array().to_owned(),
-                controlled_z_phase_relation,
-                controlled_phase_phase_relation,
+                czpr,
+                cppr,
             )
             .map_err(|err| PyValueError::new_err(format!("{:?}", err)))?,
         })
@@ -118,6 +146,25 @@ impl FirstDeviceWrapper {
     ) -> PyResult<f64> {
         self.internal
             .two_qubit_gate_time(hqslang, &control, &target)
+            .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))
+    }
+
+    /// Returns the gate time of a three qubit operation on this device.
+    ///
+    /// Returns:
+    ///     f64: The gate time.
+    ///
+    /// Raises:
+    ///     ValueError: The gate is not available in the device.
+    fn three_qubit_gate_time(
+        &self,
+        hqslang: &str,
+        control_0: usize,
+        control_1: usize,
+        target: usize,
+    ) -> PyResult<f64> {
+        self.internal
+            .three_qubit_gate_time(hqslang, &control_0, &control_1, &target)
             .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))
     }
 

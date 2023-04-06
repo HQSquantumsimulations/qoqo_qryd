@@ -14,6 +14,7 @@ use pyo3::prelude::*;
 use pyo3::types::PyByteArray;
 use qoqo::devices::GenericDeviceWrapper;
 use qoqo::QoqoBackendError;
+use qoqo_calculator_pyo3::convert_into_calculator_float;
 use roqoqo::devices::Device;
 use roqoqo_qryd::api_devices::{QRydAPIDevice, QrydEmuSquareDevice, QrydEmuTriangularDevice};
 
@@ -34,10 +35,9 @@ impl QrydEmuSquareDeviceWrapper {
     ///
     /// Args:
     ///     seed (int): Seed, if not provided will be set to 0 per default (not recommended!)
-    ///     controlled_z_phase_relation (Optinal[str]): The String used to choose what kind of phi-theta relation
+    ///     controlled_z_phase_relation (Optinal[Union[str, float]]): The String used to choose what kind of phi-theta relation
     ///                                                 to use for the PhaseShiftedControlledZ gate
-    ///                                                 It can be hardcoded to a specific value if a float is passed in as String
-    ///     controlled_phase_phase_relation (Optinal[str]): The String used to choose what kind of phi-theta relation
+    ///     controlled_phase_phase_relation (Optinal[Union[str, float]]): The String used to choose what kind of phi-theta relation
     ///                                                     to use for the PhaseShiftedControlledPhase gate
     ///
     /// Returns:
@@ -45,15 +45,39 @@ impl QrydEmuSquareDeviceWrapper {
     #[new]
     pub fn new(
         seed: Option<usize>,
-        controlled_z_phase_relation: Option<String>,
-        controlled_phase_phase_relation: Option<String>,
+        controlled_z_phase_relation: Option<&PyAny>,
+        controlled_phase_phase_relation: Option<&PyAny>,
     ) -> Self {
+        let czpr = if let Some(value) = controlled_z_phase_relation {
+            if convert_into_calculator_float(value).is_ok() {
+                Some(convert_into_calculator_float(value).unwrap().to_string())
+            } else {
+                Some(
+                    controlled_z_phase_relation
+                        .unwrap()
+                        .extract::<String>()
+                        .unwrap(),
+                )
+            }
+        } else {
+            None
+        };
+        let cppr = if let Some(value) = controlled_phase_phase_relation {
+            if convert_into_calculator_float(value).is_ok() {
+                Some(convert_into_calculator_float(value).unwrap().to_string())
+            } else {
+                Some(
+                    controlled_phase_phase_relation
+                        .unwrap()
+                        .extract::<String>()
+                        .unwrap(),
+                )
+            }
+        } else {
+            None
+        };
         Self {
-            internal: QrydEmuSquareDevice::new(
-                seed,
-                controlled_z_phase_relation,
-                controlled_phase_phase_relation,
-            ),
+            internal: QrydEmuSquareDevice::new(seed, czpr, cppr),
         }
     }
 
@@ -265,6 +289,25 @@ impl QrydEmuSquareDeviceWrapper {
             .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))
     }
 
+    /// Returns the gate time of a three qubit operation on this device.
+    ///
+    /// Returns:
+    ///     f64: The gate time.
+    ///
+    /// Raises:
+    ///     ValueError: The gate is not available in the device.
+    fn three_qubit_gate_time(
+        &self,
+        hqslang: &str,
+        control_0: usize,
+        control_1: usize,
+        target: usize,
+    ) -> PyResult<f64> {
+        self.internal
+            .three_qubit_gate_time(hqslang, &control_0, &control_1, &target)
+            .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))
+    }
+
     /// Returns the gate time of a multi qubit operation on this device.
     ///
     /// Returns:
@@ -330,10 +373,9 @@ impl QrydEmuTriangularDeviceWrapper {
     ///
     /// Args:
     ///     seed (int): Seed, if not provided will be set to 0 per default (not recommended!)
-    ///     controlled_z_phase_relation (Optinal[str]): The String used to choose what kind of phi-theta relation
+    ///     controlled_z_phase_relation (Optinal[Union[str, float]]): The String used to choose what kind of phi-theta relation
     ///                                                 to use for the PhaseShiftedControlledZ gate
-    ///                                                 It can be hardcoded to a specific value if a float is passed in as String
-    ///     controlled_phase_phase_relation (Optinal[str]): The String used to choose what kind of phi-theta relation
+    ///     controlled_phase_phase_relation (Optinal[Union[str, float]]): The String used to choose what kind of phi-theta relation
     ///                                                     to use for the PhaseShiftedControlledPhase gate
     ///
     /// Returns:
@@ -341,15 +383,39 @@ impl QrydEmuTriangularDeviceWrapper {
     #[new]
     pub fn new(
         seed: Option<usize>,
-        controlled_z_phase_relation: Option<String>,
-        controlled_phase_phase_relation: Option<String>,
+        controlled_z_phase_relation: Option<&PyAny>,
+        controlled_phase_phase_relation: Option<&PyAny>,
     ) -> Self {
+        let czpr = if let Some(value) = controlled_z_phase_relation {
+            if convert_into_calculator_float(value).is_ok() {
+                Some(convert_into_calculator_float(value).unwrap().to_string())
+            } else {
+                Some(
+                    controlled_z_phase_relation
+                        .unwrap()
+                        .extract::<String>()
+                        .unwrap(),
+                )
+            }
+        } else {
+            None
+        };
+        let cppr = if let Some(value) = controlled_phase_phase_relation {
+            if convert_into_calculator_float(value).is_ok() {
+                Some(convert_into_calculator_float(value).unwrap().to_string())
+            } else {
+                Some(
+                    controlled_phase_phase_relation
+                        .unwrap()
+                        .extract::<String>()
+                        .unwrap(),
+                )
+            }
+        } else {
+            None
+        };
         Self {
-            internal: QrydEmuTriangularDevice::new(
-                seed,
-                controlled_z_phase_relation,
-                controlled_phase_phase_relation,
-            ),
+            internal: QrydEmuTriangularDevice::new(seed, czpr, cppr),
         }
     }
 
@@ -562,6 +628,25 @@ impl QrydEmuTriangularDeviceWrapper {
     ) -> PyResult<f64> {
         self.internal
             .two_qubit_gate_time(hqslang, &control, &target)
+            .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))
+    }
+
+    /// Returns the gate time of a three qubit operation on this device.
+    ///
+    /// Returns:
+    ///     f64: The gate time.
+    ///
+    /// Raises:
+    ///     ValueError: The gate is not available in the device.
+    fn three_qubit_gate_time(
+        &self,
+        hqslang: &str,
+        control_0: usize,
+        control_1: usize,
+        target: usize,
+    ) -> PyResult<f64> {
+        self.internal
+            .three_qubit_gate_time(hqslang, &control_0, &control_1, &target)
             .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))
     }
 

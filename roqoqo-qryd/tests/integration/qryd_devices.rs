@@ -602,6 +602,8 @@ fn test_qubit_gate_times() {
     );
     assert_eq!(device.two_qubit_gate_time("ControlledPauliZ", &0, &1), None);
 
+    assert_eq!(device.three_qubit_gate_time("Toffoli", &0, &1, &2), None);
+
     assert_eq!(
         device.multi_qubit_gate_time("MultiQubitMSXX", &[0, 1, 2]),
         None
