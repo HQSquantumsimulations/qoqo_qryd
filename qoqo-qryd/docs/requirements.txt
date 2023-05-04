@@ -1,4 +1,4 @@
-qoqo>=1.2
+qoqo>=1.4
 numpy
 sphinx >= 2.1
 nbsphinx
