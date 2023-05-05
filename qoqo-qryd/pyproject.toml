@@ -12,6 +12,7 @@ requires-python = ">=3.7"
 
 [project.optional-dependencies]
 docs = [
+  "tomli",
   "sphinx>=2.1",
   "nbsphinx",
   "pygments",
