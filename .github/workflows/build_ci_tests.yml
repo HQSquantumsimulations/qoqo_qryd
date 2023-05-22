@@ -18,7 +18,7 @@ jobs:
         profile: minimal
         toolchain: stable
         default: true
-    - uses: Swatinem/rust-cache@v2.2.1
+    - uses: Swatinem/rust-cache@v2.4.0
     - name: Install dependencies
       run: |
         pip install maturin pytest numpy qoqo
@@ -58,7 +58,7 @@ jobs:
           toolchain: stable
           target: ${{ matrix.combinations.rust }}
           default: true
-      - uses: Swatinem/rust-cache@v2.2.1
+      - uses: Swatinem/rust-cache@v2.4.0
       - uses: actions/setup-python@v4.5.0
         with:
           python-version: ${{ matrix.python.py }}
