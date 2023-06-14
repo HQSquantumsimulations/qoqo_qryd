@@ -13,6 +13,7 @@
 #![deny(missing_docs)]
 #![deny(missing_crate_level_docs)]
 #![deny(missing_debug_implementations)]
+#![allow(ambiguous_glob_reexports)]
 
 //! # qoqo-qryd
 //!
