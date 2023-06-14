@@ -3,6 +3,10 @@
 Tracks qoqo-qryd changes after 0.5
 
 
+# 0.8.7
+
+* Updated to qoqo 1.5
+
 ## 0.8.6
 
 * Updated to qoqo 1.4
