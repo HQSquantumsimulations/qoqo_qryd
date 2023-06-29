@@ -1468,7 +1468,7 @@ dependencies = [
 
 [[package]]
 name = "qoqo-qryd"
-version = "0.8.7"
+version = "0.9.0"
 dependencies = [
  "bincode",
  "httpmock",
@@ -1705,7 +1705,7 @@ dependencies = [
 
 [[package]]
 name = "roqoqo-qryd"
-version = "0.8.7"
+version = "0.9.0"
 dependencies = [
  "bincode",
  "bitvec",
