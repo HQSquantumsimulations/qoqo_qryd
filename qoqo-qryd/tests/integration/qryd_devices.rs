@@ -492,6 +492,8 @@ fn test_convert_to_device() {
             array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]],
             None,
             None,
+            None,
+            None,
         )
         .unwrap()
         .into();
@@ -534,7 +536,7 @@ fn test_pyo3_new_change_layout() {
         let check_2: &str = check_str.split("qubit_positions").collect::<Vec<&str>>()[1]
             .split(")}")
             .collect::<Vec<&str>>()[1];
-        let comp_str = format!("FirstDeviceWrapper {{ internal: FirstDevice {{ number_rows: 3, number_columns: 2, qubit_positions: {{0: (0, 0), 1: (0, 1), 2: (1, 0), 3: (1, 1), 4: (2, 0), 5: (2, 1)}}, row_distance: 1.0, layout_register: {{0: {:?}}}, current_layout: 0, cutoff: 1.0, controlled_z_phase_relation: \"DefaultRelation\", controlled_phase_phase_relation: \"DefaultRelation\" }} }}", layout);
+        let comp_str = format!("FirstDeviceWrapper {{ internal: FirstDevice {{ number_rows: 3, number_columns: 2, qubit_positions: {{0: (0, 0), 1: (0, 1), 2: (1, 0), 3: (1, 1), 4: (2, 0), 5: (2, 1)}}, row_distance: 1.0, layout_register: {{0: {:?}}}, current_layout: 0, cutoff: 1.0, controlled_z_phase_relation: \"DefaultRelation\", controlled_phase_phase_relation: \"DefaultRelation\", allow_ccz_gate: true, allow_ccp_gate: false }} }}", layout);
         let comp_1: &str = comp_str.split("qubit_positions").collect::<Vec<&str>>()[0];
         let comp_2: &str = comp_str.split("qubit_positions").collect::<Vec<&str>>()[1]
             .split(")}")

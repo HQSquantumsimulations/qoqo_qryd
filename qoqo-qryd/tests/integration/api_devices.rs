@@ -261,11 +261,13 @@ fn create_triangular_device(
     py: Python,
     rel1: Option<String>,
     rel2: Option<String>,
+    ccz: Option<bool>,
+    ccp: Option<bool>,
 ) -> &PyCell<QrydEmuTriangularDeviceWrapper> {
     let seed: Option<usize> = Some(11);
     let device_type = py.get_type::<QrydEmuTriangularDeviceWrapper>();
     let device: &PyCell<QrydEmuTriangularDeviceWrapper> = device_type
-        .call1((seed, rel1, rel2))
+        .call1((seed, rel1, rel2, ccz, ccp))
         .unwrap()
         .downcast::<PyCell<QrydEmuTriangularDeviceWrapper>>()
         .unwrap();
@@ -307,7 +309,7 @@ fn test_new_triangular() {
 fn test_numberqubits_triangular() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device = create_triangular_device(py, None, None);
+        let device = create_triangular_device(py, None, None, None, None);
 
         let number_qubits_get = device
             .call_method0("number_qubits")
@@ -323,7 +325,7 @@ fn test_numberqubits_triangular() {
 fn test_copy_deepcopy_triangular() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device = create_triangular_device(py, None, None);
+        let device = create_triangular_device(py, None, None, None, None);
 
         let copy_op = device.call_method0("__copy__").unwrap();
         let copy_wrapper = copy_op.extract::<QrydEmuTriangularDeviceWrapper>().unwrap();
@@ -343,7 +345,7 @@ fn test_copy_deepcopy_triangular() {
 fn test_to_from_bincode_triangular() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device = create_triangular_device(py, None, None);
+        let device = create_triangular_device(py, None, None, None, None);
 
         let serialised = device.call_method0("to_bincode").unwrap();
         let deserialised = device.call_method1("from_bincode", (serialised,)).unwrap();
@@ -375,7 +377,7 @@ fn test_to_from_bincode_triangular() {
 fn test_to_from_json_triangular() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device = create_triangular_device(py, None, None);
+        let device = create_triangular_device(py, None, None, None, None);
 
         let serialised = device.call_method0("to_json").unwrap();
         let deserialised = device.call_method1("from_json", (serialised,)).unwrap();
@@ -403,7 +405,7 @@ fn test_to_from_json_triangular() {
 fn test_enum_to_bincode_triangular() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device = create_triangular_device(py, None, None);
+        let device = create_triangular_device(py, None, None, None, None);
 
         let serialised = device.call_method0("_enum_to_bincode");
         assert!(serialised.is_ok());
@@ -415,7 +417,7 @@ fn test_enum_to_bincode_triangular() {
 fn test_fields_triangular() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device = create_triangular_device(py, None, None);
+        let device = create_triangular_device(py, None, None, None, None);
 
         let seed = device
             .call_method0("seed")
@@ -438,7 +440,7 @@ fn test_fields_triangular() {
 fn test_twoqubitedges_triangular() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device = create_triangular_device(py, None, None);
+        let device = create_triangular_device(py, None, None, None, None);
 
         let twoqubitedges_get = device
             .call_method0("two_qubit_edges")
@@ -547,7 +549,7 @@ fn test_generic_device_square() {
 fn test_generic_device_triangular() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device = create_triangular_device(py, None, None);
+        let device = create_triangular_device(py, None, None, None, None);
         let genericdevice = device.call_method0("generic_device").unwrap();
 
         let num_gen = genericdevice
@@ -569,7 +571,7 @@ fn test_generic_device_triangular() {
 fn test_gate_times() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let triangular = create_triangular_device(py, None, None);
+        let triangular = create_triangular_device(py, None, None, Some(true), Some(true));
         let square = create_square_device(py, None, None);
 
         let sing_tr_ok = triangular.call_method1("single_qubit_gate_time", ("RotateX", 0));
@@ -592,10 +594,15 @@ fn test_gate_times() {
         assert!(two_tr_err.is_err());
         assert!(two_sq_err.is_err());
 
-        let three_tr = triangular.call_method1("three_qubit_gate_time", ("Toffoli", 0, 1, 2));
-        let three_sq = square.call_method1("three_qubit_gate_time", ("Toffoli", 0, 1, 2));
-        assert!(three_tr.is_err());
-        assert!(three_sq.is_err());
+        let three_tr_ok = triangular.call_method1(
+            "three_qubit_gate_time",
+            ("ControlledControlledPauliZ", 0, 5, 6),
+        );
+        let three_tr_err = triangular.call_method1("three_qubit_gate_time", ("Toffoli", 0, 1, 2));
+        let three_sq_err = square.call_method1("three_qubit_gate_time", ("Toffoli", 0, 1, 2));
+        assert!(three_tr_ok.is_ok());
+        assert!(three_tr_err.is_err());
+        assert!(three_sq_err.is_err());
 
         let mult_tr = triangular.call_method1("multi_qubit_gate_time", ("MultiQubitZZ", (0, 1, 2)));
         let mult_sq = square.call_method1("multi_qubit_gate_time", ("MultiQubitZZ", (0, 1, 2)));
@@ -609,9 +616,9 @@ fn test_gate_times() {
 fn test_phi_theta_relation() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let triangular = create_triangular_device(py, None, None);
+        let triangular = create_triangular_device(py, None, None, None, None);
         let square = create_square_device(py, None, None);
-        let triangular_f = create_triangular_device(py, Some("2.15".to_string()), None);
+        let triangular_f = create_triangular_device(py, Some("2.15".to_string()), None, None, None);
         let square_f = create_square_device(py, Some("2.15".to_string()), None);
         let triangular_f_1 = create_triangular_device_f(py, 2.15, 1.36);
         let square_f_1 = create_square_device_f(py, 2.15, 1.36);
