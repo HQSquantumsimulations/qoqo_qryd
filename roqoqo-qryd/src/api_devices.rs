@@ -753,6 +753,10 @@ pub struct QrydEmuTriangularDevice {
     controlled_z_phase_relation: String,
     /// The specific PhaseShiftedControlledPhase relation to use.
     controlled_phase_phase_relation: String,
+    /// Whether the device allows ControlledControlledPauliZ operations.
+    allow_ccz_gate: bool,
+    /// Whether the device allows ControlledControlledPhaseShift operations.
+    allow_ccp_gate: bool,
 }
 
 /// Implements the trait to create a new QrydEmuTriangularDevice and to return its field values.
@@ -765,10 +769,14 @@ impl QrydEmuTriangularDevice {
     /// * `controlled_z_phase_relation` - The relation to use for the PhaseShiftedControlledZ gate.
     ///                                   It can be hardcoded to a specific value if a float is passed in as String.
     /// * `controlled_phase_phase_relation` - The relation to use for the PhaseShiftedControlledPhase gate.
+    /// * `allow_ccz_gate` - Whether to allow ControlledControlledPauliZ operations in the device.
+    /// * `allow_ccp_gate` - Whether to allow ControlledControlledPhaseShift operations in the device.
     pub fn new(
         seed: Option<usize>,
         controlled_z_phase_relation: Option<String>,
         controlled_phase_phase_relation: Option<String>,
+        allow_ccz_gate: Option<bool>,
+        allow_ccp_gate: Option<bool>,
     ) -> Self {
         Self {
             local: false,
@@ -777,6 +785,8 @@ impl QrydEmuTriangularDevice {
                 .unwrap_or_else(|| "DefaultRelation".to_string()),
             controlled_phase_phase_relation: controlled_phase_phase_relation
                 .unwrap_or_else(|| "DefaultRelation".to_string()),
+            allow_ccz_gate: allow_ccz_gate.unwrap_or(true),
+            allow_ccp_gate: allow_ccp_gate.unwrap_or(false),
         }
     }
 
@@ -1003,7 +1013,46 @@ impl Device for QrydEmuTriangularDevice {
         control_1: &usize,
         target: &usize,
     ) -> Option<f64> {
-        None
+        if control_0 >= &30 {
+            return None;
+        }
+        if control_1 >= &30 {
+            return None;
+        }
+        if target >= &30 {
+            return None;
+        }
+
+        if self
+            .two_qubit_gate_time(hqslang, control_0, target)
+            .is_some()
+            && self
+                .two_qubit_gate_time(hqslang, control_0, control_1)
+                .is_some()
+            && self
+                .two_qubit_gate_time(hqslang, control_1, target)
+                .is_some()
+        {
+            match hqslang {
+                "ControlledControlledPauliZ" => {
+                    if self.allow_ccz_gate {
+                        Some(1e-6)
+                    } else {
+                        None
+                    }
+                }
+                "ControlledControlledPhaseShift" => {
+                    if self.allow_ccp_gate {
+                        Some(1e-6)
+                    } else {
+                        None
+                    }
+                }
+                _ => None,
+            }
+        } else {
+            None
+        }
     }
 
     /// Returns the gate time of a multi qubit operation on this device.
