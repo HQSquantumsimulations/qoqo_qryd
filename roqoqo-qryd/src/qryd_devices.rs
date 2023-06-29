@@ -639,35 +639,42 @@ impl Device for FirstDevice {
             return None;
         }
 
-        if self
-            .two_qubit_gate_time(hqslang, control_0, target)
-            .is_some()
-            && self
-                .two_qubit_gate_time(hqslang, control_0, control_1)
-                .is_some()
-            && self
-                .two_qubit_gate_time(hqslang, control_1, target)
-                .is_some()
-        {
-            match hqslang {
-                "ControlledControlledPauliZ" => {
-                    if self.allow_ccz_gate {
-                        Some(1e-6)
-                    } else {
-                        None
-                    }
+        match hqslang {
+            "ControlledControlledPauliZ" => {
+                if self.allow_ccz_gate
+                    && self
+                        .two_qubit_gate_time("PhaseShiftedControlledZ", control_0, target)
+                        .is_some()
+                    && self
+                        .two_qubit_gate_time("PhaseShiftedControlledZ", control_0, control_1)
+                        .is_some()
+                    && self
+                        .two_qubit_gate_time("PhaseShiftedControlledZ", control_1, target)
+                        .is_some()
+                {
+                    Some(1e-6)
+                } else {
+                    None
                 }
-                "ControlledControlledPhaseShift" => {
-                    if self.allow_ccp_gate {
-                        Some(1e-6)
-                    } else {
-                        None
-                    }
-                }
-                _ => None,
             }
-        } else {
-            None
+            "ControlledControlledPhaseShift" => {
+                if self.allow_ccp_gate
+                    && self
+                        .two_qubit_gate_time("PhaseShiftedControlledPhase", control_0, target)
+                        .is_some()
+                    && self
+                        .two_qubit_gate_time("PhaseShiftedControlledPhase", control_0, control_1)
+                        .is_some()
+                    && self
+                        .two_qubit_gate_time("PhaseShiftedControlledPhase", control_1, target)
+                        .is_some()
+                {
+                    Some(1e-6)
+                } else {
+                    None
+                }
+            }
+            _ => None,
         }
     }
 
