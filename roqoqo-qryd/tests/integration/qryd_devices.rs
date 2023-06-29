@@ -35,7 +35,8 @@ fn create_simple_qubit_positions(
 
 #[test]
 fn test_new_no_errors() {
-    let device = FirstDevice::new(1, 1, &[1], 0.0, array![[0.0,],], None, None).unwrap();
+    let device =
+        FirstDevice::new(1, 1, &[1], 0.0, array![[0.0,],], None, None, None, None).unwrap();
     assert_eq!(device.number_rows(), 1);
     assert_eq!(device.number_columns(), 1);
     assert_eq!(device.number_qubits(), 1);
@@ -56,6 +57,8 @@ fn test_new_error_rows() {
         &[2, 1],
         0.0,
         array![[0.0, 1.0], [0.0, 1.0]],
+        None,
+        None,
         None,
         None,
     );
@@ -79,6 +82,8 @@ fn test_new_error_columns() {
         array![[0.0, 1.0], [0.0, 1.0]],
         None,
         None,
+        None,
+        None,
     );
 
     assert!(device.is_err());
@@ -99,6 +104,8 @@ fn test_new_large() {
         &[3, 2],
         1.5,
         array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
+        None,
+        None,
         None,
         None,
     )
@@ -134,6 +141,8 @@ fn test_phi_theta_relation() {
         array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
         None,
         None,
+        None,
+        None,
     )
     .unwrap();
     device = device
@@ -148,6 +157,8 @@ fn test_phi_theta_relation() {
         1.5,
         array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
         Some("2.13".to_string()),
+        None,
+        None,
         None,
     )
     .unwrap();
@@ -230,6 +241,8 @@ fn test_add_layout() {
         array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
         None,
         None,
+        None,
+        None,
     )
     .unwrap();
     let new_layout: Array2<f64> = array![[0.5, 0.5, 0.5], [0.4, 0.4, 0.3]];
@@ -265,6 +278,8 @@ fn test_add_layout_error_key() {
         array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
         None,
         None,
+        None,
+        None,
     )
     .unwrap();
     let new_layout: Array2<f64> = array![[0.5, 0.5, 0.5], [0.4, 0.4, 0.3]];
@@ -293,6 +308,8 @@ fn test_add_layout_error_rows() {
         array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
         None,
         None,
+        None,
+        None,
     )
     .unwrap();
     let new_layout: Array2<f64> = array![[0.5, 0.5, 0.5], [0.4, 0.4, 0.4], [0.3, 0.3, 0.3]];
@@ -318,6 +335,8 @@ fn test_add_layout_error_columns() {
         array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
         None,
         None,
+        None,
+        None,
     )
     .unwrap();
     let new_layout: Array2<f64> = array![[0.5, 0.5], [0.4, 0.4]];
@@ -341,6 +360,8 @@ fn test_switch_layout() {
         &[3, 2],
         1.5,
         array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
+        None,
+        None,
         None,
         None,
     )
@@ -391,6 +412,8 @@ fn test_switch_layout_error() {
         array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
         None,
         None,
+        None,
+        None,
     )
     .unwrap();
     let error_device = device.switch_layout(&2);
@@ -426,6 +449,8 @@ fn test_change_qubit_positions() {
         array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
         None,
         None,
+        None,
+        None,
     )
     .unwrap();
     let mut qryd_device: QRydDevice = QRydDevice::from(&device);
@@ -456,6 +481,8 @@ fn test_change_qubit_positions_error_qubit() {
         &[3, 2],
         1.5,
         array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
+        None,
+        None,
         None,
         None,
     )
@@ -489,6 +516,8 @@ fn test_change_qubit_positions_error_row() {
         array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
         None,
         None,
+        None,
+        None,
     )
     .unwrap();
     let qubits = [
@@ -519,6 +548,8 @@ fn test_change_qubit_positions_error_extra_qubits() {
         &[3, 2],
         1.5,
         array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
+        None,
+        None,
         None,
         None,
     )
@@ -554,6 +585,8 @@ fn test_qubit_gate_times() {
         array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
         None,
         None,
+        Some(true),
+        Some(true),
     )
     .unwrap();
     device = device
@@ -603,6 +636,9 @@ fn test_qubit_gate_times() {
     assert_eq!(device.two_qubit_gate_time("ControlledPauliZ", &0, &1), None);
 
     assert_eq!(device.three_qubit_gate_time("Toffoli", &0, &1, &2), None);
+    // TODO: find correct trio
+    // assert_eq!(device.three_qubit_gate_time("ControlledControlledPauliZ", &0, &1, &6), Some(1e-6));
+    // assert_eq!(device.three_qubit_gate_time("ControlledControlledPhaseShift", &0, &1, &6), Some(1e-6));
 
     assert_eq!(
         device.multi_qubit_gate_time("MultiQubitMSXX", &[0, 1, 2]),
@@ -629,6 +665,8 @@ fn test_change_device() {
         &[3, 2],
         1.5,
         array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
+        None,
+        None,
         None,
         None,
     )
@@ -687,6 +725,8 @@ fn test_qubit_edges() {
         array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
         None,
         None,
+        None,
+        None,
     )
     .unwrap();
     device = device
@@ -707,6 +747,8 @@ fn test_qubit_gate_times_with_layout() {
         &[3, 2],
         1.5,
         array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
+        None,
+        None,
         None,
         None,
     )
@@ -855,9 +897,12 @@ fn test_qubit_gate_times_with_layout() {
 
 #[test]
 fn test_traits_firstdevice() {
-    let device = FirstDevice::new(1, 1, &[1], 0.0, array![[0.0,],], None, None).unwrap();
-    let device_1 = FirstDevice::new(1, 1, &[1], 0.0, array![[0.0,],], None, None).unwrap();
-    let device_2 = FirstDevice::new(1, 2, &[1], 0.0, array![[0.0, 1.0],], None, None).unwrap();
+    let device =
+        FirstDevice::new(1, 1, &[1], 0.0, array![[0.0,],], None, None, None, None).unwrap();
+    let device_1 =
+        FirstDevice::new(1, 1, &[1], 0.0, array![[0.0,],], None, None, None, None).unwrap();
+    let device_2 =
+        FirstDevice::new(1, 2, &[1], 0.0, array![[0.0, 1.0],], None, None, None, None).unwrap();
 
     assert!(device == device_1);
     assert!(device_1 == device);
@@ -869,15 +914,18 @@ fn test_traits_firstdevice() {
     let qubits = create_simple_qubit_positions(&[(0_usize, (0_usize, 0_usize))]);
     assert_eq!(
         format!("{:?}", device),
-        format!("FirstDevice {{ number_rows: 1, number_columns: 1, qubit_positions: {:?}, row_distance: 0.0, layout_register: {{0: [[0.0]], shape=[1, 1], strides=[1, 1], layout=CFcf (0xf), const ndim=2}}, current_layout: 0, cutoff: 1.0, controlled_z_phase_relation: \"DefaultRelation\", controlled_phase_phase_relation: \"DefaultRelation\" }}", qubits) 
+        format!("FirstDevice {{ number_rows: 1, number_columns: 1, qubit_positions: {:?}, row_distance: 0.0, layout_register: {{0: [[0.0]], shape=[1, 1], strides=[1, 1], layout=CFcf (0xf), const ndim=2}}, current_layout: 0, cutoff: 1.0, controlled_z_phase_relation: \"DefaultRelation\", controlled_phase_phase_relation: \"DefaultRelation\", allow_ccz_gate: true, allow_ccp_gate: false }}", qubits) 
     );
 }
 
 #[test]
 fn test_traits_qryddevice() {
-    let device = FirstDevice::new(1, 1, &[1], 0.0, array![[0.0,],], None, None).unwrap();
-    let device_1 = FirstDevice::new(1, 1, &[1], 0.0, array![[0.0,],], None, None).unwrap();
-    let device_2 = FirstDevice::new(1, 2, &[1], 0.0, array![[0.0, 1.0],], None, None).unwrap();
+    let device =
+        FirstDevice::new(1, 1, &[1], 0.0, array![[0.0,],], None, None, None, None).unwrap();
+    let device_1 =
+        FirstDevice::new(1, 1, &[1], 0.0, array![[0.0,],], None, None, None, None).unwrap();
+    let device_2 =
+        FirstDevice::new(1, 2, &[1], 0.0, array![[0.0, 1.0],], None, None, None, None).unwrap();
     let qryd_device: QRydDevice = QRydDevice::from(&device);
     let qryd_device_1: QRydDevice = QRydDevice::from(&device_1);
     let qryd_device_2: QRydDevice = QRydDevice::from(&device_2);
@@ -894,7 +942,7 @@ fn test_traits_qryddevice() {
     let qubits = create_simple_qubit_positions(&[(0_usize, (0_usize, 0_usize))]);
     assert_eq!(
         format!("{:?}", qryd_device),
-        format!("FirstDevice(FirstDevice {{ number_rows: 1, number_columns: 1, qubit_positions: {:?}, row_distance: 0.0, layout_register: {{0: [[0.0]], shape=[1, 1], strides=[1, 1], layout=CFcf (0xf), const ndim=2}}, current_layout: 0, cutoff: 1.0, controlled_z_phase_relation: \"DefaultRelation\", controlled_phase_phase_relation: \"DefaultRelation\" }})", qubits) 
+        format!("FirstDevice(FirstDevice {{ number_rows: 1, number_columns: 1, qubit_positions: {:?}, row_distance: 0.0, layout_register: {{0: [[0.0]], shape=[1, 1], strides=[1, 1], layout=CFcf (0xf), const ndim=2}}, current_layout: 0, cutoff: 1.0, controlled_z_phase_relation: \"DefaultRelation\", controlled_phase_phase_relation: \"DefaultRelation\", allow_ccz_gate: true, allow_ccp_gate: false }})", qubits) 
     );
 }
 
@@ -906,6 +954,8 @@ fn test_qryd_qubit_gate_times() {
         &[3, 2],
         1.5,
         array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
+        None,
+        None,
         None,
         None,
     )
@@ -981,6 +1031,8 @@ fn test_qryd_change_device() {
         array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
         None,
         None,
+        None,
+        None,
     )
     .unwrap();
     device = device
@@ -1027,6 +1079,28 @@ fn test_qryd_change_device() {
         })
     );
 }
+
+// /// Test allow_ccz_gate and allow_ccp_gate parameters
+// #[test]
+// fn test_allowed_3qubit_gate() {
+//     let device = FirstDevice::new(
+//         2,
+//         3,
+//         &[3, 2],
+//         1.5,
+//         array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
+//         None,
+//         None,
+//         None,
+//         None,
+//     )
+//     .unwrap();
+
+//     assert!(device.three_qubit_gate_time("ControlledControlledPauliZ", &33, &5, &3).is_none());
+//     assert!(device.three_qubit_gate_time("ControlledControlledPauliZ", &3, &53, &3).is_none());
+//     assert!(device.three_qubit_gate_time("ControlledControlledPauliZ", &3, &5, &38).is_none());
+
+// }
 
 // /// Test FirstDevice Serialization and Deserialization traits (readable)
 // #[cfg(feature = "serialize")]
