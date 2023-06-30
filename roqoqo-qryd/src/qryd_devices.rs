@@ -252,12 +252,12 @@ impl FirstDevice {
     ///
     /// # Arguments
     ///
-    /// `number_rows` - The fixed number of rows in device, needs to be the same for all layouts
-    /// `number_columns` - Fixed number of tweezers in each row, needs to be the same for all layouts
-    /// `qubits_per_row` - Fixed number of occupied tweezer position in each row.
+    /// * `number_rows` - The fixed number of rows in device, needs to be the same for all layouts
+    /// * `number_columns` - Fixed number of tweezers in each row, needs to be the same for all layouts
+    /// * `qubits_per_row` - Fixed number of occupied tweezer position in each row.
     ///                    At the moment assumes that number of qubits in the traps is fixed. No loading/unloading once device is created
-    /// `row_distance` - Fixed distance between rows.
-    /// `initial_layout` - The device needs at least one layout. After creation the device will be in this layout with layout number 0.
+    /// * `row_distance` - Fixed distance between rows.
+    /// * `initial_layout` - The device needs at least one layout. After creation the device will be in this layout with layout number 0.
     /// * `controlled_z_phase_relation` - The relation to use for the PhaseShiftedControlledZ gate.
     ///                                   It can be hardcoded to a specific value if a float is passed in as String.
     /// * `controlled_phase_phase_relation` - The relation to use for the PhaseShiftedControlledPhase gate.
