@@ -332,10 +332,20 @@ fn test_change_qubit_positions() {
 fn test_gate_times() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let original_layout = array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]];
+        let original_layout = array![[0.0, 0.5,], [0.0, 0.5,], [0.0, 0.5]];
         let device_type = py.get_type::<FirstDeviceWrapper>();
         let device = device_type
-            .call1((3, 2, vec![2, 2, 2], 1.0, original_layout.to_pyarray(py)))
+            .call1((
+                3,
+                2,
+                vec![2, 2, 2],
+                0.5,
+                original_layout.to_pyarray(py),
+                Option::<&PyAny>::None,
+                Option::<&PyAny>::None,
+                true,
+                true,
+            ))
             .unwrap()
             .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
@@ -351,7 +361,17 @@ fn test_gate_times() {
         assert!(two_err.is_err());
 
         let three_err = device.call_method1("three_qubit_gate_time", ("Toffoli", 0, 1, 2));
+        let three_ok_0 = device.call_method1(
+            "three_qubit_gate_time",
+            ("ControlledControlledPauliZ", 0, 1, 2),
+        );
+        let three_ok_1 = device.call_method1(
+            "three_qubit_gate_time",
+            ("ControlledControlledPhaseShift", 0, 1, 2),
+        );
         assert!(three_err.is_err());
+        assert!(three_ok_0.is_ok());
+        assert!(three_ok_1.is_ok());
 
         let mult = device.call_method1("multi_qubit_gate_time", ("MultiQubitZZ", (0, 1, 2)));
         assert!(mult.is_err());
