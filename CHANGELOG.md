@@ -3,6 +3,10 @@
 Tracks qoqo-qryd changes after 0.5
 
 
+# 0.9.0
+
+* Added optional parameters for 3-qubit operations in FirstDevice and QrydEmuTriangularDevice
+
 # 0.8.7
 
 * Updated to qoqo 1.5
