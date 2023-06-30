@@ -629,16 +629,6 @@ impl Device for FirstDevice {
         control_1: &usize,
         target: &usize,
     ) -> Option<f64> {
-        if control_0 >= &30 {
-            return None;
-        }
-        if control_1 >= &30 {
-            return None;
-        }
-        if target >= &30 {
-            return None;
-        }
-
         match hqslang {
             "ControlledControlledPauliZ" => {
                 if self.allow_ccz_gate
