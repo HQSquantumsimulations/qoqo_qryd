@@ -332,10 +332,20 @@ fn test_change_qubit_positions() {
 fn test_gate_times() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let original_layout = array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]];
+        let original_layout = array![[0.0, 0.5,], [0.0, 0.5,], [0.0, 0.5]];
         let device_type = py.get_type::<FirstDeviceWrapper>();
         let device = device_type
-            .call1((3, 2, vec![2, 2, 2], 1.0, original_layout.to_pyarray(py)))
+            .call1((
+                3,
+                2,
+                vec![2, 2, 2],
+                0.5,
+                original_layout.to_pyarray(py),
+                Option::<&PyAny>::None,
+                Option::<&PyAny>::None,
+                true,
+                true,
+            ))
             .unwrap()
             .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
@@ -351,7 +361,17 @@ fn test_gate_times() {
         assert!(two_err.is_err());
 
         let three_err = device.call_method1("three_qubit_gate_time", ("Toffoli", 0, 1, 2));
+        let three_ok_0 = device.call_method1(
+            "three_qubit_gate_time",
+            ("ControlledControlledPauliZ", 0, 1, 2),
+        );
+        let three_ok_1 = device.call_method1(
+            "three_qubit_gate_time",
+            ("ControlledControlledPhaseShift", 0, 1, 2),
+        );
         assert!(three_err.is_err());
+        assert!(three_ok_0.is_ok());
+        assert!(three_ok_1.is_ok());
 
         let mult = device.call_method1("multi_qubit_gate_time", ("MultiQubitZZ", (0, 1, 2)));
         assert!(mult.is_err());
@@ -492,6 +512,8 @@ fn test_convert_to_device() {
             array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]],
             None,
             None,
+            None,
+            None,
         )
         .unwrap()
         .into();
@@ -534,7 +556,7 @@ fn test_pyo3_new_change_layout() {
         let check_2: &str = check_str.split("qubit_positions").collect::<Vec<&str>>()[1]
             .split(")}")
             .collect::<Vec<&str>>()[1];
-        let comp_str = format!("FirstDeviceWrapper {{ internal: FirstDevice {{ number_rows: 3, number_columns: 2, qubit_positions: {{0: (0, 0), 1: (0, 1), 2: (1, 0), 3: (1, 1), 4: (2, 0), 5: (2, 1)}}, row_distance: 1.0, layout_register: {{0: {:?}}}, current_layout: 0, cutoff: 1.0, controlled_z_phase_relation: \"DefaultRelation\", controlled_phase_phase_relation: \"DefaultRelation\" }} }}", layout);
+        let comp_str = format!("FirstDeviceWrapper {{ internal: FirstDevice {{ number_rows: 3, number_columns: 2, qubit_positions: {{0: (0, 0), 1: (0, 1), 2: (1, 0), 3: (1, 1), 4: (2, 0), 5: (2, 1)}}, row_distance: 1.0, layout_register: {{0: {:?}}}, current_layout: 0, cutoff: 1.0, controlled_z_phase_relation: \"DefaultRelation\", controlled_phase_phase_relation: \"DefaultRelation\", allow_ccz_gate: true, allow_ccp_gate: false }} }}", layout);
         let comp_1: &str = comp_str.split("qubit_positions").collect::<Vec<&str>>()[0];
         let comp_2: &str = comp_str.split("qubit_positions").collect::<Vec<&str>>()[1]
             .split(")}")

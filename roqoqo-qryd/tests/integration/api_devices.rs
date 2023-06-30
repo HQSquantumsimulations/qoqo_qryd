@@ -32,7 +32,7 @@ fn test_new_square() {
 // Test the new function of the triangular device emulator
 #[test]
 fn test_new_triangular() {
-    let device = QrydEmuTriangularDevice::new(Some(1), None, None);
+    let device = QrydEmuTriangularDevice::new(Some(1), None, None, None, None);
     let apidevice = QRydAPIDevice::from(&device);
     assert_eq!(device.seed(), 1);
     assert_eq!(device.seed(), apidevice.seed());
@@ -69,7 +69,7 @@ fn test_decoherencerates_square() {
 // Test the functions from device trait of the triangular device emulator
 #[test]
 fn test_numberqubits_triangular() {
-    let device = QrydEmuTriangularDevice::new(None, None, None);
+    let device = QrydEmuTriangularDevice::new(None, None, None, None, None);
     let apidevice = QRydAPIDevice::from(&device);
     assert_eq!(device.number_qubits(), 30);
     assert_eq!(apidevice.number_qubits(), device.number_qubits());
@@ -78,7 +78,7 @@ fn test_numberqubits_triangular() {
 // Test the functions from device trait of the triangular device emulator
 #[test]
 fn test_decoherencerates_triangular() {
-    let device = QrydEmuTriangularDevice::new(None, None, None);
+    let device = QrydEmuTriangularDevice::new(None, None, None, None, None);
     let apidevice = QRydAPIDevice::from(&device);
     assert_eq!(
         device.qubit_decoherence_rates(&0),
@@ -209,7 +209,8 @@ fn test_gatetimes_square() {
 // Test the functions from device trait of the triangular device emulator
 #[test]
 fn test_gatetimes_triangular() {
-    let device = QrydEmuTriangularDevice::new(None, None, None);
+    let device = QrydEmuTriangularDevice::new(None, None, None, Some(true), Some(true));
+    let no_3qbt_device = QrydEmuTriangularDevice::new(None, None, None, Some(false), Some(false));
     let apidevice = QRydAPIDevice::from(&device);
     // single qubit gates
     assert_eq!(device.single_qubit_gate_time("RotateXY", &0), Some(1e-6));
@@ -324,6 +325,47 @@ fn test_gatetimes_triangular() {
     );
     // three qubit gates
     assert_eq!(device.three_qubit_gate_time("Toffoli", &0, &1, &2), None);
+    assert_eq!(
+        device.three_qubit_gate_time("ControlledControlledPauliZ", &0, &5, &6),
+        Some(1e-6)
+    );
+    assert_eq!(
+        device.three_qubit_gate_time("ControlledControlledPauliZ", &0, &5, &6),
+        apidevice.three_qubit_gate_time("ControlledControlledPauliZ", &0, &5, &6)
+    );
+    assert_eq!(
+        device.three_qubit_gate_time("ControlledControlledPhaseShift", &0, &5, &6),
+        Some(1e-6)
+    );
+    assert_eq!(
+        device.three_qubit_gate_time("ControlledControlledPhaseShift", &0, &5, &6),
+        apidevice.three_qubit_gate_time("ControlledControlledPhaseShift", &0, &5, &6)
+    );
+    assert_eq!(device.three_qubit_gate_time("Toffoli", &43, &1, &2), None);
+    assert_eq!(
+        device.three_qubit_gate_time("ControlledControlledPauliZ", &0, &5, &62),
+        None
+    );
+    assert_eq!(
+        device.three_qubit_gate_time("ControlledControlledPhaseShift", &0, &51, &6),
+        None
+    );
+    assert_eq!(
+        no_3qbt_device.three_qubit_gate_time("ControlledControlledPauliZ", &0, &5, &6),
+        None
+    );
+    assert_eq!(
+        no_3qbt_device.three_qubit_gate_time("ControlledControlledPhaseShift", &0, &5, &6),
+        None
+    );
+    assert_eq!(
+        device.three_qubit_gate_time("ControlledControlledPauliZ", &0, &5, &12),
+        None
+    );
+    assert_eq!(
+        device.three_qubit_gate_time("ControlledControlledPhaseShift", &0, &5, &12),
+        None
+    );
     // multi qubit gates
     assert_eq!(device.multi_qubit_gate_time("MultiQubitMS", &[0, 1]), None);
     assert_eq!(
@@ -336,7 +378,7 @@ fn test_gatetimes_triangular() {
 #[test]
 fn test_gatetime_type() {
     let sq_device = QrydEmuSquareDevice::new(None, None, None);
-    let tr_device = QrydEmuTriangularDevice::new(None, None, None);
+    let tr_device = QrydEmuTriangularDevice::new(None, None, None, None, None);
 
     assert!(sq_device
         .single_qubit_gate_time("PhaseShiftState1", &0)
@@ -400,7 +442,7 @@ fn test_changedevice_square() {
 // Changing the device is not allowed for the WebAPI emulators in the current version
 #[test]
 fn test_changedevice_triangular() {
-    let mut device = QrydEmuTriangularDevice::new(None, None, None);
+    let mut device = QrydEmuTriangularDevice::new(None, None, None, None, None);
     let mut apidevice = QRydAPIDevice::from(&device);
     assert!(device.change_device("", &[]).is_err());
     assert_eq!(
@@ -472,7 +514,7 @@ fn test_twoqubitedges_square() {
 // Test the functions from device trait of the triangular device emulator
 #[test]
 fn test_twoqubitedges_triangular() {
-    let device = QrydEmuTriangularDevice::new(None, None, None);
+    let device = QrydEmuTriangularDevice::new(None, None, None, None, None);
     let apidevice = QRydAPIDevice::from(&device);
     let two_qubit_edges: Vec<(usize, usize)> = vec![
         (0, 1),
@@ -592,7 +634,7 @@ fn test_to_generic_device_square() {
 // Test to_generic_device() for triangular device
 #[test]
 fn test_to_generic_device_triangular() {
-    let device = QrydEmuTriangularDevice::new(Some(0), None, None);
+    let device = QrydEmuTriangularDevice::new(Some(0), None, None, None, None);
     let apidevice = QRydAPIDevice::from(&device);
     let genericdevice = apidevice.to_generic_device();
 
@@ -631,9 +673,10 @@ fn test_to_generic_device_triangular() {
 
 #[test]
 fn test_phi_theta_relation() {
-    let triangular = QrydEmuTriangularDevice::new(Some(0), None, None);
+    let triangular = QrydEmuTriangularDevice::new(Some(0), None, None, None, None);
     let square = QrydEmuSquareDevice::new(Some(0), None, None);
-    let triangular_f = QrydEmuTriangularDevice::new(Some(0), Some("2.13".to_string()), None);
+    let triangular_f =
+        QrydEmuTriangularDevice::new(Some(0), Some("2.13".to_string()), None, None, None);
     let square_f = QrydEmuSquareDevice::new(Some(0), Some("2.13".to_string()), None);
 
     assert_eq!(

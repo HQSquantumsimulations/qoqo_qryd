@@ -374,10 +374,11 @@ impl QrydEmuTriangularDeviceWrapper {
     /// Args:
     ///     seed (int): Seed, if not provided will be set to 0 per default (not recommended!)
     ///     controlled_z_phase_relation (Optinal[Union[str, float]]): The String used to choose what kind of phi-theta relation
-    ///                                                 to use for the PhaseShiftedControlledZ gate
+    ///                                                 to use for the PhaseShiftedControlledZ gate.
     ///     controlled_phase_phase_relation (Optinal[Union[str, float]]): The String used to choose what kind of phi-theta relation
-    ///                                                     to use for the PhaseShiftedControlledPhase gate
-    ///
+    ///                                                     to use for the PhaseShiftedControlledPhase gate.
+    ///     allow_ccz_gate (Optional[bool]): Whether to allow ControlledControlledPauliZ operations in the device.
+    ///     allow_ccp_gate (Optional[bool]): Whether to allow ControlledControlledPhaseShift operations in the device.
     /// Returns:
     ///     QrydEmuTriangularDevice: New device
     #[new]
@@ -385,6 +386,8 @@ impl QrydEmuTriangularDeviceWrapper {
         seed: Option<usize>,
         controlled_z_phase_relation: Option<&PyAny>,
         controlled_phase_phase_relation: Option<&PyAny>,
+        allow_ccz_gate: Option<bool>,
+        allow_ccp_gate: Option<bool>,
     ) -> Self {
         let czpr = if let Some(value) = controlled_z_phase_relation {
             if convert_into_calculator_float(value).is_ok() {
@@ -415,7 +418,13 @@ impl QrydEmuTriangularDeviceWrapper {
             None
         };
         Self {
-            internal: QrydEmuTriangularDevice::new(seed, czpr, cppr),
+            internal: QrydEmuTriangularDevice::new(
+                seed,
+                czpr,
+                cppr,
+                allow_ccz_gate,
+                allow_ccp_gate,
+            ),
         }
     }
 

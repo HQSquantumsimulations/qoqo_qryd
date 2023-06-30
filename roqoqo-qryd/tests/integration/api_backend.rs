@@ -325,7 +325,7 @@ fn api_backend_with_constant_circuit() {
 #[test]
 fn api_triangular() {
     let number_qubits = 6;
-    let device = QrydEmuTriangularDevice::new(Some(2), None, None);
+    let device = QrydEmuTriangularDevice::new(Some(2), None, None, None, None);
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
     let mut circuit = Circuit::new();
     circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);

@@ -507,6 +507,8 @@ fn test_convert_to_device() {
             array![[0.0, 1.0,], [0.0, 1.0]],
             None,
             None,
+            None,
+            None,
         )
         .unwrap()
         .into();

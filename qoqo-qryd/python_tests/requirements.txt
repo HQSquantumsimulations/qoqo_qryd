@@ -1,4 +1,4 @@
 pytest
 numpy
-qoqo>=1.4
-qoqo_qryd>=0.8
+qoqo>=1.5
+qoqo_qryd>=0.9

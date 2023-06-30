@@ -28,6 +28,8 @@ fn init_backend() {
         array![[0.0, 1.0], [0.0, 1.0]],
         None,
         None,
+        None,
+        None,
     )
     .unwrap();
     let _backend = SimulatorBackend::new(device.into());
@@ -46,6 +48,8 @@ fn pragma_shift_qryd_qubit_simple_traits() {
         &[1, 1],
         3.0,
         array![[0.0, 1.0], [0.0, 1.0]],
+        None,
+        None,
         None,
         None,
     )
@@ -72,6 +76,8 @@ fn pragma_shift_qryd_qubit_simple_traits() {
         array![[0.0, 1.0], [0.0, 1.0]],
         None,
         None,
+        None,
+        None,
     )
     .unwrap()
     .add_layout(1, layout.clone())
@@ -83,6 +89,8 @@ fn pragma_shift_qryd_qubit_simple_traits() {
         &[1, 1],
         2.0,
         array![[0.0, 1.0], [0.0, 1.0]],
+        None,
+        None,
         None,
         None,
     )
@@ -106,6 +114,8 @@ fn run_simple_circuit() {
         &[1, 1],
         3.0,
         array![[0.0, 1.0], [0.0, 1.0]],
+        None,
+        None,
         None,
         None,
     )
@@ -140,7 +150,7 @@ fn test_measurement() {
         vec![RotateY::new(0, std::f64::consts::FRAC_PI_2.into()).into()];
     let (measurement, exp_vals) =
         prepare_monte_carlo_gate_test(gate, preparation_gates, basis_rotation_gates, None, 1, 200);
-    let device = FirstDevice::new(1, 1, &[1], 3.0, array![[0.0],], None, None).unwrap();
+    let device = FirstDevice::new(1, 1, &[1], 3.0, array![[0.0],], None, None, None, None).unwrap();
     let backend = SimulatorBackend::new(device.into());
     let measured_exp_vals = backend.run_measurement(&measurement).unwrap().unwrap();
     for (key, val) in exp_vals.iter() {
@@ -165,7 +175,8 @@ fn test_full_simple_gate() {
     let (measurement, exp_vals) =
         prepare_monte_carlo_gate_test(gate, preparation_gates, basis_rotation_gates, None, 5, 200);
 
-    let device = FirstDevice::new(1, 1, &[1], 3.0, array![[0.0,],], None, None).unwrap();
+    let device =
+        FirstDevice::new(1, 1, &[1], 3.0, array![[0.0,],], None, None, None, None).unwrap();
     let backend = SimulatorBackend::new(device.into());
     let measured_exp_vals = backend.run_measurement(&measurement).unwrap().unwrap();
     for (key, val) in exp_vals.iter() {

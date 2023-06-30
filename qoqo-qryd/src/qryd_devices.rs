@@ -66,6 +66,7 @@ impl FirstDeviceWrapper {
     ///     controlled_phase_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledPhase gate.
     /// Raises:
     ///     PyValueError
+    #[allow(clippy::too_many_arguments)]
     #[new]
     pub fn new(
         number_rows: usize,
@@ -75,6 +76,8 @@ impl FirstDeviceWrapper {
         initial_layout: PyReadonlyArray2<f64>,
         controlled_z_phase_relation: Option<&PyAny>,
         controlled_phase_phase_relation: Option<&PyAny>,
+        allow_ccz_gate: Option<bool>,
+        allow_ccp_gate: Option<bool>,
     ) -> PyResult<Self> {
         let czpr = if let Some(value) = controlled_z_phase_relation {
             if convert_into_calculator_float(value).is_ok() {
@@ -113,6 +116,8 @@ impl FirstDeviceWrapper {
                 initial_layout.as_array().to_owned(),
                 czpr,
                 cppr,
+                allow_ccz_gate,
+                allow_ccp_gate,
             )
             .map_err(|err| PyValueError::new_err(format!("{:?}", err)))?,
         })

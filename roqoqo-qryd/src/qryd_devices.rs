@@ -241,6 +241,10 @@ pub struct FirstDevice {
     controlled_phase_phase_relation: String,
     // Controls if multi_qubit_operations are present
     // multi_qubit_operations: bool,
+    /// Whether the device allows ControlledControlledPauliZ operations.
+    allow_ccz_gate: bool,
+    /// Whether the device allows ControlledControlledPhaseShift operations.
+    allow_ccp_gate: bool,
 }
 
 impl FirstDevice {
@@ -248,15 +252,18 @@ impl FirstDevice {
     ///
     /// # Arguments
     ///
-    /// `number_rows` - The fixed number of rows in device, needs to be the same for all layouts
-    /// `number_columns` - Fixed number of tweezers in each row, needs to be the same for all layouts
-    /// `qubits_per_row` - Fixed number of occupied tweezer position in each row.
+    /// * `number_rows` - The fixed number of rows in device, needs to be the same for all layouts
+    /// * `number_columns` - Fixed number of tweezers in each row, needs to be the same for all layouts
+    /// * `qubits_per_row` - Fixed number of occupied tweezer position in each row.
     ///                    At the moment assumes that number of qubits in the traps is fixed. No loading/unloading once device is created
-    /// `row_distance` - Fixed distance between rows.
-    /// `initial_layout` - The device needs at least one layout. After creation the device will be in this layout with layout number 0.
+    /// * `row_distance` - Fixed distance between rows.
+    /// * `initial_layout` - The device needs at least one layout. After creation the device will be in this layout with layout number 0.
     /// * `controlled_z_phase_relation` - The relation to use for the PhaseShiftedControlledZ gate.
     ///                                   It can be hardcoded to a specific value if a float is passed in as String.
     /// * `controlled_phase_phase_relation` - The relation to use for the PhaseShiftedControlledPhase gate.
+    /// * `allow_ccz_gate` - Whether to allow ControlledControlledPauliZ operations in the device.
+    /// * `allow_ccp_gate` - Whether to allow ControlledControlledPhaseShift operations in the device.
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         number_rows: usize,
         number_columns: usize,
@@ -265,6 +272,8 @@ impl FirstDevice {
         initial_layout: Array2<f64>,
         controlled_z_phase_relation: Option<String>,
         controlled_phase_phase_relation: Option<String>,
+        allow_ccz_gate: Option<bool>,
+        allow_ccp_gate: Option<bool>,
     ) -> Result<Self, RoqoqoBackendError> {
         if qubits_per_row.len() != number_rows {
             return Err(RoqoqoBackendError::GenericError {
@@ -301,6 +310,8 @@ impl FirstDevice {
             controlled_z_phase_relation.unwrap_or_else(|| "DefaultRelation".to_string());
         let controlled_phase_phase_relation =
             controlled_phase_phase_relation.unwrap_or_else(|| "DefaultRelation".to_string());
+        let allow_ccz_gate = allow_ccz_gate.unwrap_or(true);
+        let allow_ccp_gate = allow_ccp_gate.unwrap_or(false);
         let return_self = Self {
             number_rows,
             number_columns,
@@ -312,6 +323,8 @@ impl FirstDevice {
             controlled_z_phase_relation,
             controlled_phase_phase_relation,
             // multi_qubit_operations: true,
+            allow_ccz_gate,
+            allow_ccp_gate,
         }
         .add_layout(0, initial_layout)?;
         Ok(return_self)
@@ -564,6 +577,7 @@ impl Device for FirstDevice {
             _ => None,
         }
     }
+
     fn two_qubit_gate_time(&self, hqslang: &str, control: &usize, target: &usize) -> Option<f64> {
         // Check for availability of control and target on device
         if !self.qubit_positions().contains_key(control) {
@@ -606,6 +620,7 @@ impl Device for FirstDevice {
             Some(2e-6 * total_distance.powi(2))
         }
     }
+
     #[allow(unused_variables)]
     fn three_qubit_gate_time(
         &self,
@@ -614,8 +629,45 @@ impl Device for FirstDevice {
         control_1: &usize,
         target: &usize,
     ) -> Option<f64> {
-        None
+        match hqslang {
+            "ControlledControlledPauliZ" => {
+                if self.allow_ccz_gate
+                    && self
+                        .two_qubit_gate_time("PhaseShiftedControlledZ", control_0, target)
+                        .is_some()
+                    && self
+                        .two_qubit_gate_time("PhaseShiftedControlledZ", control_0, control_1)
+                        .is_some()
+                    && self
+                        .two_qubit_gate_time("PhaseShiftedControlledZ", control_1, target)
+                        .is_some()
+                {
+                    Some(1e-6)
+                } else {
+                    None
+                }
+            }
+            "ControlledControlledPhaseShift" => {
+                if self.allow_ccp_gate
+                    && self
+                        .two_qubit_gate_time("PhaseShiftedControlledPhase", control_0, target)
+                        .is_some()
+                    && self
+                        .two_qubit_gate_time("PhaseShiftedControlledPhase", control_0, control_1)
+                        .is_some()
+                    && self
+                        .two_qubit_gate_time("PhaseShiftedControlledPhase", control_1, target)
+                        .is_some()
+                {
+                    Some(1e-6)
+                } else {
+                    None
+                }
+            }
+            _ => None,
+        }
     }
+
     #[allow(unused_variables)]
     fn multi_qubit_gate_time(&self, hqslang: &str, qubits: &[usize]) -> Option<f64> {
         // if !self.multi_qubit_operations {
@@ -652,6 +704,7 @@ impl Device for FirstDevice {
             None
         }
     }
+
     #[allow(unused_variables)]
     fn qubit_decoherence_rates(&self, qubit: &usize) -> Option<Array2<f64>> {
         // At the moment we hard-code a noise free model
