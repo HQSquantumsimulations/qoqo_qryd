@@ -418,7 +418,13 @@ impl QrydEmuTriangularDeviceWrapper {
             None
         };
         Self {
-            internal: QrydEmuTriangularDevice::new(seed, czpr, cppr, allow_ccz_gate, allow_ccp_gate),
+            internal: QrydEmuTriangularDevice::new(
+                seed,
+                czpr,
+                cppr,
+                allow_ccz_gate,
+                allow_ccp_gate,
+            ),
         }
     }
 
