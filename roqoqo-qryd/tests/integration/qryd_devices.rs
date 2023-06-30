@@ -585,8 +585,8 @@ fn test_qubit_gate_times() {
         array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
         None,
         None,
-        Some(true),
-        Some(true),
+        None,
+        None,
     )
     .unwrap();
     device = device
@@ -635,10 +635,20 @@ fn test_qubit_gate_times() {
     );
     assert_eq!(device.two_qubit_gate_time("ControlledPauliZ", &0, &1), None);
 
+    // Correct three qubit gate times are tested further down (cutoff)
     assert_eq!(device.three_qubit_gate_time("Toffoli", &0, &1, &2), None);
-    // TODO: find correct trio
-    // assert_eq!(device.three_qubit_gate_time("ControlledControlledPauliZ", &0, &1, &6), Some(1e-6));
-    // assert_eq!(device.three_qubit_gate_time("ControlledControlledPhaseShift", &0, &1, &6), Some(1e-6));
+    assert_eq!(
+        device.three_qubit_gate_time("ControlledControlledPauliZ", &0, &1, &32),
+        None
+    );
+    assert_eq!(
+        device.three_qubit_gate_time("ControlledControlledPhaseShift", &0, &67, &3),
+        None
+    );
+    assert_eq!(
+        device.three_qubit_gate_time("ControlledControlledPauliZ", &45, &1, &32),
+        None
+    );
 
     assert_eq!(
         device.multi_qubit_gate_time("MultiQubitMSXX", &[0, 1, 2]),
@@ -1080,27 +1090,46 @@ fn test_qryd_change_device() {
     );
 }
 
-// /// Test allow_ccz_gate and allow_ccp_gate parameters
-// #[test]
-// fn test_allowed_3qubit_gate() {
-//     let device = FirstDevice::new(
-//         2,
-//         3,
-//         &[3, 2],
-//         1.5,
-//         array![[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]],
-//         None,
-//         None,
-//         None,
-//         None,
-//     )
-//     .unwrap();
+/// Test allow_ccz_gate and allow_ccp_gate parameters
+#[test]
+fn test_allowed_3qubit_gate() {
+    let device = FirstDevice::new(
+        2,
+        3,
+        &[3, 2],
+        0.5,
+        array![[0.0, 0.5, 1.0], [0.0, 0.5, 1.0]],
+        None,
+        None,
+        Some(true),
+        Some(true),
+    )
+    .unwrap();
 
-//     assert!(device.three_qubit_gate_time("ControlledControlledPauliZ", &33, &5, &3).is_none());
-//     assert!(device.three_qubit_gate_time("ControlledControlledPauliZ", &3, &53, &3).is_none());
-//     assert!(device.three_qubit_gate_time("ControlledControlledPauliZ", &3, &5, &38).is_none());
+    assert!(device
+        .three_qubit_gate_time("ControlledControlledPauliZ", &33, &5, &3)
+        .is_none());
+    assert!(device
+        .three_qubit_gate_time("ControlledControlledPauliZ", &3, &53, &3)
+        .is_none());
+    assert!(device
+        .three_qubit_gate_time("ControlledControlledPauliZ", &3, &5, &38)
+        .is_none());
 
-// }
+    assert!(device
+        .three_qubit_gate_time("ControlledControlledPauliZ", &0, &1, &3)
+        .is_some());
+    assert!(device
+        .three_qubit_gate_time("ControlledControlledPhaseShift", &0, &1, &3)
+        .is_some());
+
+    assert!(device
+        .three_qubit_gate_time("ControlledControlledPauliZ", &0, &1, &5)
+        .is_none());
+    assert!(device
+        .three_qubit_gate_time("ControlledControlledPhaseShift", &0, &1, &5)
+        .is_none());
+}
 
 // /// Test FirstDevice Serialization and Deserialization traits (readable)
 // #[cfg(feature = "serialize")]
