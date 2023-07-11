@@ -38,13 +38,15 @@ use std::collections::HashMap;
 ///     initial_layout (np.ndarray): The starting layout (always had the index 0).
 ///     controlled_z_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledZ gate.
 ///     controlled_phase_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledPhase gate.
+///     allow_ccz_gate (Optional[bool]): Whether to allow ControlledControlledPauliZ operations in the device.
+///     allow_ccp_gate (Optional[bool]): Whether to allow ControlledControlledPhaseShift operations in the device.
 ///
 /// Raises:
 ///     PyValueError
 #[pyclass(name = "FirstDevice", module = "qoqo_qryd")]
 #[derive(Clone, Debug, PartialEq)]
 #[pyo3(
-    text_signature = "(number_rows, number_columns, qubits_per_row, row_distance, initial_layour, controlled_z_phase_relation, controlled_phase_phase_relation, /)"
+    text_signature = "(number_rows, number_columns, qubits_per_row, row_distance, initial_layout, controlled_z_phase_relation, controlled_phase_phase_relation, allow_ccz_gate, allow_ccp_gate, /)"
 )]
 pub struct FirstDeviceWrapper {
     /// Internal storage of [roqoqo_qryd::FirstDevice]
@@ -64,6 +66,9 @@ impl FirstDeviceWrapper {
     ///     initial_layout (np.ndarray): The starting layout (always had the index 0).
     ///     controlled_z_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledZ gate.
     ///     controlled_phase_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledPhase gate.
+    ///     allow_ccz_gate (Optional[bool]): Whether to allow ControlledControlledPauliZ operations in the device.
+    ///     allow_ccp_gate (Optional[bool]): Whether to allow ControlledControlledPhaseShift operations in the device.
+    /// 
     /// Raises:
     ///     PyValueError
     #[allow(clippy::too_many_arguments)]
