@@ -379,7 +379,9 @@ impl QrydEmuSquareDeviceWrapper {
 ///     allow_ccp_gate (Optional[bool]): Whether to allow ControlledControlledPhaseShift operations in the device.
 #[pyclass(name = "QrydEmuTriangularDevice", module = "qoqo_qryd")]
 #[derive(Clone, Debug, PartialEq, Eq)]
-#[pyo3(text_signature = "(seed, controlled_z_phase_relation, controlled_phase_phase_relation, allow_ccz_gate, allow_ccp_gate, /)")]
+#[pyo3(
+    text_signature = "(seed, controlled_z_phase_relation, controlled_phase_phase_relation, allow_ccz_gate, allow_ccp_gate, /)"
+)]
 pub struct QrydEmuTriangularDeviceWrapper {
     /// Internal storage of [roqoqo_qryd::QrydEmuTriangularDevice]
     pub internal: QrydEmuTriangularDevice,

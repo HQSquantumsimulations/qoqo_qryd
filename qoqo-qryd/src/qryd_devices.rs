@@ -68,7 +68,7 @@ impl FirstDeviceWrapper {
     ///     controlled_phase_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledPhase gate.
     ///     allow_ccz_gate (Optional[bool]): Whether to allow ControlledControlledPauliZ operations in the device.
     ///     allow_ccp_gate (Optional[bool]): Whether to allow ControlledControlledPhaseShift operations in the device.
-    /// 
+    ///
     /// Raises:
     ///     PyValueError
     #[allow(clippy::too_many_arguments)]
