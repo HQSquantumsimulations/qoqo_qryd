@@ -107,10 +107,10 @@
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice" title="qoqo_qryd.api_devices.QrydEmuSquareDevice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QrydEmuSquareDevice</span></code></a>(seed, ...)</p></td>
-<td><p>Collection of all QRyd devices for WebAPI.</p></td>
+<td><p>QRyd quantum device having a squared configuration.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#qoqo_qryd.api_devices.QrydEmuTriangularDevice" title="qoqo_qryd.api_devices.QrydEmuTriangularDevice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QrydEmuTriangularDevice</span></code></a>(seed, ...)</p></td>
-<td><p>Collection of all QRyd devices for WebAPI.</p></td>
+<td><p>QRyd quantum device having a triangular configuration.</p></td>
 </tr>
 </tbody>
 </table>
@@ -118,18 +118,30 @@
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice" title="qoqo_qryd.api_devices.QrydEmuSquareDevice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QrydEmuSquareDevice</span></code></a>(seed, ...)</p></td>
-<td><p>Collection of all QRyd devices for WebAPI.</p></td>
+<td><p>QRyd quantum device having a squared configuration.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#qoqo_qryd.api_devices.QrydEmuTriangularDevice" title="qoqo_qryd.api_devices.QrydEmuTriangularDevice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QrydEmuTriangularDevice</span></code></a>(seed, ...)</p></td>
-<td><p>Collection of all QRyd devices for WebAPI.</p></td>
+<td><p>QRyd quantum device having a triangular configuration.</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py class">
 <dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuSquareDevice">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.api_devices.</span></span><span class="sig-name descname"><span class="pre">QrydEmuSquareDevice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlled_z_phase_relation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlled_phase_phase_relation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice" title="Permalink to this definition"></a></dt>
-<dd><p>Collection of all QRyd devices for WebAPI.</p>
-<p>At the moment only contains a square and a triangular device.</p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.api_devices.</span></span><span class="sig-name descname"><span class="pre">QrydEmuSquareDevice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlled_z_phase_relation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlled_phase_phase_relation</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice" title="Permalink to this definition"></a></dt>
+<dd><p>QRyd quantum device having a squared configuration.</p>
+<p>Provides an emulated quantum computing device with up to 30 qubits
+that can be accessed via the QRyd WebAPI.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seed</strong> (<em>int</em>) -- Seed, if not provided will be set to 0 per default (not recommended!)</p></li>
+<li><p><strong>controlled_z_phase_relation</strong> (<em>Optinal</em><em>[</em><em>Union</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em><em>]</em>) -- The String used to choose what kind of phi-theta relation
+to use for the PhaseShiftedControlledZ gate</p></li>
+<li><p><strong>controlled_phase_phase_relation</strong> (<em>Optinal</em><em>[</em><em>Union</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em><em>]</em>) -- The String used to choose what kind of phi-theta relation
+to use for the PhaseShiftedControlledPhase gate</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuSquareDevice.from_bincode">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_bincode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice.from_bincode" title="Permalink to this definition"></a></dt>
@@ -384,9 +396,23 @@ choice from a list of edges and can be used for applications like routing in qua
 
 <dl class="py class">
 <dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuTriangularDevice">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.api_devices.</span></span><span class="sig-name descname"><span class="pre">QrydEmuTriangularDevice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlled_z_phase_relation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlled_phase_phase_relation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuTriangularDevice" title="Permalink to this definition"></a></dt>
-<dd><p>Collection of all QRyd devices for WebAPI.</p>
-<p>At the moment only contains a square and a triangular device.</p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.api_devices.</span></span><span class="sig-name descname"><span class="pre">QrydEmuTriangularDevice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlled_z_phase_relation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlled_phase_phase_relation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_ccz_gate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_ccp_gate</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuTriangularDevice" title="Permalink to this definition"></a></dt>
+<dd><p>QRyd quantum device having a triangular configuration.</p>
+<p>Provides an emulated quantum computing device with up to 30 qubits
+that can be accessed via the QRyd WebAPI.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seed</strong> (<em>int</em>) -- Seed, if not provided will be set to 0 per default (not recommended!)</p></li>
+<li><p><strong>controlled_z_phase_relation</strong> (<em>Optinal</em><em>[</em><em>Union</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em><em>]</em>) -- The String used to choose what kind of phi-theta relation
+to use for the PhaseShiftedControlledZ gate.</p></li>
+<li><p><strong>controlled_phase_phase_relation</strong> (<em>Optinal</em><em>[</em><em>Union</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em><em>]</em>) -- The String used to choose what kind of phi-theta relation
+to use for the PhaseShiftedControlledPhase gate.</p></li>
+<li><p><strong>allow_ccz_gate</strong> (<em>Optional</em><em>[</em><em>bool</em><em>]</em>) -- Whether to allow ControlledControlledPauliZ operations in the device.</p></li>
+<li><p><strong>allow_ccp_gate</strong> (<em>Optional</em><em>[</em><em>bool</em><em>]</em>) -- Whether to allow ControlledControlledPhaseShift operations in the device.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuTriangularDevice.from_bincode">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_bincode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuTriangularDevice.from_bincode" title="Permalink to this definition"></a></dt>

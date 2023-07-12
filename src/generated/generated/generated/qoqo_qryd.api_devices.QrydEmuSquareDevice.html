@@ -106,9 +106,21 @@
 <h1>qoqo_qryd.api_devices.QrydEmuSquareDevice<a class="headerlink" href="#qoqo-qryd-api-devices-qrydemusquaredevice" title="Permalink to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuSquareDevice">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.api_devices.</span></span><span class="sig-name descname"><span class="pre">QrydEmuSquareDevice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlled_z_phase_relation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlled_phase_phase_relation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice" title="Permalink to this definition"></a></dt>
-<dd><p>Collection of all QRyd devices for WebAPI.</p>
-<p>At the moment only contains a square and a triangular device.</p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.api_devices.</span></span><span class="sig-name descname"><span class="pre">QrydEmuSquareDevice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlled_z_phase_relation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlled_phase_phase_relation</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice" title="Permalink to this definition"></a></dt>
+<dd><p>QRyd quantum device having a squared configuration.</p>
+<p>Provides an emulated quantum computing device with up to 30 qubits
+that can be accessed via the QRyd WebAPI.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seed</strong> (<em>int</em>) -- Seed, if not provided will be set to 0 per default (not recommended!)</p></li>
+<li><p><strong>controlled_z_phase_relation</strong> (<em>Optinal</em><em>[</em><em>Union</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em><em>]</em>) -- The String used to choose what kind of phi-theta relation
+to use for the PhaseShiftedControlledZ gate</p></li>
+<li><p><strong>controlled_phase_phase_relation</strong> (<em>Optinal</em><em>[</em><em>Union</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em><em>]</em>) -- The String used to choose what kind of phi-theta relation
+to use for the PhaseShiftedControlledPhase gate</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuSquareDevice.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice.__init__" title="Permalink to this definition"></a></dt>
