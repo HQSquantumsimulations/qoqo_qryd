@@ -18,14 +18,21 @@ use qoqo_calculator_pyo3::convert_into_calculator_float;
 use roqoqo::devices::Device;
 use roqoqo_qryd::api_devices::{QRydAPIDevice, QrydEmuSquareDevice, QrydEmuTriangularDevice};
 
-/// Collection of all QRyd devices for WebAPI.
+/// QRyd quantum device having a squared configuration.
 ///
-/// At the moment only contains a square and a triangular device.
+/// Provides an emulated quantum computing device with up to 30 qubits
+/// that can be accessed via the QRyd WebAPI.
+///
+/// Args:
+///     seed (int): Seed, if not provided will be set to 0 per default (not recommended!)
+///     controlled_z_phase_relation (Optinal[Union[str, float]]): The String used to choose what kind of phi-theta relation
+///                                                 to use for the PhaseShiftedControlledZ gate
+///     controlled_phase_phase_relation (Optinal[Union[str, float]]): The String used to choose what kind of phi-theta relation
+///                                                     to use for the PhaseShiftedControlledPhase gate
 #[pyclass(name = "QrydEmuSquareDevice", module = "qoqo_qryd")]
 #[derive(Clone, Debug, PartialEq, Eq)]
-#[pyo3(text_signature = "(seed, controlled_z_phase_relation, controlled_phase_phase_relation)")]
 pub struct QrydEmuSquareDeviceWrapper {
-    /// Internal storage of [roqoqo_qryd::QRydAPIDevice]
+    /// Internal storage of [roqoqo_qryd::QrydEmuSquareDevice]
     pub internal: QrydEmuSquareDevice,
 }
 
@@ -43,6 +50,9 @@ impl QrydEmuSquareDeviceWrapper {
     /// Returns:
     ///     QrydEmuSquareDevice: New device
     #[new]
+    #[pyo3(
+        text_signature = "(seed, controlled_z_phase_relation, controlled_phase_phase_relation, /)"
+    )]
     pub fn new(
         seed: Option<usize>,
         controlled_z_phase_relation: Option<&PyAny>,
@@ -356,14 +366,23 @@ impl QrydEmuSquareDeviceWrapper {
     }
 }
 
-/// Collection of all QRyd devices for WebAPI.
+/// QRyd quantum device having a triangular configuration.
 ///
-/// At the moment only contains a square and a triangular device.
+/// Provides an emulated quantum computing device with up to 30 qubits
+/// that can be accessed via the QRyd WebAPI.
+///
+/// Args:
+///     seed (int): Seed, if not provided will be set to 0 per default (not recommended!)
+///     controlled_z_phase_relation (Optinal[Union[str, float]]): The String used to choose what kind of phi-theta relation
+///                                                 to use for the PhaseShiftedControlledZ gate.
+///     controlled_phase_phase_relation (Optinal[Union[str, float]]): The String used to choose what kind of phi-theta relation
+///                                                     to use for the PhaseShiftedControlledPhase gate.
+///     allow_ccz_gate (Optional[bool]): Whether to allow ControlledControlledPauliZ operations in the device.
+///     allow_ccp_gate (Optional[bool]): Whether to allow ControlledControlledPhaseShift operations in the device.
 #[pyclass(name = "QrydEmuTriangularDevice", module = "qoqo_qryd")]
 #[derive(Clone, Debug, PartialEq, Eq)]
-#[pyo3(text_signature = "(seed, controlled_z_phase_relation, controlled_phase_phase_relation)")]
 pub struct QrydEmuTriangularDeviceWrapper {
-    /// Internal storage of [roqoqo_qryd::QRydAPIDevice]
+    /// Internal storage of [roqoqo_qryd::QrydEmuTriangularDevice]
     pub internal: QrydEmuTriangularDevice,
 }
 
@@ -379,9 +398,13 @@ impl QrydEmuTriangularDeviceWrapper {
     ///                                                     to use for the PhaseShiftedControlledPhase gate.
     ///     allow_ccz_gate (Optional[bool]): Whether to allow ControlledControlledPauliZ operations in the device.
     ///     allow_ccp_gate (Optional[bool]): Whether to allow ControlledControlledPhaseShift operations in the device.
+    ///
     /// Returns:
     ///     QrydEmuTriangularDevice: New device
     #[new]
+    #[pyo3(
+        text_signature = "(seed, controlled_z_phase_relation, controlled_phase_phase_relation, allow_ccz_gate, allow_ccp_gate, /)"
+    )]
     pub fn new(
         seed: Option<usize>,
         controlled_z_phase_relation: Option<&PyAny>,

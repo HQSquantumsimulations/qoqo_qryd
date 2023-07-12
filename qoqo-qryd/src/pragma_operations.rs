@@ -29,7 +29,6 @@ use std::collections::HashMap;
     name = "PragmaChangeQRydLayout",
     module = "qoqo_qryd.pragma_operations"
 )]
-#[pyo3(text_signature = "(new_layout, /)")]
 #[derive(Clone, Debug, PartialEq, Eq)]
 /// This PRAGMA operation changes the layout of a QRyd device.
 ///
@@ -55,6 +54,7 @@ impl PragmaChangeQRydLayoutWrapper {
     /// Returns:
     ///     self: The new PragmaChangeQRydLayout.
     #[new]
+    #[pyo3(text_signature = "(new_layout, /)")]
     fn new(new_layout: usize) -> Self {
         Self {
             internal: PragmaChangeQRydLayout::new(new_layout),
@@ -281,7 +281,6 @@ impl PragmaChangeQRydLayoutWrapper {
 }
 
 #[pyclass(name = "PragmaShiftQRydQubit", module = "qoqo_qryd.pragma_operations")]
-#[pyo3(text_signature = "(new_positions, /)")]
 #[derive(Clone, Debug, PartialEq, Eq)]
 /// This PRAGMA operation shifts qubits between tweezer positions.
 ///
@@ -306,6 +305,7 @@ impl PragmaShiftQRydQubitWrapper {
     /// Returns:
     ///     self: The new PragmaChangeQRydLayout.
     #[new]
+    #[pyo3(text_signature = "(new_positions, /)")]
     fn new(new_positions: HashMap<usize, (usize, usize)>) -> Self {
         Self {
             internal: PragmaShiftQRydQubit::new(new_positions),
