@@ -3,6 +3,11 @@
 Tracks qoqo-qryd changes after 0.5
 
 
+# 0.9.1
+
+* Updated to qoqo 1.5.1
+* Updated to pyo3 0.19
+
 # 0.9.0
 
 * Added optional parameters for 3-qubit operations in FirstDevice and QrydEmuTriangularDevice
