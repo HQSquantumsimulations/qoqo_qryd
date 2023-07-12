@@ -47,7 +47,6 @@ use std::collections::HashMap;
 ///     TypeError: Device Parameter is not QRydDevice
 #[pyclass(name = "SimulatorBackend", module = "qoqo_qryd")]
 #[derive(Clone, Debug, PartialEq)]
-#[pyo3(text_signature = "(device, /)")]
 pub struct SimulatorBackendWrapper {
     /// Internal storage of [roqoqo_qryd::SimulatorBackend]
     pub internal: SimulatorBackend,
@@ -70,6 +69,7 @@ impl SimulatorBackendWrapper {
     /// Raises:
     ///     TypeError: Device Parameter is not QRydDevice
     #[new]
+    #[pyo3(text_signature = "(device, /)")]
     pub fn new(device: &PyAny) -> PyResult<Self> {
         let device: QRydDevice = convert_into_device(device).map_err(|err| {
             PyTypeError::new_err(format!("Device Parameter is not QRydDevice {:?}", err))

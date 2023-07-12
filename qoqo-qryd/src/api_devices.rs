@@ -31,7 +31,6 @@ use roqoqo_qryd::api_devices::{QRydAPIDevice, QrydEmuSquareDevice, QrydEmuTriang
 ///                                                     to use for the PhaseShiftedControlledPhase gate
 #[pyclass(name = "QrydEmuSquareDevice", module = "qoqo_qryd")]
 #[derive(Clone, Debug, PartialEq, Eq)]
-#[pyo3(text_signature = "(seed, controlled_z_phase_relation, controlled_phase_phase_relation, /)")]
 pub struct QrydEmuSquareDeviceWrapper {
     /// Internal storage of [roqoqo_qryd::QrydEmuSquareDevice]
     pub internal: QrydEmuSquareDevice,
@@ -51,6 +50,9 @@ impl QrydEmuSquareDeviceWrapper {
     /// Returns:
     ///     QrydEmuSquareDevice: New device
     #[new]
+    #[pyo3(
+        text_signature = "(seed, controlled_z_phase_relation, controlled_phase_phase_relation, /)"
+    )]
     pub fn new(
         seed: Option<usize>,
         controlled_z_phase_relation: Option<&PyAny>,
@@ -379,9 +381,6 @@ impl QrydEmuSquareDeviceWrapper {
 ///     allow_ccp_gate (Optional[bool]): Whether to allow ControlledControlledPhaseShift operations in the device.
 #[pyclass(name = "QrydEmuTriangularDevice", module = "qoqo_qryd")]
 #[derive(Clone, Debug, PartialEq, Eq)]
-#[pyo3(
-    text_signature = "(seed, controlled_z_phase_relation, controlled_phase_phase_relation, allow_ccz_gate, allow_ccp_gate, /)"
-)]
 pub struct QrydEmuTriangularDeviceWrapper {
     /// Internal storage of [roqoqo_qryd::QrydEmuTriangularDevice]
     pub internal: QrydEmuTriangularDevice,
@@ -403,6 +402,9 @@ impl QrydEmuTriangularDeviceWrapper {
     /// Returns:
     ///     QrydEmuTriangularDevice: New device
     #[new]
+    #[pyo3(
+        text_signature = "(seed, controlled_z_phase_relation, controlled_phase_phase_relation, allow_ccz_gate, allow_ccp_gate, /)"
+    )]
     pub fn new(
         seed: Option<usize>,
         controlled_z_phase_relation: Option<&PyAny>,

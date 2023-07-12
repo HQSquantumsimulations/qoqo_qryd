@@ -45,9 +45,6 @@ use std::collections::HashMap;
 ///     PyValueError
 #[pyclass(name = "FirstDevice", module = "qoqo_qryd")]
 #[derive(Clone, Debug, PartialEq)]
-#[pyo3(
-    text_signature = "(number_rows, number_columns, qubits_per_row, row_distance, initial_layout, controlled_z_phase_relation, controlled_phase_phase_relation, allow_ccz_gate, allow_ccp_gate, /)"
-)]
 pub struct FirstDeviceWrapper {
     /// Internal storage of [roqoqo_qryd::FirstDevice]
     pub internal: FirstDevice,
@@ -73,6 +70,9 @@ impl FirstDeviceWrapper {
     ///     PyValueError
     #[allow(clippy::too_many_arguments)]
     #[new]
+    #[pyo3(
+        text_signature = "(number_rows, number_columns, qubits_per_row, row_distance, initial_layout, controlled_z_phase_relation, controlled_phase_phase_relation, allow_ccz_gate, allow_ccp_gate, /)"
+    )]
     pub fn new(
         number_rows: usize,
         number_columns: usize,
