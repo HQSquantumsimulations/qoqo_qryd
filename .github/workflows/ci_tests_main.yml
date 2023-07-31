@@ -68,7 +68,7 @@ jobs:
           toolchain: stable
           target: x86_64-unknown-linux-gnu
           default: true
-      - uses: Swatinem/rust-cache@v2.2.1
+      # - uses: Swatinem/rust-cache@v2
       - run: |
           cd roqoqo-qryd
           cargo test --doc --package=roqoqo-qryd
