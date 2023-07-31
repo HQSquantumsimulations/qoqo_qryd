@@ -18,7 +18,7 @@ jobs:
         profile: minimal
         toolchain: stable
         default: true
-    - uses: Swatinem/rust-cache@v2.2.1
+    # - uses: Swatinem/rust-cache@v2
     - name: Install dependencies
       run: |
         pip install maturin pytest numpy qoqo
