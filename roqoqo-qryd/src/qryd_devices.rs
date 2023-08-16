@@ -200,6 +200,7 @@ impl Device for QRydDevice {
         }
     }
 }
+
 impl From<&FirstDevice> for QRydDevice {
     fn from(input: &FirstDevice) -> Self {
         Self::FirstDevice(input.clone())
@@ -248,12 +249,12 @@ pub struct FirstDevice {
 }
 
 impl FirstDevice {
-    /// Create new `First` QRyd device
+    /// Create new `First` QRyd device.
     ///
     /// # Arguments
     ///
-    /// * `number_rows` - The fixed number of rows in device, needs to be the same for all layouts
-    /// * `number_columns` - Fixed number of tweezers in each row, needs to be the same for all layouts
+    /// * `number_rows` - The fixed number of rows in device, needs to be the same for all layouts.
+    /// * `number_columns` - Fixed number of tweezers in each row, needs to be the same for all layouts.
     /// * `qubits_per_row` - Fixed number of occupied tweezer position in each row.
     ///                    At the moment assumes that number of qubits in the traps is fixed. No loading/unloading once device is created
     /// * `row_distance` - Fixed distance between rows.
@@ -710,6 +711,7 @@ impl Device for FirstDevice {
         // At the moment we hard-code a noise free model
         Some(Array2::zeros((3, 3).to_owned()))
     }
+
     fn number_qubits(&self) -> usize {
         self.qubit_positions.len()
     }
