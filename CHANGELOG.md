@@ -2,6 +2,10 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+# 0.10.0
+
+* Added experimental device support
+* Updated to qoqo 1.6
 
 # 0.9.1
 
