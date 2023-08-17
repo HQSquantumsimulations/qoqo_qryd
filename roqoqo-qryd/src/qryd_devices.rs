@@ -845,3 +845,262 @@ impl Device for FirstDevice {
         new_generic_device
     }
 }
+
+/// Experimental Device
+///
+#[derive(Debug, PartialEq, Default, Clone, serde::Serialize, serde::Deserialize)]
+pub struct ExperimentalDevice {
+    /// Mapping from qubit to tweezer
+    pub qubit_to_tweezer: HashMap<usize, usize>,
+    /// Register of Layouts
+    pub layout_register: HashMap<String, TweezerLayoutInfo>,
+    /// Current Layout
+    pub current_layout: String,
+}
+
+/// Tweezers information relative to a Layout
+///
+#[derive(Debug, Default, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
+pub struct TweezerLayoutInfo {
+    /// Maps a single-qubit gate name to a tweezer -> time mapping
+    pub tweezer_single_qubit_gate_times: HashMap<String, HashMap<usize, f64>>,
+    /// Maps a two-qubit gate name to a (tweezer, tweezer) -> time mapping
+    pub tweezer_two_qubit_gate_times: HashMap<String, HashMap<(usize, usize), f64>>,
+    /// Maps a three-qubit gate name to a (tweezer, tweezer, tweezer) -> time mapping
+    pub tweezer_three_qubit_gate_times: HashMap<String, HashMap<(usize, usize, usize), f64>>,
+    /// Maps a multi-qubit gate name to a Vec<tweezer> -> time mapping
+    pub tweezer_multi_qubit_gate_times: HashMap<String, HashMap<Vec<usize>, f64>>,
+}
+
+impl ExperimentalDevice {
+    /// Creates a new ExperimentalDevice instance.
+    ///
+    /// # Returns
+    ///
+    /// * `ExperimentalDevice` - The new ExperimentalDevice instance.
+    ///
+    pub fn new() -> Self {
+        let mut layout_register: HashMap<String, TweezerLayoutInfo> = HashMap::new();
+        layout_register.insert(String::from("Default"), TweezerLayoutInfo::default());
+
+        ExperimentalDevice {
+            qubit_to_tweezer: HashMap::new(),
+            layout_register,
+            current_layout: String::from("Default"),
+        }
+    }
+
+    /// Change the current Layout.
+    ///
+    /// It is updated only if the new Layout is present in the device's
+    /// Layour register.
+    ///
+    /// # Arguments
+    ///
+    /// * `name` - The name of the new Layout.
+    ///
+    pub fn change_layout(&mut self, name: &str) {
+        if self.layout_register.keys().contains(&name.to_string()) {
+            self.current_layout = name.to_string();
+        }
+    }
+
+    /// Adds a new Layout to the device's register.
+    ///
+    /// # Arguments
+    ///
+    /// * `name` - The name of the new Layout added to the register.
+    ///
+    pub fn add_layout(&mut self, name: &str) {
+        self.layout_register
+            .insert(name.to_string(), TweezerLayoutInfo::default());
+    }
+
+    /// Set the time of a single-qubit gate for a given tweezer.
+    ///
+    pub fn set_single_tweezer_gate_time(
+        &mut self,
+        gate: &str,
+        tweezer: usize,
+        gate_time: f64,
+        layout_name: Option<String>,
+    ) {
+        let layout_name = layout_name.unwrap_or_else(|| self.current_layout.clone());
+
+        if let Some(info) = self.layout_register.get_mut(&layout_name) {
+            let sqt = &mut info.tweezer_single_qubit_gate_times;
+            if let Some(present_hm) = sqt.get_mut(gate) {
+                present_hm.insert(tweezer, gate_time);
+            } else {
+                let mut hm = HashMap::new();
+                hm.insert(tweezer, gate_time);
+                sqt.insert(gate.to_string(), hm);
+            }
+        }
+    }
+
+    /// Get the tweezer identifier of the given qubit.
+    ///
+    /// # Arguments
+    ///
+    /// * `qubit` - The input qubit identifier.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(usize)` - The tweezer identifier relative to the given qubit.
+    /// * `Err(RoqoqoBackendError)` - If the qubit idetifier is not related to any tweezer.
+    ///
+    pub fn get_tweezer_from_qubit(&self, qubit: &usize) -> Result<usize, RoqoqoBackendError> {
+        if let Some(x) = self.qubit_to_tweezer.get(qubit) {
+            return Ok(*x);
+        }
+        Err(RoqoqoBackendError::GenericError {
+            msg: "The given qubit is not present in the Layout.".to_string(),
+        })
+    }
+
+    fn get_current_layout_info(&self) -> &TweezerLayoutInfo {
+        self.layout_register
+            .get(&self.current_layout)
+            .expect("Unexpectedly did not find current layout. Bug in roqoqo-qryd")
+    }
+}
+
+impl Device for ExperimentalDevice {
+    fn single_qubit_gate_time(&self, hqslang: &str, qubit: &usize) -> Option<f64> {
+        let tweezer_layout_info = self.get_current_layout_info();
+        let mapped_qubit = self.get_tweezer_from_qubit(qubit).unwrap();
+
+        if !tweezer_layout_info
+            .tweezer_single_qubit_gate_times
+            .contains_key(hqslang)
+            || !tweezer_layout_info
+                .tweezer_single_qubit_gate_times
+                .get(hqslang)
+                .unwrap()
+                .contains_key(&mapped_qubit)
+        {
+            return None;
+        }
+
+        tweezer_layout_info
+            .tweezer_single_qubit_gate_times
+            .get(hqslang)
+            .unwrap()
+            .get(&mapped_qubit)
+            .copied()
+    }
+
+    fn two_qubit_gate_time(&self, hqslang: &str, control: &usize, target: &usize) -> Option<f64> {
+        let tweezer_layout_info = self.get_current_layout_info();
+        let mapped_control_qubit = self.get_tweezer_from_qubit(control).unwrap();
+        let mapped_target_qubit = self.get_tweezer_from_qubit(target).unwrap();
+
+        if !tweezer_layout_info
+            .tweezer_two_qubit_gate_times
+            .contains_key(hqslang)
+            || !tweezer_layout_info
+                .tweezer_two_qubit_gate_times
+                .get(hqslang)
+                .unwrap()
+                .contains_key(&(mapped_control_qubit, mapped_target_qubit))
+        {
+            return None;
+        }
+
+        tweezer_layout_info
+            .tweezer_two_qubit_gate_times
+            .get(hqslang)
+            .unwrap()
+            .get(&(mapped_control_qubit, mapped_target_qubit))
+            .copied()
+    }
+
+    fn three_qubit_gate_time(
+        &self,
+        hqslang: &str,
+        control_0: &usize,
+        control_1: &usize,
+        target: &usize,
+    ) -> Option<f64> {
+        let tweezer_layout_info = self.get_current_layout_info();
+        let mapped_control0_qubit = self.get_tweezer_from_qubit(control_0).unwrap();
+        let mapped_control1_qubit = self.get_tweezer_from_qubit(control_1).unwrap();
+        let mapped_target_qubit = self.get_tweezer_from_qubit(target).unwrap();
+
+        if !tweezer_layout_info
+            .tweezer_three_qubit_gate_times
+            .contains_key(hqslang)
+            || !tweezer_layout_info
+                .tweezer_three_qubit_gate_times
+                .get(hqslang)
+                .unwrap()
+                .contains_key(&(
+                    mapped_control0_qubit,
+                    mapped_control1_qubit,
+                    mapped_target_qubit,
+                ))
+        {
+            return None;
+        }
+
+        tweezer_layout_info
+            .tweezer_three_qubit_gate_times
+            .get(hqslang)
+            .unwrap()
+            .get(&(
+                mapped_control0_qubit,
+                mapped_control1_qubit,
+                mapped_target_qubit,
+            ))
+            .copied()
+    }
+
+    fn multi_qubit_gate_time(&self, hqslang: &str, qubits: &[usize]) -> Option<f64> {
+        let tweezer_layout_info = self.get_current_layout_info();
+        let mapped_qubits: Vec<usize> = qubits
+            .iter()
+            .map(|qubit| self.get_tweezer_from_qubit(qubit).unwrap())
+            .collect();
+
+        if !tweezer_layout_info
+            .tweezer_multi_qubit_gate_times
+            .contains_key(hqslang)
+            || !tweezer_layout_info
+                .tweezer_multi_qubit_gate_times
+                .get(hqslang)
+                .unwrap()
+                .contains_key(&mapped_qubits)
+        {
+            return None;
+        }
+
+        tweezer_layout_info
+            .tweezer_multi_qubit_gate_times
+            .get(hqslang)
+            .unwrap()
+            .get(&mapped_qubits)
+            .copied()
+    }
+
+    #[allow(unused_variables)]
+    fn qubit_decoherence_rates(&self, qubit: &usize) -> Option<Array2<f64>> {
+        // At the moment we hard-code a noise free model
+        Some(Array2::zeros((3, 3).to_owned()))
+    }
+
+    fn number_qubits(&self) -> usize {
+        if let Some(max) = self.qubit_to_tweezer.keys().max() {
+            return *max;
+        }
+        0
+    }
+
+    fn two_qubit_edges(&self) -> Vec<(usize, usize)> {
+        todo!()
+    }
+
+    fn to_generic_device(&self) -> GenericDevice {
+        todo!()
+    }
+}
