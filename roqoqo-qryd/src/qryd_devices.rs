@@ -971,24 +971,15 @@ impl Device for ExperimentalDevice {
         let tweezer_layout_info = self.get_current_layout_info();
         let mapped_qubit = self.get_tweezer_from_qubit(qubit).unwrap();
 
-        if !tweezer_layout_info
-            .tweezer_single_qubit_gate_times
-            .contains_key(hqslang)
-            || !tweezer_layout_info
-                .tweezer_single_qubit_gate_times
-                .get(hqslang)
-                .unwrap()
-                .contains_key(&mapped_qubit)
-        {
-            return None;
-        }
-
-        tweezer_layout_info
+        if let Some(hqslang_map) = tweezer_layout_info
             .tweezer_single_qubit_gate_times
             .get(hqslang)
-            .unwrap()
-            .get(&mapped_qubit)
-            .copied()
+        {
+            if hqslang_map.contains_key(&mapped_qubit) {
+                return hqslang_map.get(&mapped_qubit).copied();
+            }
+        }
+        None
     }
 
     fn two_qubit_gate_time(&self, hqslang: &str, control: &usize, target: &usize) -> Option<f64> {
@@ -996,24 +987,17 @@ impl Device for ExperimentalDevice {
         let mapped_control_qubit = self.get_tweezer_from_qubit(control).unwrap();
         let mapped_target_qubit = self.get_tweezer_from_qubit(target).unwrap();
 
-        if !tweezer_layout_info
-            .tweezer_two_qubit_gate_times
-            .contains_key(hqslang)
-            || !tweezer_layout_info
-                .tweezer_two_qubit_gate_times
-                .get(hqslang)
-                .unwrap()
-                .contains_key(&(mapped_control_qubit, mapped_target_qubit))
-        {
-            return None;
-        }
-
-        tweezer_layout_info
+        if let Some(hqslang_map) = tweezer_layout_info
             .tweezer_two_qubit_gate_times
             .get(hqslang)
-            .unwrap()
-            .get(&(mapped_control_qubit, mapped_target_qubit))
-            .copied()
+        {
+            if hqslang_map.contains_key(&(mapped_control_qubit, mapped_target_qubit)) {
+                return hqslang_map
+                    .get(&(mapped_control_qubit, mapped_target_qubit))
+                    .copied();
+            }
+        }
+        None
     }
 
     fn three_qubit_gate_time(
@@ -1028,32 +1012,25 @@ impl Device for ExperimentalDevice {
         let mapped_control1_qubit = self.get_tweezer_from_qubit(control_1).unwrap();
         let mapped_target_qubit = self.get_tweezer_from_qubit(target).unwrap();
 
-        if !tweezer_layout_info
-            .tweezer_three_qubit_gate_times
-            .contains_key(hqslang)
-            || !tweezer_layout_info
-                .tweezer_three_qubit_gate_times
-                .get(hqslang)
-                .unwrap()
-                .contains_key(&(
-                    mapped_control0_qubit,
-                    mapped_control1_qubit,
-                    mapped_target_qubit,
-                ))
-        {
-            return None;
-        }
-
-        tweezer_layout_info
+        if let Some(hqslang_map) = tweezer_layout_info
             .tweezer_three_qubit_gate_times
             .get(hqslang)
-            .unwrap()
-            .get(&(
+        {
+            if hqslang_map.contains_key(&(
                 mapped_control0_qubit,
                 mapped_control1_qubit,
                 mapped_target_qubit,
-            ))
-            .copied()
+            )) {
+                return hqslang_map
+                    .get(&(
+                        mapped_control0_qubit,
+                        mapped_control1_qubit,
+                        mapped_target_qubit,
+                    ))
+                    .copied();
+            }
+        }
+        None
     }
 
     fn multi_qubit_gate_time(&self, hqslang: &str, qubits: &[usize]) -> Option<f64> {
@@ -1063,24 +1040,15 @@ impl Device for ExperimentalDevice {
             .map(|qubit| self.get_tweezer_from_qubit(qubit).unwrap())
             .collect();
 
-        if !tweezer_layout_info
-            .tweezer_multi_qubit_gate_times
-            .contains_key(hqslang)
-            || !tweezer_layout_info
-                .tweezer_multi_qubit_gate_times
-                .get(hqslang)
-                .unwrap()
-                .contains_key(&mapped_qubits)
-        {
-            return None;
-        }
-
-        tweezer_layout_info
+        if let Some(hqslang_map) = tweezer_layout_info
             .tweezer_multi_qubit_gate_times
             .get(hqslang)
-            .unwrap()
-            .get(&mapped_qubits)
-            .copied()
+        {
+            if hqslang_map.contains_key(&mapped_qubits) {
+                return hqslang_map.get(&mapped_qubits).copied();
+            }
+        }
+        None
     }
 
     #[allow(unused_variables)]
