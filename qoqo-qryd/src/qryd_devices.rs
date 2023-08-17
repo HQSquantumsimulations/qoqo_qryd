@@ -528,6 +528,7 @@ impl ExperimentalDeviceWrapper {
     ///
     /// Raises:
     ///     ValueError: The gate is not available in the device.
+    #[pyo3(text_signature = "(hqslang, qubit, /)")]
     pub fn single_qubit_gate_time(&self, hqslang: &str, qubit: usize) -> PyResult<f64> {
         self.internal
             .single_qubit_gate_time(hqslang, &qubit)
@@ -541,6 +542,7 @@ impl ExperimentalDeviceWrapper {
     ///
     /// Raises:
     ///     ValueError: The gate is not available in the device.
+    #[pyo3(text_signature = "(hqslang, control, target, /)")]
     pub fn two_qubit_gate_time(
         &self,
         hqslang: &str,
@@ -559,7 +561,8 @@ impl ExperimentalDeviceWrapper {
     ///
     /// Raises:
     ///     ValueError: The gate is not available in the device.
-    fn three_qubit_gate_time(
+    #[pyo3(text_signature = "(hqslang, control_0, control_1, target, /)")]
+    pub fn three_qubit_gate_time(
         &self,
         hqslang: &str,
         control_0: usize,
@@ -578,6 +581,7 @@ impl ExperimentalDeviceWrapper {
     ///
     /// Raises:
     ///     ValueError: The gate is not available in the device.
+    #[pyo3(text_signature = "(hqslang, qubits, /)")]
     pub fn multi_qubit_gate_time(&self, hqslang: &str, qubits: Vec<usize>) -> PyResult<f64> {
         self.internal
             .multi_qubit_gate_time(hqslang, &qubits)
@@ -741,6 +745,7 @@ pub fn convert_into_device(input: &PyAny) -> Result<QRydDevice, QoqoBackendError
 ///    :toctree: generated/
 ///
 ///    FirstDevice
+///    ExperimentalDevice
 ///
 #[pymodule]
 pub fn qryd_devices(_py: Python, m: &PyModule) -> PyResult<()> {
