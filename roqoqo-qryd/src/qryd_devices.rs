@@ -916,11 +916,18 @@ impl ExperimentalDevice {
             .insert(name.to_string(), TweezerLayoutInfo::default());
     }
 
-    /// Set the time of a single-qubit gate for a given tweezer.
+    /// Set the time of a single-qubit gate for a tweezer in a given Layout.
     ///
-    pub fn set_single_tweezer_gate_time(
+    /// # Arguments
+    ///
+    /// * `hqslang` - The hqslang name of a single-qubit gate.
+    /// * `tweezer` - The index of the tweezer.
+    /// * `gate_time` - The the gate time for the given gate.
+    /// * `layout-name` - The name of the Layout to apply the gate time in. Defaults to the current Layout.
+    ///
+    pub fn set_tweezer_single_qubit_gate_time(
         &mut self,
-        gate: &str,
+        hqslang: &str,
         tweezer: usize,
         gate_time: f64,
         layout_name: Option<String>,
@@ -929,12 +936,108 @@ impl ExperimentalDevice {
 
         if let Some(info) = self.layout_register.get_mut(&layout_name) {
             let sqt = &mut info.tweezer_single_qubit_gate_times;
-            if let Some(present_hm) = sqt.get_mut(gate) {
+            if let Some(present_hm) = sqt.get_mut(hqslang) {
                 present_hm.insert(tweezer, gate_time);
             } else {
                 let mut hm = HashMap::new();
                 hm.insert(tweezer, gate_time);
-                sqt.insert(gate.to_string(), hm);
+                sqt.insert(hqslang.to_string(), hm);
+            }
+        }
+    }
+
+    /// Set the time of a two-qubit gate for a tweezer couple in a given Layout.
+    ///
+    /// # Arguments
+    ///
+    /// * `hqslang` - The hqslang name of a two-qubit gate.
+    /// * `tweezer0` - The index of the first tweezer.
+    /// * `tweezer1` - The index of the second tweezer.
+    /// * `gate_time` - The the gate time for the given gate.
+    /// * `layout-name` - The name of the Layout to apply the gate time in. Defaults to the current Layout.
+    ///
+    pub fn set_tweezer_two_qubit_gate_time(
+        &mut self,
+        hqslang: &str,
+        tweezer0: usize,
+        tweezer1: usize,
+        gate_time: f64,
+        layout_name: Option<String>,
+    ) {
+        let layout_name = layout_name.unwrap_or_else(|| self.current_layout.clone());
+
+        if let Some(info) = self.layout_register.get_mut(&layout_name) {
+            let sqt = &mut info.tweezer_two_qubit_gate_times;
+            if let Some(present_hm) = sqt.get_mut(hqslang) {
+                present_hm.insert((tweezer0, tweezer1), gate_time);
+            } else {
+                let mut hm = HashMap::new();
+                hm.insert((tweezer0, tweezer1), gate_time);
+                sqt.insert(hqslang.to_string(), hm);
+            }
+        }
+    }
+
+    /// Set the time of a three-qubit gate for a tweezer trio in a given Layout.
+    ///
+    /// # Arguments
+    ///
+    /// * `hqslang` - The hqslang name of a three-qubit gate.
+    /// * `tweezer0` - The index of the first tweezer.
+    /// * `tweezer1` - The index of the second tweezer.
+    /// * `tweezer2` - The index of the third tweezer.
+    /// * `gate_time` - The the gate time for the given gate.
+    /// * `layout-name` - The name of the Layout to apply the gate time in. Defaults to the current Layout.
+    ///
+    pub fn set_tweezer_three_qubit_gate_time(
+        &mut self,
+        hqslang: &str,
+        tweezer0: usize,
+        tweezer1: usize,
+        tweezer2: usize,
+        gate_time: f64,
+        layout_name: Option<String>,
+    ) {
+        let layout_name = layout_name.unwrap_or_else(|| self.current_layout.clone());
+
+        if let Some(info) = self.layout_register.get_mut(&layout_name) {
+            let sqt = &mut info.tweezer_three_qubit_gate_times;
+            if let Some(present_hm) = sqt.get_mut(hqslang) {
+                present_hm.insert((tweezer0, tweezer1, tweezer2), gate_time);
+            } else {
+                let mut hm = HashMap::new();
+                hm.insert((tweezer0, tweezer1, tweezer2), gate_time);
+                sqt.insert(hqslang.to_string(), hm);
+            }
+        }
+    }
+
+    /// Set the time of a multi-qubit gate for a list of tweezers in a given Layout.
+    ///
+    /// # Arguments
+    ///
+    /// * `hqslang` - The hqslang name of a multi-qubit gate.
+    /// * `tweezers` - The list of tweezer indexes.
+    /// * `gate_time` - The the gate time for the given gate.
+    /// * `layout-name` - The name of the Layout to apply the gate time in. Defaults to the current Layout.
+    ///
+    pub fn set_tweezer_multi_qubit_gate_time(
+        &mut self,
+        hqslang: &str,
+        tweezers: &[usize],
+        gate_time: f64,
+        layout_name: Option<String>,
+    ) {
+        let layout_name = layout_name.unwrap_or_else(|| self.current_layout.clone());
+
+        if let Some(info) = self.layout_register.get_mut(&layout_name) {
+            let sqt = &mut info.tweezer_multi_qubit_gate_times;
+            if let Some(present_hm) = sqt.get_mut(hqslang) {
+                present_hm.insert(tweezers.to_vec(), gate_time);
+            } else {
+                let mut hm = HashMap::new();
+                hm.insert(tweezers.to_vec(), gate_time);
+                sqt.insert(hqslang.to_string(), hm);
             }
         }
     }
