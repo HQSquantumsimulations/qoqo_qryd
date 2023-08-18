@@ -925,14 +925,14 @@ impl ExperimentalDevice {
     }
 
     /// Modifies the qubit -> tweezer mapping of the device.
-    /// 
+    ///
     /// If a qubit -> tweezer mapping is already present, it is overwritten.
     ///
     /// # Arguments
-    /// 
+    ///
     /// * `qubit` - The index of the qubit.
     /// * `tweezer` - The index of the tweezer.
-    /// 
+    ///
     pub fn add_qubit_tweezer_mapping(&mut self, qubit: usize, tweezer: usize) {
         self.qubit_to_tweezer.insert(qubit, tweezer);
         // if self.qubit_to_tweezer.insert(qubit, tweezer).is_none() {
