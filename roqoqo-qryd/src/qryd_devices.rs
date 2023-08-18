@@ -893,23 +893,31 @@ impl ExperimentalDevice {
     /// Change the current Layout.
     ///
     /// It is updated only if the new Layout is present in the device's
-    /// Layour register.
+    /// Layout register.
     ///
     /// # Arguments
     ///
     /// * `name` - The name of the new Layout.
     ///
-    pub fn change_layout(&mut self, name: &str) {
+    pub fn switch_layout(&mut self, name: &str) -> Result<(), RoqoqoBackendError> {
         if self.layout_register.keys().contains(&name.to_string()) {
             self.current_layout = name.to_string();
+            Ok(())
+        } else {
+            Err(RoqoqoBackendError::GenericError {
+                msg: format!(
+                    "Error switching layout of ExperimentalDevice. Layout {} is not set",
+                    name
+                ),
+            })
         }
     }
 
-    /// Adds a new Layout to the device's register.
+    /// Adds a new empty Layout to the device's register.
     ///
     /// # Arguments
     ///
-    /// * `name` - The name of the new Layout added to the register.
+    /// * `name` - The name of the new Layout to be added to the register.
     ///
     pub fn add_layout(&mut self, name: &str) {
         self.layout_register
@@ -1185,7 +1193,18 @@ impl Device for ExperimentalDevice {
     }
 
     fn two_qubit_edges(&self) -> Vec<(usize, usize)> {
-        todo!()
+        let mut edges: Vec<(usize, usize)> = Vec::new();
+        for row in 0..self.number_qubits() {
+            for column in row + 1..self.number_qubits() {
+                if self
+                    .two_qubit_gate_time("PhaseShiftedControlledPhase", &row, &column)
+                    .is_some()
+                {
+                    edges.push((row, column));
+                }
+            }
+        }
+        edges
     }
 
     fn to_generic_device(&self) -> GenericDevice {
