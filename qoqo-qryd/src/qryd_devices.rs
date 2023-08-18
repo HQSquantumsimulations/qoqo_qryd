@@ -980,7 +980,133 @@ impl ExperimentalMutableDeviceWrapper {
         self.internal.two_qubit_edges()
     }
 
-    
+    /// Add a new layout to the device.
+    ///
+    /// Args:
+    ///     name (str): The name that is assigned to the new Layout.
+    ///
+    #[pyo3(text_signature = "(name, /)")]
+    pub fn add_layout(&mut self, name: &str) {
+        self.internal.add_layout(name)
+    }
+
+    /// Modifies the qubit -> tweezer mapping of the device.
+    ///
+    /// If a qubit -> tweezer mapping is already present, it is overwritten.
+    ///
+    /// Args:
+    ///     qubit (usize): The index of the qubit.
+    ///     tweezer (usize): The index of the tweezer.
+    ///
+    /// Raises:
+    ///     PyValueError: The qubit is not present in the device.
+    #[pyo3(text_signature = "(qubit, tweezer, /)")]
+    pub fn add_qubit_tweezer_mapping(&mut self, qubit: usize, tweezer: usize) -> PyResult<()> {
+        self.internal.add_qubit_tweezer_mapping(qubit, tweezer);
+        Ok(())
+        // .map_err(|err| PyValueError::new_err(format!("{:}", err)))
+    }
+
+    /// Set the time of a single-qubit gate for a tweezer in a given Layout.
+    ///
+    /// Args:
+    ///     hqslang (str): The hqslang name of a single-qubit gate.
+    ///     tweezer (usize): The index of the tweezer.
+    ///     gate_time (float): The the gate time for the given gate.
+    ///     layout_name (Optional[str]): The name of the Layout to apply the gate time in.
+    ///         Defaults to the current Layout.
+    ///
+    #[pyo3(text_signature = "(hqslang, tweezer, gate_time, layout_name, /)")]
+    pub fn set_tweezer_single_qubit_gate_time(
+        &mut self,
+        hqslang: &str,
+        tweezer: usize,
+        gate_time: f64,
+        layout_name: Option<String>,
+    ) {
+        self.internal
+            .set_tweezer_single_qubit_gate_time(hqslang, tweezer, gate_time, layout_name)
+    }
+
+    /// Set the time of a two-qubit gate for a tweezer couple in a given Layout.
+    ///
+    /// Args:
+    ///     hqslang (str): The hqslang name of a single-qubit gate.
+    ///     tweezer0 (usize): The index of the first tweezer.
+    ///     tweezer1 (usize): The index of the second tweezer.
+    ///     gate_time (float): The the gate time for the given gate.
+    ///     layout_name (Optional[str]): The name of the Layout to apply the gate time in.
+    ///         Defaults to the current Layout.
+    ///     
+    #[pyo3(text_signature = "(hqslang, tweezer0, tweezer1, gate_time, layout_name, /)")]
+    pub fn set_tweezer_two_qubit_gate_time(
+        &mut self,
+        hqslang: &str,
+        tweezer0: usize,
+        tweezer1: usize,
+        gate_time: f64,
+        layout_name: Option<String>,
+    ) {
+        self.internal.set_tweezer_two_qubit_gate_time(
+            hqslang,
+            tweezer0,
+            tweezer1,
+            gate_time,
+            layout_name,
+        )
+    }
+
+    /// Set the time of a three-qubit gate for a tweezer trio in a given Layout.
+    ///
+    /// Args:
+    ///     hqslang (str): The hqslang name of a three-qubit gate.
+    ///     tweezer0 (usize): The index of the first tweezer.
+    ///     tweezer1 (usize): The index of the second tweezer.
+    ///     tweezer2 (usize): The index of the third tweezer.
+    ///     gate_time (float): The the gate time for the given gate.
+    ///     layout_name (Optional[str]): The name of the Layout to apply the gate time in.
+    ///         Defaults to the current Layout.
+    ///
+    #[pyo3(text_signature = "(hqslang, tweezer0, tweezer1, tweezer2, gate_time, layout_name, /)")]
+    pub fn set_tweezer_three_qubit_gate_time(
+        &mut self,
+        hqslang: &str,
+        tweezer0: usize,
+        tweezer1: usize,
+        tweezer2: usize,
+        gate_time: f64,
+        layout_name: Option<String>,
+    ) {
+        self.internal.set_tweezer_three_qubit_gate_time(
+            hqslang,
+            tweezer0,
+            tweezer1,
+            tweezer2,
+            gate_time,
+            layout_name,
+        )
+    }
+
+    /// Set the time of a multi-qubit gate for a list of tweezers in a given Layout.
+    ///
+    /// Args:
+    ///     hqslang (name): The hqslang name of a multi-qubit gate.
+    ///     tweezers (List[usize]): The list of tweezer indexes.
+    ///     gate_time (float): The the gate time for the given gate.
+    ///     layout_name (Optional[str]): The name of the Layout to apply the gate time in.
+    ///         Defaults to the current Layout.
+    ///
+    #[pyo3(text_signature = "(hqslang, tweezers, gate_time, layout_name, /)")]
+    pub fn set_tweezer_multi_qubit_gate_time(
+        &mut self,
+        hqslang: &str,
+        tweezers: Vec<usize>,
+        gate_time: f64,
+        layout_name: Option<String>,
+    ) {
+        self.internal
+            .set_tweezer_multi_qubit_gate_time(hqslang, &tweezers, gate_time, layout_name)
+    }
 }
 
 /// Convert generic python object to [roqoqo_qryd::QrydDevice].

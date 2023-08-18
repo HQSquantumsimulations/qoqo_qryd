@@ -932,13 +932,15 @@ impl ExperimentalDevice {
     /// 
     /// * `qubit` - The index of the qubit.
     /// * `tweezer` - The index of the tweezer.
-    pub fn add_qubit_tweezer_mapping(&mut self, qubit: usize, tweezer: usize) -> Result<(), RoqoqoBackendError> {
-        if self.qubit_to_tweezer.insert(qubit, tweezer).is_none() {
-            return Err(RoqoqoBackendError::GenericError {
-                msg: "The given qubit is not present in the Layout.".to_string(),
-            });
-        }
-        Ok(())
+    /// 
+    pub fn add_qubit_tweezer_mapping(&mut self, qubit: usize, tweezer: usize) {
+        self.qubit_to_tweezer.insert(qubit, tweezer);
+        // if self.qubit_to_tweezer.insert(qubit, tweezer).is_none() {
+        //     return Err(RoqoqoBackendError::GenericError {
+        //         msg: "The given qubit is not present in the Layout.".to_string(),
+        //     });
+        // }
+        // Ok(())
     }
 
     /// Set the time of a single-qubit gate for a tweezer in a given Layout.
@@ -948,7 +950,7 @@ impl ExperimentalDevice {
     /// * `hqslang` - The hqslang name of a single-qubit gate.
     /// * `tweezer` - The index of the tweezer.
     /// * `gate_time` - The the gate time for the given gate.
-    /// * `layout-name` - The name of the Layout to apply the gate time in. Defaults to the current Layout.
+    /// * `layout_name` - The name of the Layout to apply the gate time in. Defaults to the current Layout.
     ///
     pub fn set_tweezer_single_qubit_gate_time(
         &mut self,
@@ -979,7 +981,7 @@ impl ExperimentalDevice {
     /// * `tweezer0` - The index of the first tweezer.
     /// * `tweezer1` - The index of the second tweezer.
     /// * `gate_time` - The the gate time for the given gate.
-    /// * `layout-name` - The name of the Layout to apply the gate time in. Defaults to the current Layout.
+    /// * `layout_name` - The name of the Layout to apply the gate time in. Defaults to the current Layout.
     ///
     pub fn set_tweezer_two_qubit_gate_time(
         &mut self,
@@ -1012,7 +1014,7 @@ impl ExperimentalDevice {
     /// * `tweezer1` - The index of the second tweezer.
     /// * `tweezer2` - The index of the third tweezer.
     /// * `gate_time` - The the gate time for the given gate.
-    /// * `layout-name` - The name of the Layout to apply the gate time in. Defaults to the current Layout.
+    /// * `layout_name` - The name of the Layout to apply the gate time in. Defaults to the current Layout.
     ///
     pub fn set_tweezer_three_qubit_gate_time(
         &mut self,
@@ -1044,7 +1046,7 @@ impl ExperimentalDevice {
     /// * `hqslang` - The hqslang name of a multi-qubit gate.
     /// * `tweezers` - The list of tweezer indexes.
     /// * `gate_time` - The the gate time for the given gate.
-    /// * `layout-name` - The name of the Layout to apply the gate time in. Defaults to the current Layout.
+    /// * `layout_name` - The name of the Layout to apply the gate time in. Defaults to the current Layout.
     ///
     pub fn set_tweezer_multi_qubit_gate_time(
         &mut self,
