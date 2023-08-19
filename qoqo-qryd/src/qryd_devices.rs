@@ -986,8 +986,10 @@ impl ExperimentalMutableDeviceWrapper {
     ///     name (str): The name that is assigned to the new Layout.
     ///
     #[pyo3(text_signature = "(name, /)")]
-    pub fn add_layout(&mut self, name: &str) {
-        self.internal.add_layout(name)
+    pub fn add_layout(&mut self, name: &str) -> PyResult<()> {
+        self.internal
+            .add_layout(name)
+            .map_err(|err| PyValueError::new_err(format!("{:}", err)))
     }
 
     /// Modifies the qubit -> tweezer mapping of the device.
