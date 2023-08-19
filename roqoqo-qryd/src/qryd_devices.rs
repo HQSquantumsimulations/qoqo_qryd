@@ -900,17 +900,16 @@ impl ExperimentalDevice {
     /// * `name` - The name of the new Layout.
     ///
     pub fn switch_layout(&mut self, name: &str) -> Result<(), RoqoqoBackendError> {
-        if self.layout_register.keys().contains(&name.to_string()) {
-            self.current_layout = name.to_string();
-            Ok(())
-        } else {
-            Err(RoqoqoBackendError::GenericError {
+        if !self.layout_register.keys().contains(&name.to_string()) {
+            return Err(RoqoqoBackendError::GenericError {
                 msg: format!(
-                    "Error switching layout of ExperimentalDevice. Layout {} is not set",
+                    "Error switching layout of ExperimentalDevice. Layout {} is not set.",
                     name
                 ),
-            })
+            });
         }
+        self.current_layout = name.to_string();
+        Ok(())
     }
 
     /// Adds a new empty Layout to the device's register.
@@ -919,9 +918,18 @@ impl ExperimentalDevice {
     ///
     /// * `name` - The name of the new Layout to be added to the register.
     ///
-    pub fn add_layout(&mut self, name: &str) {
+    pub fn add_layout(&mut self, name: &str) -> Result<(), RoqoqoBackendError> {
+        if self.layout_register.contains_key(name) {
+            return Err(RoqoqoBackendError::GenericError {
+                msg: format!(
+                    "Error adding layout to ExperimentalDevice. Layout name {} is already in use in the Layout register.",
+                    name,
+                ),
+            });
+        }
         self.layout_register
             .insert(name.to_string(), TweezerLayoutInfo::default());
+        Ok(())
     }
 
     /// Modifies the qubit -> tweezer mapping of the device.
@@ -1081,12 +1089,12 @@ impl ExperimentalDevice {
     /// * `Err(RoqoqoBackendError)` - If the qubit idetifier is not related to any tweezer.
     ///
     pub fn get_tweezer_from_qubit(&self, qubit: &usize) -> Result<usize, RoqoqoBackendError> {
-        if let Some(x) = self.qubit_to_tweezer.get(qubit) {
-            return Ok(*x);
-        }
-        Err(RoqoqoBackendError::GenericError {
-            msg: "The given qubit is not present in the Layout.".to_string(),
-        })
+        self.qubit_to_tweezer
+            .get(qubit)
+            .ok_or(RoqoqoBackendError::GenericError {
+                msg: "The given qubit is not present in the Layout.".to_string(),
+            })
+            .copied()
     }
 
     fn get_current_layout_info(&self) -> &TweezerLayoutInfo {
@@ -1105,9 +1113,7 @@ impl Device for ExperimentalDevice {
             .tweezer_single_qubit_gate_times
             .get(hqslang)
         {
-            if hqslang_map.contains_key(&mapped_qubit) {
-                return hqslang_map.get(&mapped_qubit).copied();
-            }
+            return hqslang_map.get(&mapped_qubit).copied();
         }
         None
     }
@@ -1121,11 +1127,9 @@ impl Device for ExperimentalDevice {
             .tweezer_two_qubit_gate_times
             .get(hqslang)
         {
-            if hqslang_map.contains_key(&(mapped_control_qubit, mapped_target_qubit)) {
-                return hqslang_map
-                    .get(&(mapped_control_qubit, mapped_target_qubit))
-                    .copied();
-            }
+            return hqslang_map
+                .get(&(mapped_control_qubit, mapped_target_qubit))
+                .copied();
         }
         None
     }
@@ -1146,19 +1150,13 @@ impl Device for ExperimentalDevice {
             .tweezer_three_qubit_gate_times
             .get(hqslang)
         {
-            if hqslang_map.contains_key(&(
-                mapped_control0_qubit,
-                mapped_control1_qubit,
-                mapped_target_qubit,
-            )) {
-                return hqslang_map
-                    .get(&(
-                        mapped_control0_qubit,
-                        mapped_control1_qubit,
-                        mapped_target_qubit,
-                    ))
-                    .copied();
-            }
+            return hqslang_map
+                .get(&(
+                    mapped_control0_qubit,
+                    mapped_control1_qubit,
+                    mapped_target_qubit,
+                ))
+                .copied();
         }
         None
     }
@@ -1174,9 +1172,7 @@ impl Device for ExperimentalDevice {
             .tweezer_multi_qubit_gate_times
             .get(hqslang)
         {
-            if hqslang_map.contains_key(&mapped_qubits) {
-                return hqslang_map.get(&mapped_qubits).copied();
-            }
+            return hqslang_map.get(&mapped_qubits).copied();
         }
         None
     }
