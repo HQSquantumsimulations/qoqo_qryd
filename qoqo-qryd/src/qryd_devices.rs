@@ -1138,5 +1138,6 @@ pub fn convert_into_device(input: &PyAny) -> Result<QRydDevice, QoqoBackendError
 pub fn qryd_devices(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_class::<FirstDeviceWrapper>()?;
     m.add_class::<ExperimentalDeviceWrapper>()?;
+    m.add_class::<ExperimentalMutableDeviceWrapper>()?;
     Ok(())
 }
