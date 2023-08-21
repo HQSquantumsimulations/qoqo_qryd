@@ -15,6 +15,10 @@ mod qryd_devices;
 pub use qryd_devices::*;
 
 #[cfg(test)]
+mod experimental_devices;
+pub use experimental_devices::*;
+
+#[cfg(test)]
 mod pragma_operations;
 pub use pragma_operations::*;
 
