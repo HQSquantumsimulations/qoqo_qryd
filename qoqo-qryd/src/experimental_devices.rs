@@ -30,7 +30,7 @@ use roqoqo_qryd::ExperimentalDevice;
 #[derive(Clone, Debug, Default)]
 pub struct ExperimentalDeviceWrapper {
     /// Internal storage of [roqoqo_qryd::ExperimentalDevice]
-    internal: ExperimentalDevice,
+    pub internal: ExperimentalDevice,
 }
 
 #[pymethods]
@@ -47,6 +47,14 @@ impl ExperimentalDeviceWrapper {
         }
     }
 
+    /// Get the name of the current layout.
+    ///
+    /// Returns:
+    ///     str: The name of the current layout.
+    pub fn current_layout(&self) -> &str {
+        self.internal.current_layout.as_str()
+    }
+
     /// Switch to a different pre-defined layout.
     ///
     /// Args:
@@ -59,6 +67,23 @@ impl ExperimentalDeviceWrapper {
         self.internal
             .switch_layout(name)
             .map_err(|err| PyValueError::new_err(format!("{:}", err)))
+    }
+
+    /// Modifies the qubit -> tweezer mapping of the device.
+    ///
+    /// If a qubit -> tweezer mapping is already present, it is overwritten.
+    ///
+    /// Args:
+    ///     qubit (usize): The index of the qubit.
+    ///     tweezer (usize): The index of the tweezer.
+    ///
+    /// Raises:
+    ///     PyValueError: The qubit is not present in the device.
+    #[pyo3(text_signature = "(qubit, tweezer, /)")]
+    pub fn add_qubit_tweezer_mapping(&mut self, qubit: usize, tweezer: usize) -> PyResult<()> {
+        self.internal.add_qubit_tweezer_mapping(qubit, tweezer);
+        Ok(())
+        // .map_err(|err| PyValueError::new_err(format!("{:}", err)))
     }
 
     /// Returns the gate time of a single qubit operation on this device.
@@ -289,6 +314,26 @@ impl ExperimentalMutableDeviceWrapper {
         }
     }
 
+    /// Get the name of the current layout.
+    ///
+    /// Returns:
+    ///     str: The name of the current layout.
+    pub fn current_layout(&self) -> &str {
+        self.internal.current_layout.as_str()
+    }
+
+    /// Add a new layout to the device.
+    ///
+    /// Args:
+    ///     name (str): The name that is assigned to the new Layout.
+    ///
+    #[pyo3(text_signature = "(name, /)")]
+    pub fn add_layout(&mut self, name: &str) -> PyResult<()> {
+        self.internal
+            .add_layout(name)
+            .map_err(|err| PyValueError::new_err(format!("{:}", err)))
+    }
+
     /// Switch to a different pre-defined layout.
     ///
     /// Args:
@@ -301,6 +346,23 @@ impl ExperimentalMutableDeviceWrapper {
         self.internal
             .switch_layout(name)
             .map_err(|err| PyValueError::new_err(format!("{:}", err)))
+    }
+
+    /// Modifies the qubit -> tweezer mapping of the device.
+    ///
+    /// If a qubit -> tweezer mapping is already present, it is overwritten.
+    ///
+    /// Args:
+    ///     qubit (usize): The index of the qubit.
+    ///     tweezer (usize): The index of the tweezer.
+    ///
+    /// Raises:
+    ///     PyValueError: The qubit is not present in the device.
+    #[pyo3(text_signature = "(qubit, tweezer, /)")]
+    pub fn add_qubit_tweezer_mapping(&mut self, qubit: usize, tweezer: usize) -> PyResult<()> {
+        self.internal.add_qubit_tweezer_mapping(qubit, tweezer);
+        Ok(())
+        // .map_err(|err| PyValueError::new_err(format!("{:}", err)))
     }
 
     /// Returns the gate time of a single qubit operation on this device.
@@ -504,35 +566,6 @@ impl ExperimentalMutableDeviceWrapper {
     ///     Sequence[(int, int)]: List of two qubit edges in the undirected connectivity graph
     fn two_qubit_edges(&self) -> Vec<(usize, usize)> {
         self.internal.two_qubit_edges()
-    }
-
-    /// Add a new layout to the device.
-    ///
-    /// Args:
-    ///     name (str): The name that is assigned to the new Layout.
-    ///
-    #[pyo3(text_signature = "(name, /)")]
-    pub fn add_layout(&mut self, name: &str) -> PyResult<()> {
-        self.internal
-            .add_layout(name)
-            .map_err(|err| PyValueError::new_err(format!("{:}", err)))
-    }
-
-    /// Modifies the qubit -> tweezer mapping of the device.
-    ///
-    /// If a qubit -> tweezer mapping is already present, it is overwritten.
-    ///
-    /// Args:
-    ///     qubit (usize): The index of the qubit.
-    ///     tweezer (usize): The index of the tweezer.
-    ///
-    /// Raises:
-    ///     PyValueError: The qubit is not present in the device.
-    #[pyo3(text_signature = "(qubit, tweezer, /)")]
-    pub fn add_qubit_tweezer_mapping(&mut self, qubit: usize, tweezer: usize) -> PyResult<()> {
-        self.internal.add_qubit_tweezer_mapping(qubit, tweezer);
-        Ok(())
-        // .map_err(|err| PyValueError::new_err(format!("{:}", err)))
     }
 
     /// Set the time of a single-qubit gate for a tweezer in a given Layout.
