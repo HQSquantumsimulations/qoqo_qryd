@@ -1107,7 +1107,7 @@ impl ExperimentalDevice {
 impl Device for ExperimentalDevice {
     fn single_qubit_gate_time(&self, hqslang: &str, qubit: &usize) -> Option<f64> {
         let tweezer_layout_info = self.get_current_layout_info();
-        let mapped_qubit = self.get_tweezer_from_qubit(qubit).unwrap();
+        let mapped_qubit = self.get_tweezer_from_qubit(qubit).ok()?;
 
         if let Some(hqslang_map) = tweezer_layout_info
             .tweezer_single_qubit_gate_times
@@ -1120,8 +1120,8 @@ impl Device for ExperimentalDevice {
 
     fn two_qubit_gate_time(&self, hqslang: &str, control: &usize, target: &usize) -> Option<f64> {
         let tweezer_layout_info = self.get_current_layout_info();
-        let mapped_control_qubit = self.get_tweezer_from_qubit(control).unwrap();
-        let mapped_target_qubit = self.get_tweezer_from_qubit(target).unwrap();
+        let mapped_control_qubit = self.get_tweezer_from_qubit(control).ok()?;
+        let mapped_target_qubit = self.get_tweezer_from_qubit(target).ok()?;
 
         if let Some(hqslang_map) = tweezer_layout_info
             .tweezer_two_qubit_gate_times
@@ -1142,9 +1142,9 @@ impl Device for ExperimentalDevice {
         target: &usize,
     ) -> Option<f64> {
         let tweezer_layout_info = self.get_current_layout_info();
-        let mapped_control0_qubit = self.get_tweezer_from_qubit(control_0).unwrap();
-        let mapped_control1_qubit = self.get_tweezer_from_qubit(control_1).unwrap();
-        let mapped_target_qubit = self.get_tweezer_from_qubit(target).unwrap();
+        let mapped_control0_qubit = self.get_tweezer_from_qubit(control_0).ok()?;
+        let mapped_control1_qubit = self.get_tweezer_from_qubit(control_1).ok()?;
+        let mapped_target_qubit = self.get_tweezer_from_qubit(target).ok()?;
 
         if let Some(hqslang_map) = tweezer_layout_info
             .tweezer_three_qubit_gate_times
@@ -1163,10 +1163,11 @@ impl Device for ExperimentalDevice {
 
     fn multi_qubit_gate_time(&self, hqslang: &str, qubits: &[usize]) -> Option<f64> {
         let tweezer_layout_info = self.get_current_layout_info();
-        let mapped_qubits: Vec<usize> = qubits
-            .iter()
-            .map(|qubit| self.get_tweezer_from_qubit(qubit).unwrap())
-            .collect();
+        let mut mapped_qubits: Vec<usize> = Vec::new();
+        for qubit in qubits {
+            let mapped_qubit = self.get_tweezer_from_qubit(qubit).ok()?;
+            mapped_qubits.push(mapped_qubit);
+        }
 
         if let Some(hqslang_map) = tweezer_layout_info
             .tweezer_multi_qubit_gate_times
