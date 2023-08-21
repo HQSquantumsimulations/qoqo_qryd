@@ -15,7 +15,7 @@ use roqoqo_qryd::ExperimentalDevice;
 
 /// Test ExperimentalDevice new()
 #[test]
-fn test_new_exp() {
+fn test_new() {
     let device = ExperimentalDevice::new();
 
     assert_eq!(device.current_layout, "Default");
@@ -26,7 +26,7 @@ fn test_new_exp() {
 
 // Test ExperimentalDevice add_layout(), switch_layout() methods
 #[test]
-fn test_layouts_exp() {
+fn test_layouts() {
     let mut device = ExperimentalDevice::new();
     device.add_layout("Test").unwrap();
 
@@ -156,7 +156,7 @@ fn test_layouts_exp() {
 
 // Test ExperimentalDevice add_qubit_tweezer_mapping(), get_tweezer_from_qubit() methods
 #[test]
-fn test_qubit_tweezer_mapping_exp() {
+fn test_qubit_tweezer_mapping() {
     let mut device = ExperimentalDevice::new();
     device.add_qubit_tweezer_mapping(0, 1);
 
@@ -166,7 +166,7 @@ fn test_qubit_tweezer_mapping_exp() {
 
 /// Test ExperimentalDevice ..._qubit_gate_time() methods
 #[test]
-fn test_qubit_times_exp() {
+fn test_qubit_times() {
     let mut device = ExperimentalDevice::new();
     device.add_qubit_tweezer_mapping(0, 1);
     device.add_qubit_tweezer_mapping(1, 2);

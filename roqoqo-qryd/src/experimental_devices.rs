@@ -69,6 +69,26 @@ impl ExperimentalDevice {
         }
     }
 
+    /// Adds a new empty Layout to the device's register.
+    ///
+    /// # Arguments
+    ///
+    /// * `name` - The name of the new Layout to be added to the register.
+    ///
+    pub fn add_layout(&mut self, name: &str) -> Result<(), RoqoqoBackendError> {
+        if self.layout_register.contains_key(name) {
+            return Err(RoqoqoBackendError::GenericError {
+                msg: format!(
+                    "Error adding layout to ExperimentalDevice. Layout name {} is already in use in the Layout register.",
+                    name,
+                ),
+            });
+        }
+        self.layout_register
+            .insert(name.to_string(), TweezerLayoutInfo::default());
+        Ok(())
+    }
+
     /// Change the current Layout.
     ///
     /// It is updated only if the new Layout is present in the device's
@@ -88,26 +108,6 @@ impl ExperimentalDevice {
             });
         }
         self.current_layout = name.to_string();
-        Ok(())
-    }
-
-    /// Adds a new empty Layout to the device's register.
-    ///
-    /// # Arguments
-    ///
-    /// * `name` - The name of the new Layout to be added to the register.
-    ///
-    pub fn add_layout(&mut self, name: &str) -> Result<(), RoqoqoBackendError> {
-        if self.layout_register.contains_key(name) {
-            return Err(RoqoqoBackendError::GenericError {
-                msg: format!(
-                    "Error adding layout to ExperimentalDevice. Layout name {} is already in use in the Layout register.",
-                    name,
-                ),
-            });
-        }
-        self.layout_register
-            .insert(name.to_string(), TweezerLayoutInfo::default());
         Ok(())
     }
 
