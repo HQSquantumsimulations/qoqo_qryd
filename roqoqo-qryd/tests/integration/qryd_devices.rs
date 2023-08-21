@@ -1132,6 +1132,7 @@ fn test_allowed_3qubit_gate() {
         .is_none());
 }
 
+/// Test ExperimentalDevice new()
 #[test]
 fn test_new_exp() {
     let device = ExperimentalDevice::new();
@@ -1142,6 +1143,7 @@ fn test_new_exp() {
     assert!(device.layout_register.get("Default").is_some());
 }
 
+// Test ExperimentalDevice add_layout(), switch_layout() methods
 #[test]
 fn test_layouts_exp() {
     let mut device = ExperimentalDevice::new();
@@ -1271,6 +1273,7 @@ fn test_layouts_exp() {
     assert!(device.switch_layout("Error").is_err());
 }
 
+// Test ExperimentalDevice add_qubit_tweezer_mapping(), get_tweezer_from_qubit() methods
 #[test]
 fn test_qubit_tweezer_mapping_exp() {
     let mut device = ExperimentalDevice::new();
@@ -1280,6 +1283,7 @@ fn test_qubit_tweezer_mapping_exp() {
     assert_eq!(device.get_tweezer_from_qubit(&0).unwrap(), 1);
 }
 
+/// Test ExperimentalDevice ..._qubit_gate_time() methods
 #[test]
 fn test_qubit_times_exp() {
     let mut device = ExperimentalDevice::new();
@@ -1290,9 +1294,36 @@ fn test_qubit_times_exp() {
 
     assert!(device.single_qubit_gate_time("PauliX", &0).is_none());
 
+    // Testing missing qubits
+    assert!(device.single_qubit_gate_time("PauliX", &5).is_none());
+    assert!(device.two_qubit_gate_time("CNOT", &0, &7).is_none());
+    assert!(device
+        .three_qubit_gate_time("Toffoli", &12, &1, &3)
+        .is_none());
+    assert!(device
+        .multi_qubit_gate_time("MultiQubitZZ", &[6, 2, 3, 4])
+        .is_none());
+
     device.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.23, None);
     assert!(device.single_qubit_gate_time("PauliX", &0).is_some());
     assert_eq!(device.single_qubit_gate_time("PauliX", &0).unwrap(), 0.23);
+
+    device.set_tweezer_two_qubit_gate_time("CNOT", 0, 1, 0.45, None);
+    assert_eq!(device.two_qubit_gate_time("CNOT", &3, &0).unwrap(), 0.45);
+
+    device.set_tweezer_three_qubit_gate_time("Toffoli", 0, 1, 2, 0.65, None);
+    assert_eq!(
+        device.three_qubit_gate_time("Toffoli", &3, &0, &1).unwrap(),
+        0.65
+    );
+
+    device.set_tweezer_multi_qubit_gate_time("MultiQubitZZ", &[0, 1, 2, 3], 0.34, None);
+    assert_eq!(
+        device
+            .multi_qubit_gate_time("MultiQubitZZ", &[3, 0, 1, 2])
+            .unwrap(),
+        0.34
+    );
 }
 
 // /// Test FirstDevice Serialization and Deserialization traits (readable)
