@@ -12,15 +12,17 @@
 
 //! Integration test for public API of QRyd devices
 
-use std::usize;
-
 use ndarray::{array, Array2};
 use numpy::ToPyArray;
+use std::collections::HashMap;
+use std::usize;
+
 use pyo3::prelude::*;
 use pyo3::Python;
+
 use qoqo_qryd::qryd_devices::{convert_into_device, FirstDeviceWrapper};
 use roqoqo_qryd::qryd_devices::{FirstDevice, QRydDevice};
-use std::collections::HashMap;
+
 use test_case::test_case;
 
 #[test_case(3,2,vec![2,2,2], 1.0, array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]]; "2rows_3columns")]
