@@ -64,10 +64,16 @@ fn test_layouts() {
         assert_eq!(current_layout, "Default");
         assert_eq!(current_layout_mut, "Default");
 
-        assert!(device_mut.call_method1("add_layout", ("OtherLayout",)).is_ok());
+        assert!(device_mut
+            .call_method1("add_layout", ("OtherLayout",))
+            .is_ok());
 
-        assert!(device.call_method1("switch_layout", ("OtherLayout",)).is_ok());
-        assert!(device_mut.call_method1("switch_layout", ("OtherLayout",)).is_ok());
+        assert!(device
+            .call_method1("switch_layout", ("OtherLayout",))
+            .is_ok());
+        assert!(device_mut
+            .call_method1("switch_layout", ("OtherLayout",))
+            .is_ok());
     })
 }
 
@@ -85,8 +91,20 @@ fn test_qubit_times() {
     exp.add_layout("OtherLayout").unwrap();
     exp.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("OtherLayout".to_string()));
     exp.set_tweezer_two_qubit_gate_time("CNOT", 0, 1, 0.13, Some("OtherLayout".to_string()));
-    exp.set_tweezer_three_qubit_gate_time("Toffoli", 0, 1, 2, 0.45, Some("OtherLayout".to_string()));
-    exp.set_tweezer_multi_qubit_gate_time("MultiQubitZZ", &[0, 1, 2, 3], 0.65, Some("OtherLayout".to_string()));
+    exp.set_tweezer_three_qubit_gate_time(
+        "Toffoli",
+        0,
+        1,
+        2,
+        0.45,
+        Some("OtherLayout".to_string()),
+    );
+    exp.set_tweezer_multi_qubit_gate_time(
+        "MultiQubitZZ",
+        &[0, 1, 2, 3],
+        0.65,
+        Some("OtherLayout".to_string()),
+    );
     let fake_api_device = ExperimentalDeviceWrapper { internal: exp };
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
@@ -95,27 +113,77 @@ fn test_qubit_times() {
         let device = fake_api_pypyany.as_ref(py);
         let device_mut = device_type_mut.call0().unwrap();
 
-        device_mut.call_method1("add_qubit_tweezer_mapping", (0, 1)).unwrap();
-        device_mut.call_method1("add_qubit_tweezer_mapping", (1, 2)).unwrap();
-        device_mut.call_method1("add_qubit_tweezer_mapping", (2, 3)).unwrap();
-        device_mut.call_method1("add_qubit_tweezer_mapping", (3, 0)).unwrap();
+        device_mut
+            .call_method1("add_qubit_tweezer_mapping", (0, 1))
+            .unwrap();
+        device_mut
+            .call_method1("add_qubit_tweezer_mapping", (1, 2))
+            .unwrap();
+        device_mut
+            .call_method1("add_qubit_tweezer_mapping", (2, 3))
+            .unwrap();
+        device_mut
+            .call_method1("add_qubit_tweezer_mapping", (3, 0))
+            .unwrap();
 
-        device_mut.call_method1("add_layout", ("OtherLayout",)).unwrap();
-        device_mut.call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 0, 0.23, "OtherLayout",)).unwrap();
-        device_mut.call_method1("set_tweezer_two_qubit_gate_time", ("CNOT", 0, 1, 0.13, "OtherLayout",)).unwrap();
-        device_mut.call_method1("set_tweezer_three_qubit_gate_time", ("Toffoli", 0, 1, 2, 0.45, "OtherLayout",)).unwrap();
-        device_mut.call_method1("set_tweezer_multi_qubit_gate_time", ("MultiQubitZZ", vec![0, 1, 2, 3], 0.6, "OtherLayout",)).unwrap();
+        device_mut
+            .call_method1("add_layout", ("OtherLayout",))
+            .unwrap();
+        device_mut
+            .call_method1(
+                "set_tweezer_single_qubit_gate_time",
+                ("PauliX", 0, 0.23, "OtherLayout"),
+            )
+            .unwrap();
+        device_mut
+            .call_method1(
+                "set_tweezer_two_qubit_gate_time",
+                ("CNOT", 0, 1, 0.13, "OtherLayout"),
+            )
+            .unwrap();
+        device_mut
+            .call_method1(
+                "set_tweezer_three_qubit_gate_time",
+                ("Toffoli", 0, 1, 2, 0.45, "OtherLayout"),
+            )
+            .unwrap();
+        device_mut
+            .call_method1(
+                "set_tweezer_multi_qubit_gate_time",
+                ("MultiQubitZZ", vec![0, 1, 2, 3], 0.6, "OtherLayout"),
+            )
+            .unwrap();
 
-        assert!(device.call_method1("switch_layout", ("OtherLayout",)).is_ok());
-        assert!(device_mut.call_method1("switch_layout", ("OtherLayout",)).is_ok());
-        
-        assert!(device.call_method1("single_qubit_gate_time", ("PauliX", 3)).is_ok());
-        assert!(device_mut.call_method1("single_qubit_gate_time", ("PauliX", 3)).is_ok());
-        assert!(device.call_method1("two_qubit_gate_time", ("CNOT", 3, 0)).is_ok());
-        assert!(device_mut.call_method1("two_qubit_gate_time", ("CNOT", 3, 0)).is_ok());
-        assert!(device.call_method1("three_qubit_gate_time", ("Toffoli", 3, 0, 1)).is_ok());
-        assert!(device_mut.call_method1("three_qubit_gate_time", ("Toffoli", 3, 0, 1)).is_ok());
-        assert!(device.call_method1("multi_qubit_gate_time", ("MultiQubitZZ", vec![3, 0, 1, 2])).is_ok());
-        assert!(device_mut.call_method1("multi_qubit_gate_time", ("MultiQubitZZ", vec![3, 0, 1, 2])).is_ok());
+        assert!(device
+            .call_method1("switch_layout", ("OtherLayout",))
+            .is_ok());
+        assert!(device_mut
+            .call_method1("switch_layout", ("OtherLayout",))
+            .is_ok());
+
+        assert!(device
+            .call_method1("single_qubit_gate_time", ("PauliX", 3))
+            .is_ok());
+        assert!(device_mut
+            .call_method1("single_qubit_gate_time", ("PauliX", 3))
+            .is_ok());
+        assert!(device
+            .call_method1("two_qubit_gate_time", ("CNOT", 3, 0))
+            .is_ok());
+        assert!(device_mut
+            .call_method1("two_qubit_gate_time", ("CNOT", 3, 0))
+            .is_ok());
+        assert!(device
+            .call_method1("three_qubit_gate_time", ("Toffoli", 3, 0, 1))
+            .is_ok());
+        assert!(device_mut
+            .call_method1("three_qubit_gate_time", ("Toffoli", 3, 0, 1))
+            .is_ok());
+        assert!(device
+            .call_method1("multi_qubit_gate_time", ("MultiQubitZZ", vec![3, 0, 1, 2]))
+            .is_ok());
+        assert!(device_mut
+            .call_method1("multi_qubit_gate_time", ("MultiQubitZZ", vec![3, 0, 1, 2]))
+            .is_ok());
     })
 }
