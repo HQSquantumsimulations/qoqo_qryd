@@ -119,7 +119,6 @@ impl ExperimentalDevice {
         let status_code = resp.status();
         if status_code == reqwest::StatusCode::OK {
             Ok(resp.json::<ExperimentalDevice>().unwrap())
-
         } else {
             Err(RoqoqoBackendError::NetworkError {
                 msg: format!(
