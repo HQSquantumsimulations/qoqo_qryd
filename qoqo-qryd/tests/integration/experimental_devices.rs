@@ -50,6 +50,17 @@ fn test_layouts() {
         assert!(device.call_method1("switch_layout", ("Test",)).is_err());
         assert!(device_mut.call_method1("switch_layout", ("Test",)).is_err());
 
+        assert!(device
+            .call_method0("available_layouts")
+            .unwrap()
+            .contains("Default")
+            .unwrap());
+        assert!(device_mut
+            .call_method0("available_layouts")
+            .unwrap()
+            .contains("Default")
+            .unwrap());
+
         let current_layout: String = device
             .call_method0("current_layout")
             .unwrap()
@@ -74,11 +85,47 @@ fn test_layouts() {
         assert!(device_mut
             .call_method1("switch_layout", ("OtherLayout",))
             .is_ok());
+
+        assert!(device
+            .call_method0("available_layouts")
+            .unwrap()
+            .contains("Default")
+            .unwrap());
+        assert!(device_mut
+            .call_method0("available_layouts")
+            .unwrap()
+            .contains("Default")
+            .unwrap());
+        assert!(device
+            .call_method0("available_layouts")
+            .unwrap()
+            .contains("OtherLayout")
+            .unwrap());
+        assert!(device_mut
+            .call_method0("available_layouts")
+            .unwrap()
+            .contains("OtherLayout")
+            .unwrap());
     })
 }
 
 #[test]
-fn test_qubit_tweezer_mapping() {}
+fn test_qubit_tweezer_mapping() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let device_type = py.get_type::<ExperimentalDeviceWrapper>();
+        let device_type_mut = py.get_type::<ExperimentalMutableDeviceWrapper>();
+        let device = device_type.call0().unwrap();
+        let device_mut = device_type_mut.call0().unwrap();
+
+        assert!(device
+            .call_method1("add_qubit_tweezer_mapping", (0, 1))
+            .is_ok());
+        assert!(device_mut
+            .call_method1("add_qubit_tweezer_mapping", (0, 1))
+            .is_ok());
+    })
+}
 
 #[test]
 fn test_qubit_times() {
