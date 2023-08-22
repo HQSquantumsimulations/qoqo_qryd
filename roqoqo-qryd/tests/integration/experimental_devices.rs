@@ -28,6 +28,9 @@ fn test_new() {
 #[test]
 fn test_layouts() {
     let mut device = ExperimentalDevice::new();
+
+    assert!(device.available_layouts().contains(&"Default"));
+
     device.add_layout("Test").unwrap();
 
     assert!(device.add_layout("Test").is_err());
@@ -152,6 +155,9 @@ fn test_layouts() {
     device.switch_layout("Test").unwrap();
     assert_eq!(device.current_layout, "Test");
     assert!(device.switch_layout("Error").is_err());
+
+    assert!(device.available_layouts().contains(&"Default"));
+    assert!(device.available_layouts().contains(&"Test"));
 }
 
 // Test ExperimentalDevice add_qubit_tweezer_mapping(), get_tweezer_from_qubit() methods
