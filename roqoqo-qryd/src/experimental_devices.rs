@@ -18,7 +18,7 @@
 
 use itertools::Itertools;
 use ndarray::Array2;
-use std::collections::HashMap;
+use std::{collections::HashMap, env};
 
 use roqoqo::{
     devices::{Device, GenericDevice},
@@ -69,6 +69,67 @@ impl ExperimentalDevice {
         }
     }
 
+    /// Creates a new ExperimentalDevice instance containing populated tweezer data.
+    ///
+    /// This requires a valid QRYD_API_TOKEN. Visit `https://thequantumlaend.de/get-access/` to get one.
+    ///
+    /// # Arguments
+    ///
+    /// * `device_name` - The name of the device to instantiate.
+    /// * `access_token` - An access_token is required to access QRYD hardware and emulators.
+    ///                    The access_token can either be given as an argument here
+    ///                         or set via the environmental variable `$QRYD_API_TOKEN`.
+    ///
+    /// # Returns
+    ///
+    /// * `ExperimentalDevice` - The new ExperimentalDevice instance with populated tweezer data.
+    ///
+    /// # Errors
+    ///
+    /// * `RoqoqoBackendError`
+    ///
+    pub fn from_api(
+        device_name: &str,
+        access_token: Option<String>,
+    ) -> Result<Self, RoqoqoBackendError> {
+        let access_token_internal: String = match access_token {
+            Some(s) => s,
+            None => env::var("QRYD_API_TOKEN").map_err(|_| {
+                RoqoqoBackendError::MissingAuthentification {
+                    msg: "QRYD access token is missing.".to_string(),
+                }
+            })?,
+        };
+        let client = reqwest::blocking::Client::builder()
+            .https_only(true)
+            .build()
+            .map_err(|x| RoqoqoBackendError::NetworkError {
+                msg: format!("Could not create https client {:?}.", x),
+            })?;
+        let resp = client
+            .post("https://api.qryddemo.itp3.uni-stuttgart.de/v2_0/get_device")
+            .header("X-API-KEY", access_token_internal)
+            .body(device_name.to_string())
+            .send()
+            .map_err(|e| RoqoqoBackendError::NetworkError {
+                msg: format!("{:?}", e),
+            })?;
+
+        // TODO: better handle all the errors. To be defined later.
+        let status_code = resp.status();
+        if status_code == reqwest::StatusCode::OK {
+            Ok(resp.json::<ExperimentalDevice>().unwrap())
+
+        } else {
+            Err(RoqoqoBackendError::NetworkError {
+                msg: format!(
+                    "Request to server failed with HTTP status code {:?}.",
+                    status_code
+                ),
+            })
+        }
+    }
+
     /// Adds a new empty Layout to the device's register.
     ///
     /// # Arguments
@@ -111,6 +172,21 @@ impl ExperimentalDevice {
         Ok(())
     }
 
+    /// Returns a vector of all available Layout names.
+    ///
+    /// # Returns:
+    ///
+    /// * `Vec<&String>` - The vector of all available Layout names.
+    ///
+    pub fn available_layouts(&self) -> Vec<&str> {
+        self.layout_register
+            .keys()
+            .collect_vec()
+            .iter()
+            .map(|x| x.as_str())
+            .collect()
+    }
+
     /// Modifies the qubit -> tweezer mapping of the device.
     ///
     /// If a qubit -> tweezer mapping is already present, it is overwritten.
@@ -121,6 +197,7 @@ impl ExperimentalDevice {
     /// * `tweezer` - The index of the tweezer.
     ///
     pub fn add_qubit_tweezer_mapping(&mut self, qubit: usize, tweezer: usize) {
+        // TODO
         self.qubit_to_tweezer.insert(qubit, tweezer);
         // if self.qubit_to_tweezer.insert(qubit, tweezer).is_none() {
         //     return Err(RoqoqoBackendError::GenericError {
