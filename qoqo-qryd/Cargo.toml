@@ -45,7 +45,7 @@ qoqo = { package = "qoqo", version = "1.6", default-features = false }
 roqoqo = { package = "roqoqo", version = "1.6", features = ["serialize"] }
 
 roqoqo-qryd = { version = "0.10", path = "../roqoqo-qryd", default-features = false, features = [
-    "serialize",
+    "serialize", "web-api"
 ] }
 
 
