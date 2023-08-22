@@ -11,7 +11,6 @@
 // limitations under the License.
 
 use bincode::{deserialize, serialize};
-
 use pyo3::{
     exceptions::{PyTypeError, PyValueError},
     prelude::*,
@@ -47,6 +46,31 @@ impl ExperimentalDeviceWrapper {
         }
     }
 
+    /// Creates a new ExperimentalDevice instance containing populated tweezer data.
+    ///
+    /// This requires a valid QRYD_API_TOKEN. Visit `https://thequantumlaend.de/get-access/` to get one.
+    ///
+    /// Args
+    ///     device_name (str): The name of the device to instantiate.
+    ///     access_token (str): An access_token is required to access QRYD hardware and emulators.
+    ///                         The access_token can either be given as an argument here
+    ///                             or set via the environmental variable `$QRYD_API_TOKEN`.
+    ///
+    /// Returns
+    ///     ExperimentalDevice: The new ExperimentalDevice instance with populated tweezer data.
+    ///
+    /// Raises"
+    ///     RoqoqoBackendError
+    ///
+    #[staticmethod]
+    #[pyo3(text_signature = "(device_name, access_token, /)")]
+    pub fn from_api(device_name: &str, access_token: Option<&str>) -> PyResult<Self> {
+        let internal =
+            ExperimentalDevice::from_api(device_name, Some(access_token.unwrap().to_string()))
+                .map_err(|err| PyValueError::new_err(format!("{:}", err)))?;
+        Ok(ExperimentalDeviceWrapper { internal })
+    }
+
     /// Get the name of the current layout.
     ///
     /// Returns:
@@ -69,6 +93,15 @@ impl ExperimentalDeviceWrapper {
             .map_err(|err| PyValueError::new_err(format!("{:}", err)))
     }
 
+    /// Returns a list of all available Layout names.
+    ///
+    /// Returns:
+    ///     List[str]: The list of all available Layout names.
+    ///
+    pub fn available_layouts(&self) -> Vec<&str> {
+        self.internal.available_layouts()
+    }
+
     /// Modifies the qubit -> tweezer mapping of the device.
     ///
     /// If a qubit -> tweezer mapping is already present, it is overwritten.
@@ -81,6 +114,7 @@ impl ExperimentalDeviceWrapper {
     ///     PyValueError: The qubit is not present in the device.
     #[pyo3(text_signature = "(qubit, tweezer, /)")]
     pub fn add_qubit_tweezer_mapping(&mut self, qubit: usize, tweezer: usize) -> PyResult<()> {
+        // TODO
         self.internal.add_qubit_tweezer_mapping(qubit, tweezer);
         Ok(())
         // .map_err(|err| PyValueError::new_err(format!("{:}", err)))
@@ -348,6 +382,15 @@ impl ExperimentalMutableDeviceWrapper {
             .map_err(|err| PyValueError::new_err(format!("{:}", err)))
     }
 
+    /// Returns a list of all available Layout names.
+    ///
+    /// Returns:
+    ///     List[str]: The list of all available Layout names.
+    ///
+    pub fn available_layouts(&self) -> Vec<&str> {
+        self.internal.available_layouts()
+    }
+
     /// Modifies the qubit -> tweezer mapping of the device.
     ///
     /// If a qubit -> tweezer mapping is already present, it is overwritten.
@@ -360,6 +403,7 @@ impl ExperimentalMutableDeviceWrapper {
     ///     PyValueError: The qubit is not present in the device.
     #[pyo3(text_signature = "(qubit, tweezer, /)")]
     pub fn add_qubit_tweezer_mapping(&mut self, qubit: usize, tweezer: usize) -> PyResult<()> {
+        // TODO
         self.internal.add_qubit_tweezer_mapping(qubit, tweezer);
         Ok(())
         // .map_err(|err| PyValueError::new_err(format!("{:}", err)))
