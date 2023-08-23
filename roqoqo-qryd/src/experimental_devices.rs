@@ -196,6 +196,11 @@ impl ExperimentalDevice {
     /// * `qubit` - The index of the qubit.
     /// * `tweezer` - The index of the tweezer.
     ///
+    /// # Returns:
+    ///
+    /// * `Ok(())` - The qubit -> tweezer mapping has been added/modified.
+    /// * `Err(RoqoqoBackendError)` - The tweezer does not exist.
+    ///
     pub fn add_qubit_tweezer_mapping(
         &mut self,
         qubit: usize,
@@ -347,7 +352,7 @@ impl ExperimentalDevice {
     /// # Returns
     ///
     /// * `Ok(usize)` - The tweezer identifier relative to the given qubit.
-    /// * `Err(RoqoqoBackendError)` - If the qubit idetifier is not related to any tweezer.
+    /// * `Err(RoqoqoBackendError)` - If the qubit identifier is not related to any tweezer.
     ///
     pub fn get_tweezer_from_qubit(&self, qubit: &usize) -> Result<usize, RoqoqoBackendError> {
         self.qubit_to_tweezer
@@ -356,6 +361,30 @@ impl ExperimentalDevice {
                 msg: "The given qubit is not present in the Layout.".to_string(),
             })
             .copied()
+    }
+
+    /// Deactivate the given qubit in the device.
+    ///
+    /// # Arguments
+    ///
+    /// * `qubit` - The input qubit identifier.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(HashMap<usize,usize>)` - The updated qubit -> tweezer mapping.
+    /// * `Err(RoqoqoBackendError)` - If the given qubit identifier is not present in the mapping.
+    ///
+    pub fn deactivate_qubit(
+        &mut self,
+        qubit: usize,
+    ) -> Result<HashMap<usize, usize>, RoqoqoBackendError> {
+        if self.qubit_to_tweezer.remove(&qubit).is_none() {
+            Err(RoqoqoBackendError::GenericError {
+                msg: "The given qubit is not present in the Layout.".to_string(),
+            })
+        } else {
+            Ok(self.qubit_to_tweezer.clone())
+        }
     }
 
     fn get_current_layout_info(&self) -> &TweezerLayoutInfo {

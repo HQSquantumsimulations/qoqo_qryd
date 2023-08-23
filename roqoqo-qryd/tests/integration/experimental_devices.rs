@@ -180,6 +180,21 @@ fn test_qubit_tweezer_mapping() {
     assert_eq!(device.get_tweezer_from_qubit(&2).unwrap(), 3);
 }
 
+/// Test ExperimentalDevice deactivate_qubit()
+#[test]
+fn test_deactivate_qubit() {
+    let mut device = ExperimentalDevice::new();
+
+    assert!(device.deactivate_qubit(0).is_err());
+    
+    device.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.1, None);
+    device.add_qubit_tweezer_mapping(0, 1).unwrap();
+
+    assert!(device.deactivate_qubit(0).is_ok());
+    assert!(device.deactivate_qubit(0).is_err());
+    
+}
+
 /// Test ExperimentalDevice ..._qubit_gate_time() methods
 #[test]
 fn test_qubit_times() {
