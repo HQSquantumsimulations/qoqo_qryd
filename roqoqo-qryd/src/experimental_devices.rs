@@ -387,10 +387,11 @@ impl ExperimentalDevice {
         }
     }
 
+    #[inline]
     fn get_current_layout_info(&self) -> &TweezerLayoutInfo {
         self.layout_register
             .get(&self.current_layout)
-            .expect("Unexpectedly did not find current layout. Bug in roqoqo-qryd")
+            .expect("Unexpectedly did not find current layout. Bug in roqoqo-qryd.")
     }
 
     fn is_tweezer_present(&self, tweezer: usize) -> bool {
@@ -514,19 +515,20 @@ impl Device for ExperimentalDevice {
 
     fn number_qubits(&self) -> usize {
         // TODO: to check if this still makes sense with deactivate_qubit()
+        // UPDATE: I don't see the problem
         self.qubit_to_tweezer.keys().len()
     }
 
     fn two_qubit_edges(&self) -> Vec<(usize, usize)> {
         // TODO: do we keep PSCP as edge-defining gate?
         let mut edges: Vec<(usize, usize)> = Vec::new();
-        for row in 0..self.number_qubits() {
-            for column in row + 1..self.number_qubits() {
+        for qbt0 in self.qubit_to_tweezer.keys() {
+            for qbt1 in self.qubit_to_tweezer.keys() {
                 if self
-                    .two_qubit_gate_time("PhaseShiftedControlledPhase", &row, &column)
+                    .two_qubit_gate_time("PhaseShiftedControlledPhase", qbt0, qbt1)
                     .is_some()
                 {
-                    edges.push((row, column));
+                    edges.push((*qbt0, *qbt1));
                 }
             }
         }
@@ -545,7 +547,7 @@ impl Device for ExperimentalDevice {
     ///
     /// # Returns
     ///
-    /// * `GenericDevice` - The device in generic representation
+    /// * `GenericDevice` - The device in generic representation.
     ///
     fn to_generic_device(&self) -> GenericDevice {
         let mut new_generic_device = GenericDevice::new(self.number_qubits());
