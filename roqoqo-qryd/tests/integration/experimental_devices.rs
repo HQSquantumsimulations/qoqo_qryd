@@ -10,6 +10,8 @@
 // express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 
+use ndarray::Array2;
+
 use roqoqo::devices::Device;
 use roqoqo_qryd::ExperimentalDevice;
 
@@ -164,20 +166,24 @@ fn test_layouts() {
 #[test]
 fn test_qubit_tweezer_mapping() {
     let mut device = ExperimentalDevice::new();
-    device.add_qubit_tweezer_mapping(0, 1);
 
-    assert!(device.get_tweezer_from_qubit(&1).is_err());
-    assert_eq!(device.get_tweezer_from_qubit(&0).unwrap(), 1);
+    assert!(device.add_qubit_tweezer_mapping(0, 0).is_err());
+    assert!(device.get_tweezer_from_qubit(&0).is_err());
+
+    device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.0, None);
+    device.set_tweezer_multi_qubit_gate_time("MultiQubitZZ", &[1, 2, 3], 0.1, None);
+    device.add_qubit_tweezer_mapping(0, 0).unwrap();
+    device.add_qubit_tweezer_mapping(2, 3).unwrap();
+
+    assert_eq!(device.get_tweezer_from_qubit(&0).unwrap(), 0);
+    assert!(device.get_tweezer_from_qubit(&4).is_err());
+    assert_eq!(device.get_tweezer_from_qubit(&2).unwrap(), 3);
 }
 
 /// Test ExperimentalDevice ..._qubit_gate_time() methods
 #[test]
 fn test_qubit_times() {
     let mut device = ExperimentalDevice::new();
-    device.add_qubit_tweezer_mapping(0, 1);
-    device.add_qubit_tweezer_mapping(1, 2);
-    device.add_qubit_tweezer_mapping(2, 3);
-    device.add_qubit_tweezer_mapping(3, 0);
 
     assert!(device.single_qubit_gate_time("PauliX", &0).is_none());
 
@@ -192,23 +198,100 @@ fn test_qubit_times() {
         .is_none());
 
     device.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.23, None);
+    device.set_tweezer_two_qubit_gate_time("CNOT", 0, 1, 0.45, None);
+    device.set_tweezer_three_qubit_gate_time("Toffoli", 0, 1, 2, 0.65, None);
+    device.set_tweezer_multi_qubit_gate_time("MultiQubitZZ", &[0, 1, 2, 3], 0.34, None);
+
+    device.add_qubit_tweezer_mapping(0, 1).unwrap();
+    device.add_qubit_tweezer_mapping(1, 2).unwrap();
+    device.add_qubit_tweezer_mapping(2, 3).unwrap();
+    device.add_qubit_tweezer_mapping(3, 0).unwrap();
+
     assert!(device.single_qubit_gate_time("PauliX", &0).is_some());
     assert_eq!(device.single_qubit_gate_time("PauliX", &0).unwrap(), 0.23);
-
-    device.set_tweezer_two_qubit_gate_time("CNOT", 0, 1, 0.45, None);
     assert_eq!(device.two_qubit_gate_time("CNOT", &3, &0).unwrap(), 0.45);
-
-    device.set_tweezer_three_qubit_gate_time("Toffoli", 0, 1, 2, 0.65, None);
     assert_eq!(
         device.three_qubit_gate_time("Toffoli", &3, &0, &1).unwrap(),
         0.65
     );
-
-    device.set_tweezer_multi_qubit_gate_time("MultiQubitZZ", &[0, 1, 2, 3], 0.34, None);
     assert_eq!(
         device
             .multi_qubit_gate_time("MultiQubitZZ", &[3, 0, 1, 2])
             .unwrap(),
         0.34
+    );
+}
+
+#[test]
+fn test_number_qubits() {
+    let mut device = ExperimentalDevice::new();
+    device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.0, None);
+    device.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.0, None);
+
+    assert_eq!(device.number_qubits(), 0);
+
+    device.add_qubit_tweezer_mapping(0, 0).unwrap();
+    device.add_qubit_tweezer_mapping(1, 1).unwrap();
+
+    assert_eq!(device.number_qubits(), 2)
+}
+
+#[test]
+fn test_to_generic_device() {
+    let mut device = ExperimentalDevice::new();
+    device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None);
+    device.set_tweezer_single_qubit_gate_time("PauliY", 1, 0.23, None);
+    device.set_tweezer_two_qubit_gate_time("CNOT", 2, 3, 0.34, None);
+    device.set_tweezer_two_qubit_gate_time("ControlledPauliZ", 1, 2, 0.34, None);
+    device.add_qubit_tweezer_mapping(0, 0).unwrap();
+    device.add_qubit_tweezer_mapping(1, 1).unwrap();
+    device.add_qubit_tweezer_mapping(2, 2).unwrap();
+    device.add_qubit_tweezer_mapping(3, 3).unwrap();
+
+    let generic_device = device.to_generic_device();
+
+    assert_eq!(
+        generic_device
+            .single_qubit_gates
+            .get("PauliX")
+            .unwrap()
+            .get(&0)
+            .unwrap(),
+        &0.23
+    );
+    assert_eq!(
+        generic_device
+            .single_qubit_gates
+            .get("PauliY")
+            .unwrap()
+            .get(&1)
+            .unwrap(),
+        &0.23
+    );
+    assert_eq!(
+        generic_device
+            .two_qubit_gates
+            .get("CNOT")
+            .unwrap()
+            .get(&(2, 3))
+            .unwrap(),
+        &0.34
+    );
+    assert_eq!(
+        generic_device
+            .two_qubit_gates
+            .get("ControlledPauliZ")
+            .unwrap()
+            .get(&(1, 2))
+            .unwrap(),
+        &0.34
+    );
+    assert_eq!(
+        generic_device.qubit_decoherence_rates(&0),
+        Some(Array2::zeros((3, 3).to_owned()))
+    );
+    assert_eq!(
+        generic_device.qubit_decoherence_rates(&1),
+        Some(Array2::zeros((3, 3).to_owned()))
     );
 }
