@@ -189,21 +189,27 @@ impl ExperimentalDevice {
     /// Modifies the qubit -> tweezer mapping of the device.
     ///
     /// If a qubit -> tweezer mapping is already present, it is overwritten.
+    /// Returns an error in the the tweezer does not exist.
     ///
     /// # Arguments
     ///
     /// * `qubit` - The index of the qubit.
     /// * `tweezer` - The index of the tweezer.
     ///
-    pub fn add_qubit_tweezer_mapping(&mut self, qubit: usize, tweezer: usize) {
-        // TODO
-        self.qubit_to_tweezer.insert(qubit, tweezer);
-        // if self.qubit_to_tweezer.insert(qubit, tweezer).is_none() {
-        //     return Err(RoqoqoBackendError::GenericError {
-        //         msg: "The given qubit is not present in the Layout.".to_string(),
-        //     });
-        // }
-        // Ok(())
+    pub fn add_qubit_tweezer_mapping(
+        &mut self,
+        qubit: usize,
+        tweezer: usize,
+    ) -> Result<(), RoqoqoBackendError> {
+        // TODO: this forces the TweezerLayoutInfo to have been set already
+        if self.is_tweezer_present(tweezer) {
+            self.qubit_to_tweezer.insert(qubit, tweezer);
+            Ok(())
+        } else {
+            Err(RoqoqoBackendError::GenericError {
+                msg: "The given tweezer is not present in the Layout.".to_string(),
+            })
+        }
     }
 
     /// Set the time of a single-qubit gate for a tweezer in a given Layout.
@@ -357,6 +363,44 @@ impl ExperimentalDevice {
             .get(&self.current_layout)
             .expect("Unexpectedly did not find current layout. Bug in roqoqo-qryd")
     }
+
+    fn is_tweezer_present(&self, tweezer: usize) -> bool {
+        let tweezer_info = self.get_current_layout_info();
+        let mut present: bool = false;
+        for single_qubit_gate_struct in &tweezer_info.tweezer_single_qubit_gate_times {
+            if single_qubit_gate_struct.1.contains_key(&tweezer) {
+                present = true;
+            }
+        }
+        for two_qubit_gate_struct in &tweezer_info.tweezer_two_qubit_gate_times {
+            if two_qubit_gate_struct
+                .1
+                .keys()
+                .any(|k| k.0 == tweezer || k.1 == tweezer)
+            {
+                present = true;
+            }
+        }
+        for three_qubit_gate_struct in &tweezer_info.tweezer_three_qubit_gate_times {
+            if three_qubit_gate_struct
+                .1
+                .keys()
+                .any(|k| k.0 == tweezer || k.1 == tweezer || k.2 == tweezer)
+            {
+                present = true;
+            }
+        }
+        for multi_qubit_gate_struct in &tweezer_info.tweezer_multi_qubit_gate_times {
+            if multi_qubit_gate_struct
+                .1
+                .keys()
+                .any(|k| k.contains(&tweezer))
+            {
+                present = true;
+            }
+        }
+        present
+    }
 }
 
 impl Device for ExperimentalDevice {
@@ -440,13 +484,12 @@ impl Device for ExperimentalDevice {
     }
 
     fn number_qubits(&self) -> usize {
-        if let Some(max) = self.qubit_to_tweezer.keys().max() {
-            return *max;
-        }
-        0
+        // TODO: to check if this still makes sense with deactivate_qubit()
+        self.qubit_to_tweezer.keys().len()
     }
 
     fn two_qubit_edges(&self) -> Vec<(usize, usize)> {
+        // TODO: do we keep PSCP as edge-defining gate?
         let mut edges: Vec<(usize, usize)> = Vec::new();
         for row in 0..self.number_qubits() {
             for column in row + 1..self.number_qubits() {
@@ -461,7 +504,54 @@ impl Device for ExperimentalDevice {
         edges
     }
 
+    /// Turns Device into GenericDevice.
+    ///
+    /// Can be used as a generic interface for devices when a boxed dyn trait object cannot be used
+    /// (for example when the interface needs to be serialized).
+    ///
+    /// # Notes
+    ///
+    /// GenericDevice uses nested HashMaps to represent the most general device connectivity.
+    /// The memory usage will be inefficient for devices with large qubit numbers.
+    ///
+    /// # Returns
+    ///
+    /// * `GenericDevice` - The device in generic representation
+    ///
     fn to_generic_device(&self) -> GenericDevice {
-        todo!()
+        let mut new_generic_device = GenericDevice::new(self.number_qubits());
+        let tweezer_info = self.get_current_layout_info();
+
+        for single_qubit_gate_struct in &tweezer_info.tweezer_single_qubit_gate_times {
+            let gate_name = single_qubit_gate_struct.0.clone();
+            for single_qubit_gate_info in single_qubit_gate_struct.1 {
+                new_generic_device
+                    .set_single_qubit_gate_time(
+                        gate_name.as_str(),
+                        *single_qubit_gate_info.0,
+                        *single_qubit_gate_info.1,
+                    )
+                    .unwrap();
+            }
+        }
+        for qubit in 0..self.number_qubits() {
+            new_generic_device
+                .set_qubit_decoherence_rates(qubit, self.qubit_decoherence_rates(&qubit).unwrap())
+                .unwrap();
+        }
+        for two_qubit_gate_struct in &tweezer_info.tweezer_two_qubit_gate_times {
+            let gate_name = two_qubit_gate_struct.0.clone();
+            for two_qubit_gate_info in two_qubit_gate_struct.1 {
+                new_generic_device
+                    .set_two_qubit_gate_time(
+                        gate_name.as_str(),
+                        two_qubit_gate_info.0 .0,
+                        two_qubit_gate_info.0 .1,
+                        *two_qubit_gate_info.1,
+                    )
+                    .unwrap();
+            }
+        }
+        new_generic_device
     }
 }
