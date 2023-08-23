@@ -14,7 +14,7 @@ use bincode::{deserialize, serialize};
 use pyo3::{
     exceptions::{PyTypeError, PyValueError},
     prelude::*,
-    types::PyByteArray,
+    types::{IntoPyDict, PyByteArray},
 };
 
 use qoqo::devices::GenericDeviceWrapper;
@@ -107,17 +107,36 @@ impl ExperimentalDeviceWrapper {
     /// If a qubit -> tweezer mapping is already present, it is overwritten.
     ///
     /// Args:
-    ///     qubit (usize): The index of the qubit.
-    ///     tweezer (usize): The index of the tweezer.
+    ///     qubit (int): The index of the qubit.
+    ///     tweezer (int): The index of the tweezer.
     ///
     /// Raises:
     ///     PyValueError: The qubit is not present in the device.
     #[pyo3(text_signature = "(qubit, tweezer, /)")]
     pub fn add_qubit_tweezer_mapping(&mut self, qubit: usize, tweezer: usize) -> PyResult<()> {
-        // TODO
-        self.internal.add_qubit_tweezer_mapping(qubit, tweezer);
-        Ok(())
-        // .map_err(|err| PyValueError::new_err(format!("{:}", err)))
+        self.internal
+            .add_qubit_tweezer_mapping(qubit, tweezer)
+            .map_err(|err| PyValueError::new_err(format!("{:}", err)))
+    }
+
+    /// Deactivate the given qubit in the device.
+    ///
+    /// Args:
+    ///     qubit (int): The input qubit identifier.
+    ///
+    /// Returns:
+    ///     dict[int, int]: The updated qubit -> tweezer mapping.
+    ///
+    /// Raises:
+    ///     PyValueError: If the given qubit identifier is not present in the mapping.
+    #[pyo3(text_signature = "(qubit, /)")]
+    pub fn deactivate_qubit(&mut self, qubit: usize) -> PyResult<PyObject> {
+        Python::with_gil(|py| -> PyResult<PyObject> {
+            match self.internal.deactivate_qubit(qubit) {
+                Ok(tweezers) => Ok(tweezers.into_py_dict(py).into()),
+                Err(err) => Err(PyValueError::new_err(format!("{:}", err))),
+            }
+        })
     }
 
     /// Returns the gate time of a single qubit operation on this device.
@@ -396,17 +415,36 @@ impl ExperimentalMutableDeviceWrapper {
     /// If a qubit -> tweezer mapping is already present, it is overwritten.
     ///
     /// Args:
-    ///     qubit (usize): The index of the qubit.
-    ///     tweezer (usize): The index of the tweezer.
+    ///     qubit (int): The index of the qubit.
+    ///     tweezer (int): The index of the tweezer.
     ///
     /// Raises:
     ///     PyValueError: The qubit is not present in the device.
     #[pyo3(text_signature = "(qubit, tweezer, /)")]
     pub fn add_qubit_tweezer_mapping(&mut self, qubit: usize, tweezer: usize) -> PyResult<()> {
-        // TODO
-        self.internal.add_qubit_tweezer_mapping(qubit, tweezer);
-        Ok(())
-        // .map_err(|err| PyValueError::new_err(format!("{:}", err)))
+        self.internal
+            .add_qubit_tweezer_mapping(qubit, tweezer)
+            .map_err(|err| PyValueError::new_err(format!("{:}", err)))
+    }
+
+    /// Deactivate the given qubit in the device.
+    ///
+    /// Args:
+    ///     qubit (int): The input qubit identifier.
+    ///
+    /// Returns:
+    ///     dict[int, int]: The updated qubit -> tweezer mapping.
+    ///
+    /// Raises:
+    ///     PyValueError: If the given qubit identifier is not present in the mapping.
+    #[pyo3(text_signature = "(qubit, /)")]
+    pub fn deactivate_qubit(&mut self, qubit: usize) -> PyResult<PyObject> {
+        Python::with_gil(|py| -> PyResult<PyObject> {
+            match self.internal.deactivate_qubit(qubit) {
+                Ok(tweezers) => Ok(tweezers.into_py_dict(py).into()),
+                Err(err) => Err(PyValueError::new_err(format!("{:}", err))),
+            }
+        })
     }
 
     /// Returns the gate time of a single qubit operation on this device.
