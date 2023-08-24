@@ -30,7 +30,7 @@ use roqoqo::{
 #[derive(Debug, PartialEq, Default, Clone, serde::Serialize, serde::Deserialize)]
 pub struct ExperimentalDevice {
     /// Mapping from qubit to tweezer
-    pub qubit_to_tweezer: HashMap<usize, usize>,
+    pub qubit_to_tweezer: HashMap<usize, usize>, // TODO: starts as optional. when switch layout if none, set it as trivial full based on new layout, otherwise keep it
     /// Register of Layouts
     pub layout_register: HashMap<String, TweezerLayoutInfo>,
     /// Current Layout
@@ -75,7 +75,7 @@ impl ExperimentalDevice {
     ///
     /// # Arguments
     ///
-    /// * `device_name` - The name of the device to instantiate.
+    /// * `device_name` - The name of the device to instantiate. Defaults to "Default".
     /// * `access_token` - An access_token is required to access QRYD hardware and emulators.
     ///                    The access_token can either be given as an argument here
     ///                         or set via the environmental variable `$QRYD_API_TOKEN`.
@@ -89,9 +89,10 @@ impl ExperimentalDevice {
     /// * `RoqoqoBackendError`
     ///
     pub fn from_api(
-        device_name: &str,
+        device_name: Option<String>,
         access_token: Option<String>,
     ) -> Result<Self, RoqoqoBackendError> {
+        let device_name_internal = device_name.unwrap_or_else(|| String::from("Default"));
         let access_token_internal: String = match access_token {
             Some(s) => s,
             None => env::var("QRYD_API_TOKEN").map_err(|_| {
@@ -109,13 +110,12 @@ impl ExperimentalDevice {
         let resp = client
             .post("https://api.qryddemo.itp3.uni-stuttgart.de/v2_0/get_device")
             .header("X-API-KEY", access_token_internal)
-            .body(device_name.to_string())
+            .body(device_name_internal)
             .send()
             .map_err(|e| RoqoqoBackendError::NetworkError {
                 msg: format!("{:?}", e),
             })?;
 
-        // TODO: better handle all the errors. To be defined later.
         let status_code = resp.status();
         if status_code == reqwest::StatusCode::OK {
             Ok(resp.json::<ExperimentalDevice>().unwrap())
@@ -206,7 +206,7 @@ impl ExperimentalDevice {
         qubit: usize,
         tweezer: usize,
     ) -> Result<(), RoqoqoBackendError> {
-        // TODO: this forces the TweezerLayoutInfo to have been set already
+        // TODO: call everytime a timing has been set
         if self.is_tweezer_present(tweezer) {
             self.qubit_to_tweezer.insert(qubit, tweezer);
             Ok(())
@@ -233,6 +233,7 @@ impl ExperimentalDevice {
         gate_time: f64,
         layout_name: Option<String>,
     ) {
+        // TODO: set mapping to None when any setter is called
         let layout_name = layout_name.unwrap_or_else(|| self.current_layout.clone());
 
         if let Some(info) = self.layout_register.get_mut(&layout_name) {

@@ -38,7 +38,6 @@ impl ExperimentalDeviceWrapper {
     ///
     /// Returns:
     ///     ExperimentalDevice: The new ExperimentalDevice instance.
-    ///
     #[new]
     pub fn new() -> Self {
         Self {
@@ -51,23 +50,24 @@ impl ExperimentalDeviceWrapper {
     /// This requires a valid QRYD_API_TOKEN. Visit `https://thequantumlaend.de/get-access/` to get one.
     ///
     /// Args
-    ///     device_name (str): The name of the device to instantiate.
-    ///     access_token (str): An access_token is required to access QRYD hardware and emulators.
+    ///     device_name (Optional[str]): The name of the device to instantiate. Defaults to "Default".
+    ///     access_token (Optional[str]): An access_token is required to access QRYD hardware and emulators.
     ///                         The access_token can either be given as an argument here
     ///                             or set via the environmental variable `$QRYD_API_TOKEN`.
     ///
     /// Returns
     ///     ExperimentalDevice: The new ExperimentalDevice instance with populated tweezer data.
     ///
-    /// Raises"
+    /// Raises:
     ///     RoqoqoBackendError
-    ///
     #[staticmethod]
     #[pyo3(text_signature = "(device_name, access_token, /)")]
-    pub fn from_api(device_name: &str, access_token: Option<&str>) -> PyResult<Self> {
-        let internal =
-            ExperimentalDevice::from_api(device_name, Some(access_token.unwrap().to_string()))
-                .map_err(|err| PyValueError::new_err(format!("{:}", err)))?;
+    pub fn from_api(device_name: Option<&str>, access_token: Option<&str>) -> PyResult<Self> {
+        let internal = ExperimentalDevice::from_api(
+            Some(device_name.unwrap().to_string()),
+            Some(access_token.unwrap().to_string()),
+        )
+        .map_err(|err| PyValueError::new_err(format!("{:}", err)))?;
         Ok(ExperimentalDeviceWrapper { internal })
     }
 
@@ -97,7 +97,6 @@ impl ExperimentalDeviceWrapper {
     ///
     /// Returns:
     ///     List[str]: The list of all available Layout names.
-    ///
     pub fn available_layouts(&self) -> Vec<&str> {
         self.internal.available_layouts()
     }
@@ -317,7 +316,6 @@ impl ExperimentalDeviceWrapper {
     ///
     /// Returns:
     ///     int: The number of qubits.
-    ///
     pub fn number_qubits(&self) -> usize {
         self.internal.number_qubits()
     }
@@ -359,7 +357,6 @@ impl ExperimentalMutableDeviceWrapper {
     ///
     /// Returns:
     ///     ExperimentalMutableDevice: The new ExperimentalMutableDevice instance.
-    ///
     #[new]
     pub fn new() -> Self {
         Self {
@@ -379,7 +376,6 @@ impl ExperimentalMutableDeviceWrapper {
     ///
     /// Args:
     ///     name (str): The name that is assigned to the new Layout.
-    ///
     #[pyo3(text_signature = "(name, /)")]
     pub fn add_layout(&mut self, name: &str) -> PyResult<()> {
         self.internal
@@ -405,7 +401,6 @@ impl ExperimentalMutableDeviceWrapper {
     ///
     /// Returns:
     ///     List[str]: The list of all available Layout names.
-    ///
     pub fn available_layouts(&self) -> Vec<&str> {
         self.internal.available_layouts()
     }
@@ -658,7 +653,6 @@ impl ExperimentalMutableDeviceWrapper {
     ///     gate_time (float): The the gate time for the given gate.
     ///     layout_name (Optional[str]): The name of the Layout to apply the gate time in.
     ///         Defaults to the current Layout.
-    ///
     #[pyo3(text_signature = "(hqslang, tweezer, gate_time, layout_name, /)")]
     pub fn set_tweezer_single_qubit_gate_time(
         &mut self,
@@ -680,7 +674,6 @@ impl ExperimentalMutableDeviceWrapper {
     ///     gate_time (float): The the gate time for the given gate.
     ///     layout_name (Optional[str]): The name of the Layout to apply the gate time in.
     ///         Defaults to the current Layout.
-    ///     
     #[pyo3(text_signature = "(hqslang, tweezer0, tweezer1, gate_time, layout_name, /)")]
     pub fn set_tweezer_two_qubit_gate_time(
         &mut self,
@@ -709,7 +702,6 @@ impl ExperimentalMutableDeviceWrapper {
     ///     gate_time (float): The the gate time for the given gate.
     ///     layout_name (Optional[str]): The name of the Layout to apply the gate time in.
     ///         Defaults to the current Layout.
-    ///
     #[pyo3(text_signature = "(hqslang, tweezer0, tweezer1, tweezer2, gate_time, layout_name, /)")]
     pub fn set_tweezer_three_qubit_gate_time(
         &mut self,
@@ -738,7 +730,6 @@ impl ExperimentalMutableDeviceWrapper {
     ///     gate_time (float): The the gate time for the given gate.
     ///     layout_name (Optional[str]): The name of the Layout to apply the gate time in.
     ///         Defaults to the current Layout.
-    ///
     #[pyo3(text_signature = "(hqslang, tweezers, gate_time, layout_name, /)")]
     pub fn set_tweezer_multi_qubit_gate_time(
         &mut self,
