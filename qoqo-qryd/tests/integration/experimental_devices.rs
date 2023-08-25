@@ -17,6 +17,7 @@ use pyo3::{prelude::*, types::PyDict};
 use qoqo_qryd::{ExperimentalDeviceWrapper, ExperimentalMutableDeviceWrapper};
 use roqoqo_qryd::ExperimentalDevice;
 
+/// Test new instantiation of ExperimentalDeviceWrapper and ExperimentalMutableDeviceWrapper
 #[test]
 fn test_new() {
     pyo3::prepare_freethreaded_python();
@@ -31,6 +32,7 @@ fn test_new() {
     })
 }
 
+/// Test available_ switch_ and add_layout methods of ExperimentalDeviceWrapper and ExperimentalMutableDeviceWrapper
 #[test]
 fn test_layouts() {
     // Setup fake preconfigured device
@@ -109,6 +111,7 @@ fn test_layouts() {
     })
 }
 
+/// Test add_qubit_tweezer_mapping function of ExperimentalDeviceWrapper and ExperimentalMutableDeviceWrapper
 #[test]
 fn test_qubit_tweezer_mapping() {
     // Setup fake preconfigured device
@@ -182,6 +185,7 @@ fn test_deactivate_qubit() {
     })
 }
 
+/// Test _qubit_time functions of ExperimentalDeviceWrapper and ExperimentalMutableDeviceWrapper
 #[test]
 fn test_qubit_times() {
     // Setup fake preconfigured device
@@ -294,6 +298,7 @@ fn test_qubit_times() {
     })
 }
 
+/// Test number_qubits function of ExperimentalDeviceWrapper and ExperimentalMutableDeviceWrapper
 #[test]
 fn test_number_qubits() {
     // Setup fake preconfigured device
@@ -364,6 +369,7 @@ fn test_number_qubits() {
     })
 }
 
+/// Test to_generic_device functions of ExperimentalDeviceWrapper and ExperimentalMutableDeviceWrapper
 #[test]
 fn test_generic_device() {
     pyo3::prepare_freethreaded_python();
@@ -394,4 +400,149 @@ fn test_generic_device() {
 
         assert_eq!(num_gen, num_gen_mut);
     })
+}
+
+/// Test copy and deepcopy functions of ExperimentalDeviceWrapper and ExperimentalMutableDeviceWrapper
+#[test]
+fn test_copy_deepcopy() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let device_type = py.get_type::<ExperimentalDeviceWrapper>();
+        let device_type_mut = py.get_type::<ExperimentalMutableDeviceWrapper>();
+        let device = device_type.call0().unwrap();
+        let device_mut = device_type_mut.call0().unwrap();
+
+        let copy_op = device.call_method0("__copy__").unwrap();
+        let copy_op_mut = device_mut.call_method0("__copy__").unwrap();
+        let copy_wrapper = copy_op.extract::<ExperimentalDeviceWrapper>().unwrap();
+        let copy_wrapper_mut = copy_op_mut
+            .extract::<ExperimentalMutableDeviceWrapper>()
+            .unwrap();
+        let deepcopy_op = device.call_method1("__deepcopy__", ("",)).unwrap();
+        let deepcopy_op_mut = device_mut.call_method1("__deepcopy__", ("",)).unwrap();
+        let deepcopy_wrapper = deepcopy_op.extract::<ExperimentalDeviceWrapper>().unwrap();
+        let deepcopy_wrapper_mut = deepcopy_op_mut
+            .extract::<ExperimentalMutableDeviceWrapper>()
+            .unwrap();
+
+        let device_wrapper = device.extract::<ExperimentalDeviceWrapper>().unwrap();
+        let device_wrapper_mut = device_mut
+            .extract::<ExperimentalMutableDeviceWrapper>()
+            .unwrap();
+        assert_eq!(device_wrapper, copy_wrapper);
+        assert_eq!(device_wrapper, deepcopy_wrapper);
+        assert_eq!(device_wrapper_mut, copy_wrapper_mut);
+        assert_eq!(device_wrapper_mut, deepcopy_wrapper_mut);
+    });
+}
+
+/// Test to_ and from_json functions of ExperimentalDeviceWrapper and ExperimentalMutableDeviceWrapper
+#[test]
+fn test_to_from_json() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let device_type = py.get_type::<ExperimentalDeviceWrapper>();
+        let device_type_mut = py.get_type::<ExperimentalMutableDeviceWrapper>();
+        let device = device_type.call0().unwrap();
+        let device_mut = device_type_mut.call0().unwrap();
+
+        let serialised = device.call_method0("to_json").unwrap();
+        let serialised_mut = device_mut.call_method0("to_json").unwrap();
+        let deserialised = device.call_method1("from_json", (serialised,)).unwrap();
+        let deserialised_mut = device_mut
+            .call_method1("from_json", (serialised_mut,))
+            .unwrap();
+
+        let vec: Vec<u8> = Vec::new();
+        let deserialised_error = device.call_method1("from_json", (vec.clone(),));
+        assert!(deserialised_error.is_err());
+        let deserialised_mut_error = device_mut.call_method1("from_json", (vec,));
+        assert!(deserialised_mut_error.is_err());
+
+        let deserialised_error = deserialised.call_method0("from_json");
+        assert!(deserialised_error.is_err());
+        let deserialised_error_mut = deserialised_mut.call_method0("from_json");
+        assert!(deserialised_error_mut.is_err());
+
+        let serialised_error = serialised.call_method0("to_json");
+        assert!(serialised_error.is_err());
+        let serialised_error_mut = serialised_mut.call_method0("to_json");
+        assert!(serialised_error_mut.is_err());
+
+        let serde_wrapper = deserialised.extract::<ExperimentalDeviceWrapper>().unwrap();
+        let serde_wrapper_mut = deserialised_mut
+            .extract::<ExperimentalMutableDeviceWrapper>()
+            .unwrap();
+        let device_wrapper = device.extract::<ExperimentalDeviceWrapper>().unwrap();
+        let device_wrapper_mut = device_mut
+            .extract::<ExperimentalMutableDeviceWrapper>()
+            .unwrap();
+        assert_eq!(device_wrapper, serde_wrapper);
+        assert_eq!(device_wrapper_mut, serde_wrapper_mut);
+    });
+}
+
+/// Test to_ and from_bincode functions of ExperimentalDeviceWrapper and ExperimentalMutableDeviceWrapper
+#[test]
+fn test_to_from_bincode() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let device_type = py.get_type::<ExperimentalDeviceWrapper>();
+        let device_type_mut = py.get_type::<ExperimentalMutableDeviceWrapper>();
+        let device = device_type.call0().unwrap();
+        let device_mut = device_type_mut.call0().unwrap();
+
+        let serialised = device.call_method0("to_bincode").unwrap();
+        let serialised_mut = device_mut.call_method0("to_bincode").unwrap();
+        let deserialised = device.call_method1("from_bincode", (serialised,)).unwrap();
+        let deserialised_mut = device_mut
+            .call_method1("from_bincode", (serialised_mut,))
+            .unwrap();
+
+        let vec: Vec<u8> = Vec::new();
+        let deserialised_error = device.call_method1("from_bincode", (vec.clone(),));
+        assert!(deserialised_error.is_err());
+        let deserialised_mut_error = device_mut.call_method1("from_bincode", (vec,));
+        assert!(deserialised_mut_error.is_err());
+
+        let deserialised_error = deserialised.call_method0("from_bincode");
+        assert!(deserialised_error.is_err());
+        let deserialised_error_mut = deserialised_mut.call_method0("from_bincode");
+        assert!(deserialised_error_mut.is_err());
+
+        let serialised_error = serialised.call_method0("to_bincode");
+        assert!(serialised_error.is_err());
+        let serialised_error_mut = serialised_mut.call_method0("to_bincode");
+        assert!(serialised_error_mut.is_err());
+
+        let serde_wrapper = deserialised.extract::<ExperimentalDeviceWrapper>().unwrap();
+        let serde_wrapper_mut = deserialised_mut
+            .extract::<ExperimentalMutableDeviceWrapper>()
+            .unwrap();
+        let device_wrapper = device.extract::<ExperimentalDeviceWrapper>().unwrap();
+        let device_wrapper_mut = device_mut
+            .extract::<ExperimentalMutableDeviceWrapper>()
+            .unwrap();
+        assert_eq!(device_wrapper, serde_wrapper);
+        assert_eq!(device_wrapper_mut, serde_wrapper_mut);
+    });
+}
+
+/// Test two_qubit_edges function of ExperimentalDeviceWrapper and ExperimentalMutableDeviceWrapper
+#[test]
+fn test_two_qubit_edges() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let device_type = py.get_type::<ExperimentalDeviceWrapper>();
+        let device_type_mut = py.get_type::<ExperimentalMutableDeviceWrapper>();
+        let device = device_type.call0().unwrap();
+        let device_mut = device_type_mut.call0().unwrap();
+
+        let edges = device.call_method0("two_qubit_edges").unwrap();
+        let edges_mut = device_mut.call_method0("two_qubit_edges").unwrap();
+        let edges_wrapper = edges.extract::<Vec<usize>>().unwrap();
+        let edges_wrapper_mut = edges_mut.extract::<Vec<usize>>().unwrap();
+        assert_eq!(edges_wrapper.len(), 0);
+        assert_eq!(edges_wrapper_mut.len(), 0);
+    });
 }
