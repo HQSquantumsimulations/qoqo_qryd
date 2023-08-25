@@ -550,8 +550,9 @@ impl ExperimentalMutableDeviceWrapper {
     /// Raises:
     ///     ValueError: Cannot serialize ExperimentalMutableDevice to bytes.
     pub fn to_bincode(&self) -> PyResult<Py<PyByteArray>> {
-        let serialized = serialize(&self.internal)
-            .map_err(|_| PyValueError::new_err("Cannot serialize ExperimentalMutableDevice to bytes"))?;
+        let serialized = serialize(&self.internal).map_err(|_| {
+            PyValueError::new_err("Cannot serialize ExperimentalMutableDevice to bytes")
+        })?;
         let b: Py<PyByteArray> = Python::with_gil(|py| -> Py<PyByteArray> {
             PyByteArray::new(py, &serialized[..]).into()
         });
@@ -592,8 +593,9 @@ impl ExperimentalMutableDeviceWrapper {
     /// Raises:
     ///     ValueError: Cannot serialize ExperimentalMutableDevice to json.
     fn to_json(&self) -> PyResult<String> {
-        let serialized = serde_json::to_string(&self.internal)
-            .map_err(|_| PyValueError::new_err("Cannot serialize ExperimentalMutableDevice to json"))?;
+        let serialized = serde_json::to_string(&self.internal).map_err(|_| {
+            PyValueError::new_err("Cannot serialize ExperimentalMutableDevice to json")
+        })?;
         Ok(serialized)
     }
 

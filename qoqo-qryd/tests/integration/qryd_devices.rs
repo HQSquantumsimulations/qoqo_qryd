@@ -527,7 +527,7 @@ fn test_convert_to_device() {
     });
 }
 
-/// Test 
+/// Test
 #[test]
 fn test_pyo3_new_change_layout() {
     pyo3::prepare_freethreaded_python();
