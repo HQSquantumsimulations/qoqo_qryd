@@ -26,7 +26,7 @@ use roqoqo_qryd::ExperimentalDevice;
 /// This interface does not allow setting any piece of information about the device
 /// tweezers. This class is meant to be used by the end user.
 #[pyclass(name = "ExperimentalDevice", module = "qoqo_qryd")]
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct ExperimentalDeviceWrapper {
     /// Internal storage of [roqoqo_qryd::ExperimentalDevice]
     pub internal: ExperimentalDevice,
@@ -345,7 +345,7 @@ impl ExperimentalDeviceWrapper {
 /// This interface allows setting any piece of information about the device
 /// tweezer.
 #[pyclass(name = "ExperimentalMutableDevice", module = "qoqo_qryd")]
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct ExperimentalMutableDeviceWrapper {
     /// Internal storage of [roqoqo_qryd::ExperimentalDevice]
     internal: ExperimentalDevice,
@@ -551,7 +551,7 @@ impl ExperimentalMutableDeviceWrapper {
     ///     ValueError: Cannot serialize ExperimentalMutableDevice to bytes.
     pub fn to_bincode(&self) -> PyResult<Py<PyByteArray>> {
         let serialized = serialize(&self.internal)
-            .map_err(|_| PyValueError::new_err("Cannot serialize ExperimentalDevice to bytes"))?;
+            .map_err(|_| PyValueError::new_err("Cannot serialize ExperimentalMutableDevice to bytes"))?;
         let b: Py<PyByteArray> = Python::with_gil(|py| -> Py<PyByteArray> {
             PyByteArray::new(py, &serialized[..]).into()
         });
@@ -572,14 +572,14 @@ impl ExperimentalMutableDeviceWrapper {
     ///     ValueError: Input cannot be deserialized to ExperimentalMutableDevice.
     #[staticmethod]
     #[pyo3(text_signature = "(input, /)")]
-    pub fn from_bincode(input: &PyAny) -> PyResult<ExperimentalDeviceWrapper> {
+    pub fn from_bincode(input: &PyAny) -> PyResult<ExperimentalMutableDeviceWrapper> {
         let bytes = input
             .extract::<Vec<u8>>()
             .map_err(|_| PyTypeError::new_err("Input cannot be converted to byte array"))?;
 
-        Ok(ExperimentalDeviceWrapper {
+        Ok(ExperimentalMutableDeviceWrapper {
             internal: deserialize(&bytes[..]).map_err(|_| {
-                PyValueError::new_err("Input cannot be deserialized to ExperimentalDevice")
+                PyValueError::new_err("Input cannot be deserialized to ExperimentalMutableDevice")
             })?,
         })
     }
@@ -593,7 +593,7 @@ impl ExperimentalMutableDeviceWrapper {
     ///     ValueError: Cannot serialize ExperimentalMutableDevice to json.
     fn to_json(&self) -> PyResult<String> {
         let serialized = serde_json::to_string(&self.internal)
-            .map_err(|_| PyValueError::new_err("Cannot serialize ExperimentalDevice to json"))?;
+            .map_err(|_| PyValueError::new_err("Cannot serialize ExperimentalMutableDevice to json"))?;
         Ok(serialized)
     }
 
@@ -609,10 +609,10 @@ impl ExperimentalMutableDeviceWrapper {
     ///     ValueError: Input cannot be deserialized to ExperimentalMutableDevice.
     #[staticmethod]
     #[pyo3(text_signature = "(input, /)")]
-    fn from_json(input: &str) -> PyResult<ExperimentalDeviceWrapper> {
-        Ok(ExperimentalDeviceWrapper {
+    fn from_json(input: &str) -> PyResult<ExperimentalMutableDeviceWrapper> {
+        Ok(ExperimentalMutableDeviceWrapper {
             internal: serde_json::from_str(input).map_err(|_| {
-                PyValueError::new_err("Input cannot be deserialized to ExperimentalDevice")
+                PyValueError::new_err("Input cannot be deserialized to ExperimentalMutableDevice")
             })?,
         })
     }
