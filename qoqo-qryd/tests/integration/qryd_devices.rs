@@ -73,7 +73,7 @@ fn test_creating_device(
     });
 }
 
-/// Test involved_qubits function for Pragmas with All
+/// Test copy and deepcopy functions of FirstDeviceWrapper
 #[test]
 fn test_copy_deepcopy() {
     pyo3::prepare_freethreaded_python();
@@ -102,7 +102,7 @@ fn test_copy_deepcopy() {
     });
 }
 
-/// Test to_ and from_bincode functions of Circuit
+/// Test to_ and from_bincode functions of FirstDeviceWrapper
 #[test]
 fn test_to_from_bincode() {
     pyo3::prepare_freethreaded_python();
@@ -139,7 +139,7 @@ fn test_to_from_bincode() {
     });
 }
 
-/// Test to_ and from_bincode functions of Circuit
+/// Test _enum_to_bincode function of FirstDeviceWrapper
 #[test]
 fn test_enum_to_bincode() {
     pyo3::prepare_freethreaded_python();
@@ -162,7 +162,7 @@ fn test_enum_to_bincode() {
     });
 }
 
-/// Test to_ and from_bincode functions of Circuit
+/// Test to_ and from_json functions of FirstDeviceWrapper
 #[test]
 fn test_to_from_json() {
     pyo3::prepare_freethreaded_python();
@@ -199,6 +199,7 @@ fn test_to_from_json() {
     });
 }
 
+/// Test add_ and switch_layout functions of FirstDeviceWrapper
 #[test]
 fn test_switch_layout() {
     pyo3::prepare_freethreaded_python();
@@ -273,6 +274,7 @@ fn test_switch_layout() {
     });
 }
 
+/// Test set_cutoff function of FirstDeviceWrapper
 #[test]
 fn test_set_cutoff() {
     pyo3::prepare_freethreaded_python();
@@ -297,6 +299,7 @@ fn test_set_cutoff() {
     });
 }
 
+/// Test change_ and qubit_position functions of FirstDeviceWrapper
 #[test]
 fn test_change_qubit_positions() {
     pyo3::prepare_freethreaded_python();
@@ -329,7 +332,7 @@ fn test_change_qubit_positions() {
     });
 }
 
-// Test gate time methods
+// Test gate time methods of FirstDeviceWrapper
 #[test]
 fn test_gate_times() {
     pyo3::prepare_freethreaded_python();
@@ -380,6 +383,7 @@ fn test_gate_times() {
     })
 }
 
+/// Test phase_shift_ functions of FirstDeviceWrapper
 #[test]
 fn test_phi_theta_relation() {
     pyo3::prepare_freethreaded_python();
@@ -487,7 +491,7 @@ fn test_phi_theta_relation() {
     });
 }
 
-/// Test to_ and from_bincode functions of Circuit
+/// Test convert_into_device function
 #[test]
 fn test_convert_to_device() {
     pyo3::prepare_freethreaded_python();
@@ -523,6 +527,7 @@ fn test_convert_to_device() {
     });
 }
 
+/// Test 
 #[test]
 fn test_pyo3_new_change_layout() {
     pyo3::prepare_freethreaded_python();
