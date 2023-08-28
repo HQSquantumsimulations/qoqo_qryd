@@ -30,7 +30,7 @@ use roqoqo::{
 #[derive(Debug, PartialEq, Default, Clone, serde::Serialize, serde::Deserialize)]
 pub struct ExperimentalDevice {
     /// Mapping from qubit to tweezer
-    pub qubit_to_tweezer: HashMap<usize, usize>, // TODO: starts as optional. when switch layout if none, set it as trivial full based on new layout, otherwise keep it
+    pub qubit_to_tweezer: Option<HashMap<usize, usize>>,
     /// Register of Layouts
     pub layout_register: HashMap<String, TweezerLayoutInfo>,
     /// Current Layout
@@ -63,7 +63,7 @@ impl ExperimentalDevice {
         layout_register.insert(String::from("Default"), TweezerLayoutInfo::default());
 
         ExperimentalDevice {
-            qubit_to_tweezer: HashMap::new(),
+            qubit_to_tweezer: None,
             layout_register,
             current_layout: String::from("Default"),
         }
@@ -168,6 +168,9 @@ impl ExperimentalDevice {
             });
         }
         self.current_layout = name.to_string();
+        if self.qubit_to_tweezer.is_none() {
+            self.qubit_to_tweezer = Some(self.new_trivial_mapping());
+        }
         Ok(())
     }
 
@@ -206,9 +209,16 @@ impl ExperimentalDevice {
         qubit: usize,
         tweezer: usize,
     ) -> Result<(), RoqoqoBackendError> {
-        // TODO: call everytime a timing has been set
         if self.is_tweezer_present(tweezer) {
-            self.qubit_to_tweezer.insert(qubit, tweezer);
+            if let Some(map) = &mut self.qubit_to_tweezer {
+                map.insert(qubit, tweezer);
+            } else {
+                self.qubit_to_tweezer = Some(self.new_trivial_mapping());
+                self.qubit_to_tweezer
+                    .as_mut()
+                    .unwrap()
+                    .insert(qubit, tweezer);
+            }
             Ok(())
         } else {
             Err(RoqoqoBackendError::GenericError {
@@ -233,7 +243,7 @@ impl ExperimentalDevice {
         gate_time: f64,
         layout_name: Option<String>,
     ) {
-        // TODO: set mapping to None when any setter is called
+        self.qubit_to_tweezer = None; // TODO: is this really necessary?
         let layout_name = layout_name.unwrap_or_else(|| self.current_layout.clone());
 
         if let Some(info) = self.layout_register.get_mut(&layout_name) {
@@ -266,6 +276,7 @@ impl ExperimentalDevice {
         gate_time: f64,
         layout_name: Option<String>,
     ) {
+        self.qubit_to_tweezer = None;
         let layout_name = layout_name.unwrap_or_else(|| self.current_layout.clone());
 
         if let Some(info) = self.layout_register.get_mut(&layout_name) {
@@ -300,6 +311,7 @@ impl ExperimentalDevice {
         gate_time: f64,
         layout_name: Option<String>,
     ) {
+        self.qubit_to_tweezer = None;
         let layout_name = layout_name.unwrap_or_else(|| self.current_layout.clone());
 
         if let Some(info) = self.layout_register.get_mut(&layout_name) {
@@ -330,6 +342,7 @@ impl ExperimentalDevice {
         gate_time: f64,
         layout_name: Option<String>,
     ) {
+        self.qubit_to_tweezer = None;
         let layout_name = layout_name.unwrap_or_else(|| self.current_layout.clone());
 
         if let Some(info) = self.layout_register.get_mut(&layout_name) {
@@ -356,12 +369,17 @@ impl ExperimentalDevice {
     /// * `Err(RoqoqoBackendError)` - If the qubit identifier is not related to any tweezer.
     ///
     pub fn get_tweezer_from_qubit(&self, qubit: &usize) -> Result<usize, RoqoqoBackendError> {
-        self.qubit_to_tweezer
-            .get(qubit)
-            .ok_or(RoqoqoBackendError::GenericError {
-                msg: "The given qubit is not present in the Layout.".to_string(),
+        if let Some(map) = &self.qubit_to_tweezer {
+            map.get(qubit)
+                .ok_or(RoqoqoBackendError::GenericError {
+                    msg: "The given qubit is not present in the Layout.".to_string(),
+                })
+                .copied()
+        } else {
+            Err(RoqoqoBackendError::GenericError {
+                msg: "The device qubit -> tweezer mapping is empty.".to_string(),
             })
-            .copied()
+        }
     }
 
     /// Deactivate the given qubit in the device.
@@ -379,12 +397,18 @@ impl ExperimentalDevice {
         &mut self,
         qubit: usize,
     ) -> Result<HashMap<usize, usize>, RoqoqoBackendError> {
-        if self.qubit_to_tweezer.remove(&qubit).is_none() {
-            Err(RoqoqoBackendError::GenericError {
-                msg: "The given qubit is not present in the Layout.".to_string(),
-            })
+        if let Some(map) = &mut self.qubit_to_tweezer {
+            if map.remove(&qubit).is_none() {
+                Err(RoqoqoBackendError::GenericError {
+                    msg: "The given qubit is not present in the Layout.".to_string(),
+                })
+            } else {
+                Ok(map.clone())
+            }
         } else {
-            Ok(self.qubit_to_tweezer.clone())
+            Err(RoqoqoBackendError::GenericError {
+                msg: "The device qubit -> tweezer mapping is empty.".to_string(),
+            })
         }
     }
 
@@ -431,6 +455,69 @@ impl ExperimentalDevice {
             }
         }
         present
+    }
+
+    fn max_tweezer(&self) -> Option<usize> {
+        let tweezer_info = self.get_current_layout_info();
+        let mut max_tweezer_id: Option<usize> = None;
+
+        for single_qubit_struct in &tweezer_info.tweezer_single_qubit_gate_times {
+            if let Some(max) = single_qubit_struct.1.keys().max() {
+                if let Some(current_max) = max_tweezer_id {
+                    max_tweezer_id = Some(*max.max(&current_max));
+                } else {
+                    max_tweezer_id = Some(*max);
+                }
+            }
+        }
+        for two_qubit_struct in &tweezer_info.tweezer_two_qubit_gate_times {
+            if let Some(max) = two_qubit_struct
+                .1
+                .keys()
+                .flat_map(|&(a, b)| vec![a, b])
+                .max()
+            {
+                if let Some(current_max) = max_tweezer_id {
+                    max_tweezer_id = Some(max.max(current_max));
+                } else {
+                    max_tweezer_id = Some(max);
+                }
+            }
+        }
+        for three_qubit_struct in &tweezer_info.tweezer_three_qubit_gate_times {
+            if let Some(max) = three_qubit_struct
+                .1
+                .keys()
+                .flat_map(|&(a, b, c)| vec![a, b, c])
+                .max()
+            {
+                if let Some(current_max) = max_tweezer_id {
+                    max_tweezer_id = Some(max.max(current_max));
+                } else {
+                    max_tweezer_id = Some(max);
+                }
+            }
+        }
+        for multi_qubit_struct in &tweezer_info.tweezer_multi_qubit_gate_times {
+            if let Some(max) = multi_qubit_struct.1.keys().flatten().max() {
+                if let Some(current_max) = max_tweezer_id {
+                    max_tweezer_id = Some(*max.max(&current_max));
+                } else {
+                    max_tweezer_id = Some(*max);
+                };
+            }
+        }
+        max_tweezer_id
+    }
+
+    fn new_trivial_mapping(&self) -> HashMap<usize, usize> {
+        if let Some(max_tweezer_id) = self.max_tweezer() {
+            (0..=max_tweezer_id)
+                .map(|i| (i, i))
+                .collect::<HashMap<usize, usize>>()
+        } else {
+            HashMap::new()
+        }
     }
 }
 
@@ -515,25 +602,28 @@ impl Device for ExperimentalDevice {
     }
 
     fn number_qubits(&self) -> usize {
-        // TODO: to check if this still makes sense with deactivate_qubit()
-        // UPDATE: I don't see the problem
-        self.qubit_to_tweezer.keys().len()
+        if let Some(map) = &self.qubit_to_tweezer {
+            return map.keys().len();
+        }
+        0
     }
 
     fn two_qubit_edges(&self) -> Vec<(usize, usize)> {
-        // TODO: do we keep PSCP as edge-defining gate?
-        let mut edges: Vec<(usize, usize)> = Vec::new();
-        for qbt0 in self.qubit_to_tweezer.keys() {
-            for qbt1 in self.qubit_to_tweezer.keys() {
-                if self
-                    .two_qubit_gate_time("PhaseShiftedControlledPhase", qbt0, qbt1)
-                    .is_some()
-                {
-                    edges.push((*qbt0, *qbt1));
+        if let Some(map) = &self.qubit_to_tweezer {
+            let mut edges: Vec<(usize, usize)> = Vec::new();
+            for qbt0 in map.keys() {
+                for qbt1 in map.keys() {
+                    if self
+                        .two_qubit_gate_time("PhaseShiftedControlledPhase", qbt0, qbt1)
+                        .is_some()
+                    {
+                        edges.push((*qbt0, *qbt1));
+                    }
                 }
             }
+            return edges;
         }
-        edges
+        vec![]
     }
 
     /// Turns Device into GenericDevice.

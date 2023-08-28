@@ -21,7 +21,7 @@ fn test_new() {
     let device = ExperimentalDevice::new();
 
     assert_eq!(device.current_layout, "Default");
-    assert!(device.qubit_to_tweezer.is_empty());
+    assert!(device.qubit_to_tweezer.is_none());
     assert_eq!(device.layout_register.len(), 1);
     assert!(device.layout_register.get("Default").is_some());
 }
@@ -154,8 +154,13 @@ fn test_layouts() {
     );
 
     assert_eq!(device.current_layout, "Default");
+    assert!(device.qubit_to_tweezer.is_none());
+
     device.switch_layout("Test").unwrap();
     assert_eq!(device.current_layout, "Test");
+    assert!(device.qubit_to_tweezer.is_some());
+    assert_eq!(device.qubit_to_tweezer.clone().unwrap().len(), 4);
+
     assert!(device.switch_layout("Error").is_err());
 
     assert!(device.available_layouts().contains(&"Default"));

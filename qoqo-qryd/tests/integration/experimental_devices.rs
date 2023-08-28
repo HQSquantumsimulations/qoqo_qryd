@@ -149,6 +149,7 @@ fn test_deactivate_qubit() {
     // Setup fake preconfigured device
     let mut exp = ExperimentalDevice::new();
     exp.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.23, None);
+    exp.set_tweezer_single_qubit_gate_time("PauliY", 0, 0.23, None);
     let fake_api_device = ExperimentalDeviceWrapper { internal: exp };
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
@@ -163,6 +164,9 @@ fn test_deactivate_qubit() {
         device_mut
             .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 1, 0.23))
             .unwrap();
+        device_mut
+            .call_method1("set_tweezer_single_qubit_gate_time", ("PauliY", 0, 0.23))
+            .unwrap();
 
         device
             .call_method1("add_qubit_tweezer_mapping", (0, 1))
@@ -170,15 +174,21 @@ fn test_deactivate_qubit() {
         device_mut
             .call_method1("add_qubit_tweezer_mapping", (0, 1))
             .unwrap();
+        device
+            .call_method1("add_qubit_tweezer_mapping", (1, 0))
+            .unwrap();
+        device_mut
+            .call_method1("add_qubit_tweezer_mapping", (1, 0))
+            .unwrap();
 
         let res_device = device.call_method1("deactivate_qubit", (0,));
         let res_device_mut = device_mut.call_method1("deactivate_qubit", (0,));
         assert!(res_device.is_ok());
         assert!(res_device_mut.is_ok());
-        assert_eq!(res_device.unwrap().extract::<&PyDict>().unwrap().len(), 0);
+        assert_eq!(res_device.unwrap().extract::<&PyDict>().unwrap().len(), 1);
         assert_eq!(
             res_device_mut.unwrap().extract::<&PyDict>().unwrap().len(),
-            0
+            1
         );
         assert!(device.call_method1("deactivate_qubit", (0,)).is_err());
         assert!(device_mut.call_method1("deactivate_qubit", (0,)).is_err());
