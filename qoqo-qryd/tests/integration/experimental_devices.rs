@@ -17,6 +17,8 @@ use pyo3::{prelude::*, types::PyDict};
 use qoqo_qryd::{ExperimentalDeviceWrapper, ExperimentalMutableDeviceWrapper};
 use roqoqo_qryd::ExperimentalDevice;
 
+use httpmock::MockServer;
+
 /// Test new instantiation of ExperimentalDeviceWrapper and ExperimentalMutableDeviceWrapper
 #[test]
 fn test_new() {
@@ -554,5 +556,50 @@ fn test_two_qubit_edges() {
         let edges_wrapper_mut = edges_mut.extract::<Vec<usize>>().unwrap();
         assert_eq!(edges_wrapper.len(), 0);
         assert_eq!(edges_wrapper_mut.len(), 0);
+    });
+}
+
+/// Test from_api of ExperimentalDeviceWrapper
+#[test]
+fn test_from_api() {
+    let mut returned_device_default = ExperimentalDevice::new();
+    returned_device_default.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None);
+    let returned_device_default_wrapper = ExperimentalDeviceWrapper {
+        internal: returned_device_default.clone(),
+    };
+    let server = MockServer::start();
+    let mock = server.mock(|when, then| {
+        when.method("POST");
+        then.status(200).json_body_obj(&returned_device_default);
+    });
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let ext_device_type = returned_device_default_wrapper.into_py(py);
+        let ext_device = ext_device_type.as_ref(py);
+        let device_type = py.get_type::<ExperimentalDeviceWrapper>();
+        let device = device_type
+            .call_method1(
+                "from_api",
+                (
+                    Option::<String>::None,
+                    Option::<String>::None,
+                    server.port().to_string(),
+                ),
+            )
+            .unwrap();
+
+        mock.assert();
+
+        let returned_device_json = device
+            .call_method0("to_json")
+            .unwrap()
+            .extract::<String>()
+            .unwrap();
+        let original_device_json = ext_device
+            .call_method0("to_json")
+            .unwrap()
+            .extract::<String>()
+            .unwrap();
+        assert_eq!(returned_device_json, original_device_json);
     });
 }

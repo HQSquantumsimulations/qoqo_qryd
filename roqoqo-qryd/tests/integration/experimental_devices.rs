@@ -12,8 +12,10 @@
 
 use ndarray::Array2;
 
-use roqoqo::devices::Device;
+use roqoqo::{devices::Device, RoqoqoBackendError};
 use roqoqo_qryd::ExperimentalDevice;
+
+use httpmock::MockServer;
 
 /// Test ExperimentalDevice new()
 #[test]
@@ -241,6 +243,7 @@ fn test_qubit_times() {
     );
 }
 
+/// Test ExperimentalDevice number_qubits() method
 #[test]
 fn test_number_qubits() {
     let mut device = ExperimentalDevice::new();
@@ -255,6 +258,7 @@ fn test_number_qubits() {
     assert_eq!(device.number_qubits(), 2)
 }
 
+/// Test ExperimentalDevice to_generic_device() method method
 #[test]
 fn test_to_generic_device() {
     let mut device = ExperimentalDevice::new();
@@ -312,5 +316,40 @@ fn test_to_generic_device() {
     assert_eq!(
         generic_device.qubit_decoherence_rates(&1),
         Some(Array2::zeros((3, 3).to_owned()))
+    );
+}
+
+/// Test ExperimentalDevice from_api() method
+#[test]
+fn test_from_api() {
+    let mut returned_device_default = ExperimentalDevice::new();
+    returned_device_default.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None);
+    let server = MockServer::start();
+    let mut mock = server.mock(|when, then| {
+        when.method("POST");
+        then.status(200).json_body_obj(&returned_device_default);
+    });
+
+    let response = ExperimentalDevice::from_api(None, None, Some(server.port().to_string()));
+    mock.assert();
+    assert!(response.is_ok());
+
+    let device = response.unwrap();
+    assert_eq!(device, returned_device_default);
+
+    mock.delete();
+    mock = server.mock(|when, then| {
+        when.method("POST");
+        then.status(400);
+    });
+
+    let response = ExperimentalDevice::from_api(None, None, Some(server.port().to_string()));
+    mock.assert();
+    assert!(response.is_err());
+    assert_eq!(
+        response.unwrap_err(),
+        RoqoqoBackendError::NetworkError {
+            msg: format!("Request to server failed with HTTP status code {:?}.", 400),
+        }
     );
 }

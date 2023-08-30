@@ -54,6 +54,7 @@ impl ExperimentalDeviceWrapper {
     ///     access_token (Optional[str]): An access_token is required to access QRYD hardware and emulators.
     ///                         The access_token can either be given as an argument here
     ///                             or set via the environmental variable `$QRYD_API_TOKEN`.
+    ///     mock_port (Optional[str]): Server port to be used for testing purposes.
     ///
     /// Returns
     ///     ExperimentalDevice: The new ExperimentalDevice instance with populated tweezer data.
@@ -62,12 +63,13 @@ impl ExperimentalDeviceWrapper {
     ///     RoqoqoBackendError
     #[staticmethod]
     #[pyo3(text_signature = "(device_name, access_token, /)")]
-    pub fn from_api(device_name: Option<&str>, access_token: Option<&str>) -> PyResult<Self> {
-        let internal = ExperimentalDevice::from_api(
-            Some(device_name.unwrap().to_string()),
-            Some(access_token.unwrap().to_string()),
-        )
-        .map_err(|err| PyValueError::new_err(format!("{:}", err)))?;
+    pub fn from_api(
+        device_name: Option<String>,
+        access_token: Option<String>,
+        mock_port: Option<String>,
+    ) -> PyResult<Self> {
+        let internal = ExperimentalDevice::from_api(device_name, access_token, mock_port)
+            .map_err(|err| PyValueError::new_err(format!("{:}", err)))?;
         Ok(ExperimentalDeviceWrapper { internal })
     }
 

@@ -79,6 +79,7 @@ impl ExperimentalDevice {
     /// * `access_token` - An access_token is required to access QRYD hardware and emulators.
     ///                    The access_token can either be given as an argument here
     ///                         or set via the environmental variable `$QRYD_API_TOKEN`.
+    /// * `mock_port` - The address of the Mock server, used for testing purposes.
     ///
     /// # Returns
     ///
@@ -91,7 +92,9 @@ impl ExperimentalDevice {
     pub fn from_api(
         device_name: Option<String>,
         access_token: Option<String>,
+        mock_port: Option<String>,
     ) -> Result<Self, RoqoqoBackendError> {
+        // Preparing variables
         let device_name_internal = device_name.unwrap_or_else(|| String::from("Default"));
         let access_token_internal: String = match access_token {
             Some(s) => s,
@@ -101,21 +104,44 @@ impl ExperimentalDevice {
                 }
             })?,
         };
-        let client = reqwest::blocking::Client::builder()
-            .https_only(true)
-            .build()
-            .map_err(|x| RoqoqoBackendError::NetworkError {
-                msg: format!("Could not create https client {:?}.", x),
-            })?;
-        let resp = client
-            .post("https://api.qryddemo.itp3.uni-stuttgart.de/v2_0/get_device")
-            .header("X-API-KEY", access_token_internal)
-            .body(device_name_internal)
-            .send()
-            .map_err(|e| RoqoqoBackendError::NetworkError {
-                msg: format!("{:?}", e),
-            })?;
 
+        // Client setup
+        let client = if mock_port.is_some() {
+            reqwest::blocking::Client::builder().build().map_err(|x| {
+                RoqoqoBackendError::NetworkError {
+                    msg: format!("Could not create test client {:?}.", x),
+                }
+            })?
+        } else {
+            reqwest::blocking::Client::builder()
+                .https_only(true)
+                .build()
+                .map_err(|x| RoqoqoBackendError::NetworkError {
+                    msg: format!("Could not create https client {:?}.", x),
+                })?
+        };
+
+        // Response gathering
+        let resp = if let Some(port) = mock_port {
+            client
+                .post(format!("http://127.0.0.1:{}", port))
+                .body(device_name_internal)
+                .send()
+                .map_err(|e| RoqoqoBackendError::NetworkError {
+                    msg: format!("{:?}", e),
+                })?
+        } else {
+            client
+                .post("https://api.qryddemo.itp3.uni-stuttgart.de/v2_0/get_device")
+                .header("X-API-KEY", access_token_internal)
+                .body(device_name_internal)
+                .send()
+                .map_err(|e| RoqoqoBackendError::NetworkError {
+                    msg: format!("{:?}", e),
+                })?
+        };
+
+        // Response handling
         let status_code = resp.status();
         if status_code == reqwest::StatusCode::OK {
             Ok(resp.json::<ExperimentalDevice>().unwrap())
