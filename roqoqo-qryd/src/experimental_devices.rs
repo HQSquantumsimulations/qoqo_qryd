@@ -96,13 +96,17 @@ impl ExperimentalDevice {
     ) -> Result<Self, RoqoqoBackendError> {
         // Preparing variables
         let device_name_internal = device_name.unwrap_or_else(|| String::from("Default"));
-        let access_token_internal: String = match access_token {
-            Some(s) => s,
-            None => env::var("QRYD_API_TOKEN").map_err(|_| {
-                RoqoqoBackendError::MissingAuthentification {
-                    msg: "QRYD access token is missing.".to_string(),
-                }
-            })?,
+        let access_token_internal: String = if mock_port.is_some() {
+            "".to_string()
+        } else {
+            match access_token {
+                Some(s) => s,
+                None => env::var("QRYD_API_TOKEN").map_err(|_| {
+                    RoqoqoBackendError::MissingAuthentification {
+                        msg: "QRYD access token is missing.".to_string(),
+                    }
+                })?,
+            }
         };
 
         // Client setup
