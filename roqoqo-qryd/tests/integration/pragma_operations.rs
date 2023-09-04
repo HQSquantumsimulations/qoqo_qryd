@@ -13,9 +13,12 @@
 use bincode::serialize;
 use qoqo_calculator::Calculator;
 use roqoqo::operations::{InvolveQubits, InvolvedQubits, Operate, PragmaChangeDevice, Substitute};
-use roqoqo_qryd::pragma_operations::{PragmaChangeQRydLayout, PragmaShiftQRydQubit};
+use roqoqo_qryd::{
+    pragma_operations::{PragmaChangeQRydLayout, PragmaShiftQRydQubit},
+    PragmaDeactivateQRydQubit,
+};
 use serde_test::{assert_tokens, Configure, Token};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 /// Test PragmaChangeQRydLayout inputs and involved qubits
 #[test]
@@ -298,6 +301,141 @@ fn pragma_shift_qryd_qubit_serde_compact() {
             Token::U64(0),
             Token::TupleEnd,
             Token::MapEnd,
+            Token::StructEnd,
+        ],
+    );
+}
+
+/// Test PragmaDeactivateQRydQubit inputs and involved qubits
+#[test]
+fn pragma_deactivate_qryd_qubit_inputs_qubits() {
+    let qubit = 0;
+    let hs: HashSet<usize> = [qubit].into_iter().collect();
+    let pragma = PragmaDeactivateQRydQubit::new(qubit);
+
+    // Test inputs are correct
+    assert_eq!(pragma.qubit, qubit);
+
+    // Test InvolveQubits trait
+    assert_eq!(pragma.involved_qubits(), InvolvedQubits::Set(hs));
+}
+
+/// Test PragmaDeactivateQRydQubit to_pragma_change_device function
+#[test]
+fn pragma_deactivate_qryd_qubit_change() {
+    let qubit = 0;
+    let pragma = PragmaDeactivateQRydQubit::new(qubit);
+
+    // Test inputs are correct
+    let result = PragmaChangeDevice {
+        wrapped_tags: vec![
+            "Operation".to_string(),
+            "PragmaOperation".to_string(),
+            "PragmaDeactivateQRydQubit".to_string(),
+        ],
+        wrapped_hqslang: "PragmaDeactivateQRydQubit".to_string(),
+        wrapped_operation: serialize(&pragma).unwrap(),
+    };
+    assert_eq!(pragma.to_pragma_change_device().unwrap(), result);
+}
+
+/// Test PragmaDeactivateQRydQubit standard derived traits (Debug, Clone, PartialEq)
+#[test]
+fn pragma_deactivate_qryd_qubit_simple_traits() {
+    let qubit = 0;
+    let pragma = PragmaDeactivateQRydQubit::new(qubit);
+
+    // Test Debug trait
+    assert_eq!(
+        format!("{:?}", pragma),
+        format!("PragmaDeactivateQRydQubit {{ qubit: {:?} }}", qubit)
+    );
+
+    // Test Clone trait
+    assert_eq!(pragma.clone(), pragma);
+
+    // Test PartialEq trait
+    let pragma_0 = PragmaDeactivateQRydQubit::new(qubit);
+    let pragma_1 = PragmaDeactivateQRydQubit::new(1);
+    assert!(pragma_0 == pragma);
+    assert!(pragma == pragma_0);
+    assert!(pragma_1 != pragma);
+    assert!(pragma != pragma_1);
+}
+
+/// Test PragmaDeactivateQRydQubit Operate trait
+#[test]
+fn pragma_deactivate_qryd_qubit_operate_trait() {
+    let qubit = 0;
+    let pragma = PragmaDeactivateQRydQubit::new(qubit);
+
+    // (1) Test tags function
+    let tags: &[&str; 3] = &["Operation", "PragmaOperation", "PragmaDeactivateQRydQubit"];
+    assert_eq!(pragma.tags(), tags);
+
+    // (2) Test hqslang function
+    assert_eq!(pragma.hqslang(), String::from("PragmaDeactivateQRydQubit"));
+
+    // (3) Test is_parametrized function
+    assert!(!pragma.is_parametrized());
+}
+
+/// Test PragmaDeactivateQRydQubit Substitute trait
+#[test]
+fn pragma_deactivate_qryd_qubit_substitute_trait() {
+    let qubit = 0;
+    let pragma = PragmaDeactivateQRydQubit::new(qubit);
+    let pragma_test = PragmaDeactivateQRydQubit::new(qubit);
+
+    // (1) Substitute parameters function
+    let mut substitution_dict: Calculator = Calculator::new();
+    substitution_dict.set_variable("ro", 0.0);
+    let result = pragma.substitute_parameters(&substitution_dict).unwrap();
+    assert_eq!(result, pragma);
+
+    // (2) Remap qubits function
+    let mut qubit_mapping_test: HashMap<usize, usize> = HashMap::new();
+    qubit_mapping_test.insert(0, 2);
+    qubit_mapping_test.insert(2, 0);
+    let result = pragma_test.remap_qubits(&qubit_mapping_test);
+    assert!(result.is_err());
+}
+
+/// Test PragmaDeactivateQRydQubit Serialization and Deserialization traits (readable)
+#[test]
+fn pragma_deactivate_qryd_qubit_serde_readable() {
+    let qubit = 0;
+    let pragma_serialization = PragmaDeactivateQRydQubit::new(qubit);
+
+    assert_tokens(
+        &pragma_serialization.readable(),
+        &[
+            Token::Struct {
+                name: "PragmaDeactivateQRydQubit",
+                len: 1,
+            },
+            Token::Str("qubit"),
+            Token::U64(0),
+            Token::StructEnd,
+        ],
+    );
+}
+
+/// Test PragmaDeactivateQRydQubit Serialization and Deserialization traits (compact)
+#[test]
+fn pragma_deactivate_qryd_qubit_serde_compact() {
+    let qubit = 0;
+    let pragma_serialization = PragmaDeactivateQRydQubit::new(qubit);
+
+    assert_tokens(
+        &pragma_serialization.compact(),
+        &[
+            Token::Struct {
+                name: "PragmaDeactivateQRydQubit",
+                len: 1,
+            },
+            Token::Str("qubit"),
+            Token::U64(0),
             Token::StructEnd,
         ],
     );
