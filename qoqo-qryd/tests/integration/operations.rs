@@ -260,7 +260,11 @@ fn test_deactivate_qubit_to_change_device() {
 fn test_pragmas_involved_qubits() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let ops: [&PyAny; 2] = [new_pragma_layout(py, 0), new_pragma_shift(py, 0)];
+        let ops: [&PyAny; 3] = [
+            new_pragma_layout(py, 0),
+            new_pragma_shift(py, 0),
+            new_pragma_deactivate(py, 0),
+        ];
         for operation in ops {
             let to_involved = operation.call_method0("involved_qubits").unwrap();
             let involved_op: HashSet<&str> = HashSet::extract(to_involved).unwrap();
@@ -268,12 +272,6 @@ fn test_pragmas_involved_qubits() {
             involved_param.insert("All");
             assert_eq!(involved_op, involved_param);
         }
-        let op: &PyAny = new_pragma_deactivate(py, 0);
-        let to_involved = op.call_method0("involved_qubits").unwrap();
-        let involved_op: HashSet<usize> = HashSet::extract(to_involved).unwrap();
-        let mut involved_param: HashSet<usize> = HashSet::new();
-        involved_param.insert(0);
-        assert_eq!(involved_op, involved_param);
     });
 }
 

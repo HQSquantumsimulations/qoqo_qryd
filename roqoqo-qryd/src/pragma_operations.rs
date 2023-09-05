@@ -19,7 +19,7 @@ use roqoqo::operations::{
     InvolveQubits, InvolvedQubits, Operate, OperatePragma, PragmaChangeDevice, Substitute,
 };
 use roqoqo::{RoqoqoBackendError, RoqoqoError};
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
 /// This PRAGMA Operation changes a QRyd device to a new predefined layout.
 ///
@@ -234,8 +234,7 @@ impl PragmaDeactivateQRydQubit {
 impl InvolveQubits for PragmaDeactivateQRydQubit {
     /// Lists all involved qubits (here, All).
     fn involved_qubits(&self) -> InvolvedQubits {
-        let set: HashSet<usize> = [self.qubit].into_iter().collect();
-        InvolvedQubits::Set(set)
+        InvolvedQubits::All
     }
 }
 

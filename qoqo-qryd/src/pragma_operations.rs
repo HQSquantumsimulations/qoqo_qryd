@@ -604,16 +604,13 @@ impl PragmaDeactivateQRydQubitWrapper {
         })
     }
 
-    /// List all involved qubits.
+    /// List all involved qubits (here, all).
     ///
     /// Returns:
     ///     set[int]: The involved qubits of the PRAGMA operation.
     fn involved_qubits(&self) -> PyObject {
-        let pyobject: PyObject = Python::with_gil(|py| -> PyObject {
-            PySet::new(py, &[self.internal.qubit])
-                .unwrap()
-                .to_object(py)
-        });
+        let pyobject: PyObject =
+            Python::with_gil(|py| -> PyObject { PySet::new(py, &["All"]).unwrap().to_object(py) });
         pyobject
     }
 

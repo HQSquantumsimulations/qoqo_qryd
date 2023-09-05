@@ -18,7 +18,7 @@ use roqoqo_qryd::{
     PragmaDeactivateQRydQubit,
 };
 use serde_test::{assert_tokens, Configure, Token};
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
 /// Test PragmaChangeQRydLayout inputs and involved qubits
 #[test]
@@ -310,14 +310,13 @@ fn pragma_shift_qryd_qubit_serde_compact() {
 #[test]
 fn pragma_deactivate_qryd_qubit_inputs_qubits() {
     let qubit = 0;
-    let hs: HashSet<usize> = [qubit].into_iter().collect();
     let pragma = PragmaDeactivateQRydQubit::new(qubit);
 
     // Test inputs are correct
     assert_eq!(pragma.qubit, qubit);
 
     // Test InvolveQubits trait
-    assert_eq!(pragma.involved_qubits(), InvolvedQubits::Set(hs));
+    assert_eq!(pragma.involved_qubits(), InvolvedQubits::All);
 }
 
 /// Test PragmaDeactivateQRydQubit to_pragma_change_device function
