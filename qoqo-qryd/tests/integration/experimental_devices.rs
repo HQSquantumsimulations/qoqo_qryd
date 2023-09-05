@@ -325,6 +325,15 @@ fn test_number_qubits() {
         let device = fake_api_pypyany.as_ref(py);
         let device_mut = device_type_mut.call0().unwrap();
 
+        assert_eq!(
+            device_mut
+                .call_method0("number_qubits")
+                .unwrap()
+                .extract::<usize>()
+                .unwrap(),
+            0
+        );
+
         device_mut
             .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 0, 0.23))
             .unwrap();
@@ -338,7 +347,7 @@ fn test_number_qubits() {
                 .unwrap()
                 .extract::<usize>()
                 .unwrap(),
-            0
+            2
         );
         assert_eq!(
             device_mut
@@ -346,7 +355,7 @@ fn test_number_qubits() {
                 .unwrap()
                 .extract::<usize>()
                 .unwrap(),
-            0
+            2
         );
 
         device

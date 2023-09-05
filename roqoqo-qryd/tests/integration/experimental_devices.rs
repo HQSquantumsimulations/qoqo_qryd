@@ -248,10 +248,13 @@ fn test_qubit_times() {
 #[test]
 fn test_number_qubits() {
     let mut device = ExperimentalDevice::new();
+
+    assert_eq!(device.number_qubits(), 0);
+
     device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.0, None);
     device.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.0, None);
 
-    assert_eq!(device.number_qubits(), 0);
+    assert_eq!(device.number_qubits(), 2);
 
     device.add_qubit_tweezer_mapping(0, 0).unwrap();
     device.add_qubit_tweezer_mapping(1, 1).unwrap();

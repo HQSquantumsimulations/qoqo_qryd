@@ -638,6 +638,9 @@ impl Device for ExperimentalDevice {
         if let Some(map) = &self.qubit_to_tweezer {
             return map.keys().len();
         }
+        if let Some(max) = self.max_tweezer() {
+            return max + 1;
+        }
         0
     }
 
