@@ -10,10 +10,11 @@
 // express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 
+use bincode::serialize;
 use ndarray::Array2;
 
 use roqoqo::{devices::Device, RoqoqoBackendError};
-use roqoqo_qryd::ExperimentalDevice;
+use roqoqo_qryd::{ExperimentalDevice, PragmaChangeQRydLayout};
 
 use httpmock::MockServer;
 
@@ -317,6 +318,29 @@ fn test_to_generic_device() {
         generic_device.qubit_decoherence_rates(&1),
         Some(Array2::zeros((3, 3).to_owned()))
     );
+}
+
+/// Test ExperimentalDevice change_device() method
+#[test]
+fn test_change_device() {
+    let mut device = ExperimentalDevice::new();
+    device.add_layout("0").unwrap();
+    device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("0".to_string()));
+    device.set_tweezer_single_qubit_gate_time("PauliY", 1, 0.23, Some("0".to_string()));
+    device.set_tweezer_two_qubit_gate_time("CNOT", 2, 3, 0.34, Some("0".to_string()));
+    device.set_tweezer_two_qubit_gate_time("ControlledPauliZ", 1, 2, 0.34, Some("0".to_string()));
+    let pragma_c = PragmaChangeQRydLayout::new(0);
+
+    assert!(device.change_device("Error", &Vec::<u8>::new()).is_err());
+    assert!(device
+        .change_device("PragmaChangeQRydLayout", &Vec::<u8>::new())
+        .is_err());
+    assert_eq!(device.current_layout, "Default");
+
+    assert!(device
+        .change_device("PragmaChangeQRydLayout", &serialize(&pragma_c).unwrap())
+        .is_ok());
+    assert_eq!(device.current_layout, "0");
 }
 
 /// Test ExperimentalDevice from_api() method

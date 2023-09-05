@@ -16,6 +16,7 @@
 //! Provides the devices that are used to execute quantum programs with the QRyd backend.
 //! QRyd devices can be physical hardware or simulators.
 
+use bincode::deserialize;
 use itertools::Itertools;
 use ndarray::Array2;
 use std::{collections::HashMap, env};
@@ -24,6 +25,8 @@ use roqoqo::{
     devices::{Device, GenericDevice},
     RoqoqoBackendError,
 };
+
+use crate::{PragmaChangeQRydLayout, PragmaDeactivateQRydQubit};
 
 /// Experimental Device
 ///
@@ -654,6 +657,40 @@ impl Device for ExperimentalDevice {
             return edges;
         }
         vec![]
+    }
+
+    fn change_device(&mut self, hqslang: &str, operation: &[u8]) -> Result<(), RoqoqoBackendError> {
+        match hqslang {
+            "PragmaChangeQRydLayout" => {
+                let de_change_layout: Result<PragmaChangeQRydLayout, Box<bincode::ErrorKind>> =
+                    deserialize(operation);
+                match de_change_layout {
+                    Ok(pragma) => self.switch_layout(&pragma.new_layout().to_string()), // PROBLEM: PragmaChangeQRydLayout indexes by usize, not str
+                    Err(_) => Err(RoqoqoBackendError::GenericError {
+                        msg: "Wrapped operation not supported in ExperimentalDevice".to_string(),
+                    }),
+                }
+            }
+            "PragmaShiftQRydQubit" => Err(RoqoqoBackendError::GenericError {
+                msg: "Operation not supported in ExperimentalDevice".to_string(),
+            }),
+            "PragmaDeactivateQRydQubit" => {
+                let de_change_layout: Result<PragmaDeactivateQRydQubit, Box<bincode::ErrorKind>> =
+                    deserialize(operation);
+                match de_change_layout {
+                    Ok(pragma) => {
+                        self.deactivate_qubit(pragma.qubit)?;
+                        Ok(())
+                    }
+                    Err(_) => Err(RoqoqoBackendError::GenericError {
+                        msg: "Wrapped operation not supported in ExperimentalDevice".to_string(),
+                    }),
+                }
+            }
+            _ => Err(RoqoqoBackendError::GenericError {
+                msg: "Wrapped operation not supported in ExperimentalDevice".to_string(),
+            }),
+        }
     }
 
     /// Turns Device into GenericDevice.
