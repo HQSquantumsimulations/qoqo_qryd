@@ -11,17 +11,17 @@
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=2ed17a75"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="qoqo_qryd.APIBackend" href="qoqo_qryd.APIBackend.html" />
-    <link rel="prev" title="qoqo_qryd.pragma_operations.PragmaShiftQRydQubit" href="generated/qoqo_qryd.pragma_operations.PragmaShiftQRydQubit.html" /> 
+    <link rel="prev" title="qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit" href="generated/qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -99,10 +99,10 @@
            <div itemprop="articleBody">
              
   <section id="qoqo-qryd-simulatorbackend">
-<h1>qoqo_qryd.SimulatorBackend<a class="headerlink" href="#qoqo-qryd-simulatorbackend" title="Permalink to this heading"></a></h1>
+<h1>qoqo_qryd.SimulatorBackend<a class="headerlink" href="#qoqo-qryd-simulatorbackend" title="Link to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="qoqo_qryd.SimulatorBackend">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.</span></span><span class="sig-name descname"><span class="pre">SimulatorBackend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.SimulatorBackend" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.</span></span><span class="sig-name descname"><span class="pre">SimulatorBackend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.SimulatorBackend" title="Link to this definition"></a></dt>
 <dd><p>Local simulator backend for Rydberg devices.</p>
 <p>The QRyd simulator backend applies each operation in a circuit to a quantum register.
 The underlying simulator uses the QuEST library.
@@ -123,7 +123,7 @@ and running QuantumPrograms on simulated QRyd devices.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.SimulatorBackend.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.SimulatorBackend.__init__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.SimulatorBackend.__init__" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <p class="rubric">Methods</p>
@@ -157,7 +157,7 @@ and running QuantumPrograms on simulated QRyd devices.</p>
 </table>
 <dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.SimulatorBackend.from_bincode">
-<span class="sig-name descname"><span class="pre">from_bincode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.SimulatorBackend.from_bincode" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">from_bincode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.SimulatorBackend.from_bincode" title="Link to this definition"></a></dt>
 <dd><p>Convert the bincode representation of the SimulatorBackend to a SimulatorBackend using the bincode crate.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -180,7 +180,7 @@ and running QuantumPrograms on simulated QRyd devices.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.SimulatorBackend.from_json">
-<span class="sig-name descname"><span class="pre">from_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.SimulatorBackend.from_json" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">from_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.SimulatorBackend.from_json" title="Link to this definition"></a></dt>
 <dd><p>Convert the json representation of a SimulatorBackend to a SimulatorBackend.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -200,7 +200,7 @@ and running QuantumPrograms on simulated QRyd devices.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.SimulatorBackend.run_circuit">
-<span class="sig-name descname"><span class="pre">run_circuit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.SimulatorBackend.run_circuit" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">run_circuit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.SimulatorBackend.run_circuit" title="Link to this definition"></a></dt>
 <dd><p>Run a circuit with the QRyd backend.</p>
 <p>A circuit is passed to the backend and executed.
 During execution values are written to and read from classical registers
@@ -230,7 +230,7 @@ The results of each repetition are concatenated in OutputRegisters
 
 <dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.SimulatorBackend.run_measurement">
-<span class="sig-name descname"><span class="pre">run_measurement</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.SimulatorBackend.run_measurement" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">run_measurement</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.SimulatorBackend.run_measurement" title="Link to this definition"></a></dt>
 <dd><p>Evaluates expectation values of a measurement with the backend.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -253,7 +253,7 @@ The results of each repetition are concatenated in OutputRegisters
 
 <dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.SimulatorBackend.run_measurement_registers">
-<span class="sig-name descname"><span class="pre">run_measurement_registers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.SimulatorBackend.run_measurement_registers" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">run_measurement_registers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.SimulatorBackend.run_measurement_registers" title="Link to this definition"></a></dt>
 <dd><p>Run all circuits corresponding to one measurement with the QRyd backend.</p>
 <p>An expectation value measurement in general involves several circuits.
 Each circuit is passed to the backend and executed separately.
@@ -284,7 +284,7 @@ The results of each repetition are concatenated in OutputRegisters
 
 <dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.SimulatorBackend.to_bincode">
-<span class="sig-name descname"><span class="pre">to_bincode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.SimulatorBackend.to_bincode" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">to_bincode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.SimulatorBackend.to_bincode" title="Link to this definition"></a></dt>
 <dd><p>Return the bincode representation of the SimulatorBackend using the bincode crate.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -301,7 +301,7 @@ The results of each repetition are concatenated in OutputRegisters
 
 <dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.SimulatorBackend.to_json">
-<span class="sig-name descname"><span class="pre">to_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.SimulatorBackend.to_json" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">to_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.SimulatorBackend.to_json" title="Link to this definition"></a></dt>
 <dd><p>Return the json representation of the SimulatorBackend.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -324,7 +324,7 @@ The results of each repetition are concatenated in OutputRegisters
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="generated/qoqo_qryd.pragma_operations.PragmaShiftQRydQubit.html" class="btn btn-neutral float-left" title="qoqo_qryd.pragma_operations.PragmaShiftQRydQubit" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="generated/qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit.html" class="btn btn-neutral float-left" title="qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="qoqo_qryd.APIBackend.html" class="btn btn-neutral float-right" title="qoqo_qryd.APIBackend" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

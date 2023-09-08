@@ -18,6 +18,7 @@ qoqo\_qryd.pragma\_operations
    .. autosummary::
    
       PragmaChangeQRydLayout
+      PragmaDeactivateQRydQubit
       PragmaShiftQRydQubit
    
    

@@ -1,0 +1,32 @@
+qoqo\_qryd.pragma\_operations.PragmaDeactivateQRydQubit
+=======================================================
+
+.. currentmodule:: qoqo_qryd.pragma_operations
+
+.. autoclass:: PragmaDeactivateQRydQubit
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~PragmaDeactivateQRydQubit.__init__
+      ~PragmaDeactivateQRydQubit.from_bincode
+      ~PragmaDeactivateQRydQubit.hqslang
+      ~PragmaDeactivateQRydQubit.involved_qubits
+      ~PragmaDeactivateQRydQubit.is_parametrized
+      ~PragmaDeactivateQRydQubit.qubit
+      ~PragmaDeactivateQRydQubit.remap_qubits
+      ~PragmaDeactivateQRydQubit.substitute_parameters
+      ~PragmaDeactivateQRydQubit.tags
+      ~PragmaDeactivateQRydQubit.to_bincode
+      ~PragmaDeactivateQRydQubit.to_pragma_change_device
+   
+   
+
+   
+   
+   
