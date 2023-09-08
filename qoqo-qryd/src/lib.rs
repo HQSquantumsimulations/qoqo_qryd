@@ -51,6 +51,11 @@ pub use qryd_devices::*;
 pub mod pragma_operations;
 pub use pragma_operations::*;
 
+/// QRyd Experimental Devices.
+///
+pub mod experimental_devices;
+pub use experimental_devices::*;
+
 #[cfg(feature = "simulator")]
 pub mod simulator_backend;
 #[cfg(feature = "simulator")]
@@ -83,6 +88,7 @@ pub use api_devices::*;
 ///     Backend
 ///     pragma_operations
 ///     qryd_devices
+///     experimental_devices
 ///
 ///
 #[pymodule]
@@ -93,8 +99,10 @@ fn qoqo_qryd(_py: Python, module: &PyModule) -> PyResult<()> {
     module.add_class::<APIBackendWrapper>()?;
     let wrapper = wrap_pymodule!(qryd_devices::qryd_devices);
     module.add_wrapped(wrapper)?;
-    let wrapper2 = wrap_pymodule!(api_devices::api_devices);
-    module.add_wrapped(wrapper2)?;
+    let wrapper = wrap_pymodule!(api_devices::api_devices);
+    module.add_wrapped(wrapper)?;
+    let wrapper = wrap_pymodule!(experimental_devices::experimental_devices);
+    module.add_wrapped(wrapper)?;
     // Adding nice imports corresponding to maturin example
     let wrapper = wrap_pymodule!(pragma_operations::pragma_operations);
     module.add_wrapped(wrapper)?;
@@ -107,5 +115,9 @@ fn qoqo_qryd(_py: Python, module: &PyModule) -> PyResult<()> {
     )?;
     system_modules.set_item("qoqo_qryd.qryd_devices", module.getattr("qryd_devices")?)?;
     system_modules.set_item("qoqo_qryd.api_devices", module.getattr("api_devices")?)?;
+    system_modules.set_item(
+        "qoqo_qryd.experimental_devices",
+        module.getattr("experimental_devices")?,
+    )?;
     Ok(())
 }

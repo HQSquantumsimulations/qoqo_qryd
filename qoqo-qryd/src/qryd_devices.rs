@@ -12,15 +12,18 @@
 
 use bincode::{deserialize, serialize};
 use numpy::PyReadonlyArray2;
+use std::collections::HashMap;
+
 use pyo3::exceptions::{PyTypeError, PyValueError};
 use pyo3::prelude::*;
 use pyo3::types::PyByteArray;
+
 use qoqo::devices::GenericDeviceWrapper;
 use qoqo::QoqoBackendError;
 use qoqo_calculator_pyo3::convert_into_calculator_float;
 use roqoqo::devices::Device;
+
 use roqoqo_qryd::qryd_devices::{FirstDevice, QRydDevice};
-use std::collections::HashMap;
 
 /// First example of a QRyd quantum device.
 ///
@@ -221,7 +224,7 @@ impl FirstDeviceWrapper {
         theta: f64,
     ) -> PyResult<f64> {
         self.internal
-            .gate_time_controlled_phase(&target, &control, phi, theta)
+            .gate_time_controlled_phase(&control, &target, phi, theta)
             .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))
     }
 

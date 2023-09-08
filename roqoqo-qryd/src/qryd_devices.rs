@@ -15,15 +15,16 @@
 //! Provides the devices that are used to execute quantum programs with the QRyd backend.
 //! QRyd devices can be physical hardware or simulators.
 
-use std::collections::HashMap;
-use std::str::FromStr;
-
-use crate::{phi_theta_relation, PragmaChangeQRydLayout, PragmaShiftQRydQubit};
 use bincode::deserialize;
 use itertools::Itertools;
 use ndarray::Array2;
+use std::collections::HashMap;
+use std::str::FromStr;
+
 use roqoqo::devices::{Device, GenericDevice};
 use roqoqo::RoqoqoBackendError;
+
+use crate::{phi_theta_relation, PragmaChangeQRydLayout, PragmaShiftQRydQubit};
 
 /// Collection of all QRyd devices
 ///
@@ -200,6 +201,7 @@ impl Device for QRydDevice {
         }
     }
 }
+
 impl From<&FirstDevice> for QRydDevice {
     fn from(input: &FirstDevice) -> Self {
         Self::FirstDevice(input.clone())
@@ -248,12 +250,12 @@ pub struct FirstDevice {
 }
 
 impl FirstDevice {
-    /// Create new `First` QRyd device
+    /// Create new `First` QRyd device.
     ///
     /// # Arguments
     ///
-    /// * `number_rows` - The fixed number of rows in device, needs to be the same for all layouts
-    /// * `number_columns` - Fixed number of tweezers in each row, needs to be the same for all layouts
+    /// * `number_rows` - The fixed number of rows in device, needs to be the same for all layouts.
+    /// * `number_columns` - Fixed number of tweezers in each row, needs to be the same for all layouts.
     /// * `qubits_per_row` - Fixed number of occupied tweezer position in each row.
     ///                    At the moment assumes that number of qubits in the traps is fixed. No loading/unloading once device is created
     /// * `row_distance` - Fixed distance between rows.
@@ -421,8 +423,8 @@ impl FirstDevice {
     ///
     pub fn gate_time_controlled_phase(
         &self,
-        target: &usize,
         control: &usize,
+        target: &usize,
         phi: f64,
         theta: f64,
     ) -> Option<f64> {
@@ -432,16 +434,11 @@ impl FirstDevice {
         {
             if let Some(relation_phi) = self.phase_shift_controlled_phase(theta) {
                 if (relation_phi.abs() - phi.abs()).abs() < 0.0001 {
-                    Some(1e-6)
-                } else {
-                    None
+                    return Some(1e-6);
                 }
-            } else {
-                None
             }
-        } else {
-            None
         }
+        None
     }
 
     /// Add a new layout to the device.
@@ -710,6 +707,7 @@ impl Device for FirstDevice {
         // At the moment we hard-code a noise free model
         Some(Array2::zeros((3, 3).to_owned()))
     }
+
     fn number_qubits(&self) -> usize {
         self.qubit_positions.len()
     }

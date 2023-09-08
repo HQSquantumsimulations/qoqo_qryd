@@ -361,7 +361,7 @@ impl QrydEmuSquareDeviceWrapper {
         theta: f64,
     ) -> PyResult<f64> {
         self.internal
-            .gate_time_controlled_phase(&target, &control, phi, theta)
+            .gate_time_controlled_phase(&control, &target, phi, theta)
             .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))
     }
 }
@@ -725,7 +725,7 @@ impl QrydEmuTriangularDeviceWrapper {
         theta: f64,
     ) -> PyResult<f64> {
         self.internal
-            .gate_time_controlled_phase(&target, &control, phi, theta)
+            .gate_time_controlled_phase(&control, &target, phi, theta)
             .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))
     }
 }

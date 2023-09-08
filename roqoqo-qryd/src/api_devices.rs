@@ -437,8 +437,8 @@ impl QrydEmuSquareDevice {
     ///
     pub fn gate_time_controlled_phase(
         &self,
-        target: &usize,
         control: &usize,
+        target: &usize,
         phi: f64,
         theta: f64,
     ) -> Option<f64> {
@@ -875,8 +875,8 @@ impl QrydEmuTriangularDevice {
     ///
     pub fn gate_time_controlled_phase(
         &self,
-        target: &usize,
         control: &usize,
+        target: &usize,
         phi: f64,
         theta: f64,
     ) -> Option<f64> {

@@ -170,3 +170,76 @@ const TAGS_PragmaShiftQRydQubit: &[&str; 3] =
     &["Operation", "PragmaOperation", "PragmaShiftQRydQubit"];
 
 impl roqoqo::operations::SupportedVersion for PragmaShiftQRydQubit {}
+
+/// This PRAGMA Operation deactivates a qubit in a QRyd Experimental device.
+///
+/// In QRyd Experimental devices a quantum state is trapped within an optical tweezer.
+/// This Operation signals the device to drop the quantum state related to the given qubit.
+///
+#[derive(
+    Debug,
+    Clone,
+    PartialEq,
+    Eq,
+    roqoqo_derive::Operate,
+    roqoqo_derive::OperatePragma,
+    serde::Serialize,
+    serde::Deserialize,
+)]
+pub struct PragmaDeactivateQRydQubit {
+    /// The qubit to deactivate.
+    pub qubit: usize,
+}
+
+impl Substitute for PragmaDeactivateQRydQubit {
+    fn substitute_parameters(
+        &self,
+        _calculator: &qoqo_calculator::Calculator,
+    ) -> Result<Self, RoqoqoError> {
+        Ok(self.clone())
+    }
+
+    fn remap_qubits(&self, mapping: &HashMap<usize, usize>) -> Result<Self, RoqoqoError> {
+        if let Some((index, _)) = mapping.iter().next() {
+            Err(RoqoqoError::QubitMappingError { qubit: *index })
+        } else {
+            Ok(self.clone())
+        }
+    }
+}
+
+impl PragmaDeactivateQRydQubit {
+    /// Wrap PragmaDeactivateQRydQubit in PragmaChangeDevice operation
+    ///
+    /// PragmaDeactivateQRydQubit is device specific and can not be directly added to a Circuit.
+    /// Instead it is first wrapped in a PragmaChangeDevice operation that is in turn added
+    /// to the circuit.
+    pub fn to_pragma_change_device(&self) -> Result<PragmaChangeDevice, RoqoqoBackendError> {
+        Ok(PragmaChangeDevice {
+            wrapped_tags: self.tags().iter().map(|s| s.to_string()).collect(),
+            wrapped_hqslang: self.hqslang().to_string(),
+            wrapped_operation: serialize(&self).map_err(|err| {
+                RoqoqoBackendError::GenericError {
+                    msg: format!(
+                        "Error occured during serialisation of PragmaDeactivateQRydQubit {:?}",
+                        err
+                    ),
+                }
+            })?,
+        })
+    }
+}
+
+// Implementing the InvolveQubits trait for PragmaDeactivateQRydQubit.
+impl InvolveQubits for PragmaDeactivateQRydQubit {
+    /// Lists all involved qubits (here, All).
+    fn involved_qubits(&self) -> InvolvedQubits {
+        InvolvedQubits::All
+    }
+}
+
+#[allow(non_upper_case_globals)]
+const TAGS_PragmaDeactivateQRydQubit: &[&str; 3] =
+    &["Operation", "PragmaOperation", "PragmaDeactivateQRydQubit"];
+
+impl roqoqo::operations::SupportedVersion for PragmaDeactivateQRydQubit {}

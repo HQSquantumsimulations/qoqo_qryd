@@ -15,7 +15,9 @@
 use pyo3::prelude::*;
 use pyo3::Python;
 use qoqo::operations::PragmaChangeDeviceWrapper;
-use qoqo_qryd::pragma_operations::{PragmaChangeQRydLayoutWrapper, PragmaShiftQRydQubitWrapper};
+use qoqo_qryd::pragma_operations::{
+    PragmaChangeQRydLayoutWrapper, PragmaDeactivateQRydQubitWrapper, PragmaShiftQRydQubitWrapper,
+};
 use std::collections::{HashMap, HashSet};
 use std::usize;
 
@@ -39,11 +41,18 @@ fn new_pragma_shift(py: Python, qubit: usize) -> &PyCell<PragmaShiftQRydQubitWra
         .unwrap()
 }
 
+fn new_pragma_deactivate(py: Python, qubit: usize) -> &PyCell<PragmaDeactivateQRydQubitWrapper> {
+    let operation_type = py.get_type::<PragmaDeactivateQRydQubitWrapper>();
+    operation_type
+        .call1((qubit,))
+        .unwrap()
+        .downcast::<PyCell<PragmaDeactivateQRydQubitWrapper>>()
+        .unwrap()
+}
+
 #[test]
 fn test_pyo3_new_change_layout() {
     pyo3::prepare_freethreaded_python();
-    // let gil = pyo3::Python::acquire_gil();
-    // let py = gil.python();
     Python::with_gil(|py| {
         let operation = py.get_type::<PragmaChangeQRydLayoutWrapper>();
         let new_op = operation
@@ -126,6 +135,48 @@ fn test_pyo3_new_shift_positions() {
 }
 
 #[test]
+fn test_pyo3_new_deactivate_qubit() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let operation = py.get_type::<PragmaDeactivateQRydQubitWrapper>();
+        let new_op = operation
+            .call1((0,))
+            .unwrap()
+            .downcast::<PyCell<PragmaDeactivateQRydQubitWrapper>>()
+            .unwrap();
+
+        let comparison_copy = bool::extract(
+            new_op
+                .call_method1("__eq__", (new_pragma_deactivate(py, 0),))
+                .unwrap(),
+        )
+        .unwrap();
+        assert!(comparison_copy);
+
+        let pragma_wrapper = new_op
+            .extract::<PragmaDeactivateQRydQubitWrapper>()
+            .unwrap();
+        let new_op_diff = operation
+            .call1((1,))
+            .unwrap()
+            .downcast::<PyCell<PragmaDeactivateQRydQubitWrapper>>()
+            .unwrap();
+        let pragma_wrapper_diff = new_op_diff
+            .extract::<PragmaDeactivateQRydQubitWrapper>()
+            .unwrap();
+        let helper_ne: bool = pragma_wrapper_diff != pragma_wrapper;
+        assert!(helper_ne);
+        let helper_eq: bool = pragma_wrapper == pragma_wrapper.clone();
+        assert!(helper_eq);
+
+        assert_eq!(
+            format!("{:?}", pragma_wrapper),
+            "PragmaDeactivateQRydQubitWrapper { internal: PragmaDeactivateQRydQubit { qubit: 0 } }"
+        );
+    })
+}
+
+#[test]
 fn test_change_layout_new() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
@@ -181,12 +232,39 @@ fn test_shift_positions_to_change_device() {
     });
 }
 
-/// Test involved_qubits function for Pragmas with All
+#[test]
+fn test_deactivate_qubit_new() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let operation = new_pragma_deactivate(py, 0);
+        let new_layout: usize = operation.call_method0("qubit").unwrap().extract().unwrap();
+        assert_eq!(new_layout, 0);
+    });
+}
+
+#[test]
+fn test_deactivate_qubit_to_change_device() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let operation = new_pragma_deactivate(py, 0);
+        let pragma_change_device = operation
+            .call_method0("to_pragma_change_device")
+            .unwrap()
+            .downcast::<PyCell<PragmaChangeDeviceWrapper>>();
+        assert!(pragma_change_device.is_ok())
+    });
+}
+
+/// Test involved_qubits function for Pragmas
 #[test]
 fn test_pragmas_involved_qubits() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let ops: [&PyAny; 2] = [new_pragma_layout(py, 0), new_pragma_shift(py, 0)];
+        let ops: [&PyAny; 3] = [
+            new_pragma_layout(py, 0),
+            new_pragma_shift(py, 0),
+            new_pragma_deactivate(py, 0),
+        ];
         for operation in ops {
             let to_involved = operation.call_method0("involved_qubits").unwrap();
             let involved_op: HashSet<&str> = HashSet::extract(to_involved).unwrap();
@@ -197,12 +275,16 @@ fn test_pragmas_involved_qubits() {
     });
 }
 
-/// Test to_ and from_bincode functions of Circuit
+/// Test to_ and from_bincode functions for Pragmas
 #[test]
 fn test_to_from_bincode() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let ops: [&PyAny; 2] = [new_pragma_layout(py, 0), new_pragma_shift(py, 0)];
+        let ops: [&PyAny; 3] = [
+            new_pragma_layout(py, 0),
+            new_pragma_shift(py, 0),
+            new_pragma_deactivate(py, 0),
+        ];
         for operation in ops {
             let serialised = operation.call_method0("to_bincode").unwrap();
             let deserialised = operation
@@ -226,16 +308,24 @@ fn test_to_from_bincode() {
     });
 }
 
-/// Test involved_qubits function for Pragmas with All
+/// Test tags function for Pragmas
 #[test]
 fn test_pragmas_tags() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let ops: [&PyAny; 2] = [new_pragma_layout(py, 0), new_pragma_shift(py, 0)];
-        for (operation, name) in ops
-            .iter()
-            .zip(["PragmaChangeQRydLayout", "PragmaShiftQRydQubit"].iter())
-        {
+        let ops: [&PyAny; 3] = [
+            new_pragma_layout(py, 0),
+            new_pragma_shift(py, 0),
+            new_pragma_deactivate(py, 0),
+        ];
+        for (operation, name) in ops.iter().zip(
+            [
+                "PragmaChangeQRydLayout",
+                "PragmaShiftQRydQubit",
+                "PragmaDeactivateQRydQubit",
+            ]
+            .iter(),
+        ) {
             let to_tag = operation.call_method0("tags").unwrap();
             let tags_op: &Vec<&str> = &Vec::extract(to_tag).unwrap();
             let tags_param: &[&str] = &["Operation", "PragmaOperation", name];
@@ -244,16 +334,24 @@ fn test_pragmas_tags() {
     });
 }
 
-/// Test involved_qubits function for Pragmas with All
+/// Test hqslang function for Pragmas
 #[test]
 fn test_pragmas_hqslang() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let ops: [&PyAny; 2] = [new_pragma_layout(py, 0), new_pragma_shift(py, 0)];
-        for (operation, name) in ops
-            .iter()
-            .zip(["PragmaChangeQRydLayout", "PragmaShiftQRydQubit"].iter())
-        {
+        let ops: [&PyAny; 3] = [
+            new_pragma_layout(py, 0),
+            new_pragma_shift(py, 0),
+            new_pragma_deactivate(py, 0),
+        ];
+        for (operation, name) in ops.iter().zip(
+            [
+                "PragmaChangeQRydLayout",
+                "PragmaShiftQRydQubit",
+                "PragmaDeactivateQRydQubit",
+            ]
+            .iter(),
+        ) {
             let hqslang_op: String =
                 String::extract(operation.call_method0("hqslang").unwrap()).unwrap();
             assert_eq!(hqslang_op, name.to_string());
@@ -261,24 +359,32 @@ fn test_pragmas_hqslang() {
     });
 }
 
-/// Test involved_qubits function for Pragmas with All
+/// Test is_parametrized function for Pragmas
 #[test]
 fn test_pragmas_is_parametrised() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let ops: [&PyAny; 2] = [new_pragma_layout(py, 0), new_pragma_shift(py, 0)];
+        let ops: [&PyAny; 3] = [
+            new_pragma_layout(py, 0),
+            new_pragma_shift(py, 0),
+            new_pragma_deactivate(py, 0),
+        ];
         for operation in ops {
             assert!(!bool::extract(operation.call_method0("is_parametrized").unwrap()).unwrap());
         }
     });
 }
 
-/// Test involved_qubits function for Pragmas with All
+/// Test substitute_parameters function for Pragmas
 #[test]
 fn test_pragmas_substitute_parameters() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let ops: [&PyAny; 2] = [new_pragma_layout(py, 0), new_pragma_shift(py, 0)];
+        let ops: [&PyAny; 3] = [
+            new_pragma_layout(py, 0),
+            new_pragma_shift(py, 0),
+            new_pragma_deactivate(py, 0),
+        ];
         for operation in ops {
             let mut substitution_dict: HashMap<&str, f64> = HashMap::new();
             substitution_dict.insert("test", 1.0);
@@ -293,9 +399,9 @@ fn test_pragmas_substitute_parameters() {
     });
 }
 
-/// Test involved_qubits function for Pragmas with All
+/// Test remap_qubits function for PragmaShiftQRydQubit
 #[test]
-fn test_pragmas_remap_qubits() {
+fn test_pragmas_remap_qubits_shift() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let operation = new_pragma_shift(py, 0);
@@ -313,6 +419,7 @@ fn test_pragmas_remap_qubits() {
     });
 }
 
+/// Test remap_qubits function for PragmaChangeQRydLayout
 #[test]
 fn test_pragmas_remap_qubits_change_layout() {
     pyo3::prepare_freethreaded_python();
@@ -334,12 +441,38 @@ fn test_pragmas_remap_qubits_change_layout() {
     });
 }
 
-/// Test involved_qubits function for Pragmas with All
+/// Test remap_qubits function for PragmaDeactivateQRydQubit
+#[test]
+fn test_pragmas_remap_qubits_deactivate_qubit() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let operation = new_pragma_deactivate(py, 0);
+        let qubit_mapping: HashMap<usize, usize> = HashMap::new();
+
+        let remapped_op = operation
+            .call_method1("remap_qubits", (qubit_mapping,))
+            .unwrap();
+        let comparison =
+            bool::extract(remapped_op.call_method1("__eq__", (operation,)).unwrap()).unwrap();
+        assert!(comparison);
+        let mut qubit_mapping: HashMap<usize, usize> = HashMap::new();
+        qubit_mapping.insert(0, 2);
+        qubit_mapping.insert(2, 0);
+        let remapped_op = operation.call_method1("remap_qubits", (qubit_mapping,));
+        assert!(remapped_op.is_err());
+    });
+}
+
+/// Test __copy__, __deepcopy__ functions for Pragmas
 #[test]
 fn test_pragmas_copy_deepcopy() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let ops: [&PyAny; 2] = [new_pragma_layout(py, 0), new_pragma_shift(py, 0)];
+        let ops: [&PyAny; 3] = [
+            new_pragma_layout(py, 0),
+            new_pragma_shift(py, 0),
+            new_pragma_deactivate(py, 0),
+        ];
         for operation in ops {
             let copy_op = operation.call_method0("__copy__").unwrap();
             let deepcopy_op = operation.call_method1("__deepcopy__", ("",)).unwrap();
@@ -354,16 +487,21 @@ fn test_pragmas_copy_deepcopy() {
     });
 }
 
-/// Test involved_qubits function for Pragmas with All
+/// Test __format__,__repr__ functions for Pragmas
 #[test]
 fn test_pragmas_format_repr() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let ops: [&PyAny; 2] = [new_pragma_layout(py, 0), new_pragma_shift(py, 0)];
+        let ops: [&PyAny; 3] = [
+            new_pragma_layout(py, 0),
+            new_pragma_shift(py, 0),
+            new_pragma_deactivate(py, 0),
+        ];
         for (operation, format_repr) in ops.iter().zip(
             [
                 "PragmaChangeQRydLayout { new_layout: 0 }",
                 "PragmaShiftQRydQubit { new_positions: {0: (0, 1)} }",
+                "PragmaDeactivateQRydQubit { qubit: 0 }",
             ]
             .iter(),
         ) {
@@ -377,14 +515,15 @@ fn test_pragmas_format_repr() {
     });
 }
 
-/// Test involved_qubits function for Pragmas with All
+/// Test __eq__,__ne__ functions for Pragmas
 #[test]
 fn test_pragmas_richcmp() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let ops: [(&PyAny, &PyAny); 2] = [
+        let ops: [(&PyAny, &PyAny); 3] = [
             (new_pragma_layout(py, 0), new_pragma_layout(py, 1)),
             (new_pragma_shift(py, 0), new_pragma_shift(py, 1)),
+            (new_pragma_deactivate(py, 0), new_pragma_deactivate(py, 1)),
         ];
         for (operation_one, operation_two) in ops {
             let comparison = bool::extract(
