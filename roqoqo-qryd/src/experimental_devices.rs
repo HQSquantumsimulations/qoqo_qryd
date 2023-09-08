@@ -47,6 +47,8 @@ pub struct ExperimentalDevice {
 /// Tweezers information relative to a Layout
 ///
 #[derive(Debug, Default, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(from = "TweezerLayoutInfoSerialize")]
+#[serde(into = "TweezerLayoutInfoSerialize")]
 pub struct TweezerLayoutInfo {
     /// Maps a single-qubit gate name to a tweezer -> time mapping
     pub tweezer_single_qubit_gate_times: HashMap<String, HashMap<usize, f64>>,
@@ -56,6 +58,85 @@ pub struct TweezerLayoutInfo {
     pub tweezer_three_qubit_gate_times: HashMap<String, HashMap<(usize, usize, usize), f64>>,
     /// Maps a multi-qubit gate name to a Vec<tweezer> -> time mapping
     pub tweezer_multi_qubit_gate_times: HashMap<String, HashMap<Vec<usize>, f64>>,
+}
+
+#[derive(Debug, Clone, PartialEq, serde::Deserialize, serde::Serialize)]
+struct TweezerLayoutInfoSerialize {
+    /// Maps a single-qubit gate name to a tweezer -> time mapping
+    tweezer_single_qubit_gate_times: Vec<(String, SingleTweezerTimes)>,
+    /// Maps a two-qubit gate name to a (tweezer, tweezer) -> time mapping
+    tweezer_two_qubit_gate_times: Vec<(String, TwoTweezersTimes)>,
+    /// Maps a three-qubit gate name to a (tweezer, tweezer, tweezer) -> time mapping
+    tweezer_three_qubit_gate_times: Vec<(String, ThreeTweezersTimes)>,
+    /// Maps a multi-qubit gate name to a Vec<tweezer> -> time mapping
+    tweezer_multi_qubit_gate_times: Vec<(String, MultiTweezersTimes)>,
+}
+type SingleTweezerTimes = Vec<(usize, f64)>;
+type TwoTweezersTimes = Vec<((usize, usize), f64)>;
+type ThreeTweezersTimes = Vec<((usize, usize, usize), f64)>;
+type MultiTweezersTimes = Vec<(Vec<usize>, f64)>;
+
+impl From<TweezerLayoutInfoSerialize> for TweezerLayoutInfo {
+    fn from(info: TweezerLayoutInfoSerialize) -> Self {
+        let tweezer_single_qubit_gate_times: HashMap<String, HashMap<usize, f64>> = info
+            .tweezer_single_qubit_gate_times
+            .into_iter()
+            .map(|(k, v)| (k, v.into_iter().map(|(i_k, i_v)| (i_k, i_v)).collect()))
+            .collect();
+        let tweezer_two_qubit_gate_times: HashMap<String, HashMap<(usize, usize), f64>> = info
+            .tweezer_two_qubit_gate_times
+            .into_iter()
+            .map(|(k, v)| (k, v.into_iter().map(|(i_k, i_v)| (i_k, i_v)).collect()))
+            .collect();
+        let tweezer_three_qubit_gate_times: HashMap<String, HashMap<(usize, usize, usize), f64>> =
+            info.tweezer_three_qubit_gate_times
+                .into_iter()
+                .map(|(k, v)| (k, v.into_iter().map(|(i_k, i_v)| (i_k, i_v)).collect()))
+                .collect();
+        let tweezer_multi_qubit_gate_times: HashMap<String, HashMap<Vec<usize>, f64>> = info
+            .tweezer_multi_qubit_gate_times
+            .into_iter()
+            .map(|(k, v)| (k, v.into_iter().map(|(i_k, i_v)| (i_k, i_v)).collect()))
+            .collect();
+
+        Self {
+            tweezer_single_qubit_gate_times,
+            tweezer_two_qubit_gate_times,
+            tweezer_three_qubit_gate_times,
+            tweezer_multi_qubit_gate_times,
+        }
+    }
+}
+
+impl From<TweezerLayoutInfo> for TweezerLayoutInfoSerialize {
+    fn from(info: TweezerLayoutInfo) -> Self {
+        let tweezer_single_qubit_gate_times: Vec<(String, SingleTweezerTimes)> = info
+            .tweezer_single_qubit_gate_times
+            .into_iter()
+            .map(|(k, v)| (k, v.into_iter().map(|(i_k, i_v)| (i_k, i_v)).collect()))
+            .collect();
+        let tweezer_two_qubit_gate_times: Vec<(String, TwoTweezersTimes)> = info
+            .tweezer_two_qubit_gate_times
+            .into_iter()
+            .map(|(k, v)| (k, v.into_iter().map(|(i_k, i_v)| (i_k, i_v)).collect()))
+            .collect();
+        let tweezer_three_qubit_gate_times: Vec<(String, ThreeTweezersTimes)> = info
+            .tweezer_three_qubit_gate_times
+            .into_iter()
+            .map(|(k, v)| (k, v.into_iter().map(|(i_k, i_v)| (i_k, i_v)).collect()))
+            .collect();
+        let tweezer_multi_qubit_gate_times: Vec<(String, MultiTweezersTimes)> = info
+            .tweezer_multi_qubit_gate_times
+            .into_iter()
+            .map(|(k, v)| (k, v.into_iter().map(|(i_k, i_v)| (i_k, i_v)).collect()))
+            .collect();
+        Self {
+            tweezer_single_qubit_gate_times,
+            tweezer_two_qubit_gate_times,
+            tweezer_three_qubit_gate_times,
+            tweezer_multi_qubit_gate_times,
+        }
+    }
 }
 
 impl ExperimentalDevice {
