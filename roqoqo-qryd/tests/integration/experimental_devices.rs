@@ -14,14 +14,14 @@ use bincode::serialize;
 use ndarray::Array2;
 
 use roqoqo::{devices::Device, RoqoqoBackendError};
-use roqoqo_qryd::{ExperimentalDevice, PragmaChangeQRydLayout};
+use roqoqo_qryd::{phi_theta_relation, ExperimentalDevice, PragmaChangeQRydLayout};
 
 use httpmock::MockServer;
 
 /// Test ExperimentalDevice new()
 #[test]
 fn test_new() {
-    let device = ExperimentalDevice::new();
+    let device = ExperimentalDevice::new(None, None);
 
     assert_eq!(device.current_layout, "Default");
     assert!(device.qubit_to_tweezer.is_none());
@@ -32,7 +32,7 @@ fn test_new() {
 // Test ExperimentalDevice add_layout(), switch_layout() methods
 #[test]
 fn test_layouts() {
-    let mut device = ExperimentalDevice::new();
+    let mut device = ExperimentalDevice::new(None, None);
 
     assert!(device.available_layouts().contains(&"Default"));
 
@@ -173,7 +173,7 @@ fn test_layouts() {
 // Test ExperimentalDevice add_qubit_tweezer_mapping(), get_tweezer_from_qubit() methods
 #[test]
 fn test_qubit_tweezer_mapping() {
-    let mut device = ExperimentalDevice::new();
+    let mut device = ExperimentalDevice::new(None, None);
 
     assert!(device.add_qubit_tweezer_mapping(0, 0).is_err());
     assert!(device.get_tweezer_from_qubit(&0).is_err());
@@ -191,7 +191,7 @@ fn test_qubit_tweezer_mapping() {
 /// Test ExperimentalDevice deactivate_qubit()
 #[test]
 fn test_deactivate_qubit() {
-    let mut device = ExperimentalDevice::new();
+    let mut device = ExperimentalDevice::new(None, None);
 
     assert!(device.deactivate_qubit(0).is_err());
 
@@ -205,7 +205,7 @@ fn test_deactivate_qubit() {
 /// Test ExperimentalDevice ..._qubit_gate_time() methods
 #[test]
 fn test_qubit_times() {
-    let mut device = ExperimentalDevice::new();
+    let mut device = ExperimentalDevice::new(None, None);
 
     assert!(device.single_qubit_gate_time("PauliX", &0).is_none());
 
@@ -247,7 +247,7 @@ fn test_qubit_times() {
 /// Test ExperimentalDevice number_qubits() method
 #[test]
 fn test_number_qubits() {
-    let mut device = ExperimentalDevice::new();
+    let mut device = ExperimentalDevice::new(None, None);
 
     assert_eq!(device.number_qubits(), 0);
 
@@ -265,7 +265,7 @@ fn test_number_qubits() {
 /// Test ExperimentalDevice to_generic_device() method method
 #[test]
 fn test_to_generic_device() {
-    let mut device = ExperimentalDevice::new();
+    let mut device = ExperimentalDevice::new(None, None);
     device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None);
     device.set_tweezer_single_qubit_gate_time("PauliY", 1, 0.23, None);
     device.set_tweezer_two_qubit_gate_time("CNOT", 2, 3, 0.34, None);
@@ -326,7 +326,7 @@ fn test_to_generic_device() {
 /// Test ExperimentalDevice change_device() method
 #[test]
 fn test_change_device() {
-    let mut device = ExperimentalDevice::new();
+    let mut device = ExperimentalDevice::new(None, None);
     device.add_layout("0").unwrap();
     device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("0".to_string()));
     device.set_tweezer_single_qubit_gate_time("PauliY", 1, 0.23, Some("0".to_string()));
@@ -349,7 +349,7 @@ fn test_change_device() {
 /// Test ExperimentalDevice from_api() method
 #[test]
 fn test_from_api() {
-    let mut returned_device_default = ExperimentalDevice::new();
+    let mut returned_device_default = ExperimentalDevice::new(None, None);
     returned_device_default.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None);
     let server = MockServer::start();
     let mut mock = server.mock(|when, then| {
@@ -379,4 +379,59 @@ fn test_from_api() {
             msg: format!("Request to server failed with HTTP status code {:?}.", 400),
         }
     );
+}
+
+/// Test ExperimentalDevice phase_shift_controlled_...() and gate_time_controlled_...()  methods
+#[test]
+fn test_phi_theta_relation() {
+    let mut device = ExperimentalDevice::new(None, None);
+    let device_f = ExperimentalDevice::new(Some(2.13.to_string()), Some(2.15.to_string()));
+
+    assert_eq!(
+        device.phase_shift_controlled_z().unwrap(),
+        phi_theta_relation("DefaultRelation", std::f64::consts::PI).unwrap()
+    );
+    assert_eq!(
+        device.phase_shift_controlled_phase(1.2).unwrap(),
+        phi_theta_relation("DefaultRelation", 1.2).unwrap()
+    );
+    assert_eq!(device_f.phase_shift_controlled_z(), Some(2.13));
+    assert_eq!(device_f.phase_shift_controlled_phase(0.3), Some(2.15));
+
+    assert!(device.gate_time_controlled_z(&0, &1, 1.4).is_none());
+    assert!(device
+        .gate_time_controlled_phase(&0, &1, 1.4, 2.4)
+        .is_none());
+    assert!(device.gate_time_controlled_z(&0, &7, 1.4).is_none());
+    assert!(device
+        .gate_time_controlled_phase(&0, &7, 1.4, 2.3)
+        .is_none());
+
+    device.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledZ", 0, 1, 0.23, None);
+    device.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 0, 1, 0.23, None);
+    device.add_qubit_tweezer_mapping(0, 0).unwrap();
+    device.add_qubit_tweezer_mapping(1, 1).unwrap();
+
+    assert!(device
+        .gate_time_controlled_z(&0, &1, device.phase_shift_controlled_z().unwrap())
+        .is_some());
+    assert!(device
+        .gate_time_controlled_z(&0, &7, device.phase_shift_controlled_z().unwrap())
+        .is_none());
+    assert!(device
+        .gate_time_controlled_phase(
+            &0,
+            &1,
+            device.phase_shift_controlled_phase(0.1).unwrap(),
+            0.1
+        )
+        .is_some());
+    assert!(device
+        .gate_time_controlled_phase(
+            &0,
+            &7,
+            device.phase_shift_controlled_phase(0.1).unwrap(),
+            0.1
+        )
+        .is_none());
 }

@@ -14,8 +14,11 @@
 
 use pyo3::{prelude::*, types::PyDict};
 
-use qoqo_qryd::{ExperimentalDeviceWrapper, ExperimentalMutableDeviceWrapper};
-use roqoqo_qryd::ExperimentalDevice;
+use qoqo_qryd::{
+    experimental_devices::convert_into_device, ExperimentalDeviceWrapper,
+    ExperimentalMutableDeviceWrapper,
+};
+use roqoqo_qryd::{phi_theta_relation, ExperimentalDevice};
 
 use httpmock::MockServer;
 
@@ -38,7 +41,7 @@ fn test_new() {
 #[test]
 fn test_layouts() {
     // Setup fake preconfigured device
-    let mut exp = ExperimentalDevice::new();
+    let mut exp = ExperimentalDevice::new(None, None);
     exp.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None);
     exp.add_qubit_tweezer_mapping(0, 0).unwrap();
     exp.add_layout("OtherLayout").unwrap();
@@ -117,7 +120,7 @@ fn test_layouts() {
 #[test]
 fn test_qubit_tweezer_mapping() {
     // Setup fake preconfigured device
-    let mut exp = ExperimentalDevice::new();
+    let mut exp = ExperimentalDevice::new(None, None);
     exp.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.23, None);
     let fake_api_device = ExperimentalDeviceWrapper { internal: exp };
     pyo3::prepare_freethreaded_python();
@@ -149,7 +152,7 @@ fn test_qubit_tweezer_mapping() {
 #[test]
 fn test_deactivate_qubit() {
     // Setup fake preconfigured device
-    let mut exp = ExperimentalDevice::new();
+    let mut exp = ExperimentalDevice::new(None, None);
     exp.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.23, None);
     exp.set_tweezer_single_qubit_gate_time("PauliY", 0, 0.23, None);
     let fake_api_device = ExperimentalDeviceWrapper { internal: exp };
@@ -201,7 +204,7 @@ fn test_deactivate_qubit() {
 #[test]
 fn test_qubit_times() {
     // Setup fake preconfigured device
-    let mut exp = ExperimentalDevice::new();
+    let mut exp = ExperimentalDevice::new(None, None);
     exp.add_layout("OtherLayout").unwrap();
     exp.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("OtherLayout".to_string()));
     exp.set_tweezer_two_qubit_gate_time("CNOT", 0, 1, 0.13, Some("OtherLayout".to_string()));
@@ -314,7 +317,7 @@ fn test_qubit_times() {
 #[test]
 fn test_number_qubits() {
     // Setup fake preconfigured device
-    let mut exp = ExperimentalDevice::new();
+    let mut exp = ExperimentalDevice::new(None, None);
     exp.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None);
     exp.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.23, None);
     let fake_api_device = ExperimentalDeviceWrapper { internal: exp };
@@ -561,17 +564,52 @@ fn test_two_qubit_edges() {
 
         let edges = device.call_method0("two_qubit_edges").unwrap();
         let edges_mut = device_mut.call_method0("two_qubit_edges").unwrap();
-        let edges_wrapper = edges.extract::<Vec<usize>>().unwrap();
-        let edges_wrapper_mut = edges_mut.extract::<Vec<usize>>().unwrap();
+        let edges_wrapper = edges.extract::<Vec<(usize, usize)>>().unwrap();
+        let edges_wrapper_mut = edges_mut.extract::<Vec<(usize, usize)>>().unwrap();
         assert_eq!(edges_wrapper.len(), 0);
         assert_eq!(edges_wrapper_mut.len(), 0);
+
+        device_mut
+            .call_method1(
+                "set_tweezer_two_qubit_gate_time",
+                ("PhaseShiftedControlledPhase", 0, 1, 0.13),
+            )
+            .unwrap();
+        device_mut
+            .call_method1(
+                "set_tweezer_two_qubit_gate_time",
+                ("PhaseShiftedControlledPhase", 1, 2, 0.13),
+            )
+            .unwrap();
+        device_mut
+            .call_method1(
+                "set_tweezer_two_qubit_gate_time",
+                ("PhaseShiftedControlledPhase", 0, 2, 0.13),
+            )
+            .unwrap();
+        device_mut
+            .call_method1("add_qubit_tweezer_mapping", (0, 0))
+            .unwrap();
+        device_mut
+            .call_method1("add_qubit_tweezer_mapping", (1, 1))
+            .unwrap();
+        device_mut
+            .call_method1("add_qubit_tweezer_mapping", (2, 2))
+            .unwrap();
+
+        let new_edges_mut = device_mut
+            .call_method0("two_qubit_edges")
+            .unwrap()
+            .extract::<Vec<(usize, usize)>>()
+            .unwrap();
+        assert_eq!(new_edges_mut.len(), 3);
     });
 }
 
 /// Test from_api of ExperimentalDeviceWrapper
 #[test]
 fn test_from_api() {
-    let mut returned_device_default = ExperimentalDevice::new();
+    let mut returned_device_default = ExperimentalDevice::new(None, None);
     returned_device_default.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None);
     let returned_device_default_wrapper = ExperimentalDeviceWrapper {
         internal: returned_device_default.clone(),
@@ -611,4 +649,108 @@ fn test_from_api() {
             .unwrap();
         assert_eq!(returned_device_json, original_device_json);
     });
+}
+
+/// Test convert_into_device function
+#[test]
+fn test_convert_to_device() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let device_type = py.get_type::<ExperimentalDeviceWrapper>();
+        let device = device_type.call0().unwrap();
+
+        let converted = convert_into_device(device).unwrap();
+        let rust_dev: ExperimentalDevice = ExperimentalDevice::new(None, None);
+
+        assert_eq!(converted, rust_dev);
+    });
+}
+
+/// Test phase_shift_controlled_... and gate_time_controlled_...  methods
+#[test]
+fn test_phi_theta_relations() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let device_type_mut = py.get_type::<ExperimentalMutableDeviceWrapper>();
+        let device_type = py.get_type::<ExperimentalDeviceWrapper>();
+        let device_f = device_type_mut.call1(("2.15", "2.13")).unwrap();
+        let device = device_type.call0().unwrap();
+        let device_mut = device_type_mut.call0().unwrap();
+
+        assert_eq!(
+            device_f
+                .call_method0("phase_shift_controlled_z")
+                .unwrap()
+                .extract::<f64>()
+                .unwrap(),
+            2.15
+        );
+        assert_eq!(
+            device_f
+                .call_method1("phase_shift_controlled_phase", (0.2,))
+                .unwrap()
+                .extract::<f64>()
+                .unwrap(),
+            2.13
+        );
+        assert_eq!(
+            device
+                .call_method0("phase_shift_controlled_z")
+                .unwrap()
+                .extract::<f64>()
+                .unwrap(),
+            phi_theta_relation("DefaultRelation", std::f64::consts::PI).unwrap()
+        );
+        assert_eq!(
+            device
+                .call_method1("phase_shift_controlled_phase", (1.2,))
+                .unwrap()
+                .extract::<f64>()
+                .unwrap(),
+            phi_theta_relation("DefaultRelation", 1.2).unwrap()
+        );
+
+        device_mut
+            .call_method1(
+                "set_tweezer_two_qubit_gate_time",
+                ("PhaseShiftedControlledZ", 0, 1, 0.13),
+            )
+            .unwrap();
+        device_mut
+            .call_method1(
+                "set_tweezer_two_qubit_gate_time",
+                ("PhaseShiftedControlledPhase", 0, 1, 0.13),
+            )
+            .unwrap();
+        device_mut
+            .call_method1("add_qubit_tweezer_mapping", (0, 0))
+            .unwrap();
+        device_mut
+            .call_method1("add_qubit_tweezer_mapping", (1, 1))
+            .unwrap();
+
+        let pscz_phase = device_mut
+            .call_method0("phase_shift_controlled_z")
+            .unwrap()
+            .extract::<f64>()
+            .unwrap();
+        let pscp_phase = device_mut
+            .call_method1("phase_shift_controlled_phase", (1.0,))
+            .unwrap()
+            .extract::<f64>()
+            .unwrap();
+        assert!(pscz_phase.is_finite());
+        assert!(pscp_phase.is_finite());
+
+        let gtcz_err = device_mut.call_method1("gate_time_controlled_z", (0, 1, 0.3));
+        let gtcz_ok = device_mut.call_method1("gate_time_controlled_z", (0, 1, pscz_phase));
+        assert!(gtcz_err.is_err());
+        assert!(gtcz_ok.is_ok());
+
+        let gtcp_err = device_mut.call_method1("gate_time_controlled_phase", (0, 1, 0.3, 0.7));
+        let gtcp_ok =
+            device_mut.call_method1("gate_time_controlled_phase", (0, 1, pscp_phase, 1.0));
+        assert!(gtcp_err.is_err());
+        assert!(gtcp_ok.is_ok());
+    })
 }
