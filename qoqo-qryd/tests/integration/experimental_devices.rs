@@ -471,10 +471,7 @@ fn test_to_from_json() {
         let device_mut = device_type_mut.call0().unwrap();
 
         device_mut
-            .call_method1(
-                "set_tweezer_single_qubit_gate_time",
-                ("RotateZ", 0, 0.23),
-            )
+            .call_method1("set_tweezer_single_qubit_gate_time", ("RotateZ", 0, 0.23))
             .unwrap();
         device_mut
             .call_method1(
