@@ -17,8 +17,10 @@ use pyo3::{
     types::{IntoPyDict, PyByteArray},
 };
 
-use qoqo::devices::GenericDeviceWrapper;
+use qoqo::{devices::GenericDeviceWrapper, QoqoBackendError};
+use qoqo_calculator_pyo3::convert_into_calculator_float;
 use roqoqo::devices::Device;
+
 use roqoqo_qryd::ExperimentalDevice;
 
 /// Experimental Device
@@ -36,12 +38,48 @@ pub struct ExperimentalDeviceWrapper {
 impl ExperimentalDeviceWrapper {
     /// Creates a new ExperimentalDevice instance.
     ///
+    /// Args:
+    ///     controlled_z_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledZ gate.
+    ///     controlled_phase_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledPhase gate.
+    ///
     /// Returns:
     ///     ExperimentalDevice: The new ExperimentalDevice instance.
     #[new]
-    pub fn new() -> Self {
+    #[pyo3(text_signature = "(controlled_z_phase_relation, controlled_phase_phase_relation, /)")]
+    pub fn new(
+        controlled_z_phase_relation: Option<&PyAny>,
+        controlled_phase_phase_relation: Option<&PyAny>,
+    ) -> Self {
+        let czpr = if let Some(value) = controlled_z_phase_relation {
+            if convert_into_calculator_float(value).is_ok() {
+                Some(convert_into_calculator_float(value).unwrap().to_string())
+            } else {
+                Some(
+                    controlled_z_phase_relation
+                        .unwrap()
+                        .extract::<String>()
+                        .unwrap(),
+                )
+            }
+        } else {
+            None
+        };
+        let cppr = if let Some(value) = controlled_phase_phase_relation {
+            if convert_into_calculator_float(value).is_ok() {
+                Some(convert_into_calculator_float(value).unwrap().to_string())
+            } else {
+                Some(
+                    controlled_phase_phase_relation
+                        .unwrap()
+                        .extract::<String>()
+                        .unwrap(),
+                )
+            }
+        } else {
+            None
+        };
         Self {
-            internal: ExperimentalDevice::new(),
+            internal: ExperimentalDevice::new(czpr, cppr),
         }
     }
 
@@ -207,6 +245,78 @@ impl ExperimentalDeviceWrapper {
             .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))
     }
 
+    /// Returns the PhaseShiftedControlledZ phase shift according to the device's relation.
+    ///
+    /// Returns:
+    ///     float: The PhaseShiftedControlledZ phase shift.
+    ///
+    /// Raises:
+    ///     ValueError: Error in relation selection.
+    pub fn phase_shift_controlled_z(&self) -> PyResult<f64> {
+        self.internal
+            .phase_shift_controlled_z()
+            .ok_or_else(|| PyValueError::new_err("Error in relation selection."))
+    }
+
+    /// Returns the PhaseShiftedControlledPhase phase shift according to the device's relation.
+    ///
+    /// Returns:
+    ///     float: The PhaseShiftedControlledPhase phase shift.
+    ///
+    /// Raises:
+    ///     ValueError: Error in relation selection.
+    #[pyo3(text_signature = "(theta, /)")]
+    pub fn phase_shift_controlled_phase(&self, theta: f64) -> PyResult<f64> {
+        self.internal
+            .phase_shift_controlled_phase(theta)
+            .ok_or_else(|| PyValueError::new_err("Error in relation selection."))
+    }
+
+    /// Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.
+    ///
+    /// Args:
+    ///     control (int): The control qubit the gate acts on
+    ///     target (int): The target qubit the gate acts on
+    ///     phi (float): The phi angle to be checked.
+    ///
+    /// Returns:
+    ///     float: The gate time.
+    ///
+    /// Raises:
+    ///     ValueError: The gate is not available on the device.
+    #[pyo3(text_signature = "(control, target, phi, /)")]
+    pub fn gate_time_controlled_z(&self, control: usize, target: usize, phi: f64) -> PyResult<f64> {
+        self.internal
+            .gate_time_controlled_z(&control, &target, phi)
+            .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))
+    }
+
+    /// Returns the gate time of a PhaseShiftedControlledPhase operation with the given qubits and phi and theta angles.
+    ///
+    /// Args:
+    ///     control (int): The control qubit the gate acts on
+    ///     target (int): The target qubit the gate acts on
+    ///     phi (float): The phi angle to be checked.
+    ///     theta (float): The theta angle to be checked.
+    ///
+    /// Returns:
+    ///     float: The gate time.
+    ///
+    /// Raises:
+    ///     ValueError: The gate is not available on the device.
+    #[pyo3(text_signature = "(control, target, phi, theta, /)")]
+    pub fn gate_time_controlled_phase(
+        &self,
+        control: usize,
+        target: usize,
+        phi: f64,
+        theta: f64,
+    ) -> PyResult<f64> {
+        self.internal
+            .gate_time_controlled_phase(&control, &target, phi, theta)
+            .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))
+    }
+
     /// Turns Device into GenericDevice
     ///
     /// Can be used as a generic interface for devices when a boxed dyn trait object cannot be used
@@ -357,12 +467,48 @@ pub struct ExperimentalMutableDeviceWrapper {
 impl ExperimentalMutableDeviceWrapper {
     /// Creates a new ExperimentalMutableDevice instance.
     ///
+    /// Args:
+    ///     controlled_z_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledZ gate.
+    ///     controlled_phase_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledPhase gate.
+    ///
     /// Returns:
     ///     ExperimentalMutableDevice: The new ExperimentalMutableDevice instance.
     #[new]
-    pub fn new() -> Self {
+    #[pyo3(text_signature = "(controlled_z_phase_relation, controlled_phase_phase_relation, /)")]
+    pub fn new(
+        controlled_z_phase_relation: Option<&PyAny>,
+        controlled_phase_phase_relation: Option<&PyAny>,
+    ) -> Self {
+        let czpr = if let Some(value) = controlled_z_phase_relation {
+            if convert_into_calculator_float(value).is_ok() {
+                Some(convert_into_calculator_float(value).unwrap().to_string())
+            } else {
+                Some(
+                    controlled_z_phase_relation
+                        .unwrap()
+                        .extract::<String>()
+                        .unwrap(),
+                )
+            }
+        } else {
+            None
+        };
+        let cppr = if let Some(value) = controlled_phase_phase_relation {
+            if convert_into_calculator_float(value).is_ok() {
+                Some(convert_into_calculator_float(value).unwrap().to_string())
+            } else {
+                Some(
+                    controlled_phase_phase_relation
+                        .unwrap()
+                        .extract::<String>()
+                        .unwrap(),
+                )
+            }
+        } else {
+            None
+        };
         Self {
-            internal: ExperimentalDevice::new(),
+            internal: ExperimentalDevice::new(czpr, cppr),
         }
     }
 
@@ -508,6 +654,78 @@ impl ExperimentalMutableDeviceWrapper {
     pub fn multi_qubit_gate_time(&self, hqslang: &str, qubits: Vec<usize>) -> PyResult<f64> {
         self.internal
             .multi_qubit_gate_time(hqslang, &qubits)
+            .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))
+    }
+
+    /// Returns the PhaseShiftedControlledZ phase shift according to the device's relation.
+    ///
+    /// Returns:
+    ///     float: The PhaseShiftedControlledZ phase shift.
+    ///
+    /// Raises:
+    ///     ValueError: Error in relation selection.
+    pub fn phase_shift_controlled_z(&self) -> PyResult<f64> {
+        self.internal
+            .phase_shift_controlled_z()
+            .ok_or_else(|| PyValueError::new_err("Error in relation selection."))
+    }
+
+    /// Returns the PhaseShiftedControlledPhase phase shift according to the device's relation.
+    ///
+    /// Returns:
+    ///     float: The PhaseShiftedControlledPhase phase shift.
+    ///
+    /// Raises:
+    ///     ValueError: Error in relation selection.
+    #[pyo3(text_signature = "(theta, /)")]
+    pub fn phase_shift_controlled_phase(&self, theta: f64) -> PyResult<f64> {
+        self.internal
+            .phase_shift_controlled_phase(theta)
+            .ok_or_else(|| PyValueError::new_err("Error in relation selection."))
+    }
+
+    /// Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.
+    ///
+    /// Args:
+    ///     control (int): The control qubit the gate acts on
+    ///     target (int): The target qubit the gate acts on
+    ///     phi (float): The phi angle to be checked.
+    ///
+    /// Returns:
+    ///     float: The gate time.
+    ///
+    /// Raises:
+    ///     ValueError: The gate is not available on the device.
+    #[pyo3(text_signature = "(control, target, phi, /)")]
+    pub fn gate_time_controlled_z(&self, control: usize, target: usize, phi: f64) -> PyResult<f64> {
+        self.internal
+            .gate_time_controlled_z(&control, &target, phi)
+            .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))
+    }
+
+    /// Returns the gate time of a PhaseShiftedControlledPhase operation with the given qubits and phi and theta angles.
+    ///
+    /// Args:
+    ///     control (int): The control qubit the gate acts on
+    ///     target (int): The target qubit the gate acts on
+    ///     phi (float): The phi angle to be checked.
+    ///     theta (float): The theta angle to be checked.
+    ///
+    /// Returns:
+    ///     float: The gate time.
+    ///
+    /// Raises:
+    ///     ValueError: The gate is not available on the device.
+    #[pyo3(text_signature = "(control, target, phi, theta, /)")]
+    pub fn gate_time_controlled_phase(
+        &self,
+        control: usize,
+        target: usize,
+        phi: f64,
+        theta: f64,
+    ) -> PyResult<f64> {
+        self.internal
+            .gate_time_controlled_phase(&control, &target, phi, theta)
             .ok_or_else(|| PyValueError::new_err("The gate is not available on the device."))
     }
 
@@ -745,6 +963,19 @@ impl ExperimentalMutableDeviceWrapper {
         self.internal
             .set_tweezer_multi_qubit_gate_time(hqslang, &tweezers, gate_time, layout_name)
     }
+}
+
+/// Convert generic python object to [roqoqo_qryd::ExperimentalDevice].
+///
+/// Fallible conversion of generic python object to [roqoqo_qryd::ExperimentalDevice].
+pub fn convert_into_device(input: &PyAny) -> Result<ExperimentalDevice, QoqoBackendError> {
+    let get_bytes = input
+        .call_method0("to_bincode")
+        .map_err(|_| QoqoBackendError::CannotExtractObject)?;
+    let bytes = get_bytes
+        .extract::<Vec<u8>>()
+        .map_err(|_| QoqoBackendError::CannotExtractObject)?;
+    bincode::deserialize(&bytes[..]).map_err(|_| QoqoBackendError::CannotExtractObject)
 }
 
 /// Experimental devices for the QRyd platform.

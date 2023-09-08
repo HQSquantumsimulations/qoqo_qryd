@@ -19,25 +19,29 @@
 use bincode::deserialize;
 use itertools::Itertools;
 use ndarray::Array2;
-use std::{collections::HashMap, env};
+use std::{collections::HashMap, env, str::FromStr};
 
 use roqoqo::{
     devices::{Device, GenericDevice},
     RoqoqoBackendError,
 };
 
-use crate::{PragmaChangeQRydLayout, PragmaDeactivateQRydQubit};
+use crate::{phi_theta_relation, PragmaChangeQRydLayout, PragmaDeactivateQRydQubit};
 
 /// Experimental Device
 ///
 #[derive(Debug, PartialEq, Default, Clone, serde::Serialize, serde::Deserialize)]
 pub struct ExperimentalDevice {
-    /// Mapping from qubit to tweezer
+    /// Mapping from qubit to tweezer.
     pub qubit_to_tweezer: Option<HashMap<usize, usize>>,
-    /// Register of Layouts
+    /// Register of Layouts.
     pub layout_register: HashMap<String, TweezerLayoutInfo>,
-    /// Current Layout
+    /// Current Layout.
     pub current_layout: String,
+    /// The specific PhaseShiftedControlledZ relation to use.
+    pub controlled_z_phase_relation: String,
+    /// The specific PhaseShiftedControlledPhase relation to use.
+    pub controlled_phase_phase_relation: String,
 }
 
 /// Tweezers information relative to a Layout
@@ -57,18 +61,32 @@ pub struct TweezerLayoutInfo {
 impl ExperimentalDevice {
     /// Creates a new ExperimentalDevice instance.
     ///
+    /// # Arguments
+    ///
+    /// * `controlled_z_phase_relation` - The relation to use for the PhaseShiftedControlledZ gate.
+    ///                                   It can be hardcoded to a specific value if a float is passed in as String.
+    /// * `controlled_phase_phase_relation` - The relation to use for the PhaseShiftedControlledPhase gate.
+    ///
     /// # Returns
     ///
     /// * `ExperimentalDevice` - The new ExperimentalDevice instance.
-    ///
-    pub fn new() -> Self {
+    pub fn new(
+        controlled_z_phase_relation: Option<String>,
+        controlled_phase_phase_relation: Option<String>,
+    ) -> Self {
         let mut layout_register: HashMap<String, TweezerLayoutInfo> = HashMap::new();
         layout_register.insert(String::from("Default"), TweezerLayoutInfo::default());
+        let controlled_z_phase_relation =
+            controlled_z_phase_relation.unwrap_or_else(|| "DefaultRelation".to_string());
+        let controlled_phase_phase_relation =
+            controlled_phase_phase_relation.unwrap_or_else(|| "DefaultRelation".to_string());
 
         ExperimentalDevice {
             qubit_to_tweezer: None,
             layout_register,
             current_layout: String::from("Default"),
+            controlled_z_phase_relation,
+            controlled_phase_phase_relation,
         }
     }
 
@@ -91,7 +109,6 @@ impl ExperimentalDevice {
     /// # Errors
     ///
     /// * `RoqoqoBackendError`
-    ///
     pub fn from_api(
         device_name: Option<String>,
         access_token: Option<String>,
@@ -167,7 +184,6 @@ impl ExperimentalDevice {
     /// # Arguments
     ///
     /// * `name` - The name of the new Layout to be added to the register.
-    ///
     pub fn add_layout(&mut self, name: &str) -> Result<(), RoqoqoBackendError> {
         if self.layout_register.contains_key(name) {
             return Err(RoqoqoBackendError::GenericError {
@@ -190,7 +206,6 @@ impl ExperimentalDevice {
     /// # Arguments
     ///
     /// * `name` - The name of the new Layout.
-    ///
     pub fn switch_layout(&mut self, name: &str) -> Result<(), RoqoqoBackendError> {
         if !self.layout_register.keys().contains(&name.to_string()) {
             return Err(RoqoqoBackendError::GenericError {
@@ -212,7 +227,6 @@ impl ExperimentalDevice {
     /// # Returns:
     ///
     /// * `Vec<&String>` - The vector of all available Layout names.
-    ///
     pub fn available_layouts(&self) -> Vec<&str> {
         self.layout_register
             .keys()
@@ -232,11 +246,10 @@ impl ExperimentalDevice {
     /// * `qubit` - The index of the qubit.
     /// * `tweezer` - The index of the tweezer.
     ///
-    /// # Returns:
+    /// # Returns
     ///
     /// * `Ok(())` - The qubit -> tweezer mapping has been added/modified.
     /// * `Err(RoqoqoBackendError)` - The tweezer does not exist.
-    ///
     pub fn add_qubit_tweezer_mapping(
         &mut self,
         qubit: usize,
@@ -268,7 +281,6 @@ impl ExperimentalDevice {
     /// * `tweezer` - The index of the tweezer.
     /// * `gate_time` - The the gate time for the given gate.
     /// * `layout_name` - The name of the Layout to apply the gate time in. Defaults to the current Layout.
-    ///
     pub fn set_tweezer_single_qubit_gate_time(
         &mut self,
         hqslang: &str,
@@ -300,7 +312,6 @@ impl ExperimentalDevice {
     /// * `tweezer1` - The index of the second tweezer.
     /// * `gate_time` - The the gate time for the given gate.
     /// * `layout_name` - The name of the Layout to apply the gate time in. Defaults to the current Layout.
-    ///
     pub fn set_tweezer_two_qubit_gate_time(
         &mut self,
         hqslang: &str,
@@ -334,7 +345,6 @@ impl ExperimentalDevice {
     /// * `tweezer2` - The index of the third tweezer.
     /// * `gate_time` - The the gate time for the given gate.
     /// * `layout_name` - The name of the Layout to apply the gate time in. Defaults to the current Layout.
-    ///
     pub fn set_tweezer_three_qubit_gate_time(
         &mut self,
         hqslang: &str,
@@ -367,7 +377,6 @@ impl ExperimentalDevice {
     /// * `tweezers` - The list of tweezer indexes.
     /// * `gate_time` - The the gate time for the given gate.
     /// * `layout_name` - The name of the Layout to apply the gate time in. Defaults to the current Layout.
-    ///
     pub fn set_tweezer_multi_qubit_gate_time(
         &mut self,
         hqslang: &str,
@@ -400,7 +409,6 @@ impl ExperimentalDevice {
     ///
     /// * `Ok(usize)` - The tweezer identifier relative to the given qubit.
     /// * `Err(RoqoqoBackendError)` - If the qubit identifier is not related to any tweezer.
-    ///
     pub fn get_tweezer_from_qubit(&self, qubit: &usize) -> Result<usize, RoqoqoBackendError> {
         if let Some(map) = &self.qubit_to_tweezer {
             map.get(qubit)
@@ -425,7 +433,6 @@ impl ExperimentalDevice {
     ///
     /// * `Ok(HashMap<usize,usize>)` - The updated qubit -> tweezer mapping.
     /// * `Err(RoqoqoBackendError)` - If the given qubit identifier is not present in the mapping.
-    ///
     pub fn deactivate_qubit(
         &mut self,
         qubit: usize,
@@ -443,6 +450,91 @@ impl ExperimentalDevice {
                 msg: "The device qubit -> tweezer mapping is empty.".to_string(),
             })
         }
+    }
+
+    /// Returns the PhaseShiftedControlledZ phase shift according to the device's relation.
+    ///
+    /// # Returns
+    ///
+    /// * `f64` - The PhaseShiftedControlledZ phase shift.
+    pub fn phase_shift_controlled_z(&self) -> Option<f64> {
+        if let Ok(phase_shift_value) = f64::from_str(&self.controlled_z_phase_relation) {
+            Some(phase_shift_value)
+        } else {
+            phi_theta_relation(&self.controlled_z_phase_relation, std::f64::consts::PI)
+        }
+    }
+
+    /// Returns the PhaseShiftedControlledPhase phase shift according to the device's relation.
+    ///
+    /// # Returns
+    ///
+    /// * `f64` - The PhaseShiftedControlledPhase phase shift.
+    pub fn phase_shift_controlled_phase(&self, theta: f64) -> Option<f64> {
+        if let Ok(phase_shift_value) = f64::from_str(&self.controlled_phase_phase_relation) {
+            Some(phase_shift_value)
+        } else {
+            phi_theta_relation(&self.controlled_phase_phase_relation, theta)
+        }
+    }
+
+    /// Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.
+    ///
+    /// # Arguments
+    ///
+    /// * `control` - The control qubit the gate acts on
+    /// * `target` - The target qubit the gate acts on
+    /// * `phi` - The phi angle to be checked.
+    ///
+    /// # Returns
+    ///
+    /// * `Some<f64>` - The gate time.
+    /// * `None` - The gate is not available on the device.
+    pub fn gate_time_controlled_z(&self, control: &usize, target: &usize, phi: f64) -> Option<f64> {
+        if self
+            .two_qubit_gate_time("PhaseShiftedControlledZ", control, target)
+            .is_some()
+        {
+            if let Some(relation_phi) = self.phase_shift_controlled_z() {
+                if (relation_phi.abs() - phi.abs()).abs() < 0.0001 {
+                    return Some(1e-6);
+                }
+            }
+        }
+        None
+    }
+
+    /// Returns the gate time of a PhaseShiftedControlledPhase operation with the given qubits and phi and theta angles.
+    ///
+    /// # Arguments
+    ///
+    /// * `control` - The control qubit the gate acts on
+    /// * `target` - The target qubit the gate acts on
+    /// * `phi` - The phi angle to be checked.
+    /// * `theta` - The theta angle to be checked.
+    ///
+    /// # Returns
+    ///
+    /// * `Some<f64>` - The gate time.
+    /// * `None` - The gate is not available on the device.
+    pub fn gate_time_controlled_phase(
+        &self,
+        control: &usize,
+        target: &usize,
+        phi: f64,
+        theta: f64,
+    ) -> Option<f64> {
+        if self
+            .two_qubit_gate_time("PhaseShiftedControlledPhase", control, target)
+            .is_some()
+        {
+            if let Some(relation_phi) = self.phase_shift_controlled_phase(theta) {
+                if (relation_phi.abs() - phi.abs()).abs() < 0.0001 {
+                    return Some(1e-6);
+                }
+            }
+        }
+        None
     }
 
     #[inline]
