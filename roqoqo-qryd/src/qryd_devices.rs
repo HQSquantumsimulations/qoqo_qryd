@@ -434,16 +434,11 @@ impl FirstDevice {
         {
             if let Some(relation_phi) = self.phase_shift_controlled_phase(theta) {
                 if (relation_phi.abs() - phi.abs()).abs() < 0.0001 {
-                    Some(1e-6)
-                } else {
-                    None
+                    return Some(1e-6);
                 }
-            } else {
-                None
             }
-        } else {
-            None
         }
+        None
     }
 
     /// Add a new layout to the device.
