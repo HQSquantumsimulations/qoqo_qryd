@@ -58,6 +58,13 @@ pub struct TweezerLayoutInfo {
     pub tweezer_three_qubit_gate_times: HashMap<String, HashMap<(usize, usize, usize), f64>>,
     /// Maps a multi-qubit gate name to a Vec<tweezer> -> time mapping
     pub tweezer_multi_qubit_gate_times: HashMap<String, HashMap<Vec<usize>, f64>>,
+    /// Allowed shifts from one tweezer to others.
+    /// The keys give the tweezer a qubit can be shifted out of.
+    /// The values are lists over the directions the qubit in the tweezer can be shifted into.
+    /// The items in the list give the allowed tweezers the qubit can be shifted into in orger.
+    /// For a list 1,2,3 the qubit can be shifted into tweezer 1, into tweezer 2 if tweezer 1 is not occupied,
+    /// and into tweezer 3 if tweezer 1 and 2 are not occupied.
+    pub allowed_tweezer_shifts: HashMap<usize, Vec<Vec<usize>>>
 }
 
 #[derive(Debug, Clone, PartialEq, serde::Deserialize, serde::Serialize)]
@@ -70,6 +77,8 @@ struct TweezerLayoutInfoSerialize {
     tweezer_three_qubit_gate_times: Vec<(String, ThreeTweezersTimes)>,
     /// Maps a multi-qubit gate name to a Vec<tweezer> -> time mapping
     tweezer_multi_qubit_gate_times: Vec<(String, MultiTweezersTimes)>,
+    /// Allowed shifts from one tweezer to others.
+    allowed_tweezer_shifts: Vec<(usize, Vec<Vec<usize>>)>
 }
 type SingleTweezerTimes = Vec<(usize, f64)>;
 type TwoTweezersTimes = Vec<((usize, usize), f64)>;
@@ -98,12 +107,14 @@ impl From<TweezerLayoutInfoSerialize> for TweezerLayoutInfo {
             .into_iter()
             .map(|(k, v)| (k, v.into_iter().map(|(i_k, i_v)| (i_k, i_v)).collect()))
             .collect();
+        let allowed_tweezer_shifts: HashMap<usize, Vec<Vec<usize>>> = info.allowed_tweezer_shifts.into_iter().collect();
 
         Self {
             tweezer_single_qubit_gate_times,
             tweezer_two_qubit_gate_times,
             tweezer_three_qubit_gate_times,
             tweezer_multi_qubit_gate_times,
+            allowed_tweezer_shifts
         }
     }
 }
@@ -130,11 +141,13 @@ impl From<TweezerLayoutInfo> for TweezerLayoutInfoSerialize {
             .into_iter()
             .map(|(k, v)| (k, v.into_iter().map(|(i_k, i_v)| (i_k, i_v)).collect()))
             .collect();
+        let allowed_tweezer_shifts: Vec<(usize, Vec<Vec<usize>>)> = info.allowed_tweezer_shifts.into_iter().collect();
         Self {
             tweezer_single_qubit_gate_times,
             tweezer_two_qubit_gate_times,
             tweezer_three_qubit_gate_times,
             tweezer_multi_qubit_gate_times,
+            allowed_tweezer_shifts
         }
     }
 }
@@ -190,6 +203,7 @@ impl ExperimentalDevice {
     /// # Errors
     ///
     /// * `RoqoqoBackendError`
+    #[cfg(feature="web-api")]
     pub fn from_api(
         device_name: Option<String>,
         access_token: Option<String>,

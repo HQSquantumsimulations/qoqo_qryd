@@ -347,6 +347,7 @@ fn test_change_device() {
 }
 
 /// Test ExperimentalDevice from_api() method
+#[cfg(feature="web-api")]
 #[test]
 fn test_from_api() {
     let mut returned_device_default = ExperimentalDevice::new(None, None);
