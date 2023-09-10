@@ -67,7 +67,7 @@ jobs:
         with:
           maturin-version: latest
           command: build
-          manylinux: 2014
+          manylinux: 2_28
           args: -i python${{ matrix.python.py }} --out wheels -m qoqo-qryd/Cargo.toml --release --locked
       - name: test install
         run: |
