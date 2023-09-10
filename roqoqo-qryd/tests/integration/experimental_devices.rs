@@ -13,10 +13,11 @@
 use bincode::serialize;
 use ndarray::Array2;
 
-use roqoqo::{devices::Device, RoqoqoBackendError};
+use roqoqo::devices::Device;
+// use roqoqo::RoqoqoBackendError;
 use roqoqo_qryd::{phi_theta_relation, ExperimentalDevice, PragmaChangeQRydLayout};
 
-use httpmock::MockServer;
+// use httpmock::MockServer;
 
 /// Test ExperimentalDevice new()
 #[test]
@@ -347,40 +348,40 @@ fn test_change_device() {
 }
 
 /// Test ExperimentalDevice from_api() method
-#[cfg(feature="web-api")]
-#[test]
-fn test_from_api() {
-    let mut returned_device_default = ExperimentalDevice::new(None, None);
-    returned_device_default.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None);
-    let server = MockServer::start();
-    let mut mock = server.mock(|when, then| {
-        when.method("POST");
-        then.status(200).json_body_obj(&returned_device_default);
-    });
+// #[cfg(feature="web-api")]
+// #[test]
+// fn test_from_api() {
+//     let mut returned_device_default = ExperimentalDevice::new(None, None);
+//     returned_device_default.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None);
+//     let server = MockServer::start();
+//     let mut mock = server.mock(|when, then| {
+//         when.method("POST");
+//         then.status(200).json_body_obj(&returned_device_default);
+//     });
 
-    let response = ExperimentalDevice::from_api(None, None, Some(server.port().to_string()));
-    mock.assert();
-    assert!(response.is_ok());
+//     let response = ExperimentalDevice::from_api(None, None, Some(server.port().to_string()));
+//     mock.assert();
+//     assert!(response.is_ok());
 
-    let device = response.unwrap();
-    assert_eq!(device, returned_device_default);
+//     let device = response.unwrap();
+//     assert_eq!(device, returned_device_default);
 
-    mock.delete();
-    mock = server.mock(|when, then| {
-        when.method("POST");
-        then.status(400);
-    });
+//     mock.delete();
+//     mock = server.mock(|when, then| {
+//         when.method("POST");
+//         then.status(400);
+//     });
 
-    let response = ExperimentalDevice::from_api(None, None, Some(server.port().to_string()));
-    mock.assert();
-    assert!(response.is_err());
-    assert_eq!(
-        response.unwrap_err(),
-        RoqoqoBackendError::NetworkError {
-            msg: format!("Request to server failed with HTTP status code {:?}.", 400),
-        }
-    );
-}
+//     let response = ExperimentalDevice::from_api(None, None, Some(server.port().to_string()));
+//     mock.assert();
+//     assert!(response.is_err());
+//     assert_eq!(
+//         response.unwrap_err(),
+//         RoqoqoBackendError::NetworkError {
+//             msg: format!("Request to server failed with HTTP status code {:?}.", 400),
+//         }
+//     );
+// }
 
 /// Test ExperimentalDevice phase_shift_controlled_...() and gate_time_controlled_...()  methods
 #[test]

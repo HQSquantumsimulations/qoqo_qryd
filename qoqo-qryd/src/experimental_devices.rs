@@ -99,7 +99,7 @@ impl ExperimentalDeviceWrapper {
     ///
     /// Raises:
     ///     RoqoqoBackendError
-    #[cfg(feature="web_api")]
+    #[cfg(feature = "web_api")]
     #[staticmethod]
     #[pyo3(text_signature = "(device_name, access_token, /)")]
     pub fn from_api(
