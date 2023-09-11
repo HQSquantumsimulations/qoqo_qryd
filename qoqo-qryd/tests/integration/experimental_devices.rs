@@ -20,7 +20,7 @@ use qoqo_qryd::{
 };
 use roqoqo_qryd::{phi_theta_relation, ExperimentalDevice};
 
-use httpmock::MockServer;
+use mockito::Server;
 
 /// Test new instantiation of ExperimentalDeviceWrapper and ExperimentalMutableDeviceWrapper
 #[test]
@@ -630,11 +630,25 @@ fn test_from_api() {
     let returned_device_default_wrapper = ExperimentalDeviceWrapper {
         internal: returned_device_default.clone(),
     };
-    let server = MockServer::start();
-    let mock = server.mock(|when, then| {
-        when.method("POST");
-        then.status(200).json_body_obj(&returned_device_default);
-    });
+    let mut server = Server::new();
+    let port = server
+        .url()
+        .chars()
+        .rev()
+        .take(5)
+        .collect::<String>()
+        .chars()
+        .rev()
+        .collect::<String>();
+    let mock = server
+        .mock("POST", mockito::Matcher::Any)
+        .with_status(200)
+        .with_body(
+            serde_json::to_string(&returned_device_default)
+                .unwrap()
+                .as_bytes(),
+        )
+        .create();
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let ext_device_type = returned_device_default_wrapper.into_py(py);
@@ -643,11 +657,7 @@ fn test_from_api() {
         let device = device_type
             .call_method1(
                 "from_api",
-                (
-                    Option::<String>::None,
-                    Option::<String>::None,
-                    server.port().to_string(),
-                ),
+                (Option::<String>::None, Option::<String>::None, port),
             )
             .unwrap();
 

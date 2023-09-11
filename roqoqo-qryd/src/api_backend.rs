@@ -831,7 +831,7 @@ impl EvaluatingBackend for APIBackend {
 mod test {
     use super::*;
     use crate::api_devices::QrydEmuSquareDevice;
-    use httpmock::MockServer;
+    use mockito::Server;
     use roqoqo::operations;
     use roqoqo::{Circuit, QuantumProgram};
 
@@ -926,33 +926,41 @@ mod test {
         let error = ValidationError {
             detail: vec![detail],
         };
-        let server = MockServer::start();
-        let mock_status = server.mock(|when, then| {
-            when.method("GET").path("/DummyLocation/status");
-            then.status(422).json_body_obj(&error);
-        });
-        let mock_result = server.mock(|when, then| {
-            when.method("GET").path("/DummyLocation/result");
-            then.status(422).json_body_obj(&error);
-        });
-        let mock_delete = server.mock(|when, then| {
-            when.method("DELETE");
-            then.status(422).json_body_obj(&error);
-        });
-        let mock_post = server.mock(|when, then| {
-            when.method("POST");
-            then.status(422)
-                .header(
-                    "Location",
-                    format!("http://127.0.0.1:{}/DummyLocation", server.port()),
-                )
-                .json_body_obj(&error);
-        });
+        let mut server = Server::new();
+        let port = server
+            .url()
+            .chars()
+            .rev()
+            .take(5)
+            .collect::<String>()
+            .chars()
+            .rev()
+            .collect::<String>();
+        let mock_status = server
+            .mock("GET", "/DummyLocation/status")
+            .with_status(422)
+            .with_body(serde_json::to_string(&error).unwrap().into_bytes())
+            .create();
+        let mock_result = server
+            .mock("GET", "/DummyLocation/result")
+            .with_status(422)
+            .with_body(serde_json::to_string(&error).unwrap().into_bytes())
+            .create();
+        let mock_delete = server
+            .mock("DELETE", mockito::Matcher::Any)
+            .with_status(422)
+            .with_body(serde_json::to_string(&error).unwrap().into_bytes())
+            .create();
+        let mock_post = server
+            .mock("POST", mockito::Matcher::Any)
+            .with_status(422)
+            .with_header("Location", &format!("{}/DummyLocation", server.url()))
+            .with_body(serde_json::to_string(&error).unwrap().into_bytes())
+            .create();
         let number_qubits = 6;
         let device = QrydEmuSquareDevice::new(Some(2), None, None);
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-        let api_backend_new =
-            APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
+        let api_backend_new = APIBackend::new(qryd_device, None, None, Some(port)).unwrap();
         let mut circuit = Circuit::new();
         circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
         circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
@@ -976,8 +984,7 @@ mod test {
             RoqoqoBackendError::GenericError { .. }
         ));
 
-        let job_status = api_backend_new
-            .get_job_status(format!("http://127.0.0.1:{}/DummyLocation", server.port()));
+        let job_status = api_backend_new.get_job_status(format!("{}/DummyLocation", server.url()));
 
         mock_status.assert();
         assert!(job_status.is_err());
@@ -986,8 +993,7 @@ mod test {
             RoqoqoBackendError::GenericError { .. }
         ));
 
-        let job_result = api_backend_new
-            .get_job_result(format!("http://127.0.0.1:{}/DummyLocation", server.port()));
+        let job_result = api_backend_new.get_job_result(format!("{}/DummyLocation", server.url()));
 
         mock_result.assert();
         assert!(job_result.is_err());
@@ -996,8 +1002,7 @@ mod test {
             RoqoqoBackendError::GenericError { .. }
         ));
 
-        let job_delete =
-            api_backend_new.delete_job(format!("http://127.0.0.1:{}/DummyLocation", server.port()));
+        let job_delete = api_backend_new.delete_job(format!("{}/DummyLocation", server.url()));
 
         mock_delete.assert();
         assert!(job_delete.is_err());
@@ -1010,31 +1015,37 @@ mod test {
     /// Test error cases. Case 2: ValidationError parsing error
     #[test]
     fn api_backend_errorcase2() {
-        let server = MockServer::start();
-        let mock_post = server.mock(|when, then| {
-            when.method("POST");
-            then.status(422).header(
-                "Location",
-                format!("http://127.0.0.1:{}/DummyLocation", server.port()),
-            );
-        });
-        let mock_status = server.mock(|when, then| {
-            when.method("GET").path("/DummyLocation/status");
-            then.status(422);
-        });
-        let mock_result = server.mock(|when, then| {
-            when.method("GET").path("/DummyLocation/result");
-            then.status(422);
-        });
-        let mock_delete = server.mock(|when, then| {
-            when.method("DELETE");
-            then.status(422);
-        });
+        let mut server = Server::new();
+        let port = server
+            .url()
+            .chars()
+            .rev()
+            .take(5)
+            .collect::<String>()
+            .chars()
+            .rev()
+            .collect::<String>();
+        let mock_post = server
+            .mock("POST", mockito::Matcher::Any)
+            .with_status(422)
+            .with_header("Location", &format!("{}/DummyLocation", server.url()))
+            .create();
+        let mock_status = server
+            .mock("GET", "/DummyLocation/status")
+            .with_status(422)
+            .create();
+        let mock_result = server
+            .mock("GET", "/DummyLocation/result")
+            .with_status(422)
+            .create();
+        let mock_delete = server
+            .mock("DELETE", mockito::Matcher::Any)
+            .with_status(422)
+            .create();
         let number_qubits = 6;
         let device = QrydEmuSquareDevice::new(Some(2), None, None);
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-        let api_backend_new =
-            APIBackend::new(qryd_device, None, None, Some(server.port().to_string())).unwrap();
+        let api_backend_new = APIBackend::new(qryd_device, None, None, Some(port)).unwrap();
         let mut circuit = Circuit::new();
         circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
         circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
@@ -1058,8 +1069,7 @@ mod test {
             RoqoqoBackendError::NetworkError { .. }
         ));
 
-        let job_status = api_backend_new
-            .get_job_status(format!("http://127.0.0.1:{}/DummyLocation", server.port()));
+        let job_status = api_backend_new.get_job_status(format!("{}/DummyLocation", server.url()));
 
         mock_status.assert();
         assert!(job_status.is_err());
@@ -1068,8 +1078,7 @@ mod test {
             RoqoqoBackendError::NetworkError { .. }
         ));
 
-        let job_result = api_backend_new
-            .get_job_result(format!("http://127.0.0.1:{}/DummyLocation", server.port()));
+        let job_result = api_backend_new.get_job_result(format!("{}/DummyLocation", server.url()));
 
         mock_result.assert();
         assert!(job_result.is_err());
@@ -1078,8 +1087,7 @@ mod test {
             RoqoqoBackendError::NetworkError { .. }
         ));
 
-        let job_delete =
-            api_backend_new.delete_job(format!("http://127.0.0.1:{}/DummyLocation", server.port()));
+        let job_delete = api_backend_new.delete_job(format!("{}/DummyLocation", server.url()));
 
         mock_delete.assert();
         assert!(job_delete.is_err());

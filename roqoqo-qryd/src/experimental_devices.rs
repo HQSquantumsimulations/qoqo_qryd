@@ -369,7 +369,7 @@ impl ExperimentalDevice {
         gate_time: f64,
         layout_name: Option<String>,
     ) {
-        self.qubit_to_tweezer = None; // TODO: is this really necessary?
+        self.qubit_to_tweezer = None;
         let layout_name = layout_name.unwrap_or_else(|| self.current_layout.clone());
 
         if let Some(info) = self.layout_register.get_mut(&layout_name) {

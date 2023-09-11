@@ -16,7 +16,7 @@ use ndarray::Array2;
 use roqoqo::{devices::Device, RoqoqoBackendError};
 use roqoqo_qryd::{phi_theta_relation, ExperimentalDevice, PragmaChangeQRydLayout};
 
-use httpmock::MockServer;
+use mockito::Server;
 
 /// Test ExperimentalDevice new()
 #[test]
@@ -351,26 +351,40 @@ fn test_change_device() {
 fn test_from_api() {
     let mut returned_device_default = ExperimentalDevice::new(None, None);
     returned_device_default.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None);
-    let server = MockServer::start();
-    let mut mock = server.mock(|when, then| {
-        when.method("POST");
-        then.status(200).json_body_obj(&returned_device_default);
-    });
+    let mut server = Server::new();
+    let port = server
+        .url()
+        .chars()
+        .rev()
+        .take(5)
+        .collect::<String>()
+        .chars()
+        .rev()
+        .collect::<String>();
+    let mut mock = server
+        .mock("POST", mockito::Matcher::Any)
+        .with_status(200)
+        .with_body(
+            serde_json::to_string(&returned_device_default)
+                .unwrap()
+                .into_bytes(),
+        )
+        .create();
 
-    let response = ExperimentalDevice::from_api(None, None, Some(server.port().to_string()));
+    let response = ExperimentalDevice::from_api(None, None, Some(port.clone()));
     mock.assert();
     assert!(response.is_ok());
 
     let device = response.unwrap();
     assert_eq!(device, returned_device_default);
 
-    mock.delete();
-    mock = server.mock(|when, then| {
-        when.method("POST");
-        then.status(400);
-    });
+    mock.remove();
+    mock = server
+        .mock("POST", mockito::Matcher::Any)
+        .with_status(400)
+        .create();
 
-    let response = ExperimentalDevice::from_api(None, None, Some(server.port().to_string()));
+    let response = ExperimentalDevice::from_api(None, None, Some(port));
     mock.assert();
     assert!(response.is_err());
     assert_eq!(
