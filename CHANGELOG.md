@@ -2,6 +2,10 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+# 0.10.1
+
+* Substituted `httpmock` with `mockito` in mock testing
+
 # 0.10.0
 
 * Added experimental device support

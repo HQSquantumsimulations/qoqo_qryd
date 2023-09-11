@@ -1,6 +1,6 @@
 [package]
 name = "qoqo-qryd"
-version = "0.10.0"
+version = "0.10.1"
 authors = ["HQS Quantum Simulations <info@quantumsimulations.de>"]
 edition = "2021"
 license = "Apache-2.0"
@@ -52,7 +52,7 @@ roqoqo-qryd = { version = "0.10", path = "../roqoqo-qryd", default-features = fa
 
 [dev-dependencies]
 test-case = "2.0"
-httpmock = "0.6.7"
+mockito = "1.1"
 
 [build-dependencies]
 pyo3-build-config = "0.19"
