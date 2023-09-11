@@ -5,6 +5,7 @@ Tracks qoqo-qryd changes after 0.5
 # 0.10.1
 
 * Substituted `httpmock` with `mockito` in mock testing
+* Reduces the number of usecases that need openssl
 
 # 0.10.0
 
