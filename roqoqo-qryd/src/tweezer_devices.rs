@@ -11,7 +11,7 @@
 // limitations under the License.
 //
 
-//! Experimental QRyd Devices
+//! Tweezer QRyd Devices
 //!
 //! Provides the devices that are used to execute quantum programs with the QRyd backend.
 //! QRyd devices can be physical hardware or simulators.
@@ -28,10 +28,10 @@ use roqoqo::{
 
 use crate::{phi_theta_relation, PragmaChangeQRydLayout, PragmaDeactivateQRydQubit};
 
-/// Experimental Device
+/// Tweezer Device
 ///
 #[derive(Debug, PartialEq, Default, Clone, serde::Serialize, serde::Deserialize)]
-pub struct ExperimentalDevice {
+pub struct TweezerDevice {
     /// Mapping from qubit to tweezer.
     pub qubit_to_tweezer: Option<HashMap<usize, usize>>,
     /// Register of Layouts.
@@ -139,8 +139,8 @@ impl From<TweezerLayoutInfo> for TweezerLayoutInfoSerialize {
     }
 }
 
-impl ExperimentalDevice {
-    /// Creates a new ExperimentalDevice instance.
+impl TweezerDevice {
+    /// Creates a new TweezerDevice instance.
     ///
     /// # Arguments
     ///
@@ -150,7 +150,7 @@ impl ExperimentalDevice {
     ///
     /// # Returns
     ///
-    /// * `ExperimentalDevice` - The new ExperimentalDevice instance.
+    /// * `TweezerDevice` - The new TweezerDevice instance.
     pub fn new(
         controlled_z_phase_relation: Option<String>,
         controlled_phase_phase_relation: Option<String>,
@@ -162,7 +162,7 @@ impl ExperimentalDevice {
         let controlled_phase_phase_relation =
             controlled_phase_phase_relation.unwrap_or_else(|| "DefaultRelation".to_string());
 
-        ExperimentalDevice {
+        TweezerDevice {
             qubit_to_tweezer: None,
             layout_register,
             current_layout: String::from("Default"),
@@ -171,7 +171,7 @@ impl ExperimentalDevice {
         }
     }
 
-    /// Creates a new ExperimentalDevice instance containing populated tweezer data.
+    /// Creates a new TweezerDevice instance containing populated tweezer data.
     ///
     /// This requires a valid QRYD_API_TOKEN. Visit `https://thequantumlaend.de/get-access/` to get one.
     ///
@@ -185,7 +185,7 @@ impl ExperimentalDevice {
     ///
     /// # Returns
     ///
-    /// * `ExperimentalDevice` - The new ExperimentalDevice instance with populated tweezer data.
+    /// * `TweezerDevice` - The new TweezerDevice instance with populated tweezer data.
     ///
     /// # Errors
     ///
@@ -249,7 +249,7 @@ impl ExperimentalDevice {
         // Response handling
         let status_code = resp.status();
         if status_code == reqwest::StatusCode::OK {
-            Ok(resp.json::<ExperimentalDevice>().unwrap())
+            Ok(resp.json::<TweezerDevice>().unwrap())
         } else {
             Err(RoqoqoBackendError::NetworkError {
                 msg: format!(
@@ -727,7 +727,7 @@ impl ExperimentalDevice {
     }
 }
 
-impl Device for ExperimentalDevice {
+impl Device for TweezerDevice {
     fn single_qubit_gate_time(&self, hqslang: &str, qubit: &usize) -> Option<f64> {
         let tweezer_layout_info = self.get_current_layout_info();
         let mapped_qubit = self.get_tweezer_from_qubit(qubit).ok()?;

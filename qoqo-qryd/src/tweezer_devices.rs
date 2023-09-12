@@ -21,29 +21,29 @@ use qoqo::{devices::GenericDeviceWrapper, QoqoBackendError};
 use qoqo_calculator_pyo3::convert_into_calculator_float;
 use roqoqo::devices::Device;
 
-use roqoqo_qryd::ExperimentalDevice;
+use roqoqo_qryd::TweezerDevice;
 
-/// Experimental Device
+/// Tweezer Device
 ///
 /// This interface does not allow setting any piece of information about the device
 /// tweezers. This class is meant to be used by the end user.
-#[pyclass(name = "ExperimentalDevice", module = "qoqo_qryd")]
+#[pyclass(name = "TweezerDevice", module = "qoqo_qryd")]
 #[derive(Clone, Debug, Default, PartialEq)]
-pub struct ExperimentalDeviceWrapper {
-    /// Internal storage of [roqoqo_qryd::ExperimentalDevice]
-    pub internal: ExperimentalDevice,
+pub struct TweezerDeviceWrapper {
+    /// Internal storage of [roqoqo_qryd::TweezerDevice]
+    pub internal: TweezerDevice,
 }
 
 #[pymethods]
-impl ExperimentalDeviceWrapper {
-    /// Creates a new ExperimentalDevice instance.
+impl TweezerDeviceWrapper {
+    /// Creates a new TweezerDevice instance.
     ///
     /// Args:
     ///     controlled_z_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledZ gate.
     ///     controlled_phase_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledPhase gate.
     ///
     /// Returns:
-    ///     ExperimentalDevice: The new ExperimentalDevice instance.
+    ///     TweezerDevice: The new TweezerDevice instance.
     #[new]
     #[pyo3(text_signature = "(controlled_z_phase_relation, controlled_phase_phase_relation, /)")]
     pub fn new(
@@ -79,11 +79,11 @@ impl ExperimentalDeviceWrapper {
             None
         };
         Self {
-            internal: ExperimentalDevice::new(czpr, cppr),
+            internal: TweezerDevice::new(czpr, cppr),
         }
     }
 
-    /// Creates a new ExperimentalDevice instance containing populated tweezer data.
+    /// Creates a new TweezerDevice instance containing populated tweezer data.
     ///
     /// This requires a valid QRYD_API_TOKEN. Visit `https://thequantumlaend.de/get-access/` to get one.
     ///
@@ -95,7 +95,7 @@ impl ExperimentalDeviceWrapper {
     ///     mock_port (Optional[str]): Server port to be used for testing purposes.
     ///
     /// Returns
-    ///     ExperimentalDevice: The new ExperimentalDevice instance with populated tweezer data.
+    ///     TweezerDevice: The new TweezerDevice instance with populated tweezer data.
     ///
     /// Raises:
     ///     RoqoqoBackendError
@@ -106,9 +106,9 @@ impl ExperimentalDeviceWrapper {
         access_token: Option<String>,
         mock_port: Option<String>,
     ) -> PyResult<Self> {
-        let internal = ExperimentalDevice::from_api(device_name, access_token, mock_port)
+        let internal = TweezerDevice::from_api(device_name, access_token, mock_port)
             .map_err(|err| PyValueError::new_err(format!("{:}", err)))?;
-        Ok(ExperimentalDeviceWrapper { internal })
+        Ok(TweezerDeviceWrapper { internal })
     }
 
     /// Get the name of the current layout.
@@ -334,92 +334,92 @@ impl ExperimentalDeviceWrapper {
         }
     }
 
-    /// Return a copy of the ExperimentalDevice (copy here produces a deepcopy).
+    /// Return a copy of the TweezerDevice (copy here produces a deepcopy).
     ///
     /// Returns:
-    ///     ExperimentalDevice: A deep copy of self.
-    pub fn __copy__(&self) -> ExperimentalDeviceWrapper {
+    ///     TweezerDevice: A deep copy of self.
+    pub fn __copy__(&self) -> TweezerDeviceWrapper {
         self.clone()
     }
 
-    /// Return a deep copy of the ExperimentalDevice.
+    /// Return a deep copy of the TweezerDevice.
     ///
     /// Returns:
-    ///     ExperimentalDevice: A deep copy of self.
-    pub fn __deepcopy__(&self, _memodict: Py<PyAny>) -> ExperimentalDeviceWrapper {
+    ///     TweezerDevice: A deep copy of self.
+    pub fn __deepcopy__(&self, _memodict: Py<PyAny>) -> TweezerDeviceWrapper {
         self.clone()
     }
 
-    /// Return the bincode representation of the ExperimentalDevice using the bincode crate.
+    /// Return the bincode representation of the TweezerDevice using the bincode crate.
     ///
     /// Returns:
-    ///     ByteArray: The serialized ExperimentalDevice (in bincode form).
+    ///     ByteArray: The serialized TweezerDevice (in bincode form).
     ///
     /// Raises:
-    ///     ValueError: Cannot serialize ExperimentalDevice to bytes.
+    ///     ValueError: Cannot serialize TweezerDevice to bytes.
     pub fn to_bincode(&self) -> PyResult<Py<PyByteArray>> {
         let serialized = serialize(&self.internal)
-            .map_err(|_| PyValueError::new_err("Cannot serialize ExperimentalDevice to bytes"))?;
+            .map_err(|_| PyValueError::new_err("Cannot serialize TweezerDevice to bytes"))?;
         let b: Py<PyByteArray> = Python::with_gil(|py| -> Py<PyByteArray> {
             PyByteArray::new(py, &serialized[..]).into()
         });
         Ok(b)
     }
 
-    /// Convert the bincode representation of the ExperimentalDevice to a ExperimentalDevice using the bincode crate.
+    /// Convert the bincode representation of the TweezerDevice to a TweezerDevice using the bincode crate.
     ///
     /// Args:
-    ///     input (ByteArray): The serialized ExperimentalDevice (in bincode form).
+    ///     input (ByteArray): The serialized TweezerDevice (in bincode form).
     ///
     /// Returns:
-    ///     ExperimentalDevice: The deserialized ExperimentalDevice.
+    ///     TweezerDevice: The deserialized TweezerDevice.
     ///
     /// Raises:
     ///     TypeError: Input cannot be converted to byte array.
-    ///     ValueError: Input cannot be deserialized to ExperimentalDevice.
+    ///     ValueError: Input cannot be deserialized to TweezerDevice.
     #[staticmethod]
     #[pyo3(text_signature = "(input, /)")]
-    pub fn from_bincode(input: &PyAny) -> PyResult<ExperimentalDeviceWrapper> {
+    pub fn from_bincode(input: &PyAny) -> PyResult<TweezerDeviceWrapper> {
         let bytes = input
             .extract::<Vec<u8>>()
             .map_err(|_| PyTypeError::new_err("Input cannot be converted to byte array"))?;
 
-        Ok(ExperimentalDeviceWrapper {
+        Ok(TweezerDeviceWrapper {
             internal: deserialize(&bytes[..]).map_err(|_| {
-                PyValueError::new_err("Input cannot be deserialized to ExperimentalDevice")
+                PyValueError::new_err("Input cannot be deserialized to TweezerDevice")
             })?,
         })
     }
 
-    /// Return the json representation of the ExperimentalDevice.
+    /// Return the json representation of the TweezerDevice.
     ///
     /// Returns:
-    ///     str: The serialized form of ExperimentalDevice.
+    ///     str: The serialized form of TweezerDevice.
     ///
     /// Raises:
-    ///     ValueError: Cannot serialize ExperimentalDevice to json.
+    ///     ValueError: Cannot serialize TweezerDevice to json.
     fn to_json(&self) -> PyResult<String> {
         let serialized = serde_json::to_string(&self.internal)
-            .map_err(|_| PyValueError::new_err("Cannot serialize ExperimentalDevice to json"))?;
+            .map_err(|_| PyValueError::new_err("Cannot serialize TweezerDevice to json"))?;
         Ok(serialized)
     }
 
-    /// Convert the json representation of a ExperimentalDevice to a ExperimentalDevice.
+    /// Convert the json representation of a TweezerDevice to a TweezerDevice.
     ///
     /// Args:
-    ///     input (str): The serialized ExperimentalDevice in json form.
+    ///     input (str): The serialized TweezerDevice in json form.
     ///
     /// Returns:
-    ///     ExperimentalDevice: The deserialized ExperimentalDevice.
+    ///     TweezerDevice: The deserialized TweezerDevice.
     ///
     /// Raises:
-    ///     ValueError: Input cannot be deserialized to ExperimentalDevice.
+    ///     ValueError: Input cannot be deserialized to TweezerDevice.
     #[staticmethod]
     #[pyo3(text_signature = "(input, /)")]
-    fn from_json(input: &str) -> PyResult<ExperimentalDeviceWrapper> {
-        Ok(ExperimentalDeviceWrapper {
+    fn from_json(input: &str) -> PyResult<TweezerDeviceWrapper> {
+        Ok(TweezerDeviceWrapper {
             internal: serde_json::from_str(input).map_err(|_| {
-                PyValueError::new_err("Input cannot be deserialized to ExperimentalDevice")
+                PyValueError::new_err("Input cannot be deserialized to TweezerDevice")
             })?,
         })
     }
@@ -452,27 +452,27 @@ impl ExperimentalDeviceWrapper {
     }
 }
 
-/// Experimental Mutable Device
+/// Tweezer Mutable Device
 ///
 /// This interface allows setting any piece of information about the device
 /// tweezer.
-#[pyclass(name = "ExperimentalMutableDevice", module = "qoqo_qryd")]
+#[pyclass(name = "TweezerMutableDevice", module = "qoqo_qryd")]
 #[derive(Clone, Debug, Default, PartialEq)]
-pub struct ExperimentalMutableDeviceWrapper {
-    /// Internal storage of [roqoqo_qryd::ExperimentalDevice]
-    internal: ExperimentalDevice,
+pub struct TweezerMutableDeviceWrapper {
+    /// Internal storage of [roqoqo_qryd::TweezerDevice]
+    internal: TweezerDevice,
 }
 
 #[pymethods]
-impl ExperimentalMutableDeviceWrapper {
-    /// Creates a new ExperimentalMutableDevice instance.
+impl TweezerMutableDeviceWrapper {
+    /// Creates a new TweezerMutableDevice instance.
     ///
     /// Args:
     ///     controlled_z_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledZ gate.
     ///     controlled_phase_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledPhase gate.
     ///
     /// Returns:
-    ///     ExperimentalMutableDevice: The new ExperimentalMutableDevice instance.
+    ///     TweezerMutableDevice: The new TweezerMutableDevice instance.
     #[new]
     #[pyo3(text_signature = "(controlled_z_phase_relation, controlled_phase_phase_relation, /)")]
     pub fn new(
@@ -508,7 +508,7 @@ impl ExperimentalMutableDeviceWrapper {
             None
         };
         Self {
-            internal: ExperimentalDevice::new(czpr, cppr),
+            internal: TweezerDevice::new(czpr, cppr),
         }
     }
 
@@ -746,72 +746,71 @@ impl ExperimentalMutableDeviceWrapper {
         }
     }
 
-    /// Return a copy of the ExperimentalDevice (copy here produces a deepcopy).
+    /// Return a copy of the TweezerMutableDevice (copy here produces a deepcopy).
     ///
     /// Returns:
-    ///     ExperimentalDevice: A deep copy of self.
-    pub fn __copy__(&self) -> ExperimentalMutableDeviceWrapper {
+    ///     TweezerMutableDevice: A deep copy of self.
+    pub fn __copy__(&self) -> TweezerMutableDeviceWrapper {
         self.clone()
     }
 
-    /// Return a deep copy of the ExperimentalDevice.
+    /// Return a deep copy of the TweezerMutableDevice.
     ///
     /// Returns:
-    ///     ExperimentalDevice: A deep copy of self.
-    pub fn __deepcopy__(&self, _memodict: Py<PyAny>) -> ExperimentalMutableDeviceWrapper {
+    ///     TweezerMutableDevice: A deep copy of self.
+    pub fn __deepcopy__(&self, _memodict: Py<PyAny>) -> TweezerMutableDeviceWrapper {
         self.clone()
     }
 
-    /// Return the bincode representation of the ExperimentalMutableDevice using the bincode crate.
+    /// Return the bincode representation of the TweezerMutableDevice using the bincode crate.
     ///
     /// Returns:
-    ///     ByteArray: The serialized ExperimentalMutableDevice (in bincode form).
+    ///     ByteArray: The serialized TweezerMutableDevice (in bincode form).
     ///
     /// Raises:
-    ///     ValueError: Cannot serialize ExperimentalMutableDevice to bytes.
+    ///     ValueError: Cannot serialize TweezerMutableDevice to bytes.
     pub fn to_bincode(&self) -> PyResult<Py<PyByteArray>> {
-        let serialized = serialize(&self.internal).map_err(|_| {
-            PyValueError::new_err("Cannot serialize ExperimentalMutableDevice to bytes")
-        })?;
+        let serialized = serialize(&self.internal)
+            .map_err(|_| PyValueError::new_err("Cannot serialize TweezerMutableDevice to bytes"))?;
         let b: Py<PyByteArray> = Python::with_gil(|py| -> Py<PyByteArray> {
             PyByteArray::new(py, &serialized[..]).into()
         });
         Ok(b)
     }
 
-    /// Convert the bincode representation of the ExperimentalMutableDevice to an
-    /// ExperimentalMutableDevice using the bincode crate.
+    /// Convert the bincode representation of the TweezerMutableDevice to an
+    /// TweezerMutableDevice using the bincode crate.
     ///
     /// Args:
-    ///     input (ByteArray): The serialized ExperimentalMutableDevice (in bincode form).
+    ///     input (ByteArray): The serialized TweezerMutableDevice (in bincode form).
     ///
     /// Returns:
-    ///     ExperimentalDevice: The deserialized ExperimentalMutableDevice.
+    ///     TweezerMutableDevice: The deserialized TweezerMutableDevice.
     ///
     /// Raises:
     ///     TypeError: Input cannot be converted to byte array.
-    ///     ValueError: Input cannot be deserialized to ExperimentalMutableDevice.
+    ///     ValueError: Input cannot be deserialized to TweezerMutableDevice.
     #[staticmethod]
     #[pyo3(text_signature = "(input, /)")]
-    pub fn from_bincode(input: &PyAny) -> PyResult<ExperimentalMutableDeviceWrapper> {
+    pub fn from_bincode(input: &PyAny) -> PyResult<TweezerMutableDeviceWrapper> {
         let bytes = input
             .extract::<Vec<u8>>()
             .map_err(|_| PyTypeError::new_err("Input cannot be converted to byte array"))?;
 
-        Ok(ExperimentalMutableDeviceWrapper {
+        Ok(TweezerMutableDeviceWrapper {
             internal: deserialize(&bytes[..]).map_err(|_| {
-                PyValueError::new_err("Input cannot be deserialized to ExperimentalMutableDevice")
+                PyValueError::new_err("Input cannot be deserialized to TweezerMutableDevice")
             })?,
         })
     }
 
-    /// Return the json representation of the ExperimentalMutableDevice.
+    /// Return the json representation of the TweezerMutableDevice.
     ///
     /// Returns:
-    ///     str: The serialized form of ExperimentalMutableDevice.
+    ///     str: The serialized form of TweezerMutableDevice.
     ///
     /// Raises:
-    ///     ValueError: Cannot serialize ExperimentalMutableDevice to json.
+    ///     ValueError: Cannot serialize TweezerMutableDevice to json.
     fn to_json(&self) -> PyResult<String> {
         let serialized = serde_json::to_string(&self.internal).map_err(|_| {
             PyValueError::new_err("Cannot serialize ExperimentalMutableDevice to json")
@@ -819,22 +818,22 @@ impl ExperimentalMutableDeviceWrapper {
         Ok(serialized)
     }
 
-    /// Convert the json representation of a ExperimentalMutableDevice to an ExperimentalMutableDevice.
+    /// Convert the json representation of a TweezerMutableDevice to an TweezerMutableDevice.
     ///
     /// Args:
-    ///     input (str): The serialized ExperimentalMutableDevice in json form.
+    ///     input (str): The serialized TweezerMutableDevice in json form.
     ///
     /// Returns:
-    ///     ExperimentalDevice: The deserialized ExperimentalMutableDevice.
+    ///     TweezerMutableDevice: The deserialized TweezerMutableDevice.
     ///
     /// Raises:
-    ///     ValueError: Input cannot be deserialized to ExperimentalMutableDevice.
+    ///     ValueError: Input cannot be deserialized to TweezerMutableDevice.
     #[staticmethod]
     #[pyo3(text_signature = "(input, /)")]
-    fn from_json(input: &str) -> PyResult<ExperimentalMutableDeviceWrapper> {
-        Ok(ExperimentalMutableDeviceWrapper {
+    fn from_json(input: &str) -> PyResult<TweezerMutableDeviceWrapper> {
+        Ok(TweezerMutableDeviceWrapper {
             internal: serde_json::from_str(input).map_err(|_| {
-                PyValueError::new_err("Input cannot be deserialized to ExperimentalMutableDevice")
+                PyValueError::new_err("Input cannot be deserialized to TweezerMutableDevice")
             })?,
         })
     }
@@ -965,10 +964,10 @@ impl ExperimentalMutableDeviceWrapper {
     }
 }
 
-/// Convert generic python object to [roqoqo_qryd::ExperimentalDevice].
+/// Convert generic python object to [roqoqo_qryd::TweezerDevice].
 ///
-/// Fallible conversion of generic python object to [roqoqo_qryd::ExperimentalDevice].
-pub fn convert_into_device(input: &PyAny) -> Result<ExperimentalDevice, QoqoBackendError> {
+/// Fallible conversion of generic python object to [roqoqo_qryd::TweezerDevice].
+pub fn convert_into_device(input: &PyAny) -> Result<TweezerDevice, QoqoBackendError> {
     let get_bytes = input
         .call_method0("to_bincode")
         .map_err(|_| QoqoBackendError::CannotExtractObject)?;
@@ -978,17 +977,17 @@ pub fn convert_into_device(input: &PyAny) -> Result<ExperimentalDevice, QoqoBack
     bincode::deserialize(&bytes[..]).map_err(|_| QoqoBackendError::CannotExtractObject)
 }
 
-/// Experimental devices for the QRyd platform.
+/// Tweezer devices for the QRyd platform.
 ///
 /// .. autosummary::
 ///    :toctree: generated/
 ///
-///    ExperimentalDevice
-///    ExperimentalMutableDevice
+///    TweezerDevice
+///    TweezerMutableDevice
 ///
 #[pymodule]
 pub fn experimental_devices(_py: Python, m: &PyModule) -> PyResult<()> {
-    m.add_class::<ExperimentalDeviceWrapper>()?;
-    m.add_class::<ExperimentalMutableDeviceWrapper>()?;
+    m.add_class::<TweezerDeviceWrapper>()?;
+    m.add_class::<TweezerMutableDeviceWrapper>()?;
     Ok(())
 }

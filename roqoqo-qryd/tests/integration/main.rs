@@ -15,8 +15,8 @@ mod qryd_devices;
 pub use qryd_devices::*;
 
 #[cfg(test)]
-mod experimental_devices;
-pub use experimental_devices::*;
+mod tweezer_devices;
+pub use tweezer_devices::*;
 
 #[cfg(test)]
 mod pragma_operations;

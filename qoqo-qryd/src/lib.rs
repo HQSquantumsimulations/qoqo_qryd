@@ -51,10 +51,10 @@ pub use qryd_devices::*;
 pub mod pragma_operations;
 pub use pragma_operations::*;
 
-/// QRyd Experimental Devices.
+/// QRyd Tweezer Devices.
 ///
-pub mod experimental_devices;
-pub use experimental_devices::*;
+pub mod tweezer_devices;
+pub use tweezer_devices::*;
 
 #[cfg(feature = "simulator")]
 pub mod simulator_backend;
@@ -101,7 +101,7 @@ fn qoqo_qryd(_py: Python, module: &PyModule) -> PyResult<()> {
     module.add_wrapped(wrapper)?;
     let wrapper = wrap_pymodule!(api_devices::api_devices);
     module.add_wrapped(wrapper)?;
-    let wrapper = wrap_pymodule!(experimental_devices::experimental_devices);
+    let wrapper = wrap_pymodule!(tweezer_devices::experimental_devices);
     module.add_wrapped(wrapper)?;
     // Adding nice imports corresponding to maturin example
     let wrapper = wrap_pymodule!(pragma_operations::pragma_operations);
