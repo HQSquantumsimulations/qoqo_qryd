@@ -32,7 +32,7 @@ reqwest = { version = "0.11", features = [
     # "native-tls-vendored",
     "rustls-tls",
 
-], default-features = false, optional = true }
+], default-features = false }
 num-complex = "0.4"
 bitvec = { version = "1.0", optional = true }
 hex = { version = "0.4", optional = true }
@@ -52,5 +52,5 @@ mockito = { version = "1.1", default-features = false }
 [features]
 default = ["simulator", "web-api"]
 # serialize = ["serde"]
-web-api = ["reqwest", "hex", "bitvec"]
+web-api = ["hex", "bitvec"]
 simulator = ["roqoqo-quest"]
