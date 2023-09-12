@@ -190,10 +190,7 @@ fn test_qubit_tweezer_mapping() {
 
     let add_01 = device.add_qubit_tweezer_mapping(0, 1);
     assert!(add_01.is_ok());
-    assert_eq!(
-        add_01.unwrap(),
-        vec![(0, 1), (2, 3)].into_iter().collect()
-    );
+    assert_eq!(add_01.unwrap(), vec![(0, 1), (2, 3)].into_iter().collect());
 }
 
 /// Test TweezerDevice deactivate_qubit()
