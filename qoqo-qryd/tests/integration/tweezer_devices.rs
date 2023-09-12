@@ -121,6 +121,7 @@ fn test_qubit_tweezer_mapping() {
     // Setup fake preconfigured device
     let mut exp = TweezerDevice::new(None, None);
     exp.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.23, None);
+    exp.set_tweezer_single_qubit_gate_time("PauliX", 2, 0.23, None);
     let fake_api_device = TweezerDeviceWrapper { internal: exp };
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
@@ -131,6 +132,9 @@ fn test_qubit_tweezer_mapping() {
 
         device_mut
             .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 1, 0.23))
+            .unwrap();
+        device_mut
+            .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 2, 0.23))
             .unwrap();
 
         assert!(device
@@ -145,6 +149,15 @@ fn test_qubit_tweezer_mapping() {
         assert!(device_mut
             .call_method1("add_qubit_tweezer_mapping", (1, 0))
             .is_err());
+        assert_eq!(
+            device
+                .call_method1("add_qubit_tweezer_mapping", (3, 2))
+                .unwrap()
+                .extract::<&PyDict>()
+                .unwrap()
+                .len(),
+            2
+        );
     })
 }
 
@@ -172,18 +185,17 @@ fn test_deactivate_qubit() {
         device_mut
             .call_method1("set_tweezer_single_qubit_gate_time", ("PauliY", 0, 0.23))
             .unwrap();
-
         device
-            .call_method1("add_qubit_tweezer_mapping", (0, 1))
-            .unwrap();
-        device_mut
-            .call_method1("add_qubit_tweezer_mapping", (0, 1))
+            .call_method1("add_qubit_tweezer_mapping", (0, 0))
             .unwrap();
         device
-            .call_method1("add_qubit_tweezer_mapping", (1, 0))
+            .call_method1("add_qubit_tweezer_mapping", (1, 1))
             .unwrap();
         device_mut
-            .call_method1("add_qubit_tweezer_mapping", (1, 0))
+            .call_method1("add_qubit_tweezer_mapping", (0, 0))
+            .unwrap();
+        device_mut
+            .call_method1("add_qubit_tweezer_mapping", (1, 1))
             .unwrap();
 
         let res_device = device.call_method1("deactivate_qubit", (0,));

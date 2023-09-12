@@ -180,12 +180,20 @@ fn test_qubit_tweezer_mapping() {
 
     device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.0, None);
     device.set_tweezer_multi_qubit_gate_time("MultiQubitZZ", &[1, 2, 3], 0.1, None);
+
     assert!(device.add_qubit_tweezer_mapping(0, 0).is_ok());
     assert!(device.add_qubit_tweezer_mapping(2, 3).is_ok());
 
     assert_eq!(device.get_tweezer_from_qubit(&0).unwrap(), 0);
-    assert!(device.get_tweezer_from_qubit(&4).is_err());
     assert_eq!(device.get_tweezer_from_qubit(&2).unwrap(), 3);
+    assert!(device.get_tweezer_from_qubit(&4).is_err());
+
+    let add_01 = device.add_qubit_tweezer_mapping(0, 1);
+    assert!(add_01.is_ok());
+    assert_eq!(
+        add_01.unwrap(),
+        vec![(0, 1), (2, 3)].into_iter().collect()
+    );
 }
 
 /// Test TweezerDevice deactivate_qubit()

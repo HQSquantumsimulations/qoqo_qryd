@@ -149,13 +149,23 @@ impl TweezerDeviceWrapper {
     ///     qubit (int): The index of the qubit.
     ///     tweezer (int): The index of the tweezer.
     ///
+    /// Returns:
+    ///     dict[int, int]: The updated qubit -> tweezer mapping.
+    ///     
     /// Raises:
     ///     PyValueError: The qubit is not present in the device.
     #[pyo3(text_signature = "(qubit, tweezer, /)")]
-    pub fn add_qubit_tweezer_mapping(&mut self, qubit: usize, tweezer: usize) -> PyResult<()> {
-        self.internal
-            .add_qubit_tweezer_mapping(qubit, tweezer)
-            .map_err(|err| PyValueError::new_err(format!("{:}", err)))
+    pub fn add_qubit_tweezer_mapping(
+        &mut self,
+        qubit: usize,
+        tweezer: usize,
+    ) -> PyResult<PyObject> {
+        Python::with_gil(|py| -> PyResult<PyObject> {
+            match self.internal.add_qubit_tweezer_mapping(qubit, tweezer) {
+                Ok(mapping) => Ok(mapping.into_py_dict(py).into()),
+                Err(err) => Err(PyValueError::new_err(format!("{:}", err))),
+            }
+        })
     }
 
     /// Deactivate the given qubit in the device.
@@ -561,13 +571,23 @@ impl TweezerMutableDeviceWrapper {
     ///     qubit (int): The index of the qubit.
     ///     tweezer (int): The index of the tweezer.
     ///
+    /// Returns:
+    ///     dict[int, int]: The updated qubit -> tweezer mapping.
+    ///     
     /// Raises:
     ///     PyValueError: The qubit is not present in the device.
     #[pyo3(text_signature = "(qubit, tweezer, /)")]
-    pub fn add_qubit_tweezer_mapping(&mut self, qubit: usize, tweezer: usize) -> PyResult<()> {
-        self.internal
-            .add_qubit_tweezer_mapping(qubit, tweezer)
-            .map_err(|err| PyValueError::new_err(format!("{:}", err)))
+    pub fn add_qubit_tweezer_mapping(
+        &mut self,
+        qubit: usize,
+        tweezer: usize,
+    ) -> PyResult<PyObject> {
+        Python::with_gil(|py| -> PyResult<PyObject> {
+            match self.internal.add_qubit_tweezer_mapping(qubit, tweezer) {
+                Ok(mapping) => Ok(mapping.into_py_dict(py).into()),
+                Err(err) => Err(PyValueError::new_err(format!("{:}", err))),
+            }
+        })
     }
 
     /// Deactivate the given qubit in the device.

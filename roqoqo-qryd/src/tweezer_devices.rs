@@ -291,7 +291,7 @@ impl TweezerDevice {
         if !self.layout_register.keys().contains(&name.to_string()) {
             return Err(RoqoqoBackendError::GenericError {
                 msg: format!(
-                    "Error switching layout of ExperimentalDevice. Layout {} is not set.",
+                    "Error switching layout of TweezerDevice. Layout {} is not set.",
                     name
                 ),
             });
@@ -329,29 +329,31 @@ impl TweezerDevice {
     ///
     /// # Returns
     ///
-    /// * `Ok(())` - The qubit -> tweezer mapping has been added/modified.
+    /// * `Ok(HashMap<usize,usize>)` - The updated qubit -> tweezer mapping.
     /// * `Err(RoqoqoBackendError)` - The tweezer does not exist.
     pub fn add_qubit_tweezer_mapping(
         &mut self,
         qubit: usize,
         tweezer: usize,
-    ) -> Result<(), RoqoqoBackendError> {
-        if self.is_tweezer_present(tweezer) {
-            if let Some(map) = &mut self.qubit_to_tweezer {
-                map.insert(qubit, tweezer);
-            } else {
-                self.qubit_to_tweezer = Some(self.new_trivial_mapping());
-                self.qubit_to_tweezer
-                    .as_mut()
-                    .unwrap()
-                    .insert(qubit, tweezer);
-            }
-            Ok(())
-        } else {
-            Err(RoqoqoBackendError::GenericError {
-                msg: "The given tweezer is not present in the Layout.".to_string(),
-            })
+    ) -> Result<HashMap<usize, usize>, RoqoqoBackendError> {
+        if !self.is_tweezer_present(tweezer) {
+            return Err(RoqoqoBackendError::GenericError {
+                msg: "The given tweezer is not present in the device Tweezer data.".to_string(),
+            });
         }
+        if let Some(map) = &mut self.qubit_to_tweezer {
+            // Remove the previous qubit present in the tweezer
+            if let Some(qubit_to_remove) =
+                map.iter()
+                    .find_map(|(&qbt, &twz)| if twz == tweezer { Some(qbt) } else { None })
+            {
+                map.remove(&qubit_to_remove);
+            }
+            map.insert(qubit, tweezer);
+        } else {
+            self.qubit_to_tweezer = Some(HashMap::from([(qubit, tweezer)]));
+        }
+        Ok(self.qubit_to_tweezer.as_ref().unwrap().clone())
     }
 
     /// Set the time of a single-qubit gate for a tweezer in a given Layout.
