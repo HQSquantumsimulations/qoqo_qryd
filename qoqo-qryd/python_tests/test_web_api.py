@@ -54,6 +54,7 @@ def test():
     #         result = backend.get_job_result(job_location)
     #         print(result)
     #         break
+    pass
 
 if __name__ == '__main__':
     pytest.main(sys.argv)
