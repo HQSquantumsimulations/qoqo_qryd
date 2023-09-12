@@ -19,6 +19,7 @@ use qoqo_qryd::{
 };
 use roqoqo_qryd::{phi_theta_relation, TweezerDevice};
 
+#[cfg(feature = "web-api")]
 use mockito::Server;
 
 /// Test new instantiation of TweezerDeviceWrapper and TweezerMutableDeviceWrapper
@@ -630,6 +631,7 @@ fn test_two_qubit_edges() {
 
 /// Test from_api of TweezerDeviceWrapper
 #[test]
+#[cfg(feature = "web-api")]
 fn test_from_api() {
     let mut returned_device_default = TweezerDevice::new(None, None);
     returned_device_default.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None);

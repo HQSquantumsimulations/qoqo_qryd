@@ -100,6 +100,7 @@ impl TweezerDeviceWrapper {
     /// Raises:
     ///     RoqoqoBackendError
     #[staticmethod]
+    #[cfg(feature = "web-api")]
     #[pyo3(text_signature = "(device_name, access_token, /)")]
     pub fn from_api(
         device_name: Option<String>,

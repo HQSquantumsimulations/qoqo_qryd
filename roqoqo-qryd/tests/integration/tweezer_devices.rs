@@ -353,6 +353,7 @@ fn test_change_device() {
 
 /// Test TweezerDevice from_api() method
 #[test]
+#[cfg(feature = "web-api")]
 fn test_from_api() {
     let mut returned_device_default = TweezerDevice::new(None, None);
     returned_device_default.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None);

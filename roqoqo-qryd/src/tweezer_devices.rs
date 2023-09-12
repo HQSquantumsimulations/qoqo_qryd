@@ -190,6 +190,7 @@ impl TweezerDevice {
     /// # Errors
     ///
     /// * `RoqoqoBackendError`
+    #[cfg(feature = "web-api")]
     pub fn from_api(
         device_name: Option<String>,
         access_token: Option<String>,
