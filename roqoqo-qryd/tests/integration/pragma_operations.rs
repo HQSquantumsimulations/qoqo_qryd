@@ -13,9 +13,9 @@
 use bincode::serialize;
 use qoqo_calculator::Calculator;
 use roqoqo::operations::{InvolveQubits, InvolvedQubits, Operate, PragmaChangeDevice, Substitute};
-use roqoqo_qryd::{
-    pragma_operations::{PragmaChangeQRydLayout, PragmaShiftQRydQubit},
-    PragmaDeactivateQRydQubit,
+use roqoqo_qryd::pragma_operations::{
+    PragmaChangeQRydLayout, PragmaDeactivateQRydQubit, PragmaShiftQRydQubit,
+    PragmaShiftQubitsTweezers,
 };
 use serde_test::{assert_tokens, Configure, Token};
 use std::collections::HashMap;
@@ -161,7 +161,7 @@ fn pragma_shift_qryd_qubit_inputs_qubits() {
     assert_eq!(pragma.involved_qubits(), InvolvedQubits::All);
 }
 
-/// Test PragmaChangeQRydLayout to_pragma_change_device function
+/// Test PragmaShiftQRydQubit to_pragma_change_device function
 #[test]
 fn pragma_shift_qryd_qubit_change() {
     let mut new_positions: HashMap<usize, (usize, usize)> = HashMap::new();
@@ -435,6 +435,150 @@ fn pragma_deactivate_qryd_qubit_serde_compact() {
             },
             Token::Str("qubit"),
             Token::U64(0),
+            Token::StructEnd,
+        ],
+    );
+}
+
+/// Test PragmaShiftQubitsTweezers inputs and involved qubits
+#[test]
+fn pragma_shift_qryd_qubit_tweezer_inputs_qubits() {
+    let shifts: Vec<(usize, usize)> = vec![(0, 1), (3, 4)];
+    let pragma = PragmaShiftQubitsTweezers::new(shifts.clone());
+
+    // Test inputs are correct
+    assert_eq!(pragma.shifts(), &shifts);
+
+    // Test InvolveQubits trait
+    assert_eq!(pragma.involved_qubits(), InvolvedQubits::All);
+}
+
+/// Test PragmaShiftQubitsTweezers to_pragma_change_device function
+#[test]
+fn pragma_shift_qryd_qubit_tweezer_change() {
+    let shifts: Vec<(usize, usize)> = vec![(0, 1), (3, 4)];
+    let pragma = PragmaShiftQubitsTweezers::new(shifts);
+
+    // Test inputs are correct
+    let result = PragmaChangeDevice {
+        wrapped_tags: vec![
+            "Operation".to_string(),
+            "PragmaOperation".to_string(),
+            "PragmaShiftQubitsTweezers".to_string(),
+        ],
+        wrapped_hqslang: "PragmaShiftQubitsTweezers".to_string(),
+        wrapped_operation: serialize(&pragma).unwrap(),
+    };
+    assert_eq!(pragma.to_pragma_change_device().unwrap(), result);
+}
+
+/// Test PragmaShiftQubitsTweezers standard derived traits (Debug, Clone, PartialEq)
+#[test]
+fn pragma_shift_qryd_qubit_tweezer_simple_traits() {
+    let shifts: Vec<(usize, usize)> = vec![(0, 1), (3, 4)];
+    let pragma = PragmaShiftQubitsTweezers::new(shifts.clone());
+    // Test Debug trait
+    assert_eq!(
+        format!("{:?}", pragma),
+        format!(
+            "PragmaShiftQubitsTweezers {{ shifts: {:?} }}",
+            shifts.clone()
+        )
+    );
+
+    // Test Clone trait
+    assert_eq!(pragma.clone(), pragma);
+
+    // Test PartialEq trait
+    let pragma_0 = PragmaShiftQubitsTweezers::new(shifts.clone());
+    let pragma_1 = PragmaShiftQubitsTweezers::new(vec![]);
+    assert!(pragma_0 == pragma);
+    assert!(pragma == pragma_0);
+    assert!(pragma_1 != pragma);
+    assert!(pragma != pragma_1);
+}
+
+/// Test PragmaShiftQubitsTweezers Operate trait
+#[test]
+fn pragma_shift_qryd_qubit_tweezer_operate_trait() {
+    let shifts: Vec<(usize, usize)> = vec![(0, 1), (3, 4)];
+    let pragma = PragmaShiftQubitsTweezers::new(shifts.clone());
+
+    // (1) Test tags function
+    let tags: &[&str; 3] = &["Operation", "PragmaOperation", "PragmaShiftQubitsTweezers"];
+    assert_eq!(pragma.tags(), tags);
+
+    // (2) Test hqslang function
+    assert_eq!(pragma.hqslang(), String::from("PragmaShiftQubitsTweezers"));
+
+    // (3) Test is_parametrized function
+    assert!(!pragma.is_parametrized());
+}
+
+/// Test PragmaShiftQubitsTweezers Substitute trait
+#[test]
+fn pragma_shift_qryd_qubit_tweezer_substitute_trait() {
+    let shifts: Vec<(usize, usize)> = vec![(0, 1), (3, 4)];
+    let pragma = PragmaShiftQubitsTweezers::new(shifts.clone());
+    let new_shifts: Vec<(usize, usize)> = vec![(0, 2), (3, 5)];
+    let pragma_test = PragmaShiftQubitsTweezers::new(new_shifts.clone());
+    // (1) Substitute parameters function
+    let mut substitution_dict: Calculator = Calculator::new();
+    substitution_dict.set_variable("ro", 0.0);
+    let result = pragma.substitute_parameters(&substitution_dict).unwrap();
+    assert_eq!(result, pragma);
+
+    // (2) Remap qubits function
+    let mut qubit_mapping_test: HashMap<usize, usize> = HashMap::new();
+    qubit_mapping_test.insert(2, 1);
+    qubit_mapping_test.insert(5, 4);
+    let result = pragma_test.remap_qubits(&qubit_mapping_test).unwrap();
+    assert_eq!(result, pragma);
+}
+
+/// Test PragmaShiftQubitsTweezers Serialization and Deserialization traits (readable)
+#[test]
+fn pragma_shift_qryd_qubit_tweezer_serde_readable() {
+    let shifts: Vec<(usize, usize)> = vec![(0, 1)];
+    let pragma_serialization = PragmaShiftQubitsTweezers::new(shifts.clone());
+    assert_tokens(
+        &pragma_serialization.readable(),
+        &[
+            Token::Struct {
+                name: "PragmaShiftQubitsTweezers",
+                len: 1,
+            },
+            Token::Str("shifts"),
+            Token::Seq { len: Some(1) },
+            Token::Tuple { len: 2 },
+            Token::U64(0),
+            Token::U64(1),
+            Token::TupleEnd,
+            Token::SeqEnd,
+            Token::StructEnd,
+        ],
+    );
+}
+
+/// Test PragmaShiftQubitsTweezers Serialization and Deserialization traits (compact)
+#[test]
+fn pragma_shift_qryd_qubit_tweezer_serde_compact() {
+    let shifts: Vec<(usize, usize)> = vec![(0, 1)];
+    let pragma_serialization = PragmaShiftQubitsTweezers::new(shifts.clone());
+    assert_tokens(
+        &pragma_serialization.compact(),
+        &[
+            Token::Struct {
+                name: "PragmaShiftQubitsTweezers",
+                len: 1,
+            },
+            Token::Str("shifts"),
+            Token::Seq { len: Some(1) },
+            Token::Tuple { len: 2 },
+            Token::U64(0),
+            Token::U64(1),
+            Token::TupleEnd,
+            Token::SeqEnd,
             Token::StructEnd,
         ],
     );

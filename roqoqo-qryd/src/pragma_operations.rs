@@ -171,9 +171,9 @@ const TAGS_PragmaShiftQRydQubit: &[&str; 3] =
 
 impl roqoqo::operations::SupportedVersion for PragmaShiftQRydQubit {}
 
-/// This PRAGMA Operation deactivates a qubit in a QRyd Experimental device.
+/// This PRAGMA Operation deactivates a qubit in a QRyd Tweezer device.
 ///
-/// In QRyd Experimental devices a quantum state is trapped within an optical tweezer.
+/// In QRyd Tweezer devices a quantum state is trapped within an optical tweezer.
 /// This Operation signals the device to drop the quantum state related to the given qubit.
 ///
 #[derive(
@@ -243,3 +243,78 @@ const TAGS_PragmaDeactivateQRydQubit: &[&str; 3] =
     &["Operation", "PragmaOperation", "PragmaDeactivateQRydQubit"];
 
 impl roqoqo::operations::SupportedVersion for PragmaDeactivateQRydQubit {}
+
+/// This PRAGMA Operation lists the shift operations to be executed in a QRyd Tweezer device.
+///
+/// Each tuple contains first the starting tweezer identifier and second the ending tweezer identifier.
+/// Multiple instances indicate parallel operations.
+///
+#[derive(
+    Debug,
+    Clone,
+    PartialEq,
+    Eq,
+    roqoqo_derive::Operate,
+    roqoqo_derive::OperatePragma,
+    serde::Serialize,
+    serde::Deserialize,
+)]
+pub struct PragmaShiftQubitsTweezers {
+    /// The list of shifts that can run in parallel.
+    pub shifts: Vec<(usize, usize)>,
+}
+
+impl Substitute for PragmaShiftQubitsTweezers {
+    fn substitute_parameters(
+        &self,
+        _calculator: &qoqo_calculator::Calculator,
+    ) -> Result<Self, RoqoqoError> {
+        Ok(self.clone())
+    }
+
+    fn remap_qubits(&self, mapping: &HashMap<usize, usize>) -> Result<Self, RoqoqoError> {
+        let mut new_shifts = Vec::<(usize, usize)>::with_capacity(self.shifts.len());
+        for (start, end) in self.shifts.iter() {
+            let new_start = mapping.get(start).unwrap_or(start);
+            let new_end = mapping.get(end).unwrap_or(end);
+            new_shifts.push((*new_start, *new_end));
+        }
+        Ok(Self { shifts: new_shifts })
+    }
+}
+
+impl PragmaShiftQubitsTweezers {
+    /// Wrap PragmaShiftQubitsTweezers in PragmaChangeDevice operation
+    ///
+    /// PragmaShiftQubitsTweezers is device specific and can not be directly added to a Circuit.
+    /// Instead it is first wrapped in a PragmaChangeDevice operation that is in turn added
+    /// to the circuit.
+    pub fn to_pragma_change_device(&self) -> Result<PragmaChangeDevice, RoqoqoBackendError> {
+        Ok(PragmaChangeDevice {
+            wrapped_tags: self.tags().iter().map(|s| s.to_string()).collect(),
+            wrapped_hqslang: self.hqslang().to_string(),
+            wrapped_operation: serialize(&self).map_err(|err| {
+                RoqoqoBackendError::GenericError {
+                    msg: format!(
+                        "Error occured during serialisation of PragmaShiftQubitsTweezers {:?}",
+                        err
+                    ),
+                }
+            })?,
+        })
+    }
+}
+
+// Implementing the InvolveQubits trait for PragmaShiftQubitsTweezers.
+impl InvolveQubits for PragmaShiftQubitsTweezers {
+    /// Lists all involved qubits (here, All).
+    fn involved_qubits(&self) -> InvolvedQubits {
+        InvolvedQubits::All
+    }
+}
+
+#[allow(non_upper_case_globals)]
+const TAGS_PragmaShiftQubitsTweezers: &[&str; 3] =
+    &["Operation", "PragmaOperation", "PragmaShiftQubitsTweezers"];
+
+impl roqoqo::operations::SupportedVersion for PragmaShiftQubitsTweezers {}
