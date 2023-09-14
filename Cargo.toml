@@ -3,6 +3,7 @@ members = [
     "qoqo-qryd",
     "roqoqo-qryd",
 ]
+resolver = "2"
 
 [profile.release]
 lto = "thin"

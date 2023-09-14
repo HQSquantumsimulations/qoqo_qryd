@@ -46,9 +46,9 @@
 pub mod qryd_devices;
 pub use qryd_devices::*;
 
-/// Experimental devices representing QRyd quantum computer(s)
-pub mod experimental_devices;
-pub use experimental_devices::*;
+/// Tweezer devices representing QRyd quantum computer(s)
+pub mod tweezer_devices;
+pub use tweezer_devices::*;
 
 /// Devices representing QRyd quantum computer(s)
 pub mod api_devices;

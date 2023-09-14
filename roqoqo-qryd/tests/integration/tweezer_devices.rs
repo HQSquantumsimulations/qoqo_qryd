@@ -14,14 +14,14 @@ use bincode::serialize;
 use ndarray::Array2;
 
 use roqoqo::{devices::Device, RoqoqoBackendError};
-use roqoqo_qryd::{phi_theta_relation, ExperimentalDevice, PragmaChangeQRydLayout};
+use roqoqo_qryd::{phi_theta_relation, PragmaChangeQRydLayout, TweezerDevice};
 
-use httpmock::MockServer;
+use mockito::Server;
 
-/// Test ExperimentalDevice new()
+/// Test TweezerDevice new()
 #[test]
 fn test_new() {
-    let device = ExperimentalDevice::new(None, None);
+    let device = TweezerDevice::new(None, None);
 
     assert_eq!(device.current_layout, "Default");
     assert!(device.qubit_to_tweezer.is_none());
@@ -29,10 +29,10 @@ fn test_new() {
     assert!(device.layout_register.get("Default").is_some());
 }
 
-// Test ExperimentalDevice add_layout(), switch_layout() methods
+// Test TweezerDevice add_layout(), switch_layout() methods
 #[test]
 fn test_layouts() {
-    let mut device = ExperimentalDevice::new(None, None);
+    let mut device = TweezerDevice::new(None, None);
 
     assert!(device.available_layouts().contains(&"Default"));
 
@@ -170,28 +170,33 @@ fn test_layouts() {
     assert!(device.available_layouts().contains(&"Test"));
 }
 
-// Test ExperimentalDevice add_qubit_tweezer_mapping(), get_tweezer_from_qubit() methods
+// Test TweezerDevice add_qubit_tweezer_mapping(), get_tweezer_from_qubit() methods
 #[test]
 fn test_qubit_tweezer_mapping() {
-    let mut device = ExperimentalDevice::new(None, None);
+    let mut device = TweezerDevice::new(None, None);
 
     assert!(device.add_qubit_tweezer_mapping(0, 0).is_err());
     assert!(device.get_tweezer_from_qubit(&0).is_err());
 
     device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.0, None);
     device.set_tweezer_multi_qubit_gate_time("MultiQubitZZ", &[1, 2, 3], 0.1, None);
+
     assert!(device.add_qubit_tweezer_mapping(0, 0).is_ok());
     assert!(device.add_qubit_tweezer_mapping(2, 3).is_ok());
 
     assert_eq!(device.get_tweezer_from_qubit(&0).unwrap(), 0);
-    assert!(device.get_tweezer_from_qubit(&4).is_err());
     assert_eq!(device.get_tweezer_from_qubit(&2).unwrap(), 3);
+    assert!(device.get_tweezer_from_qubit(&4).is_err());
+
+    let add_01 = device.add_qubit_tweezer_mapping(0, 1);
+    assert!(add_01.is_ok());
+    assert_eq!(add_01.unwrap(), vec![(0, 1), (2, 3)].into_iter().collect());
 }
 
-/// Test ExperimentalDevice deactivate_qubit()
+/// Test TweezerDevice deactivate_qubit()
 #[test]
 fn test_deactivate_qubit() {
-    let mut device = ExperimentalDevice::new(None, None);
+    let mut device = TweezerDevice::new(None, None);
 
     assert!(device.deactivate_qubit(0).is_err());
 
@@ -202,10 +207,10 @@ fn test_deactivate_qubit() {
     assert!(device.deactivate_qubit(0).is_err());
 }
 
-/// Test ExperimentalDevice ..._qubit_gate_time() methods
+/// Test TweezerDevice ..._qubit_gate_time() methods
 #[test]
 fn test_qubit_times() {
-    let mut device = ExperimentalDevice::new(None, None);
+    let mut device = TweezerDevice::new(None, None);
 
     assert!(device.single_qubit_gate_time("PauliX", &0).is_none());
 
@@ -244,10 +249,10 @@ fn test_qubit_times() {
     );
 }
 
-/// Test ExperimentalDevice number_qubits() method
+/// Test TweezerDevice number_qubits() method
 #[test]
 fn test_number_qubits() {
-    let mut device = ExperimentalDevice::new(None, None);
+    let mut device = TweezerDevice::new(None, None);
 
     assert_eq!(device.number_qubits(), 0);
 
@@ -262,10 +267,10 @@ fn test_number_qubits() {
     assert_eq!(device.number_qubits(), 2)
 }
 
-/// Test ExperimentalDevice to_generic_device() method method
+/// Test TweezerDevice to_generic_device() method method
 #[test]
 fn test_to_generic_device() {
-    let mut device = ExperimentalDevice::new(None, None);
+    let mut device = TweezerDevice::new(None, None);
     device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None);
     device.set_tweezer_single_qubit_gate_time("PauliY", 1, 0.23, None);
     device.set_tweezer_two_qubit_gate_time("CNOT", 2, 3, 0.34, None);
@@ -323,10 +328,10 @@ fn test_to_generic_device() {
     );
 }
 
-/// Test ExperimentalDevice change_device() method
+/// Test TweezerDevice change_device() method
 #[test]
 fn test_change_device() {
-    let mut device = ExperimentalDevice::new(None, None);
+    let mut device = TweezerDevice::new(None, None);
     device.add_layout("0").unwrap();
     device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("0".to_string()));
     device.set_tweezer_single_qubit_gate_time("PauliY", 1, 0.23, Some("0".to_string()));
@@ -346,31 +351,46 @@ fn test_change_device() {
     assert_eq!(device.current_layout, "0");
 }
 
-/// Test ExperimentalDevice from_api() method
+/// Test TweezerDevice from_api() method
 #[test]
+#[cfg(feature = "web-api")]
 fn test_from_api() {
-    let mut returned_device_default = ExperimentalDevice::new(None, None);
+    let mut returned_device_default = TweezerDevice::new(None, None);
     returned_device_default.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None);
-    let server = MockServer::start();
-    let mut mock = server.mock(|when, then| {
-        when.method("POST");
-        then.status(200).json_body_obj(&returned_device_default);
-    });
+    let mut server = Server::new();
+    let port = server
+        .url()
+        .chars()
+        .rev()
+        .take(5)
+        .collect::<String>()
+        .chars()
+        .rev()
+        .collect::<String>();
+    let mut mock = server
+        .mock("POST", mockito::Matcher::Any)
+        .with_status(200)
+        .with_body(
+            serde_json::to_string(&returned_device_default)
+                .unwrap()
+                .into_bytes(),
+        )
+        .create();
 
-    let response = ExperimentalDevice::from_api(None, None, Some(server.port().to_string()));
+    let response = TweezerDevice::from_api(None, None, Some(port.clone()));
     mock.assert();
     assert!(response.is_ok());
 
     let device = response.unwrap();
     assert_eq!(device, returned_device_default);
 
-    mock.delete();
-    mock = server.mock(|when, then| {
-        when.method("POST");
-        then.status(400);
-    });
+    mock.remove();
+    mock = server
+        .mock("POST", mockito::Matcher::Any)
+        .with_status(400)
+        .create();
 
-    let response = ExperimentalDevice::from_api(None, None, Some(server.port().to_string()));
+    let response = TweezerDevice::from_api(None, None, Some(port));
     mock.assert();
     assert!(response.is_err());
     assert_eq!(
@@ -381,11 +401,11 @@ fn test_from_api() {
     );
 }
 
-/// Test ExperimentalDevice phase_shift_controlled_...() and gate_time_controlled_...()  methods
+/// Test TweezerDevice phase_shift_controlled_...() and gate_time_controlled_...()  methods
 #[test]
 fn test_phi_theta_relation() {
-    let mut device = ExperimentalDevice::new(None, None);
-    let device_f = ExperimentalDevice::new(Some(2.13.to_string()), Some(2.15.to_string()));
+    let mut device = TweezerDevice::new(None, None);
+    let device_f = TweezerDevice::new(Some(2.13.to_string()), Some(2.15.to_string()));
 
     assert_eq!(
         device.phase_shift_controlled_z().unwrap(),

@@ -1,4 +1,4 @@
-name: documentation
+name: HQS build Sphinx docs for rust pyo3 repos
 
 on:
   release:
@@ -10,12 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - uses: actions/setup-python@v4.5.0
+    - uses: actions/setup-python@v4
     - uses: actions-rs/toolchain@v1
       with:
         profile: minimal
         toolchain: stable
-        target: x86_64-unknown-linux-gnu
         default: true
     - name: Install dependencies
       run: |

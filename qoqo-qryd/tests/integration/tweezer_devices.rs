@@ -10,25 +10,25 @@
 // express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Integration test for Experimental Devices
+//! Integration test for Tweezer Devices
 
 use pyo3::{prelude::*, types::PyDict};
 
 use qoqo_qryd::{
-    experimental_devices::convert_into_device, ExperimentalDeviceWrapper,
-    ExperimentalMutableDeviceWrapper,
+    tweezer_devices::convert_into_device, TweezerDeviceWrapper, TweezerMutableDeviceWrapper,
 };
-use roqoqo_qryd::{phi_theta_relation, ExperimentalDevice};
+use roqoqo_qryd::{phi_theta_relation, TweezerDevice};
 
-use httpmock::MockServer;
+#[cfg(feature = "web-api")]
+use mockito::Server;
 
-/// Test new instantiation of ExperimentalDeviceWrapper and ExperimentalMutableDeviceWrapper
+/// Test new instantiation of TweezerDeviceWrapper and TweezerMutableDeviceWrapper
 #[test]
 fn test_new() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type = py.get_type::<ExperimentalDeviceWrapper>();
-        let device_type_mut = py.get_type::<ExperimentalMutableDeviceWrapper>();
+        let device_type = py.get_type::<TweezerDeviceWrapper>();
+        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
         let res = device_type.call0();
         let res_mut = device_type_mut.call0();
 
@@ -37,20 +37,20 @@ fn test_new() {
     })
 }
 
-/// Test available_ switch_ and add_layout methods of ExperimentalDeviceWrapper and ExperimentalMutableDeviceWrapper
+/// Test available_ switch_ and add_layout methods of TweezerDeviceWrapper and TweezerMutableDeviceWrapper
 #[test]
 fn test_layouts() {
     // Setup fake preconfigured device
-    let mut exp = ExperimentalDevice::new(None, None);
+    let mut exp = TweezerDevice::new(None, None);
     exp.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None);
     exp.add_qubit_tweezer_mapping(0, 0).unwrap();
     exp.add_layout("OtherLayout").unwrap();
     exp.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("OtherLayout".to_string()));
-    let fake_api_device = ExperimentalDeviceWrapper { internal: exp };
+    let fake_api_device = TweezerDeviceWrapper { internal: exp };
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let fake_api_pypyany = fake_api_device.into_py(py);
-        let device_type_mut = py.get_type::<ExperimentalMutableDeviceWrapper>();
+        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
         let device = fake_api_pypyany.as_ref(py);
         let device_mut = device_type_mut.call0().unwrap();
 
@@ -116,22 +116,26 @@ fn test_layouts() {
     })
 }
 
-/// Test add_qubit_tweezer_mapping function of ExperimentalDeviceWrapper and ExperimentalMutableDeviceWrapper
+/// Test add_qubit_tweezer_mapping function of TweezerDeviceWrapper and TweezerMutableDeviceWrapper
 #[test]
 fn test_qubit_tweezer_mapping() {
     // Setup fake preconfigured device
-    let mut exp = ExperimentalDevice::new(None, None);
+    let mut exp = TweezerDevice::new(None, None);
     exp.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.23, None);
-    let fake_api_device = ExperimentalDeviceWrapper { internal: exp };
+    exp.set_tweezer_single_qubit_gate_time("PauliX", 2, 0.23, None);
+    let fake_api_device = TweezerDeviceWrapper { internal: exp };
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let fake_api_pypyany = fake_api_device.into_py(py);
-        let device_type_mut = py.get_type::<ExperimentalMutableDeviceWrapper>();
+        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
         let device = fake_api_pypyany.as_ref(py);
         let device_mut = device_type_mut.call0().unwrap();
 
         device_mut
             .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 1, 0.23))
+            .unwrap();
+        device_mut
+            .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 2, 0.23))
             .unwrap();
 
         assert!(device
@@ -146,20 +150,30 @@ fn test_qubit_tweezer_mapping() {
         assert!(device_mut
             .call_method1("add_qubit_tweezer_mapping", (1, 0))
             .is_err());
+        assert_eq!(
+            device
+                .call_method1("add_qubit_tweezer_mapping", (3, 2))
+                .unwrap()
+                .extract::<&PyDict>()
+                .unwrap()
+                .len(),
+            2
+        );
     })
 }
 
+/// Test deactivate_qubit function of TweezerDeviceWrapper and TweezerMutableDeviceWrapper
 #[test]
 fn test_deactivate_qubit() {
     // Setup fake preconfigured device
-    let mut exp = ExperimentalDevice::new(None, None);
+    let mut exp = TweezerDevice::new(None, None);
     exp.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.23, None);
     exp.set_tweezer_single_qubit_gate_time("PauliY", 0, 0.23, None);
-    let fake_api_device = ExperimentalDeviceWrapper { internal: exp };
+    let fake_api_device = TweezerDeviceWrapper { internal: exp };
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let fake_api_pypyany = fake_api_device.into_py(py);
-        let device_type_mut = py.get_type::<ExperimentalMutableDeviceWrapper>();
+        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
         let device = fake_api_pypyany.as_ref(py);
         let device_mut = device_type_mut.call0().unwrap();
 
@@ -172,18 +186,17 @@ fn test_deactivate_qubit() {
         device_mut
             .call_method1("set_tweezer_single_qubit_gate_time", ("PauliY", 0, 0.23))
             .unwrap();
-
         device
-            .call_method1("add_qubit_tweezer_mapping", (0, 1))
-            .unwrap();
-        device_mut
-            .call_method1("add_qubit_tweezer_mapping", (0, 1))
+            .call_method1("add_qubit_tweezer_mapping", (0, 0))
             .unwrap();
         device
-            .call_method1("add_qubit_tweezer_mapping", (1, 0))
+            .call_method1("add_qubit_tweezer_mapping", (1, 1))
             .unwrap();
         device_mut
-            .call_method1("add_qubit_tweezer_mapping", (1, 0))
+            .call_method1("add_qubit_tweezer_mapping", (0, 0))
+            .unwrap();
+        device_mut
+            .call_method1("add_qubit_tweezer_mapping", (1, 1))
             .unwrap();
 
         let res_device = device.call_method1("deactivate_qubit", (0,));
@@ -200,11 +213,11 @@ fn test_deactivate_qubit() {
     })
 }
 
-/// Test _qubit_time functions of ExperimentalDeviceWrapper and ExperimentalMutableDeviceWrapper
+/// Test _qubit_time functions of TweezerDeviceWrapper and TweezerMutableDeviceWrapper
 #[test]
 fn test_qubit_times() {
     // Setup fake preconfigured device
-    let mut exp = ExperimentalDevice::new(None, None);
+    let mut exp = TweezerDevice::new(None, None);
     exp.add_layout("OtherLayout").unwrap();
     exp.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("OtherLayout".to_string()));
     exp.set_tweezer_two_qubit_gate_time("CNOT", 0, 1, 0.13, Some("OtherLayout".to_string()));
@@ -227,11 +240,11 @@ fn test_qubit_times() {
     exp.add_qubit_tweezer_mapping(1, 2).unwrap();
     exp.add_qubit_tweezer_mapping(2, 3).unwrap();
     exp.add_qubit_tweezer_mapping(3, 0).unwrap();
-    let fake_api_device = ExperimentalDeviceWrapper { internal: exp };
+    let fake_api_device = TweezerDeviceWrapper { internal: exp };
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let fake_api_pypyany = fake_api_device.into_py(py);
-        let device_type_mut = py.get_type::<ExperimentalMutableDeviceWrapper>();
+        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
         let device = fake_api_pypyany.as_ref(py);
         let device_mut = device_type_mut.call0().unwrap();
 
@@ -313,18 +326,18 @@ fn test_qubit_times() {
     })
 }
 
-/// Test number_qubits function of ExperimentalDeviceWrapper and ExperimentalMutableDeviceWrapper
+/// Test number_qubits function of TweezerDeviceWrapper and TweezerMutableDeviceWrapper
 #[test]
 fn test_number_qubits() {
     // Setup fake preconfigured device
-    let mut exp = ExperimentalDevice::new(None, None);
+    let mut exp = TweezerDevice::new(None, None);
     exp.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None);
     exp.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.23, None);
-    let fake_api_device = ExperimentalDeviceWrapper { internal: exp };
+    let fake_api_device = TweezerDeviceWrapper { internal: exp };
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let fake_api_pypyany = fake_api_device.into_py(py);
-        let device_type_mut = py.get_type::<ExperimentalMutableDeviceWrapper>();
+        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
         let device = fake_api_pypyany.as_ref(py);
         let device_mut = device_type_mut.call0().unwrap();
 
@@ -393,13 +406,13 @@ fn test_number_qubits() {
     })
 }
 
-/// Test to_generic_device functions of ExperimentalDeviceWrapper and ExperimentalMutableDeviceWrapper
+/// Test to_generic_device functions of TweezerDeviceWrapper and TweezerMutableDeviceWrapper
 #[test]
 fn test_generic_device() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type = py.get_type::<ExperimentalDeviceWrapper>();
-        let device_type_mut = py.get_type::<ExperimentalMutableDeviceWrapper>();
+        let device_type = py.get_type::<TweezerDeviceWrapper>();
+        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
         let device = device_type.call0().unwrap();
         let device_mut = device_type_mut.call0().unwrap();
 
@@ -426,33 +439,31 @@ fn test_generic_device() {
     })
 }
 
-/// Test copy and deepcopy functions of ExperimentalDeviceWrapper and ExperimentalMutableDeviceWrapper
+/// Test copy and deepcopy functions of TweezerDeviceWrapper and TweezerMutableDeviceWrapper
 #[test]
 fn test_copy_deepcopy() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type = py.get_type::<ExperimentalDeviceWrapper>();
-        let device_type_mut = py.get_type::<ExperimentalMutableDeviceWrapper>();
+        let device_type = py.get_type::<TweezerDeviceWrapper>();
+        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
         let device = device_type.call0().unwrap();
         let device_mut = device_type_mut.call0().unwrap();
 
         let copy_op = device.call_method0("__copy__").unwrap();
         let copy_op_mut = device_mut.call_method0("__copy__").unwrap();
-        let copy_wrapper = copy_op.extract::<ExperimentalDeviceWrapper>().unwrap();
+        let copy_wrapper = copy_op.extract::<TweezerDeviceWrapper>().unwrap();
         let copy_wrapper_mut = copy_op_mut
-            .extract::<ExperimentalMutableDeviceWrapper>()
+            .extract::<TweezerMutableDeviceWrapper>()
             .unwrap();
         let deepcopy_op = device.call_method1("__deepcopy__", ("",)).unwrap();
         let deepcopy_op_mut = device_mut.call_method1("__deepcopy__", ("",)).unwrap();
-        let deepcopy_wrapper = deepcopy_op.extract::<ExperimentalDeviceWrapper>().unwrap();
+        let deepcopy_wrapper = deepcopy_op.extract::<TweezerDeviceWrapper>().unwrap();
         let deepcopy_wrapper_mut = deepcopy_op_mut
-            .extract::<ExperimentalMutableDeviceWrapper>()
+            .extract::<TweezerMutableDeviceWrapper>()
             .unwrap();
 
-        let device_wrapper = device.extract::<ExperimentalDeviceWrapper>().unwrap();
-        let device_wrapper_mut = device_mut
-            .extract::<ExperimentalMutableDeviceWrapper>()
-            .unwrap();
+        let device_wrapper = device.extract::<TweezerDeviceWrapper>().unwrap();
+        let device_wrapper_mut = device_mut.extract::<TweezerMutableDeviceWrapper>().unwrap();
         assert_eq!(device_wrapper, copy_wrapper);
         assert_eq!(device_wrapper, deepcopy_wrapper);
         assert_eq!(device_wrapper_mut, copy_wrapper_mut);
@@ -460,13 +471,13 @@ fn test_copy_deepcopy() {
     });
 }
 
-/// Test to_ and from_json functions of ExperimentalDeviceWrapper and ExperimentalMutableDeviceWrapper
+/// Test to_ and from_json functions of TweezerDeviceWrapper and TweezerMutableDeviceWrapper
 #[test]
 fn test_to_from_json() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type = py.get_type::<ExperimentalDeviceWrapper>();
-        let device_type_mut = py.get_type::<ExperimentalMutableDeviceWrapper>();
+        let device_type = py.get_type::<TweezerDeviceWrapper>();
+        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
         let device = device_type.call0().unwrap();
         let device_mut = device_type_mut.call0().unwrap();
 
@@ -509,26 +520,24 @@ fn test_to_from_json() {
         let serialised_error_mut = serialised_mut.call_method0("to_json");
         assert!(serialised_error_mut.is_err());
 
-        let serde_wrapper = deserialised.extract::<ExperimentalDeviceWrapper>().unwrap();
+        let serde_wrapper = deserialised.extract::<TweezerDeviceWrapper>().unwrap();
         let serde_wrapper_mut = deserialised_mut
-            .extract::<ExperimentalMutableDeviceWrapper>()
+            .extract::<TweezerMutableDeviceWrapper>()
             .unwrap();
-        let device_wrapper = device.extract::<ExperimentalDeviceWrapper>().unwrap();
-        let device_wrapper_mut = device_mut
-            .extract::<ExperimentalMutableDeviceWrapper>()
-            .unwrap();
+        let device_wrapper = device.extract::<TweezerDeviceWrapper>().unwrap();
+        let device_wrapper_mut = device_mut.extract::<TweezerMutableDeviceWrapper>().unwrap();
         assert_eq!(device_wrapper, serde_wrapper);
         assert_eq!(device_wrapper_mut, serde_wrapper_mut);
     });
 }
 
-/// Test to_ and from_bincode functions of ExperimentalDeviceWrapper and ExperimentalMutableDeviceWrapper
+/// Test to_ and from_bincode functions of TweezerDeviceWrapper and TweezerMutableDeviceWrapper
 #[test]
 fn test_to_from_bincode() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type = py.get_type::<ExperimentalDeviceWrapper>();
-        let device_type_mut = py.get_type::<ExperimentalMutableDeviceWrapper>();
+        let device_type = py.get_type::<TweezerDeviceWrapper>();
+        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
         let device = device_type.call0().unwrap();
         let device_mut = device_type_mut.call0().unwrap();
 
@@ -555,26 +564,24 @@ fn test_to_from_bincode() {
         let serialised_error_mut = serialised_mut.call_method0("to_bincode");
         assert!(serialised_error_mut.is_err());
 
-        let serde_wrapper = deserialised.extract::<ExperimentalDeviceWrapper>().unwrap();
+        let serde_wrapper = deserialised.extract::<TweezerDeviceWrapper>().unwrap();
         let serde_wrapper_mut = deserialised_mut
-            .extract::<ExperimentalMutableDeviceWrapper>()
+            .extract::<TweezerMutableDeviceWrapper>()
             .unwrap();
-        let device_wrapper = device.extract::<ExperimentalDeviceWrapper>().unwrap();
-        let device_wrapper_mut = device_mut
-            .extract::<ExperimentalMutableDeviceWrapper>()
-            .unwrap();
+        let device_wrapper = device.extract::<TweezerDeviceWrapper>().unwrap();
+        let device_wrapper_mut = device_mut.extract::<TweezerMutableDeviceWrapper>().unwrap();
         assert_eq!(device_wrapper, serde_wrapper);
         assert_eq!(device_wrapper_mut, serde_wrapper_mut);
     });
 }
 
-/// Test two_qubit_edges function of ExperimentalDeviceWrapper and ExperimentalMutableDeviceWrapper
+/// Test two_qubit_edges function of TweezerDeviceWrapper and TweezerMutableDeviceWrapper
 #[test]
 fn test_two_qubit_edges() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type = py.get_type::<ExperimentalDeviceWrapper>();
-        let device_type_mut = py.get_type::<ExperimentalMutableDeviceWrapper>();
+        let device_type = py.get_type::<TweezerDeviceWrapper>();
+        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
         let device = device_type.call0().unwrap();
         let device_mut = device_type_mut.call0().unwrap();
 
@@ -622,32 +629,43 @@ fn test_two_qubit_edges() {
     });
 }
 
-/// Test from_api of ExperimentalDeviceWrapper
+/// Test from_api of TweezerDeviceWrapper
 #[test]
+#[cfg(feature = "web-api")]
 fn test_from_api() {
-    let mut returned_device_default = ExperimentalDevice::new(None, None);
+    let mut returned_device_default = TweezerDevice::new(None, None);
     returned_device_default.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None);
-    let returned_device_default_wrapper = ExperimentalDeviceWrapper {
+    let returned_device_default_wrapper = TweezerDeviceWrapper {
         internal: returned_device_default.clone(),
     };
-    let server = MockServer::start();
-    let mock = server.mock(|when, then| {
-        when.method("POST");
-        then.status(200).json_body_obj(&returned_device_default);
-    });
+    let mut server = Server::new();
+    let port = server
+        .url()
+        .chars()
+        .rev()
+        .take(5)
+        .collect::<String>()
+        .chars()
+        .rev()
+        .collect::<String>();
+    let mock = server
+        .mock("POST", mockito::Matcher::Any)
+        .with_status(200)
+        .with_body(
+            serde_json::to_string(&returned_device_default)
+                .unwrap()
+                .as_bytes(),
+        )
+        .create();
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let ext_device_type = returned_device_default_wrapper.into_py(py);
         let ext_device = ext_device_type.as_ref(py);
-        let device_type = py.get_type::<ExperimentalDeviceWrapper>();
+        let device_type = py.get_type::<TweezerDeviceWrapper>();
         let device = device_type
             .call_method1(
                 "from_api",
-                (
-                    Option::<String>::None,
-                    Option::<String>::None,
-                    server.port().to_string(),
-                ),
+                (Option::<String>::None, Option::<String>::None, port),
             )
             .unwrap();
 
@@ -672,11 +690,11 @@ fn test_from_api() {
 fn test_convert_to_device() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type = py.get_type::<ExperimentalDeviceWrapper>();
+        let device_type = py.get_type::<TweezerDeviceWrapper>();
         let device = device_type.call0().unwrap();
 
         let converted = convert_into_device(device).unwrap();
-        let rust_dev: ExperimentalDevice = ExperimentalDevice::new(None, None);
+        let rust_dev: TweezerDevice = TweezerDevice::new(None, None);
 
         assert_eq!(converted, rust_dev);
     });
@@ -687,8 +705,8 @@ fn test_convert_to_device() {
 fn test_phi_theta_relations() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type_mut = py.get_type::<ExperimentalMutableDeviceWrapper>();
-        let device_type = py.get_type::<ExperimentalDeviceWrapper>();
+        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
+        let device_type = py.get_type::<TweezerDeviceWrapper>();
         let device_f = device_type_mut.call1(("2.15", "2.13")).unwrap();
         let device = device_type.call0().unwrap();
         let device_mut = device_type_mut.call0().unwrap();

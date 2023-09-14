@@ -1,6 +1,6 @@
 [package]
 name = "qoqo-qryd"
-version = "0.10.0"
+version = "0.10.1"
 authors = ["HQS Quantum Simulations <info@quantumsimulations.de>"]
 edition = "2021"
 license = "Apache-2.0"
@@ -45,14 +45,13 @@ qoqo = { package = "qoqo", version = "1.6", default-features = false }
 roqoqo = { package = "roqoqo", version = "1.6", features = ["serialize"] }
 
 roqoqo-qryd = { version = "0.10", path = "../roqoqo-qryd", default-features = false, features = [
-    "serialize",
     "web-api",
 ] }
 
 
 [dev-dependencies]
-test-case = "2.0"
-httpmock = "0.6.7"
+test-case = "3.0"
+mockito = { version = "1.1", default-features = false }
 
 [build-dependencies]
 pyo3-build-config = "0.19"
