@@ -36,7 +36,6 @@ fn api_backend() {
         let device = QrydEmuSquareDevice::new(Some(2), None, None);
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
         let api_backend_new = APIBackend::new(qryd_device, None, None, None).unwrap();
-        // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
         let mut circuit = Circuit::new();
         circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
         circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
@@ -60,6 +59,14 @@ fn api_backend() {
         circuit += operations::ControlledPauliY::new(1, 2);
         circuit += operations::ControlledPauliZ::new(1, 2);
         circuit += operations::ControlledPhaseShift::new(1, 2, std::f64::consts::FRAC_PI_4.into());
+        circuit += operations::PragmaControlledCircuit::new(1, Circuit::new());
+        circuit += operations::ControlledControlledPauliZ::new(1, 2, 3);
+        circuit += operations::ControlledControlledPhaseShift::new(
+            1,
+            2,
+            3,
+            std::f64::consts::FRAC_PI_4.into(),
+        );
 
         // circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
         for i in 0..number_qubits {
@@ -164,10 +171,35 @@ fn api_backend() {
         let mut circuit = Circuit::new();
         circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
         circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
-        circuit += operations::RotateX::new(4, std::f64::consts::FRAC_PI_2.into());
-        // circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
-        circuit += operations::MeasureQubit::new(0, "ro".to_string(), 0);
-        circuit += operations::PragmaSetNumberOfMeasurements::new(10, "ro".to_string());
+        circuit += operations::RotateY::new(4, std::f64::consts::FRAC_PI_2.into());
+        circuit += operations::RotateZ::new(4, std::f64::consts::FRAC_PI_2.into());
+        circuit += operations::PauliX::new(2);
+        circuit += operations::PauliY::new(2);
+        circuit += operations::PauliZ::new(2);
+        circuit += operations::Hadamard::new(3);
+        circuit += operations::SqrtPauliX::new(5);
+        circuit += operations::InvSqrtPauliX::new(5);
+        circuit += operations::PhaseShiftState1::new(4, std::f64::consts::FRAC_PI_2.into());
+        circuit += operations::RotateXY::new(
+            4,
+            std::f64::consts::FRAC_PI_2.into(),
+            std::f64::consts::FRAC_PI_4.into(),
+        );
+        circuit += operations::CNOT::new(1, 2);
+        circuit += operations::SWAP::new(1, 2);
+        circuit += operations::ISwap::new(1, 2);
+        circuit += operations::ControlledPauliY::new(1, 2);
+        circuit += operations::ControlledPauliZ::new(1, 2);
+        circuit += operations::ControlledPhaseShift::new(1, 2, std::f64::consts::FRAC_PI_4.into());
+        circuit += operations::PragmaControlledCircuit::new(1, Circuit::new());
+        circuit += operations::ControlledControlledPauliZ::new(1, 2, 3);
+        circuit += operations::ControlledControlledPhaseShift::new(
+            1,
+            2,
+            3,
+            std::f64::consts::FRAC_PI_4.into(),
+        );
+
         let measurement = ClassicalRegister {
             constant_circuit: None,
             circuits: vec![circuit.clone()],

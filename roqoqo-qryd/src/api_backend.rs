@@ -219,12 +219,15 @@ fn check_operation_compatability(op: &Operation) -> Result<(), RoqoqoBackendErro
         Operation::ControlledPauliY(_) =>  Ok(()),
         Operation::ControlledPauliZ(_) =>  Ok(()),
         Operation::ControlledPhaseShift(_) => Ok(()),
+        Operation::PragmaControlledCircuit(_) => Ok(()),
+        Operation::ControlledControlledPauliZ(_) => Ok(()),
+        Operation::ControlledControlledPhaseShift(_) => Ok(()),
         Operation::SWAP(_) =>  Ok(()),
         Operation::ISwap(_) => Ok(()),
         Operation::PragmaSetNumberOfMeasurements(_) => Ok(()),
         _ => Err(RoqoqoBackendError::GenericError {
             msg: format!("Operation {} is not supported by QRydDemo Web API backend.\n
-            Use: MeasureQubit, PragmaSetNumberOfMeasurements, PhaseShiftState1, RotateXY, RotateX, RotateY, RotateZ, RotateZ, Hadamard, PauliX, PauliY, PauliZ, SqrtPauliX, InvSqrtPauliX, PhaseShiftedControlledZ, PhaseShiftedControlledPhase, CNOT, ControlledPauliY, ControlledPauliZ, ControlledPhaseShift, SWAP or ISwap instead.", op.hqslang())
+            Use: MeasureQubit, PragmaSetNumberOfMeasurements, PhaseShiftState1, RotateXY, RotateX, RotateY, RotateZ, RotateZ, Hadamard, PauliX, PauliY, PauliZ, SqrtPauliX, InvSqrtPauliX, PhaseShiftedControlledZ, PhaseShiftedControlledPhase, CNOT, ControlledPauliY, ControlledPauliZ, ControlledPhaseShift, PragmaControlledCircuit, ControlledControlledPauliZ, ControlledControlledPhaseShift, SWAP or ISwap instead.", op.hqslang())
         })
     }
 }
