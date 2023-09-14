@@ -193,6 +193,63 @@ fn test_qubit_tweezer_mapping() {
     assert_eq!(add_01.unwrap(), vec![(0, 1), (2, 3)].into_iter().collect());
 }
 
+/// Test TweezerDevice set_allowed_tweezer_shifts() method
+#[test]
+fn test_allowed_tweezer_shifts() {
+    let mut device = TweezerDevice::new(None, None);
+    device.add_layout("OtherLayout").unwrap();
+    device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.0, Some("OtherLayout".to_string()));
+    device.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.0, Some("OtherLayout".to_string()));
+    device.set_tweezer_single_qubit_gate_time("PauliX", 2, 0.0, Some("OtherLayout".to_string()));
+    device.switch_layout("OtherLayout").unwrap();
+
+    assert!(device
+        .set_allowed_tweezer_shifts(&0, &[&[1], &[2]], Some("OtherLayout".to_string()))
+        .is_ok());
+
+    let saved_shifts = &device
+        .layout_register
+        .get("OtherLayout")
+        .unwrap()
+        .allowed_tweezer_shifts;
+    assert!(!saved_shifts.is_empty());
+    assert!(saved_shifts.contains_key(&0));
+    assert!(saved_shifts.get(&0).unwrap().contains(&vec![1]));
+    assert!(saved_shifts.get(&0).unwrap().contains(&vec![2]));
+
+    let incorrect_shift_list =
+        device.set_allowed_tweezer_shifts(&0, &[&[0]], Some("OtherLayout".to_string()));
+    assert!(incorrect_shift_list.is_err());
+    assert_eq!(
+        incorrect_shift_list.unwrap_err(),
+        RoqoqoBackendError::GenericError {
+            msg: "The allowed shifts contain the given tweezer.".to_string(),
+        }
+    );
+
+    let incorrect_tweezer = device.set_allowed_tweezer_shifts(&3, &[&[0]], None);
+    assert!(incorrect_tweezer.is_err());
+    assert_eq!(
+        incorrect_tweezer.unwrap_err(),
+        RoqoqoBackendError::GenericError {
+            msg:
+                "The given tweezer, or shifts tweezers, are not present in the device Tweezer data."
+                    .to_string(),
+        }
+    );
+
+    let incorrect_shift_list_2 = device.set_allowed_tweezer_shifts(&2, &[&[5]], None);
+    assert!(incorrect_shift_list_2.is_err());
+    assert_eq!(
+        incorrect_shift_list_2.unwrap_err(),
+        RoqoqoBackendError::GenericError {
+            msg:
+                "The given tweezer, or shifts tweezers, are not present in the device Tweezer data."
+                    .to_string(),
+        }
+    )
+}
+
 /// Test TweezerDevice deactivate_qubit()
 #[test]
 fn test_deactivate_qubit() {

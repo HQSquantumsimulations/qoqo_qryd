@@ -154,7 +154,7 @@ impl TweezerDeviceWrapper {
     ///     dict[int, int]: The updated qubit -> tweezer mapping.
     ///     
     /// Raises:
-    ///     PyValueError: The qubit is not present in the device.
+    ///     ValueError: The tweezer is not present in the device.
     #[pyo3(text_signature = "(qubit, tweezer, /)")]
     pub fn add_qubit_tweezer_mapping(
         &mut self,
@@ -576,7 +576,7 @@ impl TweezerMutableDeviceWrapper {
     ///     dict[int, int]: The updated qubit -> tweezer mapping.
     ///     
     /// Raises:
-    ///     PyValueError: The qubit is not present in the device.
+    ///     ValueError: The tweezer is not present in the device.
     #[pyo3(text_signature = "(qubit, tweezer, /)")]
     pub fn add_qubit_tweezer_mapping(
         &mut self,
@@ -982,6 +982,43 @@ impl TweezerMutableDeviceWrapper {
     ) {
         self.internal
             .set_tweezer_multi_qubit_gate_time(hqslang, &tweezers, gate_time, layout_name)
+    }
+
+    /// Set the allowed Tweezer shifts of a specified Tweezer.
+    ///
+    /// The tweezer give the tweezer a qubit can be shifted out of. The values are lists
+    /// over the directions the qubit in the tweezer can be shifted into.
+    /// The items in the list give the allowed tweezers the qubit can be shifted into in order.
+    /// For a list 1,2,3 the qubit can be shifted into tweezer 1, into tweezer 2 if tweezer 1 is not occupied,
+    /// and into tweezer 3 if tweezer 1 and 2 are not occupied.
+    ///
+    /// Args:
+    ///     tweezer (int): The index of the tweezer.
+    ///     allowed_shifts (list(list(int))): The allowed tweezer shifts.
+    ///     layout_name (Optional[str]): The name of the Layout to apply the gate time in.
+    ///         Defaults to the current Layout.
+    ///
+    /// Raises:
+    ///     ValueError: The tweezer or shifts are not present in the device or
+    ///         the given tweezer is contained in the shift list.
+    #[pyo3(text_signature = "(tweezer, allowed_shifts, layout_name, /)")]
+    pub fn set_allowed_tweezer_shifts(
+        &mut self,
+        tweezer: usize,
+        allowed_shifts: Vec<Vec<usize>>,
+        layout_name: Option<String>,
+    ) -> PyResult<()> {
+        self.internal
+            .set_allowed_tweezer_shifts(
+                &tweezer,
+                allowed_shifts
+                    .iter()
+                    .map(|vec| vec.as_slice())
+                    .collect::<Vec<&[usize]>>()
+                    .as_slice(),
+                layout_name,
+            )
+            .map_err(|err| PyValueError::new_err(format!("{:}", err)))
     }
 }
 

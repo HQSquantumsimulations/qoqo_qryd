@@ -58,6 +58,13 @@ pub struct TweezerLayoutInfo {
     pub tweezer_three_qubit_gate_times: HashMap<String, HashMap<(usize, usize, usize), f64>>,
     /// Maps a multi-qubit gate name to a Vec<tweezer> -> time mapping
     pub tweezer_multi_qubit_gate_times: HashMap<String, HashMap<Vec<usize>, f64>>,
+    /// Allowed shifts from one tweezer to others.
+    /// The keys give the tweezer a qubit can be shifted out of.
+    /// The values are lists over the directions the qubit in the tweezer can be shifted into.
+    /// The items in the list give the allowed tweezers the qubit can be shifted into in order.
+    /// For a list 1,2,3 the qubit can be shifted into tweezer 1, into tweezer 2 if tweezer 1 is not occupied,
+    /// and into tweezer 3 if tweezer 1 and 2 are not occupied.
+    pub allowed_tweezer_shifts: HashMap<usize, Vec<Vec<usize>>>,
 }
 
 #[derive(Debug, Clone, PartialEq, serde::Deserialize, serde::Serialize)]
@@ -70,6 +77,8 @@ struct TweezerLayoutInfoSerialize {
     tweezer_three_qubit_gate_times: Vec<(String, ThreeTweezersTimes)>,
     /// Maps a multi-qubit gate name to a Vec<tweezer> -> time mapping
     tweezer_multi_qubit_gate_times: Vec<(String, MultiTweezersTimes)>,
+    /// Allowed shifts from one tweezer to others
+    allowed_tweezer_shifts: Vec<(usize, Vec<Vec<usize>>)>,
 }
 type SingleTweezerTimes = Vec<(usize, f64)>;
 type TwoTweezersTimes = Vec<((usize, usize), f64)>;
@@ -98,12 +107,15 @@ impl From<TweezerLayoutInfoSerialize> for TweezerLayoutInfo {
             .into_iter()
             .map(|(k, v)| (k, v.into_iter().map(|(i_k, i_v)| (i_k, i_v)).collect()))
             .collect();
+        let allowed_tweezer_shifts: HashMap<usize, Vec<Vec<usize>>> =
+            info.allowed_tweezer_shifts.into_iter().collect();
 
         Self {
             tweezer_single_qubit_gate_times,
             tweezer_two_qubit_gate_times,
             tweezer_three_qubit_gate_times,
             tweezer_multi_qubit_gate_times,
+            allowed_tweezer_shifts,
         }
     }
 }
@@ -130,11 +142,15 @@ impl From<TweezerLayoutInfo> for TweezerLayoutInfoSerialize {
             .into_iter()
             .map(|(k, v)| (k, v.into_iter().map(|(i_k, i_v)| (i_k, i_v)).collect()))
             .collect();
+        let allowed_tweezer_shifts: Vec<(usize, Vec<Vec<usize>>)> =
+            info.allowed_tweezer_shifts.into_iter().collect();
+
         Self {
             tweezer_single_qubit_gate_times,
             tweezer_two_qubit_gate_times,
             tweezer_three_qubit_gate_times,
             tweezer_multi_qubit_gate_times,
+            allowed_tweezer_shifts,
         }
     }
 }
@@ -481,6 +497,54 @@ impl TweezerDevice {
                 sqt.insert(hqslang.to_string(), hm);
             }
         }
+    }
+
+    /// Set the allowed Tweezer shifts of a specified Tweezer.
+    ///
+    /// The tweezer give the tweezer a qubit can be shifted out of. The values are lists
+    /// over the directions the qubit in the tweezer can be shifted into.
+    /// The items in the list give the allowed tweezers the qubit can be shifted into in order.
+    /// For a list 1,2,3 the qubit can be shifted into tweezer 1, into tweezer 2 if tweezer 1 is not occupied,
+    /// and into tweezer 3 if tweezer 1 and 2 are not occupied.
+    ///
+    /// # Arguments
+    ///
+    /// * `tweezer` - The index of the tweezer.
+    /// * `allowed_shifts` - The allowed Tweezer shifts.
+    /// * `layout_name` - The name of the Layout to apply the gate time in. Defaults to the current Layout.
+    pub fn set_allowed_tweezer_shifts(
+        &mut self,
+        tweezer: &usize,
+        allowed_shifts: &[&[usize]],
+        layout_name: Option<String>,
+    ) -> Result<(), RoqoqoBackendError> {
+        let layout_name = layout_name.unwrap_or_else(|| self.current_layout.clone());
+
+        if !self.is_tweezer_present(*tweezer)
+            || allowed_shifts
+                .iter()
+                .any(|s| s.iter().any(|t| !self.is_tweezer_present(*t)))
+        {
+            return Err(RoqoqoBackendError::GenericError {
+                msg: "The given tweezer, or shifts tweezers, are not present in the device Tweezer data."
+                    .to_string(),
+            });
+        }
+        if allowed_shifts
+            .iter()
+            .any(|shift_list| shift_list.contains(tweezer))
+        {
+            return Err(RoqoqoBackendError::GenericError {
+                msg: "The allowed shifts contain the given tweezer.".to_string(),
+            });
+        }
+        if let Some(info) = self.layout_register.get_mut(&layout_name) {
+            info.allowed_tweezer_shifts.insert(
+                *tweezer,
+                allowed_shifts.iter().map(|&slice| slice.to_vec()).collect(),
+            );
+        }
+        Ok(())
     }
 
     /// Get the tweezer identifier of the given qubit.
