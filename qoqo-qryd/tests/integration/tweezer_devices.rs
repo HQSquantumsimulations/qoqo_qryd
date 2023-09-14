@@ -578,13 +578,6 @@ fn test_to_from_bincode() {
         let device = device_type.call0().unwrap();
         let device_mut = device_type_mut.call0().unwrap();
 
-        let serialised = device.call_method0("to_bincode").unwrap();
-        let serialised_mut = device_mut.call_method0("to_bincode").unwrap();
-        let deserialised = device.call_method1("from_bincode", (serialised,)).unwrap();
-        let deserialised_mut = device_mut
-            .call_method1("from_bincode", (serialised_mut,))
-            .unwrap();
-
         device_mut
             .call_method1("set_tweezer_single_qubit_gate_time", ("RotateZ", 0, 0.23))
             .unwrap();
@@ -602,6 +595,13 @@ fn test_to_from_bincode() {
             .unwrap();
         device_mut
             .call_method1("set_allowed_tweezer_shifts", (0, vec![vec![1]]))
+            .unwrap();
+
+        let serialised = device.call_method0("to_bincode").unwrap();
+        let serialised_mut = device_mut.call_method0("to_bincode").unwrap();
+        let deserialised = device.call_method1("from_bincode", (serialised,)).unwrap();
+        let deserialised_mut = device_mut
+            .call_method1("from_bincode", (serialised_mut,))
             .unwrap();
 
         let vec: Vec<u8> = Vec::new();
