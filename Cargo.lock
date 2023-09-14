@@ -896,7 +896,7 @@ dependencies = [
 
 [[package]]
 name = "qoqo-qryd"
-version = "0.10.1"
+version = "0.11.0"
 dependencies = [
  "bincode",
  "mockito",
@@ -1138,7 +1138,7 @@ dependencies = [
 
 [[package]]
 name = "roqoqo-qryd"
-version = "0.10.1"
+version = "0.11.0"
 dependencies = [
  "bincode",
  "bitvec",
