@@ -199,6 +199,8 @@ fn api_backend() {
             3,
             std::f64::consts::FRAC_PI_4.into(),
         );
+        circuit += operations::MeasureQubit::new(0, "ro".to_string(), 0);
+        circuit += operations::PragmaSetNumberOfMeasurements::new(10, "ro".to_string());
 
         let measurement = ClassicalRegister {
             constant_circuit: None,
