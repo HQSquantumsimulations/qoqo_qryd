@@ -20,7 +20,7 @@ use std::usize;
 use qoqo::operations::PragmaChangeDeviceWrapper;
 use qoqo_qryd::pragma_operations::{
     PragmaChangeQRydLayoutWrapper, PragmaDeactivateQRydQubitWrapper, PragmaShiftQRydQubitWrapper,
-    PragmaShiftQubitsTweezersWrapper,
+    PragmaShiftQubitsTweezersWrapper, PragmaSwitchDeviceLayoutWrapper,
 };
 
 fn new_pragma_layout(py: Python, layout: usize) -> &PyCell<PragmaChangeQRydLayoutWrapper> {
@@ -61,6 +61,18 @@ fn new_pragma_shift_tweezers(
         .call1((shifts,))
         .unwrap()
         .downcast::<PyCell<PragmaShiftQubitsTweezersWrapper>>()
+        .unwrap()
+}
+
+fn new_pragma_switch_layout(
+    py: Python,
+    new_layout: String,
+) -> &PyCell<PragmaSwitchDeviceLayoutWrapper> {
+    let operation_type = py.get_type::<PragmaSwitchDeviceLayoutWrapper>();
+    operation_type
+        .call1((new_layout,))
+        .unwrap()
+        .downcast::<PyCell<PragmaSwitchDeviceLayoutWrapper>>()
         .unwrap()
 }
 
@@ -233,6 +245,49 @@ fn test_pyo3_new_shift_tweezers() {
 }
 
 #[test]
+fn test_pyo3_new_switch_layout() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let operation = py.get_type::<PragmaSwitchDeviceLayoutWrapper>();
+        let new_op = operation
+            .call1(("Square",))
+            .unwrap()
+            .downcast::<PyCell<PragmaSwitchDeviceLayoutWrapper>>()
+            .unwrap();
+
+        let comparison_copy = bool::extract(
+            new_op
+                .call_method1(
+                    "__eq__",
+                    (new_pragma_switch_layout(py, "Square".to_string()),),
+                )
+                .unwrap(),
+        )
+        .unwrap();
+        assert!(comparison_copy);
+
+        let pragma_wrapper = new_op.extract::<PragmaSwitchDeviceLayoutWrapper>().unwrap();
+        let new_op_diff = operation
+            .call1(("Triangle",))
+            .unwrap()
+            .downcast::<PyCell<PragmaSwitchDeviceLayoutWrapper>>()
+            .unwrap();
+        let pragma_wrapper_diff = new_op_diff
+            .extract::<PragmaSwitchDeviceLayoutWrapper>()
+            .unwrap();
+        let helper_ne: bool = pragma_wrapper_diff != pragma_wrapper;
+        assert!(helper_ne);
+        let helper_eq: bool = pragma_wrapper == pragma_wrapper.clone();
+        assert!(helper_eq);
+
+        assert_eq!(
+            format!("{:?}", pragma_wrapper),
+            "PragmaSwitchDeviceLayoutWrapper { internal: PragmaSwitchDeviceLayout { new_layout: \"Square\" } }"
+        );
+    })
+}
+
+#[test]
 fn test_change_layout_new() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
@@ -335,16 +390,44 @@ fn test_shift_tweezers_to_change_device() {
     });
 }
 
+#[test]
+fn test_switch_layout_new() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let operation = new_pragma_switch_layout(py, "Square".to_string());
+        let new_layout: String = operation
+            .call_method0("new_layout")
+            .unwrap()
+            .extract()
+            .unwrap();
+        assert_eq!(new_layout, "Square".to_string());
+    });
+}
+
+#[test]
+fn test_switch_layout_to_change_device() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let operation = new_pragma_switch_layout(py, "Square".to_string());
+        let pragma_change_device = operation
+            .call_method0("to_pragma_change_device")
+            .unwrap()
+            .downcast::<PyCell<PragmaChangeDeviceWrapper>>();
+        assert!(pragma_change_device.is_ok())
+    });
+}
+
 /// Test involved_qubits function for Pragmas
 #[test]
 fn test_pragmas_involved_qubits() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let ops: [&PyAny; 4] = [
+        let ops: [&PyAny; 5] = [
             new_pragma_layout(py, 0),
             new_pragma_shift(py, 0),
             new_pragma_deactivate(py, 0),
             new_pragma_shift_tweezers(py, vec![(0, 1)]),
+            new_pragma_switch_layout(py, "Square".to_string()),
         ];
         for operation in ops {
             let to_involved = operation.call_method0("involved_qubits").unwrap();
@@ -361,11 +444,12 @@ fn test_pragmas_involved_qubits() {
 fn test_to_from_bincode() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let ops: [&PyAny; 4] = [
+        let ops: [&PyAny; 5] = [
             new_pragma_layout(py, 0),
             new_pragma_shift(py, 0),
             new_pragma_deactivate(py, 0),
             new_pragma_shift_tweezers(py, vec![(0, 1)]),
+            new_pragma_switch_layout(py, "Square".to_string()),
         ];
         for operation in ops {
             let serialised = operation.call_method0("to_bincode").unwrap();
@@ -395,11 +479,12 @@ fn test_to_from_bincode() {
 fn test_pragmas_tags() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let ops: [&PyAny; 4] = [
+        let ops: [&PyAny; 5] = [
             new_pragma_layout(py, 0),
             new_pragma_shift(py, 0),
             new_pragma_deactivate(py, 0),
             new_pragma_shift_tweezers(py, vec![(0, 1)]),
+            new_pragma_switch_layout(py, "Square".to_string()),
         ];
         for (operation, name) in ops.iter().zip(
             [
@@ -423,11 +508,12 @@ fn test_pragmas_tags() {
 fn test_pragmas_hqslang() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let ops: [&PyAny; 4] = [
+        let ops: [&PyAny; 5] = [
             new_pragma_layout(py, 0),
             new_pragma_shift(py, 0),
             new_pragma_deactivate(py, 0),
             new_pragma_shift_tweezers(py, vec![(0, 1)]),
+            new_pragma_switch_layout(py, "Square".to_string()),
         ];
         for (operation, name) in ops.iter().zip(
             [
@@ -450,11 +536,12 @@ fn test_pragmas_hqslang() {
 fn test_pragmas_is_parametrised() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let ops: [&PyAny; 4] = [
+        let ops: [&PyAny; 5] = [
             new_pragma_layout(py, 0),
             new_pragma_shift(py, 0),
             new_pragma_deactivate(py, 0),
             new_pragma_shift_tweezers(py, vec![(0, 1)]),
+            new_pragma_switch_layout(py, "Square".to_string()),
         ];
         for operation in ops {
             assert!(!bool::extract(operation.call_method0("is_parametrized").unwrap()).unwrap());
@@ -467,11 +554,12 @@ fn test_pragmas_is_parametrised() {
 fn test_pragmas_substitute_parameters() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let ops: [&PyAny; 4] = [
+        let ops: [&PyAny; 5] = [
             new_pragma_layout(py, 0),
             new_pragma_shift(py, 0),
             new_pragma_deactivate(py, 0),
             new_pragma_shift_tweezers(py, vec![(0, 1)]),
+            new_pragma_switch_layout(py, "Square".to_string()),
         ];
         for operation in ops {
             let mut substitution_dict: HashMap<&str, f64> = HashMap::new();
@@ -580,16 +668,39 @@ fn test_pragmas_remap_qubits_shift_tweezers() {
     });
 }
 
+/// Test remap_qubits function for PragmaSwitchDeviceLayout
+#[test]
+fn test_pragmas_remap_qubits_switch_layout() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let operation = new_pragma_switch_layout(py, "Square".to_string());
+        let qubit_mapping: HashMap<usize, usize> = HashMap::new();
+
+        let remapped_op = operation
+            .call_method1("remap_qubits", (qubit_mapping,))
+            .unwrap();
+        let comparison =
+            bool::extract(remapped_op.call_method1("__eq__", (operation,)).unwrap()).unwrap();
+        assert!(comparison);
+        let mut qubit_mapping: HashMap<usize, usize> = HashMap::new();
+        qubit_mapping.insert(0, 2);
+        qubit_mapping.insert(2, 0);
+        let remapped_op = operation.call_method1("remap_qubits", (qubit_mapping,));
+        assert!(remapped_op.is_err());
+    });
+}
+
 /// Test __copy__, __deepcopy__ functions for Pragmas
 #[test]
 fn test_pragmas_copy_deepcopy() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let ops: [&PyAny; 4] = [
+        let ops: [&PyAny; 5] = [
             new_pragma_layout(py, 0),
             new_pragma_shift(py, 0),
             new_pragma_deactivate(py, 0),
             new_pragma_shift_tweezers(py, vec![(0, 1)]),
+            new_pragma_switch_layout(py, "Square".to_string()),
         ];
         for operation in ops {
             let copy_op = operation.call_method0("__copy__").unwrap();
@@ -610,11 +721,12 @@ fn test_pragmas_copy_deepcopy() {
 fn test_pragmas_format_repr() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let ops: [&PyAny; 4] = [
+        let ops: [&PyAny; 5] = [
             new_pragma_layout(py, 0),
             new_pragma_shift(py, 0),
             new_pragma_deactivate(py, 0),
             new_pragma_shift_tweezers(py, vec![(0, 1)]),
+            new_pragma_switch_layout(py, "Square".to_string()),
         ];
         for (operation, format_repr) in ops.iter().zip(
             [
@@ -622,6 +734,7 @@ fn test_pragmas_format_repr() {
                 "PragmaShiftQRydQubit { new_positions: {0: (0, 1)} }",
                 "PragmaDeactivateQRydQubit { qubit: 0 }",
                 "PragmaShiftQubitsTweezers { shifts: [(0, 1)] }",
+                "PragmaSwitchDeviceLayout { new_layout: \"Square\" }",
             ]
             .iter(),
         ) {
@@ -640,13 +753,17 @@ fn test_pragmas_format_repr() {
 fn test_pragmas_richcmp() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let ops: [(&PyAny, &PyAny); 4] = [
+        let ops: [(&PyAny, &PyAny); 5] = [
             (new_pragma_layout(py, 0), new_pragma_layout(py, 1)),
             (new_pragma_shift(py, 0), new_pragma_shift(py, 1)),
             (new_pragma_deactivate(py, 0), new_pragma_deactivate(py, 1)),
             (
                 new_pragma_shift_tweezers(py, vec![(0, 1)]),
                 new_pragma_shift_tweezers(py, vec![(1, 0)]),
+            ),
+            (
+                new_pragma_switch_layout(py, "Square".to_string()),
+                new_pragma_switch_layout(py, "Triangle".to_string()),
             ),
         ];
         for (operation_one, operation_two) in ops {
