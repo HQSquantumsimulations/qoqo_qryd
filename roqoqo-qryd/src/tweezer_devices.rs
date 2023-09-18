@@ -26,7 +26,10 @@ use roqoqo::{
     RoqoqoBackendError,
 };
 
-use crate::{phi_theta_relation, PragmaChangeQRydLayout, PragmaDeactivateQRydQubit};
+use crate::{
+    phi_theta_relation, PragmaDeactivateQRydQubit, PragmaShiftQubitsTweezers,
+    PragmaSwitchDeviceLayout,
+};
 
 /// Tweezer Device
 ///
@@ -353,7 +356,7 @@ impl TweezerDevice {
         qubit: usize,
         tweezer: usize,
     ) -> Result<HashMap<usize, usize>, RoqoqoBackendError> {
-        if !self.is_tweezer_present(tweezer) {
+        if !self.is_tweezer_present(tweezer, None) {
             return Err(RoqoqoBackendError::GenericError {
                 msg: "The given tweezer is not present in the device Tweezer data.".to_string(),
             });
@@ -518,12 +521,12 @@ impl TweezerDevice {
         allowed_shifts: &[&[usize]],
         layout_name: Option<String>,
     ) -> Result<(), RoqoqoBackendError> {
-        let layout_name = layout_name.unwrap_or_else(|| self.current_layout.clone());
+        let layout_name = layout_name.clone().unwrap_or_else(|| self.current_layout.clone());
 
-        if !self.is_tweezer_present(*tweezer)
+        if !self.is_tweezer_present(*tweezer, Some(layout_name.clone()))
             || allowed_shifts
                 .iter()
-                .any(|s| s.iter().any(|t| !self.is_tweezer_present(*t)))
+                .any(|s| s.iter().any(|t| !self.is_tweezer_present(*t, Some(layout_name.clone()))))
         {
             return Err(RoqoqoBackendError::GenericError {
                 msg: "The given tweezer, or shifts tweezers, are not present in the device Tweezer data."
@@ -692,8 +695,12 @@ impl TweezerDevice {
             .expect("Unexpectedly did not find current layout. Bug in roqoqo-qryd.")
     }
 
-    fn is_tweezer_present(&self, tweezer: usize) -> bool {
-        let tweezer_info = self.get_current_layout_info();
+    fn is_tweezer_present(&self, tweezer: usize, layout_name: Option<String>) -> bool {
+        let tweezer_info = if let Some(x) = layout_name {
+            self.layout_register.get(&x).expect("The specified layout does not exist.")
+        } else {
+            self.get_current_layout_info()
+        };
         let mut present: bool = false;
         for single_qubit_gate_struct in &tweezer_info.tweezer_single_qubit_gate_times {
             if single_qubit_gate_struct.1.contains_key(&tweezer) {
@@ -791,6 +798,33 @@ impl TweezerDevice {
         } else {
             HashMap::new()
         }
+    }
+
+    fn _are_all_shifts_valid(&mut self, pragma: &PragmaShiftQubitsTweezers) -> bool {
+        // Checks for all shifts from pragma:
+        // - if the starting tweezer has any valid shifts associated with it in the device
+        // - if the ending tweezer is contained in the associated valid shifts
+        // - if the device has has a quantum state to move in the starting tweezer position
+        for (shift_start, shift_end) in &pragma.shifts {
+            match self
+                .get_current_layout_info()
+                .allowed_tweezer_shifts
+                .get(shift_start)
+            {
+                Some(allowed_shifts) => {
+                    // Check if each shift is valid and that there's a quantum state to move
+                    if !allowed_shifts
+                        .iter()
+                        .any(|allowed_dest| allowed_dest.contains(shift_end))
+                        && !self.qubit_to_tweezer.as_ref().unwrap().iter().any(|(_, twz)| twz == shift_start) {
+                        return false;
+                    }
+                }
+                // If no shifts are allowed by the device for this tweezer, then it's not valid
+                None => return false,
+            }
+        }
+        true
     }
 }
 
@@ -904,19 +938,19 @@ impl Device for TweezerDevice {
 
     fn change_device(&mut self, hqslang: &str, operation: &[u8]) -> Result<(), RoqoqoBackendError> {
         match hqslang {
-            "PragmaChangeQRydLayout" => {
-                let de_change_layout: Result<PragmaChangeQRydLayout, Box<bincode::ErrorKind>> =
+            "PragmaChangeQRydLayout" => Err(RoqoqoBackendError::GenericError {
+                msg: "Operation not supported in TweezerDevice. Please use PragmaSwitchDeviceLayout.".to_string(),
+            }),
+            "PragmaSwitchDeviceLayout" => {
+                let de_change_layout: Result<PragmaSwitchDeviceLayout, Box<bincode::ErrorKind>> =
                     deserialize(operation);
                 match de_change_layout {
-                    Ok(pragma) => self.switch_layout(&pragma.new_layout().to_string()), // PROBLEM: PragmaChangeQRydLayout indexes by usize, not str
+                    Ok(pragma) => self.switch_layout(pragma.new_layout()),
                     Err(_) => Err(RoqoqoBackendError::GenericError {
-                        msg: "Wrapped operation not supported in ExperimentalDevice".to_string(),
+                        msg: "Wrapped operation not supported in TweezerDevice".to_string(),
                     }),
                 }
-            }
-            "PragmaShiftQRydQubit" => Err(RoqoqoBackendError::GenericError {
-                msg: "Operation not supported in ExperimentalDevice".to_string(),
-            }),
+            },
             "PragmaDeactivateQRydQubit" => {
                 let de_change_layout: Result<PragmaDeactivateQRydQubit, Box<bincode::ErrorKind>> =
                     deserialize(operation);
@@ -926,12 +960,62 @@ impl Device for TweezerDevice {
                         Ok(())
                     }
                     Err(_) => Err(RoqoqoBackendError::GenericError {
-                        msg: "Wrapped operation not supported in ExperimentalDevice".to_string(),
+                        msg: "Wrapped operation not supported in TweezerDevice".to_string(),
+                    }),
+                }
+            },
+            "PragmaShiftQRydQubit" => Err(RoqoqoBackendError::GenericError {
+                msg: "Operation not supported in TweezerDevice. Please use PragmaShiftQubitsTweezers.".to_string(),
+            }),
+            "PragmaShiftQubitsTweezers" => {
+                let de_shift_qubits_tweezers: Result<
+                    PragmaShiftQubitsTweezers,
+                    Box<bincode::ErrorKind>,
+                > = deserialize(operation);
+                match de_shift_qubits_tweezers {
+                    Ok(pragma) => {
+                        // Check if the there are qubits to move
+                        if self.qubit_to_tweezer.is_none() {
+                            return Err(RoqoqoBackendError::GenericError {
+                                msg: "The device qubit -> tweezer mapping is empty: no qubits to shift.".to_string(),
+                            });
+                        }
+                        // Check if the shifts in the operation are valid on the device
+                        if !self._are_all_shifts_valid(&pragma) {
+                            return Err(RoqoqoBackendError::GenericError {
+                                msg: "The PragmaShiftQubitsTweezers operation is not valid on this device."
+                                    .to_string(),
+                            });
+                        } 
+                        // Start applying the shifts
+                        if let Some(map) = &mut self.qubit_to_tweezer {
+                            for (shift_start, shift_end) in &pragma.shifts {
+                                if let Some(qubit_to_remove) =
+                                    map.iter()
+                                        .find_map(|(&qbt, &twz)| if twz == *shift_end { Some(qbt) } else { None })
+                                {
+                                    // Remove qubit previously present in target tweezer
+                                    map.remove(&qubit_to_remove);
+                                }
+                                if let Some(qubit_to_move) =
+                                    map.iter()
+                                        .find_map(|(&qbt, &twz)| if twz == *shift_start { Some(qbt) } else { None })
+                                {
+                                    // Move the qubit into the new tweezer
+                                    map.remove(&qubit_to_move);
+                                    map.insert(qubit_to_move, *shift_end);
+                                }
+                            }
+                        }
+                        Ok(())
+                    }
+                    Err(_) => Err(RoqoqoBackendError::GenericError {
+                        msg: "Wrapped operation not supported in TweezerDevice".to_string(),
                     }),
                 }
             }
             _ => Err(RoqoqoBackendError::GenericError {
-                msg: "Wrapped operation not supported in ExperimentalDevice".to_string(),
+                msg: "Wrapped operation not supported in TweezerDevice".to_string(),
             }),
         }
     }
