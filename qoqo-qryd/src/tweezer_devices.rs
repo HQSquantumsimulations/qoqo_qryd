@@ -1044,7 +1044,7 @@ pub fn convert_into_device(input: &PyAny) -> Result<TweezerDevice, QoqoBackendEr
 ///    TweezerMutableDevice
 ///
 #[pymodule]
-pub fn experimental_devices(_py: Python, m: &PyModule) -> PyResult<()> {
+pub fn tweezer_devices(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_class::<TweezerDeviceWrapper>()?;
     m.add_class::<TweezerMutableDeviceWrapper>()?;
     Ok(())
