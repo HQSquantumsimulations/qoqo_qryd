@@ -521,12 +521,15 @@ impl TweezerDevice {
         allowed_shifts: &[&[usize]],
         layout_name: Option<String>,
     ) -> Result<(), RoqoqoBackendError> {
-        let layout_name = layout_name.clone().unwrap_or_else(|| self.current_layout.clone());
+        let layout_name = layout_name
+            .clone()
+            .unwrap_or_else(|| self.current_layout.clone());
 
         if !self.is_tweezer_present(*tweezer, Some(layout_name.clone()))
-            || allowed_shifts
-                .iter()
-                .any(|s| s.iter().any(|t| !self.is_tweezer_present(*t, Some(layout_name.clone()))))
+            || allowed_shifts.iter().any(|s| {
+                s.iter()
+                    .any(|t| !self.is_tweezer_present(*t, Some(layout_name.clone())))
+            })
         {
             return Err(RoqoqoBackendError::GenericError {
                 msg: "The given tweezer, or shifts tweezers, are not present in the device Tweezer data."
@@ -697,7 +700,9 @@ impl TweezerDevice {
 
     fn is_tweezer_present(&self, tweezer: usize, layout_name: Option<String>) -> bool {
         let tweezer_info = if let Some(x) = layout_name {
-            self.layout_register.get(&x).expect("The specified layout does not exist.")
+            self.layout_register
+                .get(&x)
+                .expect("The specified layout does not exist.")
         } else {
             self.get_current_layout_info()
         };
@@ -816,7 +821,13 @@ impl TweezerDevice {
                     if !allowed_shifts
                         .iter()
                         .any(|allowed_dest| allowed_dest.contains(shift_end))
-                        && !self.qubit_to_tweezer.as_ref().unwrap().iter().any(|(_, twz)| twz == shift_start) {
+                        && !self
+                            .qubit_to_tweezer
+                            .as_ref()
+                            .unwrap()
+                            .iter()
+                            .any(|(_, twz)| twz == shift_start)
+                    {
                         return false;
                     }
                 }
@@ -986,7 +997,7 @@ impl Device for TweezerDevice {
                                 msg: "The PragmaShiftQubitsTweezers operation is not valid on this device."
                                     .to_string(),
                             });
-                        } 
+                        }
                         // Start applying the shifts
                         if let Some(map) = &mut self.qubit_to_tweezer {
                             for (shift_start, shift_end) in &pragma.shifts {
