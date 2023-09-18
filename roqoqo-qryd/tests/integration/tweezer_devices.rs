@@ -591,3 +591,18 @@ fn test_phi_theta_relation() {
         )
         .is_none());
 }
+
+#[test]
+fn test_two_tweezer_edges() {
+    let mut device = TweezerDevice::new(None, None);
+    device.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 0, 1, 0.0, None);
+    device.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 0, 2, 0.0, None);
+    device.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 1, 3, 0.0, None);
+    device.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 2, 3, 0.0, None);
+
+    assert_eq!(device.two_tweezer_edges().len(), 4);
+    assert!(device
+        .two_tweezer_edges()
+        .iter()
+        .all(|el| [(0, 1), (0, 2), (1, 3), (2, 3)].contains(el)));
+}

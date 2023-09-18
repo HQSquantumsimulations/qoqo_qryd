@@ -8,6 +8,7 @@ Tracks qoqo-qryd changes after 0.5
 * Reduced the number of usecases that need openssl
 * ExperimentalDevice renamed to TweezerDevice
 * `TweezerDevice.add_qubit_tweezer_mapping()` returns the new mapping
+* Added `TweezerDevice.two_tweezer_edges()`
 * Added `TweezerDevice.set_allowed_tweezer_shifts()`
 * Added `PragmaShiftQubitsTweezers`
 * Added `PragmaSwitchDeviceLayout`

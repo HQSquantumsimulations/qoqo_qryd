@@ -691,6 +691,28 @@ impl TweezerDevice {
         None
     }
 
+    /// Returns the two tweezer edges of the device.
+    ///
+    /// And edge between two tweezer is valid only if the
+    /// PhaseShiftedControlledPhase gate can be performed.
+    ///
+    /// # Returns:
+    ///
+    /// * `Vec<(usize, usize)>` - The vector containing the edges.
+    pub fn two_tweezer_edges(&self) -> Vec<(usize, usize)> {
+        let mut edges: Vec<(usize, usize)> = vec![];
+        if let Some(hm) = self
+            .get_current_layout_info()
+            .tweezer_two_qubit_gate_times
+            .get("PhaseShiftedControlledPhase")
+        {
+            for ((start_tw, end_tw), _) in hm.iter() {
+                edges.push((*start_tw, *end_tw));
+            }
+        }
+        edges
+    }
+
     #[inline]
     fn get_current_layout_info(&self) -> &TweezerLayoutInfo {
         self.layout_register
