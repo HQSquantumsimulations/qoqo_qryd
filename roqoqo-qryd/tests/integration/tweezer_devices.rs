@@ -595,6 +595,9 @@ fn test_phi_theta_relation() {
 #[test]
 fn test_two_tweezer_edges() {
     let mut device = TweezerDevice::new(None, None);
+
+    assert_eq!(device.two_tweezer_edges().len(), 0);
+
     device.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 0, 1, 0.0, None);
     device.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 0, 2, 0.0, None);
     device.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 1, 3, 0.0, None);
