@@ -10,6 +10,7 @@ Tracks qoqo-qryd changes after 0.5
 * `TweezerDevice.add_qubit_tweezer_mapping()` returns the new mapping
 * Added `TweezerDevice.set_allowed_tweezer_shifts()`
 * Added `PragmaShiftQubitsTweezers`
+* Added `PragmaSwitchDeviceLayout`
 * Added ControlledControlledPauliZ, ControlledControlledPhaseShift and PragmaControlledCircuit to `APIBackend`'s allowed operations
 
 # 0.10.0
