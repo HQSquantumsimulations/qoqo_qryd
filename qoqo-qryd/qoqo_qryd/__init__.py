@@ -20,6 +20,7 @@
     pragma_operations
     SimulatorBackend
     APIBackend
+    tweezer_devices
 
 """
 

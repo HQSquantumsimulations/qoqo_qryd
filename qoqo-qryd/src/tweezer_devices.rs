@@ -27,6 +27,11 @@ use roqoqo_qryd::TweezerDevice;
 ///
 /// This interface does not allow setting any piece of information about the device
 /// tweezers. This class is meant to be used by the end user.
+///
+/// Args:
+///     controlled_z_phase_relation ((Optional[Union[str, float]])): The relation to use for the PhaseShiftedControlledZ gate.
+///                                   It can be hardcoded to a specific value if a float is passed in as String.
+///     controlled_phase_phase_relation ((Optional[Union[str, float]])): The relation to use for the PhaseShiftedControlledPhase gate.
 #[pyclass(name = "TweezerDevice", module = "qoqo_qryd")]
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct TweezerDeviceWrapper {
@@ -467,6 +472,11 @@ impl TweezerDeviceWrapper {
 ///
 /// This interface allows setting any piece of information about the device
 /// tweezer.
+///
+/// Args:
+///     controlled_z_phase_relation ((Optional[Union[str, float]])): The relation to use for the PhaseShiftedControlledZ gate.
+///                                   It can be hardcoded to a specific value if a float is passed in as String.
+///     controlled_phase_phase_relation ((Optional[Union[str, float]])): The relation to use for the PhaseShiftedControlledPhase gate.
 #[pyclass(name = "TweezerMutableDevice", module = "qoqo_qryd")]
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct TweezerMutableDeviceWrapper {
