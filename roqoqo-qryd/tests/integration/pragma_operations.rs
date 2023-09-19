@@ -15,7 +15,7 @@ use qoqo_calculator::Calculator;
 use roqoqo::operations::{InvolveQubits, InvolvedQubits, Operate, PragmaChangeDevice, Substitute};
 use roqoqo_qryd::pragma_operations::{
     PragmaChangeQRydLayout, PragmaDeactivateQRydQubit, PragmaShiftQRydQubit,
-    PragmaShiftQubitsTweezers,
+    PragmaShiftQubitsTweezers, PragmaSwitchDeviceLayout,
 };
 use serde_test::{assert_tokens, Configure, Token};
 use std::collections::HashMap;
@@ -579,6 +579,132 @@ fn pragma_shift_qryd_qubit_tweezer_serde_compact() {
             Token::U64(1),
             Token::TupleEnd,
             Token::SeqEnd,
+            Token::StructEnd,
+        ],
+    );
+}
+
+/// Test PragmaSwitchDeviceLayout inputs and involved qubits
+#[test]
+fn pragma_switch_device_layout_inputs_qubits() {
+    let pragma = PragmaSwitchDeviceLayout::new("Square".to_string());
+
+    // Test inputs are correct
+    assert_eq!(pragma.new_layout(), "Square");
+
+    // Test InvolveQubits trait
+    assert_eq!(pragma.involved_qubits(), InvolvedQubits::All);
+}
+
+/// Test PragmaSwitchDeviceLayout to_pragma_change_device function
+#[test]
+fn pragma_switch_device_layout_change() {
+    let pragma = PragmaSwitchDeviceLayout::new("Square".to_string());
+
+    // Test inputs are correct
+    let result = PragmaChangeDevice {
+        wrapped_tags: vec![
+            "Operation".to_string(),
+            "PragmaOperation".to_string(),
+            "PragmaSwitchDeviceLayout".to_string(),
+        ],
+        wrapped_hqslang: "PragmaSwitchDeviceLayout".to_string(),
+        wrapped_operation: serialize(&pragma).unwrap(),
+    };
+    assert_eq!(pragma.to_pragma_change_device().unwrap(), result);
+}
+
+/// Test PragmaSwitchDeviceLayout standard derived traits (Debug, Clone, PartialEq)
+#[test]
+fn pragma_switch_device_layout_simple_traits() {
+    let pragma = PragmaSwitchDeviceLayout::new("Square".to_string());
+    // Test Debug trait
+    assert_eq!(
+        format!("{:?}", pragma),
+        "PragmaSwitchDeviceLayout { new_layout: \"Square\" }"
+    );
+
+    // Test Clone trait
+    assert_eq!(pragma.clone(), pragma);
+
+    // Test PartialEq trait
+    let pragma_0 = PragmaSwitchDeviceLayout::new("Square".to_string());
+    let pragma_1 = PragmaSwitchDeviceLayout::new("Triangle".to_string());
+    assert!(pragma_0 == pragma);
+    assert!(pragma == pragma_0);
+    assert!(pragma_1 != pragma);
+    assert!(pragma != pragma_1);
+}
+
+/// Test PragmaSwitchDeviceLayout Operate trait
+#[test]
+fn pragma_switch_device_layout_operate_trait() {
+    let pragma = PragmaSwitchDeviceLayout::new("Square".to_string());
+
+    // (1) Test tags function
+    let tags: &[&str; 3] = &["Operation", "PragmaOperation", "PragmaSwitchDeviceLayout"];
+    assert_eq!(pragma.tags(), tags);
+
+    // (2) Test hqslang function
+    assert_eq!(pragma.hqslang(), String::from("PragmaSwitchDeviceLayout"));
+
+    // (3) Test is_parametrized function
+    assert!(!pragma.is_parametrized());
+}
+
+/// Test PragmaSwitchDeviceLayout Substitute trait
+#[test]
+fn pragma_switch_device_layout_substitute_trait() {
+    let pragma = PragmaSwitchDeviceLayout::new("Square".to_string());
+    let pragma_test = PragmaSwitchDeviceLayout::new("Square".to_string());
+    // (1) Substitute parameters function
+    let mut substitution_dict: Calculator = Calculator::new();
+    substitution_dict.set_variable("ro", 0.0);
+    let result = pragma_test
+        .substitute_parameters(&substitution_dict)
+        .unwrap();
+    assert_eq!(result, pragma);
+
+    // (2) Remap qubits function
+    let mut qubit_mapping_test: HashMap<usize, usize> = HashMap::new();
+    let result = pragma_test.remap_qubits(&qubit_mapping_test).unwrap();
+    assert_eq!(result, pragma);
+    qubit_mapping_test.insert(0, 2);
+    let result = pragma_test.remap_qubits(&qubit_mapping_test);
+    assert!(result.is_err());
+}
+
+/// Test PragmaSwitchDeviceLayout Serialization and Deserialization traits (readable)
+#[test]
+fn pragma_switch_device_layout_serde_readable() {
+    let pragma_serialization = PragmaSwitchDeviceLayout::new("Square".to_string());
+    assert_tokens(
+        &pragma_serialization.readable(),
+        &[
+            Token::Struct {
+                name: "PragmaSwitchDeviceLayout",
+                len: 1,
+            },
+            Token::Str("new_layout"),
+            Token::Str("Square"),
+            Token::StructEnd,
+        ],
+    );
+}
+
+/// Test PragmaSwitchDeviceLayout Serialization and Deserialization traits (compact)
+#[test]
+fn pragma_switch_device_layout_serde_compact() {
+    let pragma_serialization = PragmaSwitchDeviceLayout::new("Square".to_string());
+    assert_tokens(
+        &pragma_serialization.compact(),
+        &[
+            Token::Struct {
+                name: "PragmaSwitchDeviceLayout",
+                len: 1,
+            },
+            Token::Str("new_layout"),
+            Token::Str("Square"),
             Token::StructEnd,
         ],
     );

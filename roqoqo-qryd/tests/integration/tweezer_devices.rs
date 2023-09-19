@@ -12,9 +12,13 @@
 
 use bincode::serialize;
 use ndarray::Array2;
+use std::collections::HashMap;
 
 use roqoqo::{devices::Device, RoqoqoBackendError};
-use roqoqo_qryd::{phi_theta_relation, PragmaChangeQRydLayout, TweezerDevice};
+use roqoqo_qryd::{
+    phi_theta_relation, PragmaChangeQRydLayout, PragmaShiftQRydQubit, PragmaShiftQubitsTweezers,
+    PragmaSwitchDeviceLayout, TweezerDevice,
+};
 
 use mockito::Server;
 
@@ -193,6 +197,63 @@ fn test_qubit_tweezer_mapping() {
     assert_eq!(add_01.unwrap(), vec![(0, 1), (2, 3)].into_iter().collect());
 }
 
+/// Test TweezerDevice set_allowed_tweezer_shifts() method
+#[test]
+fn test_allowed_tweezer_shifts() {
+    let mut device = TweezerDevice::new(None, None);
+    device.add_layout("OtherLayout").unwrap();
+    device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.0, Some("OtherLayout".to_string()));
+    device.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.0, Some("OtherLayout".to_string()));
+    device.set_tweezer_single_qubit_gate_time("PauliX", 2, 0.0, Some("OtherLayout".to_string()));
+    device.switch_layout("OtherLayout").unwrap();
+
+    assert!(device
+        .set_allowed_tweezer_shifts(&0, &[&[1], &[2]], Some("OtherLayout".to_string()))
+        .is_ok());
+
+    let saved_shifts = &device
+        .layout_register
+        .get("OtherLayout")
+        .unwrap()
+        .allowed_tweezer_shifts;
+    assert!(!saved_shifts.is_empty());
+    assert!(saved_shifts.contains_key(&0));
+    assert!(saved_shifts.get(&0).unwrap().contains(&vec![1]));
+    assert!(saved_shifts.get(&0).unwrap().contains(&vec![2]));
+
+    let incorrect_shift_list =
+        device.set_allowed_tweezer_shifts(&0, &[&[0]], Some("OtherLayout".to_string()));
+    assert!(incorrect_shift_list.is_err());
+    assert_eq!(
+        incorrect_shift_list.unwrap_err(),
+        RoqoqoBackendError::GenericError {
+            msg: "The allowed shifts contain the given tweezer.".to_string(),
+        }
+    );
+
+    let incorrect_tweezer = device.set_allowed_tweezer_shifts(&3, &[&[0]], None);
+    assert!(incorrect_tweezer.is_err());
+    assert_eq!(
+        incorrect_tweezer.unwrap_err(),
+        RoqoqoBackendError::GenericError {
+            msg:
+                "The given tweezer, or shifts tweezers, are not present in the device Tweezer data."
+                    .to_string(),
+        }
+    );
+
+    let incorrect_shift_list_2 = device.set_allowed_tweezer_shifts(&2, &[&[5]], None);
+    assert!(incorrect_shift_list_2.is_err());
+    assert_eq!(
+        incorrect_shift_list_2.unwrap_err(),
+        RoqoqoBackendError::GenericError {
+            msg:
+                "The given tweezer, or shifts tweezers, are not present in the device Tweezer data."
+                    .to_string(),
+        }
+    )
+}
+
 /// Test TweezerDevice deactivate_qubit()
 #[test]
 fn test_deactivate_qubit() {
@@ -332,23 +393,98 @@ fn test_to_generic_device() {
 #[test]
 fn test_change_device() {
     let mut device = TweezerDevice::new(None, None);
-    device.add_layout("0").unwrap();
-    device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("0".to_string()));
-    device.set_tweezer_single_qubit_gate_time("PauliY", 1, 0.23, Some("0".to_string()));
-    device.set_tweezer_two_qubit_gate_time("CNOT", 2, 3, 0.34, Some("0".to_string()));
-    device.set_tweezer_two_qubit_gate_time("ControlledPauliZ", 1, 2, 0.34, Some("0".to_string()));
-    let pragma_c = PragmaChangeQRydLayout::new(0);
+    device.add_layout("Test").unwrap();
+    device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("Test".to_string()));
+    device.set_tweezer_single_qubit_gate_time("PauliY", 1, 0.23, Some("Test".to_string()));
+    device.set_tweezer_two_qubit_gate_time("CNOT", 2, 3, 0.34, Some("Test".to_string()));
+    device.set_tweezer_two_qubit_gate_time(
+        "ControlledPauliZ",
+        1,
+        2,
+        0.34,
+        Some("Test".to_string()),
+    );
+    let pragma_old_c = PragmaChangeQRydLayout::new(0);
+    let hm: HashMap<usize, (usize, usize)> = [(0, (1, 2))].into_iter().collect();
+    let pragma_old_s = PragmaShiftQRydQubit::new(hm);
+
+    let pragma_new_c = PragmaSwitchDeviceLayout::new("Test".to_string());
 
     assert!(device.change_device("Error", &Vec::<u8>::new()).is_err());
     assert!(device
         .change_device("PragmaChangeQRydLayout", &Vec::<u8>::new())
         .is_err());
     assert_eq!(device.current_layout, "Default");
+    assert!(device
+        .change_device("PragmaChangeQRydLayout", &serialize(&pragma_old_c).unwrap())
+        .is_err());
 
     assert!(device
-        .change_device("PragmaChangeQRydLayout", &serialize(&pragma_c).unwrap())
+        .change_device("PragmaShiftQRydQubit", &serialize(&pragma_old_s).unwrap())
+        .is_err());
+
+    assert!(device
+        .change_device("PragmaSwitchDeviceLayout", &Vec::<u8>::new())
+        .is_err());
+    assert!(device
+        .change_device(
+            "PragmaSwitchDeviceLayout",
+            &serialize(&pragma_new_c).unwrap()
+        )
         .is_ok());
-    assert_eq!(device.current_layout, "0");
+    assert_eq!(device.current_layout, "Test");
+}
+
+/// Test TweezerDevice change_device() method with PragmaShiftQubitsTweezers
+#[test]
+fn test_change_device_shift() {
+    let mut device = TweezerDevice::new(None, None);
+    device.add_layout("0").unwrap();
+    device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("0".to_string()));
+    device.set_tweezer_single_qubit_gate_time("PauliY", 1, 0.23, Some("0".to_string()));
+    device.set_tweezer_two_qubit_gate_time("CNOT", 2, 3, 0.34, Some("0".to_string()));
+    device.set_tweezer_two_qubit_gate_time("ControlledPauliZ", 1, 2, 0.34, Some("0".to_string()));
+    device
+        .set_allowed_tweezer_shifts(&0, &[&[1, 2], &[3]], Some("0".to_string()))
+        .unwrap();
+
+    let pragma_s = PragmaShiftQubitsTweezers::new(vec![(0, 1), (2, 3)]);
+
+    let err1 = device.change_device("PragmaShiftQubitsTweezers", &serialize(&pragma_s).unwrap());
+    assert!(err1.is_err());
+    assert_eq!(
+        err1.unwrap_err(),
+        RoqoqoBackendError::GenericError {
+            msg: "The device qubit -> tweezer mapping is empty: no qubits to shift.".to_string(),
+        }
+    );
+
+    device.switch_layout("0").unwrap();
+
+    let err2 = device.change_device("PragmaShiftQubitsTweezers", &serialize(&pragma_s).unwrap());
+    assert!(err2.is_err());
+    assert_eq!(
+        err2.unwrap_err(),
+        RoqoqoBackendError::GenericError {
+            msg: "The PragmaShiftQubitsTweezers operation is not valid on this device.".to_string(),
+        }
+    );
+
+    device
+        .set_allowed_tweezer_shifts(&2, &[&[3]], None)
+        .unwrap();
+
+    let ok = device.change_device("PragmaShiftQubitsTweezers", &serialize(&pragma_s).unwrap());
+    assert!(ok.is_ok());
+    assert_eq!(device.qubit_to_tweezer.as_ref().unwrap().len(), 2);
+    assert_eq!(
+        device.qubit_to_tweezer.as_ref().unwrap().get(&0).unwrap(),
+        &1
+    );
+    assert_eq!(
+        device.qubit_to_tweezer.as_ref().unwrap().get(&2).unwrap(),
+        &3
+    );
 }
 
 /// Test TweezerDevice from_api() method
@@ -454,4 +590,22 @@ fn test_phi_theta_relation() {
             0.1
         )
         .is_none());
+}
+
+#[test]
+fn test_two_tweezer_edges() {
+    let mut device = TweezerDevice::new(None, None);
+
+    assert_eq!(device.two_tweezer_edges().len(), 0);
+
+    device.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 0, 1, 0.0, None);
+    device.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 0, 2, 0.0, None);
+    device.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 1, 3, 0.0, None);
+    device.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 2, 3, 0.0, None);
+
+    assert_eq!(device.two_tweezer_edges().len(), 4);
+    assert!(device
+        .two_tweezer_edges()
+        .iter()
+        .all(|el| [(0, 1), (0, 2), (1, 3), (2, 3)].contains(el)));
 }

@@ -318,3 +318,76 @@ const TAGS_PragmaShiftQubitsTweezers: &[&str; 3] =
     &["Operation", "PragmaOperation", "PragmaShiftQubitsTweezers"];
 
 impl roqoqo::operations::SupportedVersion for PragmaShiftQubitsTweezers {}
+
+/// This PRAGMA Operation changes a Tweezer device to a new predefined layout.
+///
+/// Tweezer devices have a set of predefined tweezer position layouts set at the start of the circuit.
+/// During circuit execution the device can be switched between the predefined layouts with this PRAGMA.
+///
+#[derive(
+    Debug,
+    Clone,
+    PartialEq,
+    Eq,
+    roqoqo_derive::Operate,
+    roqoqo_derive::OperatePragma,
+    serde::Serialize,
+    serde::Deserialize,
+)]
+pub struct PragmaSwitchDeviceLayout {
+    /// The name of the new layout the device is changed to.
+    new_layout: String,
+}
+
+impl Substitute for PragmaSwitchDeviceLayout {
+    fn substitute_parameters(
+        &self,
+        _calculator: &qoqo_calculator::Calculator,
+    ) -> Result<Self, RoqoqoError> {
+        Ok(self.clone())
+    }
+
+    fn remap_qubits(&self, mapping: &HashMap<usize, usize>) -> Result<Self, RoqoqoError> {
+        if let Some((index, _)) = mapping.iter().next() {
+            Err(RoqoqoError::QubitMappingError { qubit: *index })
+        } else {
+            Ok(self.clone())
+        }
+    }
+}
+
+impl roqoqo::operations::SupportedVersion for PragmaSwitchDeviceLayout {}
+
+impl PragmaSwitchDeviceLayout {
+    /// Wrap PragmaSwitchDeviceLayout in PragmaChangeDevice operation
+    ///
+    /// PragmaSwitchDeviceLayout is device specific and can not be directly added to a Circuit.
+    /// Instead it is first wrapped in a PragmaChangeDevice operation that is in turn added
+    /// to the circuit.
+    pub fn to_pragma_change_device(&self) -> Result<PragmaChangeDevice, RoqoqoBackendError> {
+        Ok(PragmaChangeDevice {
+            wrapped_tags: self.tags().iter().map(|s| s.to_string()).collect(),
+            wrapped_hqslang: self.hqslang().to_string(),
+            wrapped_operation: serialize(&self).map_err(|err| {
+                RoqoqoBackendError::GenericError {
+                    msg: format!(
+                        "Error occured during serialisation of PragmaSwitchDeviceLayout {:?}",
+                        err
+                    ),
+                }
+            })?,
+        })
+    }
+}
+
+// Implementing the InvolveQubits trait for PragmaSwitchDeviceLayout.
+impl InvolveQubits for PragmaSwitchDeviceLayout {
+    /// Lists all involved qubits (here, All).
+    fn involved_qubits(&self) -> InvolvedQubits {
+        InvolvedQubits::All
+    }
+}
+
+#[allow(non_upper_case_globals)]
+const TAGS_PragmaSwitchDeviceLayout: &[&str; 3] =
+    &["Operation", "PragmaOperation", "PragmaSwitchDeviceLayout"];

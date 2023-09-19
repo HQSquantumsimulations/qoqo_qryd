@@ -2,13 +2,17 @@
 
 Tracks qoqo-qryd changes after 0.5
 
-# 0.10.1
+# 0.11.0
 
 * Substituted `httpmock` with `mockito` in mock testing
 * Reduced the number of usecases that need openssl
 * ExperimentalDevice renamed to TweezerDevice
-* `add_qubit_tweezer_mapping()` returns the new mapping
+* `TweezerDevice.add_qubit_tweezer_mapping()` returns the new mapping
+* Added `TweezerDevice.two_tweezer_edges()`
+* Added `TweezerDevice.set_allowed_tweezer_shifts()`
 * Added `PragmaShiftQubitsTweezers`
+* Added `PragmaSwitchDeviceLayout`
+* Added ControlledControlledPauliZ, ControlledControlledPhaseShift and PragmaControlledCircuit to `APIBackend`'s allowed operations
 
 # 0.10.0
 
