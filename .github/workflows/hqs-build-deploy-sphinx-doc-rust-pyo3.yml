@@ -11,6 +11,8 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
     - uses: actions-rs/toolchain@v1
       with:
         profile: minimal
@@ -19,16 +21,23 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip maturin
-        pip install ./qoqo-qryd
-        python -m pip install -r ./userdoc/requirements.txt
+        pip install ./qoqo-qryd[docs]
+    - uses: peaceiris/actions-mdbook@v1
+      with:
+        version: latest
     - name: build
       run: |
-        cd ./userdoc
+        # qoqo-qryd
+        cd qoqo-qryd/docs
         python -m sphinx -T -E -b html . _build/html
-        cd ../../
+        cd ../..
+        cp -r ./qoqo-qryd/docs/_build/html ./documentation/src/qoqo_qryd_api
+        # Generating doc
+        cd documentation/
+        mdbook build
+
     - name: publish
       uses: peaceiris/actions-gh-pages@v3
-      # if: ${{ github.ref == 'refs/heads/main' }}
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./userdoc/_build/html/
+        publish_dir: documentation/book
