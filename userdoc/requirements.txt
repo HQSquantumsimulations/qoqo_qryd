@@ -1,9 +1,0 @@
-numpy
-qoqo_qryd
-sphinx >= 2.1
-nbsphinx
-pygments
-recommonmark
-myst_parser
-sphinx_rtd_theme
-rst2pdf
