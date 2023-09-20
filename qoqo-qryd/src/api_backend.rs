@@ -453,6 +453,15 @@ impl APIBackendWrapper {
                 )
             })
     }
+
+    /// Setter for the dev option of the APIDevice.
+    ///
+    /// Args:
+    ///     dev (bool): The boolean to set the dev option to.
+    ///
+    pub fn set_dev(&mut self, dev: bool) {
+        self.internal.set_dev(dev);
+    }
 }
 
 /// Convert generic python object to [roqoqo_qryd::APIBackend].

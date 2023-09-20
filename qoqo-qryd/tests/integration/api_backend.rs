@@ -790,3 +790,17 @@ fn test_bincode_square() {
         assert_eq!(backend_wrapper, serde_wrapper);
     });
 }
+
+#[test]
+fn test_dev_setter() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let backend = create_backend_with_square_device(py, Some(11));
+
+        assert!(backend.call_method1("set_dev", (true,)).is_ok());
+
+        let internal = &backend.borrow().internal;
+
+        assert!(internal.dev);
+    });
+}

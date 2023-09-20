@@ -49,6 +49,8 @@ pub struct APIBackend {
     timeout: usize,
     /// The address of the Mock server, used for testing purposes.
     mock_port: Option<String>,
+    /// Is develop version. Defaults to `false`.
+    pub dev: bool,
 }
 
 /// Local struct representing the body of the request message
@@ -353,6 +355,7 @@ impl APIBackend {
                 access_token: "".to_string(),
                 timeout: timeout.unwrap_or(30),
                 mock_port,
+                dev: false,
             })
         } else {
             let access_token_internal: String = match access_token {
@@ -369,6 +372,7 @@ impl APIBackend {
                 access_token: access_token_internal,
                 timeout: timeout.unwrap_or(30),
                 mock_port,
+                dev: false,
             })
         }
     }
@@ -412,7 +416,7 @@ impl APIBackend {
         let data = QRydRunData {
             backend: self.device.qrydbackend(),
             program: quantumprogram,
-            dev: false,
+            dev: self.dev,
             fusion_max_qubits: 4,
             seed_simulator: Some(seed_param),
             seed_compiler: None,
@@ -758,6 +762,16 @@ impl APIBackend {
         }
         bit_map.insert(readout, measurement_record);
         Ok((bit_map, float_map, complex_map))
+    }
+
+    /// Setter for the dev option of the APIDevice.
+    ///
+    /// # Arguments
+    ///
+    /// * `dev` - The boolean to set the dev option to.
+    ///
+    pub fn set_dev(&mut self, dev: bool) {
+        self.dev = dev;
     }
 }
 
