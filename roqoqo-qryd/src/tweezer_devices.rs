@@ -216,7 +216,7 @@ impl TweezerDevice {
         mock_port: Option<String>,
     ) -> Result<Self, RoqoqoBackendError> {
         // Preparing variables
-        let device_name_internal = device_name.unwrap_or_else(|| String::from("Default"));
+        let device_name_internal = device_name.unwrap_or_else(|| String::from("default"));
         let access_token_internal: String = if mock_port.is_some() {
             "".to_string()
         } else {
@@ -249,7 +249,7 @@ impl TweezerDevice {
         // Response gathering
         let resp = if let Some(port) = mock_port {
             client
-                .post(format!("http://127.0.0.1:{}", port))
+                .get(format!("http://127.0.0.1:{}", port))
                 .body(device_name_internal)
                 .send()
                 .map_err(|e| RoqoqoBackendError::NetworkError {
@@ -257,9 +257,11 @@ impl TweezerDevice {
                 })?
         } else {
             client
-                .post("https://api.qryddemo.itp3.uni-stuttgart.de/v2_0/get_device")
+                .get(format!(
+                    "https://api.qryddemo.itp3.uni-stuttgart.de/v1_0/backends/devices/{}",
+                    device_name_internal
+                ))
                 .header("X-API-KEY", access_token_internal)
-                .body(device_name_internal)
                 .send()
                 .map_err(|e| RoqoqoBackendError::NetworkError {
                     msg: format!("{:?}", e),

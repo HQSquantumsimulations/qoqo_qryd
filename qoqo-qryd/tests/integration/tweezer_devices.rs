@@ -705,7 +705,7 @@ fn test_from_api() {
         .rev()
         .collect::<String>();
     let mock = server
-        .mock("POST", mockito::Matcher::Any)
+        .mock("GET", mockito::Matcher::Any)
         .with_status(200)
         .with_body(
             serde_json::to_string(&returned_device_default)
