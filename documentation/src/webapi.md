@@ -105,3 +105,20 @@ The four API calls can be used to obtain a result the following way:
     # alternatively delete job
     # backend.delete_job(job_location)
 ```
+
+TweezerDevice
+----------
+
+By calling the `.from_api()` static method, an instance of the ``TweezerDevice`` class can be created with Tweezer information already set.
+
+```python
+from qoqo_qryd.tweezer_devices import TweezerDevice
+
+# Creating a new TweezerDevice instance.
+device = TweezerDevice.from_api(
+    # The name of the device to use.
+    device_name="test_device",
+    # Optional token. This is not necessary if the token is already an environment variable.
+    access_token="YOUR_QRYD_API_TOKEN"
+)
+```
