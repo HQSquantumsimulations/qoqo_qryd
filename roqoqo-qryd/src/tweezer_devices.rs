@@ -175,7 +175,7 @@ impl TweezerDevice {
         controlled_phase_phase_relation: Option<String>,
     ) -> Self {
         let mut layout_register: HashMap<String, TweezerLayoutInfo> = HashMap::new();
-        layout_register.insert(String::from("Default"), TweezerLayoutInfo::default());
+        layout_register.insert(String::from("default"), TweezerLayoutInfo::default());
         let controlled_z_phase_relation =
             controlled_z_phase_relation.unwrap_or_else(|| "DefaultRelation".to_string());
         let controlled_phase_phase_relation =
@@ -184,7 +184,7 @@ impl TweezerDevice {
         TweezerDevice {
             qubit_to_tweezer: None,
             layout_register,
-            current_layout: String::from("Default"),
+            current_layout: String::from("default"),
             controlled_z_phase_relation,
             controlled_phase_phase_relation,
         }

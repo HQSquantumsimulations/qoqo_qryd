@@ -27,10 +27,10 @@ use mockito::Server;
 fn test_new() {
     let device = TweezerDevice::new(None, None);
 
-    assert_eq!(device.current_layout, "Default");
+    assert_eq!(device.current_layout, "default");
     assert!(device.qubit_to_tweezer.is_none());
     assert_eq!(device.layout_register.len(), 1);
-    assert!(device.layout_register.get("Default").is_some());
+    assert!(device.layout_register.get("default").is_some());
 }
 
 // Test TweezerDevice add_layout(), switch_layout() methods
@@ -38,14 +38,14 @@ fn test_new() {
 fn test_layouts() {
     let mut device = TweezerDevice::new(None, None);
 
-    assert!(device.available_layouts().contains(&"Default"));
+    assert!(device.available_layouts().contains(&"default"));
 
     device.add_layout("Test").unwrap();
 
     assert!(device.add_layout("Test").is_err());
 
     assert_eq!(device.layout_register.len(), 2);
-    assert!(device.layout_register.contains_key("Default"));
+    assert!(device.layout_register.contains_key("default"));
     assert!(device.layout_register.contains_key("Test"));
 
     device.set_tweezer_single_qubit_gate_time("RotateX", 0, 0.23, None);
@@ -63,7 +63,7 @@ fn test_layouts() {
         Some("Test".to_string()),
     );
 
-    let default_layout = device.layout_register.get("Default").unwrap();
+    let default_layout = device.layout_register.get("default").unwrap();
     let test_layout = device.layout_register.get("Test").unwrap();
     assert!(default_layout
         .tweezer_single_qubit_gate_times
@@ -160,7 +160,7 @@ fn test_layouts() {
         0.13
     );
 
-    assert_eq!(device.current_layout, "Default");
+    assert_eq!(device.current_layout, "default");
     assert!(device.qubit_to_tweezer.is_none());
 
     device.switch_layout("Test").unwrap();
@@ -170,7 +170,7 @@ fn test_layouts() {
 
     assert!(device.switch_layout("Error").is_err());
 
-    assert!(device.available_layouts().contains(&"Default"));
+    assert!(device.available_layouts().contains(&"default"));
     assert!(device.available_layouts().contains(&"Test"));
 }
 
@@ -414,7 +414,7 @@ fn test_change_device() {
     assert!(device
         .change_device("PragmaChangeQRydLayout", &Vec::<u8>::new())
         .is_err());
-    assert_eq!(device.current_layout, "Default");
+    assert_eq!(device.current_layout, "default");
     assert!(device
         .change_device("PragmaChangeQRydLayout", &serialize(&pragma_old_c).unwrap())
         .is_err());

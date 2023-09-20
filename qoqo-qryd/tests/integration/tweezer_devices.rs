@@ -60,12 +60,12 @@ fn test_layouts() {
         assert!(device
             .call_method0("available_layouts")
             .unwrap()
-            .contains("Default")
+            .contains("default")
             .unwrap());
         assert!(device_mut
             .call_method0("available_layouts")
             .unwrap()
-            .contains("Default")
+            .contains("default")
             .unwrap());
 
         let current_layout: String = device
@@ -79,8 +79,8 @@ fn test_layouts() {
             .extract()
             .unwrap();
 
-        assert_eq!(current_layout, "Default");
-        assert_eq!(current_layout_mut, "Default");
+        assert_eq!(current_layout, "default");
+        assert_eq!(current_layout_mut, "default");
 
         assert!(device_mut
             .call_method1("add_layout", ("OtherLayout",))
@@ -96,12 +96,12 @@ fn test_layouts() {
         assert!(device
             .call_method0("available_layouts")
             .unwrap()
-            .contains("Default")
+            .contains("default")
             .unwrap());
         assert!(device_mut
             .call_method0("available_layouts")
             .unwrap()
-            .contains("Default")
+            .contains("default")
             .unwrap());
         assert!(device
             .call_method0("available_layouts")
