@@ -943,9 +943,15 @@ impl TweezerDevice {
             end_tweezer: &usize,
             shift_lists: &[Vec<usize>],
         ) -> bool {
-            let correct_shift_list = shift_lists.iter().find(|list| list.contains(end_tweezer)).unwrap();
+            let correct_shift_list = shift_lists
+                .iter()
+                .find(|list| list.contains(end_tweezer))
+                .unwrap();
             // Check the path up to the target tweezer
-            for el in correct_shift_list.iter().take_while(|tw| *tw != end_tweezer) {
+            for el in correct_shift_list
+                .iter()
+                .take_while(|tw| *tw != end_tweezer)
+            {
                 if _is_tweezer_occupied(qbt_to_twz, el) {
                     return false;
                 }
@@ -969,7 +975,10 @@ impl TweezerDevice {
             {
                 Some(allowed_shifts) => {
                     if !_is_tweezer_in_shift_lists(shift_end, allowed_shifts)
-                        || !_is_tweezer_occupied(self.qubit_to_tweezer.as_ref().unwrap(), shift_start)
+                        || !_is_tweezer_occupied(
+                            self.qubit_to_tweezer.as_ref().unwrap(),
+                            shift_start,
+                        )
                         || !_is_path_free(
                             self.qubit_to_tweezer.as_ref().unwrap(),
                             shift_end,
