@@ -592,6 +592,7 @@ fn test_phi_theta_relation() {
         .is_none());
 }
 
+// Test TweezerDevice two_tweezer_edges() method
 #[test]
 fn test_two_tweezer_edges() {
     let mut device = TweezerDevice::new(None, None);
@@ -608,4 +609,16 @@ fn test_two_tweezer_edges() {
         .two_tweezer_edges()
         .iter()
         .all(|el| [(0, 1), (0, 2), (1, 3), (2, 3)].contains(el)));
+}
+
+#[test]
+fn test_default_layout() {
+    let mut device = TweezerDevice::new(None, None);
+    device.add_layout("triangle").unwrap();
+    device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("triangle".to_string()));
+
+    assert!(device.set_default_layout("square").is_err());
+
+    assert!(device.set_default_layout("triangle").is_ok());
+    assert_eq!(device.default_layout, Some("triangle".to_string()));
 }

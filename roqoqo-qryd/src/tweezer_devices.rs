@@ -45,6 +45,8 @@ pub struct TweezerDevice {
     pub controlled_z_phase_relation: String,
     /// The specific PhaseShiftedControlledPhase relation to use.
     pub controlled_phase_phase_relation: String,
+    /// The default layout to use at first intantiation.
+    pub default_layout: Option<String>,
 }
 
 /// Tweezers information relative to a Layout
@@ -187,6 +189,7 @@ impl TweezerDevice {
             current_layout: String::from("default"),
             controlled_z_phase_relation,
             controlled_phase_phase_relation,
+            default_layout: None,
         }
     }
 
@@ -271,7 +274,11 @@ impl TweezerDevice {
         // Response handling
         let status_code = resp.status();
         if status_code == reqwest::StatusCode::OK {
-            Ok(resp.json::<TweezerDevice>().unwrap())
+            let mut device = resp.json::<TweezerDevice>().unwrap();
+            if let Some(default) = device.default_layout.clone() {
+                device.switch_layout(&default).unwrap();
+            }
+            Ok(device)
         } else {
             Err(RoqoqoBackendError::NetworkError {
                 msg: format!(
@@ -517,6 +524,11 @@ impl TweezerDevice {
     /// * `tweezer` - The index of the tweezer.
     /// * `allowed_shifts` - The allowed Tweezer shifts.
     /// * `layout_name` - The name of the Layout to apply the gate time in. Defaults to the current Layout.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(())` - The allowed shifts have been set.
+    /// * `Err(RoqoqoBackendError)` - The given shifts are not valid.
     pub fn set_allowed_tweezer_shifts(
         &mut self,
         tweezer: &usize,
@@ -527,6 +539,7 @@ impl TweezerDevice {
             .clone()
             .unwrap_or_else(|| self.current_layout.clone());
 
+        // Check that all the involved tweezers exist
         if !self.is_tweezer_present(*tweezer, Some(layout_name.clone()))
             || allowed_shifts.iter().any(|s| {
                 s.iter()
@@ -538,6 +551,7 @@ impl TweezerDevice {
                     .to_string(),
             });
         }
+        // Check the input tweezer is not present in the input allowed shifts
         if allowed_shifts
             .iter()
             .any(|shift_list| shift_list.contains(tweezer))
@@ -552,6 +566,89 @@ impl TweezerDevice {
                 allowed_shifts.iter().map(|&slice| slice.to_vec()).collect(),
             );
         }
+        Ok(())
+    }
+
+    /// Set the allowed Tweezer shifts from a list of tweezers.
+    ///
+    /// # Arguments
+    ///
+    /// * `row_shifts` - A list of lists, each representing a row of tweezers.
+    /// * `layout_name` - The name of the Layout to apply the gate time in. Defaults to the current Layout.
+    pub fn set_allowed_tweezer_shifts_from_rows(
+        &mut self,
+        row_shifts: &[&[usize]],
+        layout_name: Option<String>,
+    ) -> Result<(), RoqoqoBackendError> {
+        let layout_name = layout_name
+            .clone()
+            .unwrap_or_else(|| self.current_layout.clone());
+        if self.layout_register.get(&layout_name).is_none() {
+            return Err(RoqoqoBackendError::GenericError {
+                msg: "The chosen layout has not been set.".to_string(),
+            });
+        }
+
+        // Check that all the involved tweezers exist
+        if row_shifts.iter().any(|s| {
+            s.iter()
+                .any(|t| !self.is_tweezer_present(*t, Some(layout_name.clone())))
+        }) {
+            return Err(RoqoqoBackendError::GenericError {
+                msg: "The given tweezer, or shifts tweezers, are not present in the device Tweezer data."
+                    .to_string(),
+            });
+        }
+
+        let allowed_shifts = &mut self
+            .layout_register
+            .get_mut(&layout_name)
+            .unwrap()
+            .allowed_tweezer_shifts;
+
+        // For each row in the input..
+        row_shifts.iter().for_each(|row| {
+            // ... divide in left, mid (the tweezer) and right parts
+            for i in 0..row.len() {
+                let (left_slice, mid) = row.split_at(i);
+                let mid = mid.first().unwrap_or(&0);
+                let mut vec_left = left_slice.to_vec();
+                vec_left.reverse();
+                let vec_right = &row[i + 1..].to_vec();
+
+                // Insert the left and right side
+                allowed_shifts.insert(*mid, vec![]);
+                if let Some(val) = allowed_shifts.get_mut(mid) {
+                    if !vec_left.is_empty() {
+                        val.push(vec_left.to_vec());
+                    }
+                    if !vec_right.is_empty() {
+                        val.push(vec_right.to_vec());
+                    }
+                }
+            }
+        });
+
+        Ok(())
+    }
+
+    /// Set the name of the default layout to use.
+    ///
+    /// # Arguments
+    ///
+    /// * `layout` - The name of the layout to use.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(())` - The default layout has been set.
+    /// * `Err(RoqoqoBackendError)` - The given layout name is not present in the layout register.
+    pub fn set_default_layout(&mut self, layout: &str) -> Result<(), RoqoqoBackendError> {
+        if !self.layout_register.contains_key(layout) {
+            return Err(RoqoqoBackendError::GenericError {
+                msg: "The given layout name is not present in the layout register.".to_string(),
+            });
+        }
+        self.default_layout = Some(layout.to_string());
         Ok(())
     }
 
