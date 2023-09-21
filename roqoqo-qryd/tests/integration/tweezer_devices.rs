@@ -197,9 +197,57 @@ fn test_qubit_tweezer_mapping() {
     assert_eq!(add_01.unwrap(), vec![(0, 1), (2, 3)].into_iter().collect());
 }
 
+/// Test TweezerDevice set_allowed_tweezer_shifts_from_rows() method
+#[test]
+fn test_allowed_tweezer_shifts_from_rows() {
+    let mut device = TweezerDevice::new(None, None);
+    device.add_layout("triangle").unwrap();
+    device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.0, Some("triangle".to_string()));
+    device.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.0, Some("triangle".to_string()));
+    device.set_tweezer_single_qubit_gate_time("PauliX", 2, 0.0, Some("triangle".to_string()));
+    device.set_tweezer_single_qubit_gate_time("PauliX", 3, 0.0, Some("triangle".to_string()));
+    device.set_tweezer_single_qubit_gate_time("PauliX", 4, 0.0, Some("triangle".to_string()));
+    device.set_tweezer_single_qubit_gate_time("PauliX", 5, 0.0, Some("triangle".to_string()));
+
+    assert!(device
+        .set_allowed_tweezer_shifts_from_rows(
+            &[&[0, 1, 2], &[3, 4, 5]],
+            Some("triangle".to_string())
+        )
+        .is_ok());
+
+    let saved_shifts = &device
+        .layout_register
+        .get("triangle")
+        .unwrap()
+        .allowed_tweezer_shifts;
+    assert!(!saved_shifts.is_empty());
+    assert!(saved_shifts.contains_key(&0));
+    assert!(saved_shifts.get(&0).unwrap().contains(&vec![1, 2]));
+    assert!(saved_shifts.get(&1).unwrap().contains(&vec![0]));
+    assert!(saved_shifts.get(&1).unwrap().contains(&vec![2]));
+    assert!(saved_shifts.get(&2).unwrap().contains(&vec![1, 0]));
+    assert!(saved_shifts.get(&3).unwrap().contains(&vec![4, 5]));
+    assert!(saved_shifts.get(&4).unwrap().contains(&vec![3]));
+    assert!(saved_shifts.get(&4).unwrap().contains(&vec![5]));
+    assert!(saved_shifts.get(&5).unwrap().contains(&vec![4, 3]));
+
+    let incorrect_tweezer =
+        device.set_allowed_tweezer_shifts_from_rows(&[&[9]], Some("triangle".to_string()));
+    assert!(incorrect_tweezer.is_err());
+    assert_eq!(
+        incorrect_tweezer.unwrap_err(),
+        RoqoqoBackendError::GenericError {
+            msg:
+                "The given tweezer, or shifts tweezers, are not present in the device Tweezer data."
+                    .to_string(),
+        }
+    );
+}
+
 /// Test TweezerDevice set_allowed_tweezer_shifts() method
 #[test]
-fn test_allowed_tweezer_shifts() {
+fn test_allowed_tweezer_shifts_row() {
     let mut device = TweezerDevice::new(None, None);
     device.add_layout("OtherLayout").unwrap();
     device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.0, Some("OtherLayout".to_string()));

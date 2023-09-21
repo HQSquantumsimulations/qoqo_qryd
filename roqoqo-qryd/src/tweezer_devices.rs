@@ -583,11 +583,6 @@ impl TweezerDevice {
         let layout_name = layout_name
             .clone()
             .unwrap_or_else(|| self.current_layout.clone());
-        if self.layout_register.get(&layout_name).is_none() {
-            return Err(RoqoqoBackendError::GenericError {
-                msg: "The chosen layout has not been set.".to_string(),
-            });
-        }
 
         // Check that all the involved tweezers exist
         if row_shifts.iter().any(|s| {
