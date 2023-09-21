@@ -1030,6 +1030,19 @@ impl TweezerMutableDeviceWrapper {
             )
             .map_err(|err| PyValueError::new_err(format!("{:}", err)))
     }
+
+    /// Set the name of the default layout to use.
+    ///
+    /// Args:
+    ///     layout (str): The name of the layout to use.
+    ///
+    /// Raises:
+    ///     ValueError: The given layout name is not present in the layout register.
+    pub fn set_default_layout(&mut self, layout: &str) -> PyResult<()> {
+        self.internal
+            .set_default_layout(layout)
+            .map_err(|err| PyValueError::new_err(format!("{:}", err)))
+    }
 }
 
 /// Convert generic python object to [roqoqo_qryd::TweezerDevice].

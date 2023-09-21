@@ -689,10 +689,25 @@ fn test_two_qubit_edges() {
 #[test]
 #[cfg(feature = "web-api")]
 fn test_from_api() {
-    let mut returned_device_default = TweezerDevice::new(None, None);
-    returned_device_default.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None);
-    let returned_device_default_wrapper = TweezerDeviceWrapper {
-        internal: returned_device_default.clone(),
+    let mut sent_device = TweezerDevice::new(None, None);
+    sent_device.add_layout("triangle").unwrap();
+    sent_device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("triangle".to_string()));
+    sent_device.set_default_layout("triangle").unwrap();
+    // let sent_device_wrapper = TweezerDeviceWrapper {
+    //     internal: sent_device.clone(),
+    // };
+    let mut received_device = TweezerDevice::new(None, None);
+    received_device.add_layout("triangle").unwrap();
+    received_device.set_tweezer_single_qubit_gate_time(
+        "PauliX",
+        0,
+        0.23,
+        Some("triangle".to_string()),
+    );
+    received_device.switch_layout("triangle").unwrap();
+    received_device.set_default_layout("triangle").unwrap();
+    let received_device_wrapper = TweezerDeviceWrapper {
+        internal: received_device.clone(),
     };
     let mut server = Server::new();
     let port = server
@@ -707,17 +722,18 @@ fn test_from_api() {
     let mock = server
         .mock("GET", mockito::Matcher::Any)
         .with_status(200)
-        .with_body(
-            serde_json::to_string(&returned_device_default)
-                .unwrap()
-                .as_bytes(),
-        )
+        .with_body(serde_json::to_string(&sent_device).unwrap().as_bytes())
         .create();
+
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let ext_device_type = returned_device_default_wrapper.into_py(py);
-        let ext_device = ext_device_type.as_ref(py);
+        // let sent_device_type = sent_device_wrapper.into_py(py);
+        // let sent_device_py = sent_device_type.as_ref(py);
+        let received_device_type = received_device_wrapper.into_py(py);
+        let received_device_py = received_device_type.as_ref(py);
+
         let device_type = py.get_type::<TweezerDeviceWrapper>();
+
         let device = device_type
             .call_method1(
                 "from_api",
@@ -727,12 +743,21 @@ fn test_from_api() {
 
         mock.assert();
 
+        assert_eq!(
+            device
+                .call_method0("current_layout")
+                .unwrap()
+                .extract::<String>()
+                .unwrap(),
+            "triangle"
+        );
+
         let returned_device_json = device
             .call_method0("to_json")
             .unwrap()
             .extract::<String>()
             .unwrap();
-        let original_device_json = ext_device
+        let original_device_json = received_device_py
             .call_method0("to_json")
             .unwrap()
             .extract::<String>()
@@ -842,5 +867,31 @@ fn test_phi_theta_relations() {
             device_mut.call_method1("gate_time_controlled_phase", (0, 1, pscp_phase, 1.0));
         assert!(gtcp_err.is_err());
         assert!(gtcp_ok.is_ok());
+    })
+}
+
+#[test]
+fn test_default_layout() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
+        let device_mut = device_type_mut.call0().unwrap();
+        device_mut
+            .call_method1("add_layout", ("triangle",))
+            .unwrap();
+        device_mut
+            .call_method1(
+                "set_tweezer_single_qubit_gate_time",
+                ("PauliX", 0, 0.23, "triangle".to_string()),
+            )
+            .unwrap();
+
+        assert!(device_mut
+            .call_method1("set_default_layout", ("square",))
+            .is_err());
+
+        assert!(device_mut
+            .call_method1("set_default_layout", ("triangle",))
+            .is_ok());
     })
 }
