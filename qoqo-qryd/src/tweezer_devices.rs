@@ -466,6 +466,17 @@ impl TweezerDeviceWrapper {
     fn two_qubit_edges(&self) -> Vec<(usize, usize)> {
         self.internal.two_qubit_edges()
     }
+
+    /// Returns the two tweezer edges of the device.
+    ///
+    /// And edge between two tweezer is valid only if the
+    /// PhaseShiftedControlledPhase gate can be performed.
+    ///
+    /// Returns:
+    ///     Sequence[(int, int)]: List of two tweezer edges
+    fn two_tweezer_edges(&self) -> Vec<(usize, usize)> {
+        self.internal.two_tweezer_edges()
+    }
 }
 
 /// Tweezer Mutable Device
@@ -895,6 +906,17 @@ impl TweezerMutableDeviceWrapper {
     ///     Sequence[(int, int)]: List of two qubit edges in the undirected connectivity graph
     fn two_qubit_edges(&self) -> Vec<(usize, usize)> {
         self.internal.two_qubit_edges()
+    }
+
+    /// Returns the two tweezer edges of the device.
+    ///
+    /// And edge between two tweezer is valid only if the
+    /// PhaseShiftedControlledPhase gate can be performed.
+    ///
+    /// Returns:
+    ///     Sequence[(int, int)]: List of two tweezer edges
+    fn two_tweezer_edges(&self) -> Vec<(usize, usize)> {
+        self.internal.two_tweezer_edges()
     }
 
     /// Set the time of a single-qubit gate for a tweezer in a given Layout.

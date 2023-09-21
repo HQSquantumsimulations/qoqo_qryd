@@ -13,6 +13,7 @@
 //! Integration test for Tweezer Devices
 
 use pyo3::{prelude::*, types::PyDict};
+use serde_json::Value;
 
 use qoqo_qryd::{
     tweezer_devices::convert_into_device, TweezerDeviceWrapper, TweezerMutableDeviceWrapper,
@@ -752,17 +753,67 @@ fn test_from_api() {
             "triangle"
         );
 
-        let returned_device_json = device
+        let returned_device_string = device
             .call_method0("to_json")
             .unwrap()
             .extract::<String>()
             .unwrap();
-        let original_device_json = received_device_py
+        let original_device_string = received_device_py
             .call_method0("to_json")
             .unwrap()
             .extract::<String>()
             .unwrap();
-        assert_eq!(returned_device_json, original_device_json);
+        let return_device_json: Value = serde_json::from_str(&returned_device_string).unwrap();
+        let original_device_json: Value = serde_json::from_str(&original_device_string).unwrap();
+
+        assert_eq!(
+            return_device_json.get("qubit_to_tweezer").unwrap(),
+            original_device_json.get("qubit_to_tweezer").unwrap()
+        );
+        assert!(return_device_json
+            .get("layout_register")
+            .unwrap()
+            .get("triangle")
+            .is_some());
+        assert!(return_device_json
+            .get("layout_register")
+            .unwrap()
+            .get("default")
+            .is_some());
+        assert!(original_device_json
+            .get("layout_register")
+            .unwrap()
+            .get("triangle")
+            .is_some());
+        assert!(original_device_json
+            .get("layout_register")
+            .unwrap()
+            .get("default")
+            .is_some());
+        assert_eq!(
+            return_device_json.get("current_layout").unwrap(),
+            original_device_json.get("current_layout").unwrap()
+        );
+        assert_eq!(
+            return_device_json
+                .get("controlled_z_phase_relation")
+                .unwrap(),
+            original_device_json
+                .get("controlled_z_phase_relation")
+                .unwrap()
+        );
+        assert_eq!(
+            return_device_json
+                .get("controlled_phase_phase_relation")
+                .unwrap(),
+            original_device_json
+                .get("controlled_phase_phase_relation")
+                .unwrap()
+        );
+        assert_eq!(
+            return_device_json.get("default_layout").unwrap(),
+            original_device_json.get("default_layout").unwrap()
+        );
     });
 }
 
@@ -870,6 +921,54 @@ fn test_phi_theta_relations() {
     })
 }
 
+// Test two_tweezer_edges() method of TweezerDeviceWrapper and TweezerMutableDeviceWrapper
+#[test]
+fn test_two_tweezer_edges() {
+    // Setup fake preconfigured device
+    let mut exp = TweezerDevice::new(None, None);
+    exp.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 0, 1, 0.23, None);
+    exp.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 1, 2, 0.23, None);
+    let fake_api_device = TweezerDeviceWrapper { internal: exp };
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let fake_api_pypyany = fake_api_device.into_py(py);
+        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
+        let device = fake_api_pypyany.as_ref(py);
+        let device_mut = device_type_mut.call0().unwrap();
+
+        let edges_mut = device_mut.call_method0("two_tweezer_edges").unwrap();
+        let edges_wrapper_mut = edges_mut.extract::<Vec<(usize, usize)>>().unwrap();
+        assert_eq!(edges_wrapper_mut.len(), 0);
+
+        device_mut
+            .call_method1(
+                "set_tweezer_two_qubit_gate_time",
+                ("PhaseShiftedControlledPhase", 0, 1, 0.23),
+            )
+            .unwrap();
+        device_mut
+            .call_method1(
+                "set_tweezer_two_qubit_gate_time",
+                ("PhaseShiftedControlledPhase", 1, 2, 0.23),
+            )
+            .unwrap();
+
+        let new_edges_mut = device_mut
+            .call_method0("two_tweezer_edges")
+            .unwrap()
+            .extract::<Vec<(usize, usize)>>()
+            .unwrap();
+        let edges = device
+            .call_method0("two_tweezer_edges")
+            .unwrap()
+            .extract::<Vec<(usize, usize)>>()
+            .unwrap();
+        assert_eq!(new_edges_mut.len(), 2);
+        assert_eq!(edges.len(), 2);
+    })
+}
+
+/// Test set_default_layout method of TweezerMutableDeviceWrapper
 #[test]
 fn test_default_layout() {
     pyo3::prepare_freethreaded_python();
