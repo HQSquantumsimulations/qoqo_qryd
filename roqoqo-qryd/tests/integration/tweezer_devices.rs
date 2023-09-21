@@ -485,13 +485,23 @@ fn test_change_device() {
 #[test]
 fn test_change_device_shift() {
     let mut device = TweezerDevice::new(None, None);
-    device.add_layout("0").unwrap();
-    device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("0".to_string()));
-    device.set_tweezer_single_qubit_gate_time("PauliY", 1, 0.23, Some("0".to_string()));
-    device.set_tweezer_two_qubit_gate_time("CNOT", 2, 3, 0.34, Some("0".to_string()));
-    device.set_tweezer_two_qubit_gate_time("ControlledPauliZ", 1, 2, 0.34, Some("0".to_string()));
+    device.add_layout("triangle").unwrap();
+    device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("triangle".to_string()));
+    device.set_tweezer_single_qubit_gate_time("PauliY", 1, 0.23, Some("triangle".to_string()));
+    device.set_tweezer_two_qubit_gate_time("CNOT", 2, 3, 0.34, Some("triangle".to_string()));
+    device.set_tweezer_two_qubit_gate_time(
+        "ControlledPauliZ",
+        1,
+        2,
+        0.34,
+        Some("triangle".to_string()),
+    );
+    device.set_tweezer_two_qubit_gate_time("Toffoli", 4, 5, 0.34, Some("triangle".to_string()));
     device
-        .set_allowed_tweezer_shifts(&0, &[&[1, 2], &[3]], Some("0".to_string()))
+        .set_allowed_tweezer_shifts(&0, &[&[1, 2], &[3]], Some("triangle".to_string()))
+        .unwrap();
+    device
+        .set_allowed_tweezer_shifts(&1, &[&[4, 5]], Some("triangle".to_string()))
         .unwrap();
 
     let pragma_s = PragmaShiftQubitsTweezers::new(vec![(0, 1), (2, 3)]);
@@ -505,7 +515,10 @@ fn test_change_device_shift() {
         }
     );
 
-    device.switch_layout("0").unwrap();
+    device.current_layout = "triangle".to_string();
+    device.add_qubit_tweezer_mapping(0, 0).unwrap();
+    device.add_qubit_tweezer_mapping(1, 1).unwrap();
+    device.add_qubit_tweezer_mapping(2, 2).unwrap();
 
     let err2 = device.change_device("PragmaShiftQubitsTweezers", &serialize(&pragma_s).unwrap());
     assert!(err2.is_err());
@@ -520,6 +533,12 @@ fn test_change_device_shift() {
         .set_allowed_tweezer_shifts(&2, &[&[3]], None)
         .unwrap();
 
+    // Target already occupied
+    let err3 = device.change_device("PragmaShiftQubitsTweezers", &serialize(&pragma_s).unwrap());
+    assert!(err3.is_err());
+
+    device.deactivate_qubit(1).unwrap();
+
     let ok = device.change_device("PragmaShiftQubitsTweezers", &serialize(&pragma_s).unwrap());
     assert!(ok.is_ok());
     assert_eq!(device.qubit_to_tweezer.as_ref().unwrap().len(), 2);
@@ -531,6 +550,15 @@ fn test_change_device_shift() {
         device.qubit_to_tweezer.as_ref().unwrap().get(&2).unwrap(),
         &3
     );
+
+    device.add_qubit_tweezer_mapping(4, 4).unwrap();
+
+    // Path is blocked
+    let pragma_s = PragmaShiftQubitsTweezers::new(vec![(1, 5)]);
+    let err4 = device.change_device("PragmaShiftQubitsTweezers", &serialize(&pragma_s).unwrap());
+    assert!(err4.is_err());
+
+    // device.set_allowed_tweezer_shifts_from_rows(&[&[0, 1, 2, 3], &[4, 5, 6]], Some("triangle".to_string())).unwrap();
 }
 
 /// Test TweezerDevice from_api() method

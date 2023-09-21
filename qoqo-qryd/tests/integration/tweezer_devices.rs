@@ -13,6 +13,7 @@
 //! Integration test for Tweezer Devices
 
 use pyo3::{prelude::*, types::PyDict};
+#[cfg(feature = "web-api")]
 use serde_json::Value;
 
 use qoqo_qryd::{

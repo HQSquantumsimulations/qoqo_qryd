@@ -929,10 +929,38 @@ impl TweezerDevice {
     }
 
     fn _are_all_shifts_valid(&mut self, pragma: &PragmaShiftQubitsTweezers) -> bool {
+        #[inline]
+        fn _is_tweezer_in_shift_lists(tweezer_id: &usize, shift_lists: &[Vec<usize>]) -> bool {
+            shift_lists.iter().any(|list| list.contains(tweezer_id))
+        }
+        #[inline]
+        fn _is_tweezer_occupied(qbt_to_twz: &HashMap<usize, usize>, tweezer_id: &usize) -> bool {
+            qbt_to_twz.iter().any(|(_, twz)| twz == tweezer_id)
+        }
+        #[inline]
+        fn _is_path_free(
+            qbt_to_twz: &HashMap<usize, usize>,
+            end_tweezer: &usize,
+            shift_lists: &[Vec<usize>],
+        ) -> bool {
+            let correct_shift_list = shift_lists.iter().find(|list| list.contains(end_tweezer)).unwrap();
+            // Check the path up to the target tweezer
+            for el in correct_shift_list.iter().take_while(|tw| *tw != end_tweezer) {
+                if _is_tweezer_occupied(qbt_to_twz, el) {
+                    return false;
+                }
+            }
+            // Check the target tweezer itself
+            if _is_tweezer_occupied(qbt_to_twz, end_tweezer) {
+                return false;
+            }
+            true
+        }
         // Checks for all shifts from pragma:
         // - if the starting tweezer has any valid shifts associated with it in the device
         // - if the ending tweezer is contained in the associated valid shifts
         // - if the device has has a quantum state to move in the starting tweezer position
+        // - if any tweezer in between the staring and ending tweezers is free (ending included)
         for (shift_start, shift_end) in &pragma.shifts {
             match self
                 .get_current_layout_info()
@@ -940,16 +968,13 @@ impl TweezerDevice {
                 .get(shift_start)
             {
                 Some(allowed_shifts) => {
-                    // Check if each shift is valid and that there's a quantum state to move
-                    if !allowed_shifts
-                        .iter()
-                        .any(|allowed_dest| allowed_dest.contains(shift_end))
-                        && !self
-                            .qubit_to_tweezer
-                            .as_ref()
-                            .unwrap()
-                            .iter()
-                            .any(|(_, twz)| twz == shift_start)
+                    if !_is_tweezer_in_shift_lists(shift_end, allowed_shifts)
+                        || !_is_tweezer_occupied(self.qubit_to_tweezer.as_ref().unwrap(), shift_start)
+                        || !_is_path_free(
+                            self.qubit_to_tweezer.as_ref().unwrap(),
+                            shift_end,
+                            allowed_shifts,
+                        )
                     {
                         return false;
                     }
@@ -1124,13 +1149,6 @@ impl Device for TweezerDevice {
                         // Start applying the shifts
                         if let Some(map) = &mut self.qubit_to_tweezer {
                             for (shift_start, shift_end) in &pragma.shifts {
-                                if let Some(qubit_to_remove) =
-                                    map.iter()
-                                        .find_map(|(&qbt, &twz)| if twz == *shift_end { Some(qbt) } else { None })
-                                {
-                                    // Remove qubit previously present in target tweezer
-                                    map.remove(&qubit_to_remove);
-                                }
                                 if let Some(qubit_to_move) =
                                     map.iter()
                                         .find_map(|(&qbt, &twz)| if twz == *shift_start { Some(qbt) } else { None })
