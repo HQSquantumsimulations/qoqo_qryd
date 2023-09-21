@@ -238,9 +238,7 @@ fn test_allowed_tweezer_shifts_from_rows() {
     assert_eq!(
         incorrect_tweezer.unwrap_err(),
         RoqoqoBackendError::GenericError {
-            msg:
-                "The given tweezer, or shifts tweezers, are not present in the device Tweezer data."
-                    .to_string(),
+            msg: "A given Tweezer is not present in the device Tweezer data.".to_string(),
         }
     );
 }

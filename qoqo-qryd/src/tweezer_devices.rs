@@ -1027,7 +1027,7 @@ impl TweezerMutableDeviceWrapper {
     /// Args:
     ///     tweezer (int): The index of the tweezer.
     ///     allowed_shifts (list(list(int))): The allowed tweezer shifts.
-    ///     layout_name (Optional[str]): The name of the Layout to apply the gate time in.
+    ///     layout_name (Optional[str]): The name of the Layout to apply the allowed shifts in.
     ///         Defaults to the current Layout.
     ///
     /// Raises:
@@ -1044,6 +1044,37 @@ impl TweezerMutableDeviceWrapper {
             .set_allowed_tweezer_shifts(
                 &tweezer,
                 allowed_shifts
+                    .iter()
+                    .map(|vec| vec.as_slice())
+                    .collect::<Vec<&[usize]>>()
+                    .as_slice(),
+                layout_name,
+            )
+            .map_err(|err| PyValueError::new_err(format!("{:}", err)))
+    }
+
+    /// Set the allowed Tweezer shifts from a list of tweezers.
+    ///
+    /// The items in the rows give the allowed tweezers that qubit can be shifted into.
+    /// For a list 1,2,3 the qubit can be shifted into tweezer 1, into tweezer 2 if tweezer 1 is not occupied,
+    /// and into tweezer 3 if tweezer 1 and 2 are not occupied.
+    ///
+    /// Args:
+    ///     row_shifts (list(list(int))): A list of lists, each representing a row of tweezers.
+    ///     layout_name (Optional[str]): The name of the Layout to apply the allowed shifts in.
+    ///         Defaults to the current Layout.
+    ///
+    /// Raises:
+    ///     ValueError: The involved tweezers are not present in the device.
+    #[pyo3(text_signature = "(row_shifts, layout_name, /)")]
+    pub fn set_allowed_tweezer_shifts_from_rows(
+        &mut self,
+        row_shifts: Vec<Vec<usize>>,
+        layout_name: Option<String>,
+    ) -> PyResult<()> {
+        self.internal
+            .set_allowed_tweezer_shifts_from_rows(
+                row_shifts
                     .iter()
                     .map(|vec| vec.as_slice())
                     .collect::<Vec<&[usize]>>()

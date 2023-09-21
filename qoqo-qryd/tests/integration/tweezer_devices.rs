@@ -196,6 +196,39 @@ fn test_allowed_tweezer_shifts() {
     })
 }
 
+/// Test set_allowed_tweezer_shifts_from_rows of TweeerDeviceMutableWrapper
+#[test]
+fn test_allowed_tweezer_shifts_from_rows() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
+        let device_mut = device_type_mut.call0().unwrap();
+
+        device_mut
+            .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 0, 0.23))
+            .unwrap();
+        device_mut
+            .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 1, 0.23))
+            .unwrap();
+        device_mut
+            .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 2, 0.23))
+            .unwrap();
+
+        assert!(device_mut
+            .call_method1(
+                "set_allowed_tweezer_shifts_from_rows",
+                (vec![vec![0, 1, 2]],)
+            )
+            .is_ok());
+        assert!(device_mut
+            .call_method1("set_allowed_tweezer_shifts_from_rows", (vec![vec![1, 5]],))
+            .is_err());
+        assert!(device_mut
+            .call_method1("set_allowed_tweezer_shifts_from_rows", (vec![vec![0, 0]],))
+            .is_err());
+    })
+}
+
 /// Test deactivate_qubit function of TweezerDeviceWrapper and TweezerMutableDeviceWrapper
 #[test]
 fn test_deactivate_qubit() {

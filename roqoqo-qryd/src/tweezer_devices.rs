@@ -585,14 +585,21 @@ impl TweezerDevice {
             .unwrap_or_else(|| self.current_layout.clone());
 
         // Check that all the involved tweezers exist
-        if row_shifts.iter().any(|s| {
-            s.iter()
+        if row_shifts.iter().any(|row| {
+            row.iter()
                 .any(|t| !self.is_tweezer_present(*t, Some(layout_name.clone())))
         }) {
             return Err(RoqoqoBackendError::GenericError {
-                msg: "The given tweezer, or shifts tweezers, are not present in the device Tweezer data."
-                    .to_string(),
+                msg: "A given Tweezer is not present in the device Tweezer data.".to_string(),
             });
+        }
+        // Check that there are no repetitions in the input shifts
+        for row in row_shifts.iter() {
+            if row.iter().duplicates().count() > 0 {
+                return Err(RoqoqoBackendError::GenericError {
+                    msg: "The given Tweezers contain repetitions.".to_string(),
+                });
+            }
         }
 
         let allowed_shifts = &mut self
