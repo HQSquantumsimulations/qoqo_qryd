@@ -1,0 +1,1031 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>HQS qoqo-qryd User Documentation</title>
+        <meta name="robots" content="noindex" />
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var html = document.querySelector('html');
+            var sidebar = null;
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Index</a></li><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="execution.html"><strong aria-hidden="true">2.</strong> Execution</a></li><li class="chapter-item expanded "><a href="webapi.html"><strong aria-hidden="true">3.</strong> WebAPI</a></li><li class="chapter-item expanded "><a href="qrydspecifics.html"><strong aria-hidden="true">4.</strong> QRyd Specifics</a></li><li class="chapter-item expanded "><a href="examples.html"><strong aria-hidden="true">5.</strong> Examples</a></li><li class="chapter-item expanded "><a href="qoqo_qryd_api.html"><strong aria-hidden="true">6.</strong> qoqo-qryd API</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">HQS qoqo-qryd User Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="welcome-to-the-qoqo-qrydroqoqo-qryd-user-documentation"><a class="header" href="#welcome-to-the-qoqo-qrydroqoqo-qryd-user-documentation">Welcome to the qoqo-qryd/roqoqo-qryd user documentation!</a></h1>
+<p>This software is designed to support the <a href="https://thequantumlaend.de/qryddemo/">QRydDemo</a> project on quantum computing with Rydberg atoms. It provides components to support QRydDemo quantum computers based on the <a href="https://github.com/HQSquantumsimulations/qoqo">qoqo</a> quantum toolkit by <a href="https://quantumsimulations.de">HQS Quantum Simulations</a> used to represent quantum circuits.</p>
+<p>To learn more about the general approach to create quantum programs and executing them in qoqo see <a href="src/introduction.html">Introduction</a> and <a href="src/execution.html">Execution</a>.</p>
+<p>This software is split into two packages:</p>
+<ul>
+<li>roqoqo-qryd: Implementing the core functionality and a Rust interface.</li>
+<li>qoqo-qryd: The Python interface.</li>
+</ul>
+<p>The packages are based on the open source <a href="https://github.com/HQSquantumsimulations/qoqo">qoqo</a> quantum computing toolkit.</p>
+<h2 id="interface-to-the-current-qryddemo-webapi"><a class="header" href="#interface-to-the-current-qryddemo-webapi">Interface to the current QRydDemo WebAPI</a></h2>
+<p>At the moment QRydDemo WebAPI allows access to Quantum Hardware Emulators of different device topologies. 
+qoqo-qryd/roqoqo-qryd support interfacing with the corresponding REST-API with low level calls, i.e. using <code>Circuit</code>,  as well as with high-level backend based functionalities, i.e. by using <code>QuantumPrograms</code> in qoqo. For more details see <a href="webapi.html">WebAPI</a>.</p>
+<h2 id="qryddemo-specific-hardware-operations-prototype"><a class="header" href="#qryddemo-specific-hardware-operations-prototype">QRydDemo specific hardware operations (prototype)</a></h2>
+<p>Rydberg atom based quantum devices support, in principle, operations not commonly found in other quantum hardware.
+Changes in device topology are one of these operations. 
+roqoqo-qryd/qoqo-qryd adds support for changes in device topology to qoqo. For more details see <a href="qrydspecifics.html">QRyd Specifics</a>.
+Note that this is a preview prototype and does not represent a finalized set of operations on the QRydDemo hardware.</p>
+<h2 id="local-simulator-supporting-specific-hardware-operations"><a class="header" href="#local-simulator-supporting-specific-hardware-operations">Local simulator supporting specific hardware operations</a></h2>
+<p>qoqo-qryd/roqoqo-qryd include a local <a href="https://github.com/QuEST-Kit/QuEST%3E">QuEST</a> based simulator for quantum devices supporting the Rydberg specific quantum operations. The simulator is intended to let users test the capabilities of quantum hardware with the additional operations. For more details see <a href="qrydspecifics.html">QRyd Specifics</a>. Note that the devices for the simulator do not represent a finalized design for QRydDemo.</p>
+<h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
+<p>A collection of example python programs can be found in <a href="examples.html">Examples</a>.</p>
+<h2 id="openssl"><a class="header" href="#openssl">OpenSSL</a></h2>
+<p>Acknowledgments related to using OpenSSL for http requests:</p>
+<p>This product includes software developed by the OpenSSL Project
+for use in the OpenSSL Toolkit (http://www.openssl.org/).</p>
+<p>This product includes cryptographic software written by Eric Young
+(eay@cryptsoft.com).  This product includes software written by Tim
+Hudson (tjh@cryptsoft.com).</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
+<p>The qoqo-qryd package is designed to enable the execution of quantum algorithms implemented in <a href="https://github.com/HQSquantumsimulations/qoqo">qoqo</a> on QRydDemo hardware.</p>
+<h2 id="low-level-quantum-circuits"><a class="header" href="#low-level-quantum-circuits">Low level: quantum circuits</a></h2>
+<p>Qoqo is a circuit based quantum computing toolkit. Like many other quantum computing toolkits it can be used to construct quantum circuits - sequences of quantum operations that are to be executed on a quantum computer.</p>
+<p>Examples for quantum operations are the controlled NOT (CNOT) operation on two qubits and the Hadamard gate on a single qubit.</p>
+<pre><code class="language-python">   from qoqo import Circuit
+   from qoqo import operations as ops
+   circuit = Circuit()
+   # Initializing first qubit in superposition of |0&gt; and |1&gt;
+   circuit += ops.Hadamard(0)
+   # Entangling qubits 0 and 1 with CNOT
+   circuit += ops.CNOT(0,1)
+</code></pre>
+<p>To extract information from a quantum computer results must be measured.
+For measurements qoqo defines classical registers in the quantum circuits.
+The classical measurement results will be written to the classical registers.
+The definition of classical registers is similar to a variable declaration in normal programs.</p>
+<p>The measurement of a qubit (on hardware) is always a projective measurement in the <code>Z</code>-basis yielding <code>0</code> or <code>1</code>.</p>
+<pre><code class="language-python">   from qoqo import Circuit
+   from qoqo import operations as ops
+   circuit = Circuit()
+   # Defining a bit readout with name &quot;ro&quot; containing 2 bits
+   circuit += ops.DefinitionBit(&quot;ro&quot;, 2, is_output=True)
+   # Initializing first qubit in superposition of |0&gt; and |1&gt;
+   circuit += ops.Hadamard(0)
+   # Entangling qubits 0 and 1 with CNOT
+   circuit += ops.CNOT(0,1)
+   # Measuring all qubits and writing the results into register 'ro'
+   # Repeating the circuit 100 times to create 100 projective measurements
+   circuit += ops.PragmaRepeatedMeasurement(&quot;ro&quot;, 100, None)
+</code></pre>
+<h2 id="high-level-quantum-programs"><a class="header" href="#high-level-quantum-programs">High-level: quantum programs</a></h2>
+<p>On a more abstract level a quantum program can be defined as a program that can be executed on a quantum computer after receiving a list of classical parameters and returns a list of classical results.</p>
+<p>Qoqo provides the QuantumProgram class for this purpose. A QuantumProgram is the preferred way to communicate between different programs (for example with hardware or simulators) and to save quantum programs with the qoqo toolkit.</p>
+<p>For many applications the measurement results of several circuits need to be combined to extract the required information from a quantum state prepared by the quantum operations in a quantum circuit.
+The combination of the results of each quantum circuit happens in a post-processing of classical measurement.</p>
+<p>A qoqo measurement combines one <code>constant_circuit</code> that is always executed first, a list of <code>circuits</code> that are executed after the constant circuit, and a <code>measurement_input</code> that encodes the classical post-processing.</p>
+<p>As an example take the measurement of a Hamiltonian <code>H = 0.1 * X + 0.2 * Z</code> where <code>X</code> and <code>Z</code> are Pauli operators. We want to measure <code>H</code> with respect to a state <code>|psi&gt; = (|0&gt; + |1&gt;)/sqrt(2)</code>. 
+We will use a Hadamard gate in the <code>constant_circuit</code> to prepare <code>|psi&gt;</code>. Since we cannot measure <code>X</code> and <code>Z</code> at the same time, the <code>circuits</code> list will include one quantum circuit that does not apply any additional gate and one circuit that rotates the qubit basis into the <code>X</code>-basis so that the expectation value <code>&lt;X&gt;</code> is equivalent to the measurement of <code>&lt;Z&gt;</code> in the new basis.
+This kind of measurement is referred to as a PauliZProduct measurement because each qubit is rotated in the correct basis for the readout. 
+For the post-processing the PauliZProduct measurement needs two more details to be added to the input (<code>PauliZProductInput</code>): Which qubits to combine into expectation values (<code>add_pauliz_product()</code>) and which weight to use for each result (<code>add_linear_exp_val()</code>).</p>
+<p>In general one can measure the expectation values of the products of local Z operators, e.g. <code>&lt;Z0&gt;</code>, <code>&lt;Z1&gt;</code>, <code>&lt;Z0*Z1&gt;</code>, <code>&lt;Z0*Z3&gt;</code>, ...
+The PauliZProductInput needs to define all of these products that are measured. Here we will measure two products <code>&lt;Z0&gt;</code> after a rotation in the X basis and <code>&lt;Z0&gt;</code> without an additional rotation.
+The PauliZProductInput also defines the weights of the products in the final result. Here 0.1 for the first product and 0.2 for the second.</p>
+<pre><code class="language-python">   from qoqo import Circuit
+   from qoqo import operations as ops
+   from qoqo.measurements import PauliZProduct, PauliZProductInput
+   from qoqo import QuantumProgram
+   # Initialize |psi&gt;
+   init_circuit = Circuit()
+   init_circuit += ops.Hadamard(0)
+   # Z-basis measurement circuit with 1000 shots
+   z_circuit = Circuit()
+   z_circuit += ops.DefinitionBit(&quot;ro_z&quot;, 1, is_output=True)
+   z_circuit += ops.PragmaRepeatedMeasurement(&quot;ro_z&quot;, 1000, None)
+   # X-basis measurement circuit with 1000 shots   
+   x_circuit = Circuit()
+   x_circuit += ops.DefinitionBit(&quot;ro_x&quot;, 1, is_output=True)
+   # Changing to the X basis with a Hadamard gate
+   x_circuit += ops.Hadamard(0)
+   x_circuit += ops.PragmaRepeatedMeasurement(&quot;ro_x&quot;, 1000, None)
+
+   # Preparing the measurement input for one qubit
+   # The PauliZProductInput starts with just the number of qubits
+   # and if to use a flipped measurements set.
+   measurement_input = PauliZProductInput(1, False)
+   # Next, pauli products are added to the PauliZProductInput
+   # Read out product of Z on site 0 for register ro_z (no basis change)
+   z_basis_index = measurement_input.add_pauliz_product(&quot;ro_z&quot;, [0,])
+   # Read out product of Z on site 0 for register ro_x
+   # (after basis change effectively a &lt;X&gt; measurement)
+   x_basis_index = measurement_input.add_pauliz_product(&quot;ro_x&quot;, [0,])
+   
+   # Last, instructions on how to combine the single expectation values
+   # into the total result are provided.
+   # Add a result (the expectation value of H) that is a combination of
+   # the PauliProduct expectation values.
+   measurement_input.add_linear_exp_val(&quot;&lt;H&gt;&quot;, {x_basis_index: 0.1, z_basis_index: 0.2})
+
+   measurement = PauliZProduct(
+      constant_circuit=init_circuit,
+      circuits=[z_circuit, x_circuit],
+      input=measurement_input,
+   )
+</code></pre>
+<p>For details on how to execute QuantumPrograms see <a href="execution.html">Execution</a>.</p>
+<p>The qoqo QuantumProgram combines a measurement with a list of free parameters that are not set at compilation time but can be dynamically set whenever the QuantumProgram is run.
+To demonstrate this we modify the example from above to use a state <code>|psi&gt;</code> with a free angle between <code>|0&gt;</code> and <code>|1&gt;</code>. Such a state can be prepared by a <code>RotateX</code> quantum operation.</p>
+<pre><code class="language-python">   from qoqo import Circuit
+   from qoqo import operations as ops
+   from qoqo.measurements import PauliZProduct, PauliZProductInput
+   from qoqo import QuantumProgram
+   # initialize |psi&gt;
+   init_circuit = Circuit()
+   # Apply a RotateY gate with a symbolic angle
+   # To execute the circuit this symbolic parameter needs to be replaced 
+   # by a real number with the help of a QuantumProgram
+   init_circuit += ops.RotateX(0, &quot;angle&quot;)
+   # Z-basis measurement circuit with 1000 shots
+   z_circuit = Circuit()
+   z_circuit += ops.DefinitionBit(&quot;ro_z&quot;, 1, is_output=True)
+   z_circuit += ops.PragmaRepeatedMeasurement(&quot;ro_z&quot;, 1000, None)
+   # X-basis measurement circuit with 1000 shots   
+   x_circuit = Circuit()
+   x_circuit += ops.DefinitionBit(&quot;ro_x&quot;, 1, is_output=True)
+   # Changing to the X basis with a Hadamard gate
+   x_circuit += ops.Hadamard(0)
+   x_circuit += ops.PragmaRepeatedMeasurement(&quot;ro_x&quot;, 1000, None)
+
+   # Preparing the measurement input for one qubit
+   measurement_input = PauliZProductInput(1, False)
+   # Read out product of Z on site 0 for register ro_z (no basis change)
+   z_basis_index = measurement_input.add_pauliz_product(&quot;ro_z&quot;, [0,])
+   # Read out product of Z on site 0 for register ro_x
+   # (after basis change effectively a &lt;X&gt; measurement)
+   x_basis_index = measurement_input.add_pauliz_product(&quot;ro_x&quot;, [0,])
+   
+   # Add a result (the expectation value of H) that is a combination of
+   # the PauliProduct expectation values
+   measurement_input.add_linear_exp_val(&quot;&lt;H&gt;&quot;, {x_basis_index: 0.1, z_basis_index: 0.2})
+
+   measurement = PauliZProduct(
+      constant_circuit=init_circuit,
+      circuits=[z_circuit, x_circuit],
+      input=measurement_input,
+   )
+
+   # A quantum program is created from the measurement and &quot;angle&quot; is registered as
+   # a free input parameter.
+   # The QuantumProgram now has one free parameter that needs to set when executing it.
+   # The symbolic value angle in the circuits will be replaced by that free parameter
+   # during execution.
+   program = QuantumProgram(
+      measurement=measurement,
+      input_parameter_names=[&quot;angle&quot;],
+   )
+</code></pre>
+<p>For details on how to execute QuantumPrograms see <a href="execution.html">Execution</a>.</p>
+<h2 id="a-quantumprogram-returning-unprocessed-measurements"><a class="header" href="#a-quantumprogram-returning-unprocessed-measurements">A QuantumProgram returning unprocessed measurements</a></h2>
+<p>There also exist many use cases where end users want to receive the full measurement output without post-processing.
+For example when working with external tools that expect full  measurement records or when implementing custom post-processing.
+For these use cases the <code>ClassicalRegister</code> measurement can be used to create three dictionaries, one for all registers with bit values, one for all registers with float values and one for all registers with complex values.
+Note that this measurement does not need a separate measurement input as no post-processing takes place.</p>
+<pre><code class="language-python">   from qoqo import Circuit
+   from qoqo import operations as ops
+   from qoqo.measurements import ClassicalRegister
+   from qoqo import QuantumProgram
+   # initialize |psi&gt;
+   init_circuit = Circuit()
+   # Apply a RotateY gate with a symbolic angle
+   # To execute the circuit this symbolic parameter needs to be replaced 
+   # with a real number with the help of a QuantumProgram
+   init_circuit += ops.RotateX(0, &quot;angle&quot;)
+   # Z-basis measurement circuit with 1000 shots
+   z_circuit = Circuit()
+   z_circuit += ops.DefinitionBit(&quot;ro_z&quot;, 1, is_output=True)
+   z_circuit += ops.PragmaRepeatedMeasurement(&quot;ro_z&quot;, 1000, None)
+   # X-basis measurement circuit with 1000 shots   
+   x_circuit = Circuit()
+   x_circuit += ops.DefinitionBit(&quot;ro_x&quot;, 1, is_output=True)
+   # Changing to the X basis with a Hadamard gate
+   x_circuit += ops.Hadamard(0)
+   x_circuit += ops.PragmaRepeatedMeasurement(&quot;ro_x&quot;, 1000, None)
+
+   measurement = ClassicalRegister(constant_circuit=init_circuit, circuits=[z_circuit, x_circuit])
+
+   # A quantum program is created from the measurement and &quot;angle&quot; is registered as a free input parameter
+   # The QuantumProgram now has one free parameter that needs to set when executing it.
+   # The symbolic value angle in the circuits will be replaced by that free parameter during execution.
+   program = QuantumProgram(measurement=measurement, input_parameter_names=[&quot;angle&quot;])
+</code></pre>
+<p>For details on how to execute QuantumPrograms see <a href="execution.html">Execution</a>.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="executing-quantum-programs"><a class="header" href="#executing-quantum-programs">Executing Quantum Programs</a></h1>
+<p>To obtain results from a QuantumProgram, Measurement or Circuit it needs to be executed on real quantum computing hardware or run on a simulator.</p>
+<p>Qoqo uses separate backends for this evaluation. For each hardware or simulator a backend can be created that implements qoqo's <code>EvaluatingBackend</code> interface and runs QuantumPrograms. For an overview of backends see the <a href="https://github.com/HQSquantumsimulations/qoqo">qoqo</a> website. Backends which provide the functionality to run a single circuit are so-called <code>EvaluatingBackend</code>. The QRydDemo backends fall in this category.</p>
+<p>An <code>EvaluatingBackend</code> can run:</p>
+<ol>
+<li>
+<p><strong>A single circuit</strong>. The backend will execute just the circuit and return the measurement results of all registers in a tuple (bit-registers, float-registers, complex-registers). bit_registers is a dictionary of all registers with bit values, float_registers of all registers with float values and complex_registers of all registers with complex values. All the post-processing needs to be done manually.</p>
+</li>
+<li>
+<p><strong>A measurement</strong>. All circuits in the measurement are run and the post-processed expectation values are returned.</p>
+</li>
+<li>
+<p><strong>A quantum program</strong>. A <code>QuantumProgram</code> also handles replacement of variables. It provides its own <code>run</code> method and calls a provided backend internally.</p>
+</li>
+</ol>
+<p>As an example we will use the quantum program from <a href="introduction.html">Introduction</a> and the <a href="https://github.com/HQSquantumsimulations/qoqo-quest">qoqo-quest</a> simulator backend. Here we show three alternative options that can be ran: a single circuit, a measurement, and a quantum program.</p>
+<pre><code class="language-python">   from qoqo import Circuit, QuantumProgram
+   from qoqo import operations as ops
+   from qoqo.measurements import PauliZProduct, PauliZProductInput
+   from qoqo_quest import Backend
+   # Initialize |psi&gt;
+   init_circuit = Circuit()
+   # Apply a RotateY gate with a symbolic angle
+   # To execute the circuit this symbolic parameter needs to be replaced 
+   # with a real number with the help of a QuantumProgram
+   init_circuit += ops.RotateX(0, &quot;angle&quot;)
+   # Z-basis measurement circuit with 1000 shots
+   z_circuit = Circuit()
+   z_circuit += ops.DefinitionBit(&quot;ro_z&quot;, 1, is_output=True)
+   z_circuit += ops.PragmaRepeatedMeasurement(&quot;ro_z&quot;, 1000, None)
+   # X-basis measurement circuit with 1000 shots   
+   x_circuit = Circuit()
+   x_circuit += ops.DefinitionBit(&quot;ro_x&quot;, 1, is_output=True)
+   # Changing to the X basis with a Hadamard gate
+   x_circuit += ops.Hadamard(0)
+   x_circuit += ops.PragmaRepeatedMeasurement(&quot;ro_x&quot;, 1000, None)
+
+   # Preparing the measurement input for one qubit
+   measurement_input = PauliZProductInput(1, False)
+   # Read out product of Z on site 0 for register ro_z (no basis change)
+   z_basis_index = measurement_input.add_pauliz_product(&quot;ro_z&quot;, [0,])
+   # Read out product of Z on site 0 for register ro_x
+   # (after basis change effectively a &lt;X&gt; measurement)
+   x_basis_index = measurement_input.add_pauliz_product(&quot;ro_x&quot;, [0,])
+   
+   # Add a result (the expectation value of H) that is a combination of the PauliProduct
+   # expectation values
+   measurement_input.add_linear_exp_val(&quot;&lt;H&gt;&quot;, {x_basis_index: 0.1, z_basis_index: 0.2})
+
+   measurement = PauliZProduct(
+      constant_circuit=init_circuit,
+      circuits=[z_circuit, x_circuit],
+      input=measurement_input,
+   )
+
+   # Here we show three alternative options that can be ran:
+   # a single circuit, a measurement, and a quantum program.
+
+   # Create a backend simulating one qubit
+   backend = Backend(1)
+
+   # a) Run a single circuit 
+   (bit_registers, float_registers, complex_registers) = backend.run_circuit(z_circuit)
+
+   # b) To run a measurement we need to replace the free parameter by hand
+   executable_measurement = measurement.substitute_parameters({&quot;angle&quot;: 0.2})
+   expectation_values = backend.run_measurement(executable_measurement)
+   print(expectation_values)
+
+   # c) Run a quantum program
+   # The QuantumProgram now has one free parameter that needs to bet set when executing it.
+   # The symbolic value &quot;angle&quot; in the circuits will be replaced by that free parameter
+   # during execution.
+   program = QuantumProgram(measurement=measurement, input_parameter_names=[&quot;angle&quot;])
+   # Run the program with  0.1 substituting `angle`
+   expectation_values = program.run(backend, [0.1])
+</code></pre>
+<p>Note: The QuantumProgram can be run in the same way with the qoqo_qryd <code>SimulatorBackend</code> when all quantum operations are replaced by sequences of operations directly supported by the QRydDemo hardware. However, in order to use the qoqo_qryd <code>SimulatorBackend</code>, a device needs to be defined first, as shown in the SimulatorBackend subsection of <a href="qrydspecifics.html">QRyd Specifics</a>.</p>
+<p>In general, to distinguish between a command returning expectation values and a program returning register the command <code>run_registers</code> is used here.</p>
+<pre><code class="language-python">   from qoqo import Circuit
+   from qoqo import operations as ops
+   from qoqo.measurements import ClassicalRegister
+   from qoqo import QuantumProgram
+   from qoqo_quest import Backend
+   # Initialize |psi&gt;
+   init_circuit = Circuit()
+   # Apply a RotateY gate with a symbolic angle
+   # To execute the circuit this symbolic parameter needs to be replaced 
+   # with a real number with the help of a QuantumProgram
+   init_circuit += ops.RotateY(0, &quot;angle&quot;)
+   # Z-basis measurement circuit with 1000 shots
+   z_circuit = Circuit()
+   z_circuit += ops.DefinitionBit(&quot;ro_z&quot;, 1, is_output=True)
+   z_circuit += ops.PragmaRepeatedMeasurement(&quot;ro_z&quot;, 1000, None)
+   # X-basis measurement circuit with 1000 shots   
+   x_circuit = Circuit()
+   x_circuit += ops.DefinitionBit(&quot;ro_x&quot;, 1, is_output=True)
+   # Changing to the X basis with a Hadamard gate
+   x_circuit += ops.Hadamard(0)
+   x_circuit += ops.PragmaRepeatedMeasurement(&quot;ro_x&quot;, 1000, None)
+
+   measurement = ClassicalRegister(constant_circuit=init_circuit, circuits=[z_circuit, x_circuit])
+
+   # A quantum program is created from the measurement and &quot;angle&quot; is registered as a free input
+   # parameter. The QuantumProgram now has one free parameter that needs to be set when
+   # executing it. The symbolic value angle in the circuits will be replaced by that free parameter
+   # during execution.
+   program = QuantumProgram(measurement=measurement, input_parameter_names=[&quot;angle&quot;])
+
+   backend = Backend(1)
+   (bit_registers, float_registers, complex_registers) = program.run_registers(backend, [0.1])
+   print(bit_registers)
+</code></pre>
+<h2 id="executing-quantumprograms-without-returning-expecation-values"><a class="header" href="#executing-quantumprograms-without-returning-expecation-values">Executing QuantumPrograms without returning expecation values</a></h2>
+<p>As described in <a href="introduction.html">Introduction</a> the <code>ClassicalRegister</code> measurement can be used to return the full measurement record. </p>
+<h2 id="non-executing-backends"><a class="header" href="#non-executing-backends">Non-executing backends</a></h2>
+<p>Qoqo also has backends that cannot be used to run or evaluate a quantum circuit. These backends typically are used to translate qoqo circuits to other quantum toolkits or languages. One example is <a href="https://github.com/HQSquantumsimulations/qoqo_qasm">qoqo_qasm</a></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="qryddemo-webapi"><a class="header" href="#qryddemo-webapi">QRydDemo WebAPI</a></h1>
+<p>The QRydDemo project at the moment provides access to a Quantum Hardware Emulator via a REST-API. 
+qoqo-qryd and roqoqo-qryd allow interfacing with the WebAPI.
+The WebAPI can be accessed on the level of direct API calls.
+It is also possible to use the WebAPI as an <code>EvaluatingBackend</code> for general (non-parameterized)
+qoqo QuantumPrograms via the WebAPI as described in <a href="execution.html">Execution</a>.</p>
+<h2 id="getting-access-to-the-webapi"><a class="header" href="#getting-access-to-the-webapi">Getting access to the WebAPI</a></h2>
+<p>To use the WebAPI, a QRydDemo account is required. Users can register via the <a href="https://thequantumlaend.de/get-access/">online registration form</a>. Access is controlled via a Token. The token can either be directly provided to the <code>APIBackend</code> on creation or the backend tries to read it from the <code>QRYD_API_TOKEN</code> environmental variable.</p>
+<h2 id="devices"><a class="header" href="#devices">Devices</a></h2>
+<p>At the moment the QrydDemo WebAPI supports two device emulators. Both support 30 qubits, one in a square and another with a triangular topology.</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center"><img src="square.png" alt="" title="Square topology" /></th><th style="text-align: center"><img src="triangle.png" alt="" title="Triangular topology" /></th></tr></thead><tbody>
+<tr><td style="text-align: center">Square topology</td><td style="text-align: center">Triangular topology</td></tr>
+</tbody></table>
+</div>
+<p>The Emulators allow the user to set the phase shifts in the <code>PhaseShiftedControlledZ</code> and <code>PhaseShiftedControlledPhase</code> native gates and the seed for the random number generator. In qoqo-qryd these are set when creating the devices.</p>
+<pre><code class="language-python">    import numpy as np
+    from qoqo_qryd.api_devices import QrydEmuSquareDevice
+    from qoqo_qryd import APIBackend
+    # Creating a new device.
+    # All calculations on this device will use 1 as the random seed
+    # and 0.23 as the phase shift in the PhaseShiftedControlledZ gate 
+    device = QrydEmuSquareDevice(seed=1, controlled_z_phase_relation=&quot;0.23&quot;)
+    # Create a new backend that will use the device.
+    # Timeout controls how often the backend is queried 
+    # for a result when backend is used as an evaluating backend.
+    # The wait time between queries is 0.2 seconds.
+    backend = APIBackend(device=device, timeout=20)
+</code></pre>
+<h2 id="apibackend"><a class="header" href="#apibackend">APIBackend</a></h2>
+<p>The <code>APIBackend</code> of qoqo-qryd supports the four direct API-calls of the QRydDemo WebAPI:</p>
+<ol>
+<li>Queueing a job of running a qoqo QuantumProgram with a ClassicalRegister measurement (<code>post_job(quantumprogram)</code>).</li>
+<li>Querying the status of the job (<code>get_job_status(job)</code>).</li>
+<li>Retrieving the results of the job (<code>get_job_result(job)</code>).</li>
+<li>Deleting a posted job (<code>delete_job(job)</code>).</li>
+</ol>
+<p>Additional information can be found on the <a href="https://thequantumlaend.de/qryddemo/">API documentation</a></p>
+<p>The four API calls can be used to obtain a result the following way:</p>
+<pre><code class="language-python">    import numpy as np
+    from qoqo import operations as ops
+    from qoqo import Circuit
+    from qoqo import QuantumProgram
+    from qoqo_qryd.api_devices import QrydEmuSquareDevice
+    from qoqo.measurements import ClassicalRegister
+    from time import sleep
+    from qoqo_qryd import APIBackend
+
+    # Creating a new device.
+    # All calculations on this device will use 1 as the random seed
+    # and 0.23 as the phase shift in the PhaseShiftedControlledZ gate 
+    device = QrydEmuSquareDevice(seed=1, controlled_z_phase_relation=&quot;0.23&quot;)
+    # Create a new backend that will use the device.
+    # Timeout controls how often the backend is queried 
+    # for a result when backend is used as an evaluating backend.
+    # The wait time between queries is 0.2 seconds.
+    backend = APIBackend(device=device, timeout=20)
+    
+    # Creating a quantum circuit that will be measured
+    circuit = Circuit()
+
+    circuit += ops.RotateX(0, np.pi/2)
+    circuit += ops.RotateX(2, np.pi/2)
+    circuit += ops.RotateX(4, np.pi/2)
+
+    circuit += ops.DefinitionBit(&quot;ro&quot;, 6, is_output=True)
+    circuit += ops.PragmaRepeatedMeasurement(&quot;ro&quot;, 1000, None)
+    
+    # The direct API calls only support ClassicalRegister measurements
+    measurement = ClassicalRegister(constant_circuit=None, circuits=[circuit])
+    program = QuantumProgram(measurement=measurement, input_parameter_names=[])
+    # First API call: queueing the job
+    # Returns url for further queries.
+    job_location = backend.post_job(program)
+    for i in range(20):
+        print(i)
+        sleep(30)
+        # Query the job status via an API call
+        job_status = backend.get_job_status(job_location)
+        if job_status[&quot;status&quot;] == &quot;completed&quot;:
+            # If the job is completed retrieve result via API call
+            result = backend.get_job_result(job_location)
+            print(result)
+            break
+    # alternatively delete job
+    # backend.delete_job(job_location)
+</code></pre>
+<h2 id="tweezerdevice"><a class="header" href="#tweezerdevice">TweezerDevice</a></h2>
+<p>By calling the <code>.from_api()</code> static method, an instance of the <code>TweezerDevice</code> class can be created with Tweezer information already set.</p>
+<pre><code class="language-python">from qoqo_qryd.tweezer_devices import TweezerDevice
+
+# Creating a new TweezerDevice instance.
+device = TweezerDevice.from_api(
+    # The name of the device to use.
+    device_name=&quot;test_device&quot;,
+    # Optional token. This is not necessary if the token is already an environment variable.
+    access_token=&quot;YOUR_QRYD_API_TOKEN&quot;
+)
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="rydberg-devices-and-operations"><a class="header" href="#rydberg-devices-and-operations">Rydberg devices and operations</a></h1>
+<p>Due to the nature of the QRydDemo hardware based on Rydberg atoms, QRydDemo quantum computing devices can have special capabilities that are 'not' present in all universal quantum computers.</p>
+<p>The devices can have two-dimensional grids of optical tweezer-positions and different two-dimensional grids can be calibrated. A tweezer-position is a physical spot that can be populated by a qubit.
+Not every tweezer position needs to be filled by a qubit and qubit can be moved between tweezer positions.
+Note that all functionality described here is a preview and does not represent a finalized QRydDemo design.</p>
+<h2 id="special-operations"><a class="header" href="#special-operations">Special operations</a></h2>
+<p>To support the full flexibility of the QRydDemo devices, two additional qoqo operations are provided <code>PragmaChangeQRydLayout</code>, <code>PragmaSwitchDeviceLayout</code>, <code>PragmaShiftQRydQubit</code> and <code>PragmaShiftQubitsTweezers</code>.
+<code>PragmaChangeQRydLayout</code> allows a quantum circuit to change between predefined calibrated optical tweezer positions. It indexes the layouts by integer. A similar operation, but meant for <code>TweezerDevice</code> and <code>TweezerMutableDevice</code>, is <code>PragmaSwitchDeviceLayout</code>, which indexes the new layout via a string.
+<code>PragmaShiftQRydQubit</code> allows a quantum circuit to shift a qubit from one tweezer position to another. <code>PragmaShiftQubitsTweezers</code> is the equivalent operation meant to be used with <code>TweezerDevice</code> and <code>TweezerMutableDevice</code>.</p>
+<pre><code class="language-python">   from qoqo import Circuit
+   from qoqo_qryd.pragma_operations import PragmaChangeQRydLayout, PragmaShiftQRydQubit, PragmaSwitchDeviceLayout, PragmaShiftQubitsTweezers
+
+   circuit = Circuit()
+   # Switch to predefined layout 1
+   circuit += PragmaChangeQRydLayout(new_layout=1).to_pragma_change_device()
+   # Switch to predefined layout &quot;triangle&quot;
+   circuit += PragmaSwitchDeviceLayout(new_layout=&quot;triangle&quot;).to_pragma_change_device()
+   # Shift qubit 0 to tweezer position: row 0, column 1 and qubit 1 to postion row 1, column 1
+   circuit += PragmaShiftQRydQubit(new_positions={0: (0,1), 1: (1,1)}).to_pragma_change_device()
+   # Shift the qubit state present in tweezer 0 to tweezer 1, and the qubit state present in tweezer 2 to tweezer 3
+   circuit += PragmaShiftQubitsTweezers(shifts=[(0, 1), (2, 3)]).to_pragma_change_device()
+   ()
+</code></pre>
+<h2 id="qryd-and-tweezer-devices"><a class="header" href="#qryd-and-tweezer-devices">QRyd and Tweezer devices</a></h2>
+<p>Each type of QRydDemo hardware or Simulator device can be represented by either the QRydDevice or the TweezerDevice classes.
+The available hardware operations are defined in the devices. They save the 2D connectivity and can be queried for the availability of certain gate operations on the qubit.
+At the moment the most general example Device class is <code>FirstDevice</code>, that can be used for simulations. Other available devices include <code>TweezerMutableDevice</code>, which works by first defining the underlying tweezer structure and then populate it with qubits as needed. <code>TweezerDevice</code> works in a similar way. The main difference is it does not allow any setting of the Tweezer information. This should be obtained via the <code>.from_api()</code> call (see the <a href="webapi.html">WebAPI</a> section).</p>
+<p>The fundamental gates that are available on the QRydDemo devices are the following qoqo operations: <code>RotateX</code>, <code>RotateY</code>, <code>RotateZ</code>, <code>RotateXY</code>, <code>PauliX</code>,  <code>PauliY</code>,  <code>PauliZ</code>, <code>PhaseShiftState1</code> ,  <code>SqrtPauliX</code>,  <code>InvSqrtPauliX</code>, <code>PhaseShiftedControlledZ</code> and <code>PhaseShiftedControlledPhase</code>.
+The single-qubit gates are assumed to be available on all qubits. 
+The <code>PhaseShiftedControlledZ</code> and <code>PhaseShiftedControlledPhase</code> are available between a subset of qubit pairs.
+The <code>PhaseShiftedControlledZ</code> is a ControlledPauliZ gate that also applies single qubit phases whereas the  <code>PhaseShiftedControlledPhase</code> is equivalent to <code>PhaseShiftedControlledZ</code> but with a variable phase rotation.
+The phase shifts can in principle be device dependent.</p>
+<p>The devices can optionally contain the <code>controlled_z_phase_relation</code> and <code>controlled_phase_phase_relation</code> parameters that define the phase shift relations of the two-qubit gates for the device. The first parameter can also be set explicitly by putting a string defining a float value as input.</p>
+<pre><code class="language-python">   from qoqo_qryd.qryd_devices import FirstDevice
+   from qoqo_qryd.tweezer_devices import TweezerMutableDevice
+   import numpy as np
+
+   # Create a FirstDevice
+   first_device = FirstDevice(
+      # The number of tweezer position rows in the 2D Grid is fixed
+      number_rows=2,
+      # The number of tweezer position  columns in the 2D grid is also fixed
+      number_columns=4,
+      # As not all tweezer positions must be filled, the number of positions
+      # occupied by qubits per row is fixed
+      qubits_per_row=[2, 2],
+      # The (model) physical distance between rows is fixed
+      row_distance=1.0,
+      # The initial layout (layout number 0 for PragmaChangeQRydLayout) is defined 
+      # by the physical positions of the tweezers in each row
+      initial_layout=np.array([
+         [0.0, 1.0, 2.0, 3.0],
+         [0.0, 1.0, 2.0, 3.0]]),
+      # The phase shift value related to the PhaseShiftedControlledZ gate
+      # Using a string that defines a relation is also possible
+      controlled_z_phase_relation=&quot;0.23&quot;,
+      # The relation to use for the PhaseShiftedControlledPhase phase shift value
+      controlled_phase_phase_relation=&quot;DefaultRelation&quot;
+   )
+
+   # Print the two-qubit-operation connectivity graph of the device
+   print(first_device.two_qubit_edges())
+
+   # Create a TweezerMutableDevice
+   tweezer_device = TweezerMutableDevice(
+      # The phase shift value related to the PhaseShiftedControlledZ gate
+      # Using a string that defines a relation is also possible
+      controlled_z_phase_relation=&quot;0.23&quot;,
+      # The relation to use for the PhaseShiftedControlledPhase phase shift value
+      controlled_phase_phase_relation=&quot;DefaultRelation&quot;
+   )
+
+   # Add a tweezer layout to the device
+   tweezer_device.add_layout(name=&quot;triangle&quot;)
+
+   # Set single-qubit tweezer gate time information on the new layout
+   tweezer_device.set_tweezer_single_qubit_gate_time(
+      hqslang=&quot;PhaseShiftState1&quot;,
+      tweezer=0,
+      gate_time=0.23,
+      layout=&quot;triangle&quot;,
+   )
+
+   # Populate the newly set tweezer with qubit indexed as 0
+   tweezer_device.add_qubit_tweezer_mapping(
+      qubit=0,
+      tweezer=0,
+   )
+
+   # Print the available layouts of the device
+   print(tweezer_device.available_layouts())
+</code></pre>
+<h2 id="simulatorbackend"><a class="header" href="#simulatorbackend">SimulatorBackend</a></h2>
+<p>The <code>SimulatorBackend</code> of qoqo-qryd can execute qoqo QuantumPrograms depending on the provided devices. At the moment only the <code>FirstDevice</code> is available for the QRydDemo project.
+Executing a circuit with the <code>SimulatorBackend</code> initialized by the <code>FirstDevice</code> corresponds to running a simulation of the QuantumProgram which validates that only
+operations available in <code>FirstDevice</code> are used.</p>
+<pre><code class="language-python">   from qoqo_qryd.qryd_devices import FirstDevice
+   from qoqo_qryd import SimulatorBackend
+   import numpy as np
+   # Create a FirstDevice
+   device = FirstDevice(
+      # The number of tweezer position rows in the 2D Grid is fixed
+      number_rows=2,
+      # The number of tweezer position  columns in the 2D grid is also fixed
+      number_columns=4,
+      # As not all tweezer positions must be filled, the number of positions
+      # occupied by qubits per row is fixed
+      qubits_per_row=[2, 2],
+      # The (model) physical distance between rows is fixed
+      row_distance=1.0,
+      # The initial layout (layout number 0 for PragmaChangeQRydLayout) is defined 
+      # by the physical positions of the tweezers in each row
+      initial_layout=np.array([
+         [0.0, 1.0, 2.0, 3.0],
+         [0.0, 1.0, 2.0, 3.0]]))
+
+   # Initialize Backend
+   backend = SimulatorBackend(device)
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="qoqo-qryd-examples"><a class="header" href="#qoqo-qryd-examples">qoqo-qryd Examples</a></h1>
+<h2 id="using-qubit-shift-operations"><a class="header" href="#using-qubit-shift-operations">Using qubit shift operations</a></h2>
+<pre><code class="language-python">&quot;&quot;&quot;A simple example for shifting the qubit positions.&quot;&quot;&quot;
+
+# Copyright © 2021-2022 HQS Quantum Simulations GmbH.
+#
+# Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not use this file except
+# in compliance with the License. You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software distributed under the License
+# is distributed on an &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+# or implied. See the License for the specific language governing permissions and limitations under
+# the License.
+
+import numpy as np
+from qoqo import Circuit
+import qoqo.operations as ops
+from qoqo_qryd import qryd_devices, SimulatorBackend
+from qoqo_qryd import pragma_operations as qrydops
+
+
+# ------------------------- The set-up of the device -------------------------- #
+
+# Initializing Device with a square lattice
+#
+#   Tweezer positions:
+#   (0, 0) ----- (0, 1) ----- (0, 2) ----- (0, 3)
+#   (1, 0) ----- (1, 1) ----- (1, 2) ----- (1, 3)
+#
+#   Qubit positions:
+#   0 --- 1
+#   2 --- 3
+#
+device = qryd_devices.FirstDevice(
+    number_rows=2,
+    number_columns=4,
+    qubits_per_row=[2, 2],
+    row_distance=1.0,
+    initial_layout=np.array([
+        [0.0, 1.0, 2.0, 3.0],
+        [0.0, 1.0, 2.0, 3.0]
+    ])
+)
+
+# Adding a triangular lattice
+#
+#   Tweezer positions:
+#   (0, 0) ----- (0, 1) ----- (0, 2) ----- (0, 3)
+#          (1, 0) ----- (1, 1) ----- (1, 2) ----- (1, 3)
+#
+#   Qubit positions:
+#   0 --- 1
+#      2 --- 3
+device = device.add_layout(
+    1,
+    np.array([
+       [0.0, 1.0, 2.0, 3.0],
+       [0.5, 1.5, 2.5, 3.5]
+   ])
+)
+# Set the cut-off distance for two-qubit interactions
+device.set_cutoff(1.0)
+# Setting up the device in the square lattice
+device.change_qubit_positions({0: (0, 0), 1: (0, 1), 2: (1, 0), 3: (1, 1)})
+backend = SimulatorBackend(device)
+
+# ------------------------ The set-up of the circuit ------------------------ #
+
+circuit = Circuit()
+# Qubits 1 and 2 are not close enough for interaction in square lattice
+circuit += ops.PhaseShiftedControlledZ(control=1, target=2, phi=0.0)
+# This should fail
+# result = backend.run_circuit(circuit)
+
+
+# ------------------ The set-up of the circuit with device change --------------- #
+
+circuit = Circuit()
+# Qubits 1 and 2 are close enough for interaction in square lattice after shift
+#   Qubit positions after shift:
+#   0 --- 1
+#         2 --- 3
+circuit += ops.DefinitionComplex(&quot;state_vector_before&quot;, 16, True)
+circuit += ops.DefinitionComplex(&quot;state_vector_after&quot;, 16, True)
+circuit += ops.RotateX(1, np.pi)
+circuit += ops.RotateX(2, np.pi / 2)
+circuit += ops.PragmaGetStateVector(&quot;state_vector_before&quot;, None)
+circuit += qrydops.PragmaShiftQRydQubit(
+    {0: (0, 0), 1: (0, 1), 2: (1, 1), 3: (1, 2)}).to_pragma_change_device()
+circuit += ops.PhaseShiftedControlledZ(control=1, target=2, phi=0.0)
+circuit += ops.PragmaGetStateVector(&quot;state_vector_before&quot;, None)
+# This should pass
+result = backend.run_circuit(circuit)
+print(&quot;State vector before applying shift and two-qubit gate&quot;)
+print(result[2][&quot;state_vector_before&quot;])
+print(&quot;State vector after applying shift and two-qubit gate&quot;)
+print(result[2][&quot;state_vector_after&quot;])
+</code></pre>
+<h2 id="changing-the-device-layout"><a class="header" href="#changing-the-device-layout">Changing the device layout</a></h2>
+<pre><code class="language-python">&quot;&quot;&quot;A simple example for switching between a square lattice and a triangular lattice layout.&quot;&quot;&quot;
+
+# Copyright © 2021-2022 HQS Quantum Simulations GmbH.
+#
+# Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not use this file except
+# in compliance with the License. You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software distributed under the License
+# is distributed on an &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+# or implied. See the License for the specific language governing permissions and limitations under
+# the License.
+
+import numpy as np
+from qoqo import Circuit
+import qoqo.operations as ops
+from qoqo_qryd import qryd_devices, SimulatorBackend
+from qoqo_qryd import pragma_operations as qrydops
+
+
+# ------------------------- The set-up of the device -------------------------- #
+
+# Initializing device with a square lattice
+#
+#   Tweezer positions:
+#   (0, 0) ----- (0, 1) ----- (0, 2) ----- (0, 3)
+#   (1, 0) ----- (1, 1) ----- (1, 2) ----- (1, 3)
+#
+#   Qubit positions:
+#   0 --- 1
+#   2 --- 3
+#
+device = qryd_devices.FirstDevice(
+    number_rows=2,
+    number_columns=4,
+    qubits_per_row=[2, 2],
+    row_distance=1.0,
+    initial_layout=np.array([
+        [0.0, 1.0, 2.0, 3.0],
+        [0.0, 1.0, 2.0, 3.0]]))
+# Adding a triangular lattice
+#
+#   Tweezer positions:
+#   (0, 0) ----- (0, 1) ----- (0, 2) ----- (0, 3)
+#          (1, 0) ----- (1, 1) ----- (1, 2) ----- (1, 3)
+#
+#   Qubit positions:
+#   0 --- 1
+#      2 --- 3
+device = device.add_layout(
+    1,
+   np.array([
+       [0.0, 1.0, 2.0, 3.0],
+       [0.5, 1.5, 2.5, 3.5]
+   ])
+)
+# Set the cut-off distance for two-qubit interactions
+device.set_cutoff(1.0)
+# Setting up the device in the triangular lattice
+device.switch_layout(1)
+device.change_qubit_positions({0: (0, 0), 1: (0, 1), 2: (1, 0), 3: (1, 1)})
+backend = SimulatorBackend(device)
+
+# ----------------------- The set-up of the circuit -------------------------- #
+
+circuit = Circuit()
+# Qubits 0 and 2 are not close enough
+# for interaction in triangular lattice
+circuit += ops.PhaseShiftedControlledZ(control=0, target=2, phi=0.0)
+# This should fail
+# result = backend.run_circuit(circuit)
+
+
+# ----------------- The set-up of the circuit with device change --------------- #
+
+circuit = Circuit()
+circuit += ops.DefinitionComplex(&quot;state_vector_before&quot;, 16, True)
+circuit += ops.DefinitionComplex(&quot;state_vector_after&quot;, 16, True)
+circuit += ops.RotateX(0, np.pi)
+circuit += ops.RotateX(2, np.pi / 2)
+circuit += ops.PragmaGetStateVector(&quot;state_vector_before&quot;, None)
+# Qubits 0 and 2 are close enough for interaction in square lattice
+circuit += qrydops.PragmaChangeQRydLayout(0).to_pragma_change_device()
+circuit += ops.PhaseShiftedControlledZ(control=0, target=2, phi=0.0)
+circuit += ops.PragmaGetStateVector(&quot;state_vector_after&quot;, None)
+# This should pass
+result = backend.run_circuit(circuit)
+print(&quot;State vector before applying shift and two-qubit gate&quot;)
+print(result[2][&quot;state_vector_before&quot;])
+print(&quot;State vector after applying shift and two-qubit gate&quot;)
+print(result[2][&quot;state_vector_after&quot;])
+</code></pre>
+<h2 id="using-multi-qubit-operations"><a class="header" href="#using-multi-qubit-operations">Using multi-qubit operations</a></h2>
+<pre><code class="language-python">&quot;&quot;&quot;A simple example demonstrating multi qubit operations.&quot;&quot;&quot;
+
+# Copyright © 2021 - 2022 HQS Quantum Simulations GmbH.
+#
+# Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not use this file except
+# in compliance with the License. You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software distributed under the License
+# is distributed on an &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+# or implied. See the License for the specific language governing permissions and limitations under
+# the License.
+import numpy as np
+from qoqo import Circuit
+import qoqo.operations as ops
+from qoqo_qryd import qryd_devices, SimulatorBackend
+from qoqo_qryd import pragma_operations as qrydops
+
+# --------------------- The set-up of the device ----------------------- #
+
+# Initializing Device with a square lattice
+#
+#   Tweezer positions:
+#   (0, 0) ----- (0, 1) ----- (0, 2) ----- (0, 3)
+#   (1, 0) ----- (1, 1) ----- (1, 2) ----- (1, 3)
+#   (2, 0) ----- (2, 1) ----- (2, 2) ----- (2, 3)
+#
+#   Qubit positions:
+#   0 --- 1 --- 2 --- 3
+#   4 --- 5 --- 6 --- 7
+#   8 --- 9 --- 10 --- 11
+#
+device = qryd_devices.FirstDevice(
+    number_rows=3,
+    number_columns=4,
+    qubits_per_row=[4, 4, 4],
+    row_distance=1.0,
+    initial_layout=np.array([
+        [0.0, 1.0, 2.0, 3.0],
+        [0.0, 1.0, 2.0, 3.0],
+        [0.0, 1.0, 2.0, 3.0]]))
+
+backend = SimulatorBackend(device)
+
+# ---------------- Multi Qubit Circuits that will fail ---------------------- #
+
+# For the Prototype we assume that only MultiQubitZZ operations 
+# are allowed between qubits in one row.
+# This is an arbitrary limitation implemented to showcase
+# how a restricted operation would be implemented
+# in the final device.
+
+# Use a MultiQubitMS Molemer-Sorensen Gate
+circuit = Circuit()
+# MultiQubitMS not supported natively
+circuit += ops.MultiQubitMS(qubits=[0, 1, 2, 3], theta=1.0)
+# This should fail
+# result = backend.run_circuit(circuit)
+
+# Use a MultiQubitZZ  Gate but in the wrong direction
+circuit = Circuit()
+# MultiQubitZZ not supported along a column
+circuit += ops.MultiQubitZZ(qubits=[0, 4, 8], theta=1.0)
+# This should fail
+#result = backend.run_circuit(circuit)
+
+
+# --------------------- Working Multi Qubit Circuit ------------------------- #
+
+circuit = Circuit()
+circuit += ops.DefinitionBit(&quot;ro&quot;, 12, True)
+circuit += ops.MultiQubitZZ(qubits=[0, 1, 2, 3], theta=1.0)
+circuit += ops.PragmaRepeatedMeasurement(&quot;ro&quot;, 1, None)
+# This should pass
+result = backend.run_circuit(circuit)
+print(&quot;Result of ZZ on first four qubits&quot;)
+print(result)
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="qoqo-qryd-api-documentation"><a class="header" href="#qoqo-qryd-api-documentation">qoqo-qryd API documentation</a></h1>
+<p>The qoqo-qryd provides software components for <a href="https://github.com/HQSquantumsimulations/qoqo%3E">qoqo</a> that support QRydDemo quantum computers.</p>
+<p>The qoqo-qryd module provides:</p>
+<ol>
+<li>Backends that execute a compiled qoqo QuantumProgram on QRydDemo hardware (when available), via a WebAPI emulation (APIBackend) or simulators (SimulatorBackend).</li>
+<li>A set of specific operations only available on QRydDemo hardware.</li>
+<li>A collection of devices, representations of the hardware devices available in QrydDemo.</li>
+</ol>
+<p>This is the <a href="qoqo_qryd_api/html/index.html">API documentation of qoqo-qryd</a>, for a more general overview see the User Documentation.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+    </div>
+    </body>
+</html>

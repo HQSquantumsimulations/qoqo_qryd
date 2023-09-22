@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>qoqo_qryd &mdash; qoqo_qryd 0.11.1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=b4a3dd51"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="qoqo_qryd.qryd_devices" href="generated/qoqo_qryd.qryd_devices.html" />
+    <link rel="prev" title="qoqo_qryd documentation" href="../modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            qoqo_qryd
+          </a>
+              <div class="version">
+                0.11.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../modules.html">qoqo_qryd documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">qoqo_qryd</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/qoqo_qryd.qryd_devices.html">qoqo_qryd.qryd_devices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/qoqo_qryd.api_devices.html">qoqo_qryd.api_devices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/qoqo_qryd.pragma_operations.html">qoqo_qryd.pragma_operations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/qoqo_qryd.SimulatorBackend.html">qoqo_qryd.SimulatorBackend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/qoqo_qryd.APIBackend.html">qoqo_qryd.APIBackend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/qoqo_qryd.tweezer_devices.html">qoqo_qryd.tweezer_devices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#qoqo_qryd.APIBackend"><code class="docutils literal notranslate"><span class="pre">APIBackend</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.APIBackend.delete_job"><code class="docutils literal notranslate"><span class="pre">APIBackend.delete_job()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.APIBackend.from_bincode"><code class="docutils literal notranslate"><span class="pre">APIBackend.from_bincode()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.APIBackend.from_json"><code class="docutils literal notranslate"><span class="pre">APIBackend.from_json()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.APIBackend.get_job_result"><code class="docutils literal notranslate"><span class="pre">APIBackend.get_job_result()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.APIBackend.get_job_status"><code class="docutils literal notranslate"><span class="pre">APIBackend.get_job_status()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.APIBackend.post_job"><code class="docutils literal notranslate"><span class="pre">APIBackend.post_job()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.APIBackend.run_circuit"><code class="docutils literal notranslate"><span class="pre">APIBackend.run_circuit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.APIBackend.run_measurement"><code class="docutils literal notranslate"><span class="pre">APIBackend.run_measurement()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.APIBackend.run_measurement_registers"><code class="docutils literal notranslate"><span class="pre">APIBackend.run_measurement_registers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.APIBackend.set_dev"><code class="docutils literal notranslate"><span class="pre">APIBackend.set_dev()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.APIBackend.to_bincode"><code class="docutils literal notranslate"><span class="pre">APIBackend.to_bincode()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.APIBackend.to_json"><code class="docutils literal notranslate"><span class="pre">APIBackend.to_json()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#qoqo_qryd.SimulatorBackend"><code class="docutils literal notranslate"><span class="pre">SimulatorBackend</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.SimulatorBackend.from_bincode"><code class="docutils literal notranslate"><span class="pre">SimulatorBackend.from_bincode()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.SimulatorBackend.from_json"><code class="docutils literal notranslate"><span class="pre">SimulatorBackend.from_json()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.SimulatorBackend.run_circuit"><code class="docutils literal notranslate"><span class="pre">SimulatorBackend.run_circuit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.SimulatorBackend.run_measurement"><code class="docutils literal notranslate"><span class="pre">SimulatorBackend.run_measurement()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.SimulatorBackend.run_measurement_registers"><code class="docutils literal notranslate"><span class="pre">SimulatorBackend.run_measurement_registers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.SimulatorBackend.to_bincode"><code class="docutils literal notranslate"><span class="pre">SimulatorBackend.to_bincode()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.SimulatorBackend.to_json"><code class="docutils literal notranslate"><span class="pre">SimulatorBackend.to_json()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">qoqo_qryd</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../modules.html">qoqo_qryd documentation</a></li>
+      <li class="breadcrumb-item active">qoqo_qryd</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/generated/qoqo_qryd.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-qoqo_qryd">
+<span id="qoqo-qryd"></span><h1>qoqo_qryd<a class="headerlink" href="#module-qoqo_qryd" title="Link to this heading"></a></h1>
+<p><a class="reference external" href="https://thequantumlaend.de/qryddemo/">QRydDemo</a> support for the <a class="reference external" href="https://github.com/HQSquantumsimulations/qoqo">qoqo</a> quantum toolkit.</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/qoqo_qryd.qryd_devices.html#module-qoqo_qryd.qryd_devices" title="qoqo_qryd.qryd_devices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">qryd_devices</span></code></a></p></td>
+<td><p>Prototype qoqo devices for Rydberg hardware</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/qoqo_qryd.api_devices.html#module-qoqo_qryd.api_devices" title="qoqo_qryd.api_devices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">api_devices</span></code></a></p></td>
+<td><p>Devices available on the QRydDemo WebAPI.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/qoqo_qryd.pragma_operations.html#module-qoqo_qryd.pragma_operations" title="qoqo_qryd.pragma_operations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pragma_operations</span></code></a></p></td>
+<td><p>QRyd specific PragmaOperations that support changing the QRyd device during a circuit evaluation</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#qoqo_qryd.SimulatorBackend" title="qoqo_qryd.SimulatorBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SimulatorBackend</span></code></a>(device, /)</p></td>
+<td><p>Local simulator backend for Rydberg devices.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#qoqo_qryd.APIBackend" title="qoqo_qryd.APIBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">APIBackend</span></code></a>(device, access_token, timeout, ...)</p></td>
+<td><p>Qoqo backend interfacing QRydDemo WebAPI.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/qoqo_qryd.tweezer_devices.html#module-qoqo_qryd.tweezer_devices" title="qoqo_qryd.tweezer_devices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tweezer_devices</span></code></a></p></td>
+<td><p>Tweezer devices for the QRyd platform.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#qoqo_qryd.APIBackend" title="qoqo_qryd.APIBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">APIBackend</span></code></a>(device, access_token, timeout, ...)</p></td>
+<td><p>Qoqo backend interfacing QRydDemo WebAPI.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#qoqo_qryd.SimulatorBackend" title="qoqo_qryd.SimulatorBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SimulatorBackend</span></code></a>(device, /)</p></td>
+<td><p>Local simulator backend for Rydberg devices.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="qoqo_qryd.APIBackend">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.</span></span><span class="sig-name descname"><span class="pre">APIBackend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">access_token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_port</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend" title="Link to this definition"></a></dt>
+<dd><p>Qoqo backend interfacing QRydDemo WebAPI.</p>
+<p>The WebAPI Backend implements methods available in the QRyd Web API.
+Furthermore, QRyd quantum computer only allows gate operations
+that are available on a device model of a QRyd device (stored in a [crate::QRydDevice]).
+This limitation is introduced by design to check the compatability of quantum programs with a model of the QRyd hardware.
+For simulations of the QRyd quantum computer use the Backend simulator [crate::Backend].</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.APIBackend.delete_job">
+<span class="sig-name descname"><span class="pre">delete_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_location</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend.delete_job" title="Link to this definition"></a></dt>
+<dd><p>Delete a posted WebAPI job</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>job_location</strong> (<em>str</em>) -- location (url) of the job one is interested in.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> -- Could not delete job.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.APIBackend.from_bincode">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_bincode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend.from_bincode" title="Link to this definition"></a></dt>
+<dd><p>Convert the bincode representation of the APIBackend to a APIBackend using the bincode crate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input</strong> (<em>ByteArray</em>) -- The serialized APIBackend (in bincode form).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The deserialized APIBackend.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#qoqo_qryd.APIBackend" title="qoqo_qryd.APIBackend">APIBackend</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> -- Input cannot be converted to byte array.</p></li>
+<li><p><strong>ValueError</strong> -- Input cannot be deserialized to APIBackend.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.APIBackend.from_json">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend.from_json" title="Link to this definition"></a></dt>
+<dd><p>Convert the json representation of a APIBackend to a APIBackend.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input</strong> (<em>str</em>) -- The serialized APIBackend in json form.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The deserialized APIBackend.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#qoqo_qryd.APIBackend" title="qoqo_qryd.APIBackend">APIBackend</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> -- Input cannot be deserialized to APIBackend.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.APIBackend.get_job_result">
+<span class="sig-name descname"><span class="pre">get_job_result</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_location</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend.get_job_result" title="Link to this definition"></a></dt>
+<dd><p>Get status of a completed WebAPI job.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>job_location</strong> (<em>str</em>) -- location (url) of the job one is interested in.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns</dt><dd><p>dict: Result of the job.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.APIBackend.get_job_status">
+<span class="sig-name descname"><span class="pre">get_job_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_location</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend.get_job_status" title="Link to this definition"></a></dt>
+<dd><p>Get status of a posted WebAPI job.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>job_location</strong> (<em>str</em>) -- location (url) of the job one is interested in.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>status and message of the job.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>QRydJobStatus(dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.APIBackend.post_job">
+<span class="sig-name descname"><span class="pre">post_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quantumprogram</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend.post_job" title="Link to this definition"></a></dt>
+<dd><p>Post to add a new job to be run on the backend and return the location of the job.</p>
+<p>Other free parameters of the job (<cite>seed</cite>, <cite>pcz_theta</cite> etc.)
+are provided by the device given during the initializing of the backend.</p>
+<p>The returned location is the URL of the job in String form
+that can be used to query the job status and result
+or to delete the job.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>quantumprogram</strong> (<em>qoqo.QuantumProgram</em>) -- qoqo QuantumProgram to be executed.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>URL of the location of the job.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.APIBackend.run_circuit">
+<span class="sig-name descname"><span class="pre">run_circuit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend.run_circuit" title="Link to this definition"></a></dt>
+<dd><p>Run a circuit with the QRyd APIBackend.</p>
+<p>A circuit is passed to the APIBackend and executed.
+During execution values are written to and read from classical registers
+(List[bool], List[float], List[complex]).
+To produce sufficient statistics for evaluating expectation values,
+circuits have to be run multiple times.
+The results of each repetition are concatenated in OutputRegisters
+(List[List[bool]], List[List[float]], List[List[complex]]).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>circuit</strong> (<em>Circuit</em>) -- The circuit that is run on the APIBackend.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The output registers written by the evaluated circuits.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[Dict[str, List[List[bool]]], Dict[str, List[List[float]]]], Dict[str, List[List[complex]]]]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> -- Circuit argument cannot be converted to qoqo Circuit</p></li>
+<li><p><strong>RuntimeError</strong> -- Running Circuit failed</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.APIBackend.run_measurement">
+<span class="sig-name descname"><span class="pre">run_measurement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">measurement</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend.run_measurement" title="Link to this definition"></a></dt>
+<dd><p>Evaluates expectation values of a measurement with the APIBackend.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>measurement</strong> (<em>Measurement</em>) -- The measurement that is run on the APIBackend.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The  dictionary of expectation values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[Dict[str, float]]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> -- Measurement evaluate function could not be used</p></li>
+<li><p><strong>RuntimeError</strong> -- Internal error measurement.evaluation returned unknown type</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.APIBackend.run_measurement_registers">
+<span class="sig-name descname"><span class="pre">run_measurement_registers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">measurement</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend.run_measurement_registers" title="Link to this definition"></a></dt>
+<dd><p>Run all circuits corresponding to one measurement with the QRyd APIBackend.</p>
+<p>An expectation value measurement in general involves several circuits.
+Each circuit is passed to the APIBackend and executed separately.
+During execution values are written to and read from classical registers
+(List[bool], List[float], List[complex]).
+To produce sufficient statistics for evaluating expectation values,
+circuits have to be run multiple times.
+The results of each repetition are concatenated in OutputRegisters
+(List[List[bool]], List[List[float]], List[List[complex]]).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>measurement</strong> (<em>Measurement</em>) -- The measurement that is run on the APIBackend.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The output registers written by the evaluated circuits.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[Dict[str, List[List[bool]]], Dict[str, List[List[float]]]], Dict[str, List[List[complex]]]]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> -- Circuit argument cannot be converted to qoqo Circuit</p></li>
+<li><p><strong>RuntimeError</strong> -- Running Circuit failed</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.APIBackend.set_dev">
+<span class="sig-name descname"><span class="pre">set_dev</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dev</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend.set_dev" title="Link to this definition"></a></dt>
+<dd><p>Setter for the dev option of the APIDevice.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dev</strong> (<em>bool</em>) -- The boolean to set the dev option to.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.APIBackend.to_bincode">
+<span class="sig-name descname"><span class="pre">to_bincode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend.to_bincode" title="Link to this definition"></a></dt>
+<dd><p>Return the bincode representation of the APIBackend using the bincode crate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The serialized APIBackend (in bincode form).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>ByteArray</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> -- Cannot serialize APIBackend to bytes.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.APIBackend.to_json">
+<span class="sig-name descname"><span class="pre">to_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.APIBackend.to_json" title="Link to this definition"></a></dt>
+<dd><p>Return the json representation of the APIBackend.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The serialized form of APIBackend.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> -- Cannot serialize APIBackend to json.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="qoqo_qryd.SimulatorBackend">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.</span></span><span class="sig-name descname"><span class="pre">SimulatorBackend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.SimulatorBackend" title="Link to this definition"></a></dt>
+<dd><p>Local simulator backend for Rydberg devices.</p>
+<p>The QRyd simulator backend applies each operation in a circuit to a quantum register.
+The underlying simulator uses the QuEST library.
+Although the underlying simulator supports arbitrary unitary gates, the QRyd simulator only
+allows operations that are available on a device model of a QRyd device.
+This limitation is introduced by design to check the compatibility of circuits with a model of the QRyd hardware.
+For unrestricted simulations use the backend simulator of the roqoqo-quest crate.</p>
+<p>The simulator backend implements the qoqo EvaluatingBackend interface
+and is compatible with running single circuits, running and evaluating measurements
+and running QuantumPrograms on simulated QRyd devices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>device</strong> (<em>Device</em>) -- QRyd device providing information about the available operations.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>TypeError</strong> -- Device Parameter is not QRydDevice</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.SimulatorBackend.from_bincode">
+<span class="sig-name descname"><span class="pre">from_bincode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.SimulatorBackend.from_bincode" title="Link to this definition"></a></dt>
+<dd><p>Convert the bincode representation of the SimulatorBackend to a SimulatorBackend using the bincode crate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input</strong> (<em>ByteArray</em>) -- The serialized SimulatorBackend (in bincode form).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The deserialized SimulatorBackend.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#qoqo_qryd.SimulatorBackend" title="qoqo_qryd.SimulatorBackend">SimulatorBackend</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> -- Input cannot be converted to byte array.</p></li>
+<li><p><strong>ValueError</strong> -- Input cannot be deserialized to SimulatorBackend.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.SimulatorBackend.from_json">
+<span class="sig-name descname"><span class="pre">from_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.SimulatorBackend.from_json" title="Link to this definition"></a></dt>
+<dd><p>Convert the json representation of a SimulatorBackend to a SimulatorBackend.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input</strong> (<em>str</em>) -- The serialized SimulatorBackend in json form.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The deserialized SimulatorBackend.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#qoqo_qryd.SimulatorBackend" title="qoqo_qryd.SimulatorBackend">SimulatorBackend</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> -- Input cannot be deserialized to SimulatorBackend.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.SimulatorBackend.run_circuit">
+<span class="sig-name descname"><span class="pre">run_circuit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.SimulatorBackend.run_circuit" title="Link to this definition"></a></dt>
+<dd><p>Run a circuit with the QRyd backend.</p>
+<p>A circuit is passed to the backend and executed.
+During execution values are written to and read from classical registers
+(List[bool], List[float], List[complex]).
+To produce sufficient statistics for evaluating expectation values,
+circuits have to be run multiple times.
+The results of each repetition are concatenated in OutputRegisters
+(List[List[bool]], List[List[float]], List[List[complex]]).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>circuit</strong> (<em>Circuit</em>) -- The circuit that is run on the backend.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The output registers written by the evaluated circuits.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[Dict[str, List[List[bool]]], Dict[str, List[List[float]]]], Dict[str, List[List[complex]]]]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> -- Circuit argument cannot be converted to qoqo Circuit</p></li>
+<li><p><strong>RuntimeError</strong> -- Running Circuit failed</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.SimulatorBackend.run_measurement">
+<span class="sig-name descname"><span class="pre">run_measurement</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.SimulatorBackend.run_measurement" title="Link to this definition"></a></dt>
+<dd><p>Evaluates expectation values of a measurement with the backend.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>measurement</strong> (<em>Measurement</em>) -- The measurement that is run on the backend.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The  dictionary of expectation values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[Dict[str, float]]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> -- Measurement evaluate function could not be used</p></li>
+<li><p><strong>RuntimeError</strong> -- Internal error measurement.evaluation returned unknown type</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.SimulatorBackend.run_measurement_registers">
+<span class="sig-name descname"><span class="pre">run_measurement_registers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.SimulatorBackend.run_measurement_registers" title="Link to this definition"></a></dt>
+<dd><p>Run all circuits corresponding to one measurement with the QRyd backend.</p>
+<p>An expectation value measurement in general involves several circuits.
+Each circuit is passed to the backend and executed separately.
+During execution values are written to and read from classical registers
+(List[bool], List[float], List[complex]).
+To produce sufficient statistics for evaluating expectation values,
+circuits have to be run multiple times.
+The results of each repetition are concatenated in OutputRegisters
+(List[List[bool]], List[List[float]], List[List[complex]]).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>measurement</strong> (<em>Measurement</em>) -- The measurement that is run on the backend.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The output registers written by the evaluated circuits.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[Dict[str, List[List[bool]]], Dict[str, List[List[float]]]], Dict[str, List[List[complex]]]]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> -- Circuit argument cannot be converted to qoqo Circuit</p></li>
+<li><p><strong>RuntimeError</strong> -- Running Circuit failed</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.SimulatorBackend.to_bincode">
+<span class="sig-name descname"><span class="pre">to_bincode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.SimulatorBackend.to_bincode" title="Link to this definition"></a></dt>
+<dd><p>Return the bincode representation of the SimulatorBackend using the bincode crate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The serialized SimulatorBackend (in bincode form).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>ByteArray</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> -- Cannot serialize SimulatorBackend to bytes.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.SimulatorBackend.to_json">
+<span class="sig-name descname"><span class="pre">to_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.SimulatorBackend.to_json" title="Link to this definition"></a></dt>
+<dd><p>Return the json representation of the SimulatorBackend.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The serialized form of SimulatorBackend.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> -- Cannot serialize SimulatorBackend to json.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../modules.html" class="btn btn-neutral float-left" title="qoqo_qryd documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="generated/qoqo_qryd.qryd_devices.html" class="btn btn-neutral float-right" title="qoqo_qryd.qryd_devices" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, HQS Quantum Simulations GmbH.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

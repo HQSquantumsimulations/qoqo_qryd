@@ -1,0 +1,339 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>QRyd Specifics - HQS qoqo-qryd User Documentation</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var html = document.querySelector('html');
+            var sidebar = null;
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Index</a></li><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="execution.html"><strong aria-hidden="true">2.</strong> Execution</a></li><li class="chapter-item expanded "><a href="webapi.html"><strong aria-hidden="true">3.</strong> WebAPI</a></li><li class="chapter-item expanded "><a href="qrydspecifics.html" class="active"><strong aria-hidden="true">4.</strong> QRyd Specifics</a></li><li class="chapter-item expanded "><a href="examples.html"><strong aria-hidden="true">5.</strong> Examples</a></li><li class="chapter-item expanded "><a href="qoqo_qryd_api.html"><strong aria-hidden="true">6.</strong> qoqo-qryd API</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">HQS qoqo-qryd User Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="rydberg-devices-and-operations"><a class="header" href="#rydberg-devices-and-operations">Rydberg devices and operations</a></h1>
+<p>Due to the nature of the QRydDemo hardware based on Rydberg atoms, QRydDemo quantum computing devices can have special capabilities that are 'not' present in all universal quantum computers.</p>
+<p>The devices can have two-dimensional grids of optical tweezer-positions and different two-dimensional grids can be calibrated. A tweezer-position is a physical spot that can be populated by a qubit.
+Not every tweezer position needs to be filled by a qubit and qubit can be moved between tweezer positions.
+Note that all functionality described here is a preview and does not represent a finalized QRydDemo design.</p>
+<h2 id="special-operations"><a class="header" href="#special-operations">Special operations</a></h2>
+<p>To support the full flexibility of the QRydDemo devices, two additional qoqo operations are provided <code>PragmaChangeQRydLayout</code>, <code>PragmaSwitchDeviceLayout</code>, <code>PragmaShiftQRydQubit</code> and <code>PragmaShiftQubitsTweezers</code>.
+<code>PragmaChangeQRydLayout</code> allows a quantum circuit to change between predefined calibrated optical tweezer positions. It indexes the layouts by integer. A similar operation, but meant for <code>TweezerDevice</code> and <code>TweezerMutableDevice</code>, is <code>PragmaSwitchDeviceLayout</code>, which indexes the new layout via a string.
+<code>PragmaShiftQRydQubit</code> allows a quantum circuit to shift a qubit from one tweezer position to another. <code>PragmaShiftQubitsTweezers</code> is the equivalent operation meant to be used with <code>TweezerDevice</code> and <code>TweezerMutableDevice</code>.</p>
+<pre><code class="language-python">   from qoqo import Circuit
+   from qoqo_qryd.pragma_operations import PragmaChangeQRydLayout, PragmaShiftQRydQubit, PragmaSwitchDeviceLayout, PragmaShiftQubitsTweezers
+
+   circuit = Circuit()
+   # Switch to predefined layout 1
+   circuit += PragmaChangeQRydLayout(new_layout=1).to_pragma_change_device()
+   # Switch to predefined layout &quot;triangle&quot;
+   circuit += PragmaSwitchDeviceLayout(new_layout=&quot;triangle&quot;).to_pragma_change_device()
+   # Shift qubit 0 to tweezer position: row 0, column 1 and qubit 1 to postion row 1, column 1
+   circuit += PragmaShiftQRydQubit(new_positions={0: (0,1), 1: (1,1)}).to_pragma_change_device()
+   # Shift the qubit state present in tweezer 0 to tweezer 1, and the qubit state present in tweezer 2 to tweezer 3
+   circuit += PragmaShiftQubitsTweezers(shifts=[(0, 1), (2, 3)]).to_pragma_change_device()
+   ()
+</code></pre>
+<h2 id="qryd-and-tweezer-devices"><a class="header" href="#qryd-and-tweezer-devices">QRyd and Tweezer devices</a></h2>
+<p>Each type of QRydDemo hardware or Simulator device can be represented by either the QRydDevice or the TweezerDevice classes.
+The available hardware operations are defined in the devices. They save the 2D connectivity and can be queried for the availability of certain gate operations on the qubit.
+At the moment the most general example Device class is <code>FirstDevice</code>, that can be used for simulations. Other available devices include <code>TweezerMutableDevice</code>, which works by first defining the underlying tweezer structure and then populate it with qubits as needed. <code>TweezerDevice</code> works in a similar way. The main difference is it does not allow any setting of the Tweezer information. This should be obtained via the <code>.from_api()</code> call (see the <a href="webapi.html">WebAPI</a> section).</p>
+<p>The fundamental gates that are available on the QRydDemo devices are the following qoqo operations: <code>RotateX</code>, <code>RotateY</code>, <code>RotateZ</code>, <code>RotateXY</code>, <code>PauliX</code>,  <code>PauliY</code>,  <code>PauliZ</code>, <code>PhaseShiftState1</code> ,  <code>SqrtPauliX</code>,  <code>InvSqrtPauliX</code>, <code>PhaseShiftedControlledZ</code> and <code>PhaseShiftedControlledPhase</code>.
+The single-qubit gates are assumed to be available on all qubits. 
+The <code>PhaseShiftedControlledZ</code> and <code>PhaseShiftedControlledPhase</code> are available between a subset of qubit pairs.
+The <code>PhaseShiftedControlledZ</code> is a ControlledPauliZ gate that also applies single qubit phases whereas the  <code>PhaseShiftedControlledPhase</code> is equivalent to <code>PhaseShiftedControlledZ</code> but with a variable phase rotation.
+The phase shifts can in principle be device dependent.</p>
+<p>The devices can optionally contain the <code>controlled_z_phase_relation</code> and <code>controlled_phase_phase_relation</code> parameters that define the phase shift relations of the two-qubit gates for the device. The first parameter can also be set explicitly by putting a string defining a float value as input.</p>
+<pre><code class="language-python">   from qoqo_qryd.qryd_devices import FirstDevice
+   from qoqo_qryd.tweezer_devices import TweezerMutableDevice
+   import numpy as np
+
+   # Create a FirstDevice
+   first_device = FirstDevice(
+      # The number of tweezer position rows in the 2D Grid is fixed
+      number_rows=2,
+      # The number of tweezer position  columns in the 2D grid is also fixed
+      number_columns=4,
+      # As not all tweezer positions must be filled, the number of positions
+      # occupied by qubits per row is fixed
+      qubits_per_row=[2, 2],
+      # The (model) physical distance between rows is fixed
+      row_distance=1.0,
+      # The initial layout (layout number 0 for PragmaChangeQRydLayout) is defined 
+      # by the physical positions of the tweezers in each row
+      initial_layout=np.array([
+         [0.0, 1.0, 2.0, 3.0],
+         [0.0, 1.0, 2.0, 3.0]]),
+      # The phase shift value related to the PhaseShiftedControlledZ gate
+      # Using a string that defines a relation is also possible
+      controlled_z_phase_relation=&quot;0.23&quot;,
+      # The relation to use for the PhaseShiftedControlledPhase phase shift value
+      controlled_phase_phase_relation=&quot;DefaultRelation&quot;
+   )
+
+   # Print the two-qubit-operation connectivity graph of the device
+   print(first_device.two_qubit_edges())
+
+   # Create a TweezerMutableDevice
+   tweezer_device = TweezerMutableDevice(
+      # The phase shift value related to the PhaseShiftedControlledZ gate
+      # Using a string that defines a relation is also possible
+      controlled_z_phase_relation=&quot;0.23&quot;,
+      # The relation to use for the PhaseShiftedControlledPhase phase shift value
+      controlled_phase_phase_relation=&quot;DefaultRelation&quot;
+   )
+
+   # Add a tweezer layout to the device
+   tweezer_device.add_layout(name=&quot;triangle&quot;)
+
+   # Set single-qubit tweezer gate time information on the new layout
+   tweezer_device.set_tweezer_single_qubit_gate_time(
+      hqslang=&quot;PhaseShiftState1&quot;,
+      tweezer=0,
+      gate_time=0.23,
+      layout=&quot;triangle&quot;,
+   )
+
+   # Populate the newly set tweezer with qubit indexed as 0
+   tweezer_device.add_qubit_tweezer_mapping(
+      qubit=0,
+      tweezer=0,
+   )
+
+   # Print the available layouts of the device
+   print(tweezer_device.available_layouts())
+</code></pre>
+<h2 id="simulatorbackend"><a class="header" href="#simulatorbackend">SimulatorBackend</a></h2>
+<p>The <code>SimulatorBackend</code> of qoqo-qryd can execute qoqo QuantumPrograms depending on the provided devices. At the moment only the <code>FirstDevice</code> is available for the QRydDemo project.
+Executing a circuit with the <code>SimulatorBackend</code> initialized by the <code>FirstDevice</code> corresponds to running a simulation of the QuantumProgram which validates that only
+operations available in <code>FirstDevice</code> are used.</p>
+<pre><code class="language-python">   from qoqo_qryd.qryd_devices import FirstDevice
+   from qoqo_qryd import SimulatorBackend
+   import numpy as np
+   # Create a FirstDevice
+   device = FirstDevice(
+      # The number of tweezer position rows in the 2D Grid is fixed
+      number_rows=2,
+      # The number of tweezer position  columns in the 2D grid is also fixed
+      number_columns=4,
+      # As not all tweezer positions must be filled, the number of positions
+      # occupied by qubits per row is fixed
+      qubits_per_row=[2, 2],
+      # The (model) physical distance between rows is fixed
+      row_distance=1.0,
+      # The initial layout (layout number 0 for PragmaChangeQRydLayout) is defined 
+      # by the physical positions of the tweezers in each row
+      initial_layout=np.array([
+         [0.0, 1.0, 2.0, 3.0],
+         [0.0, 1.0, 2.0, 3.0]]))
+
+   # Initialize Backend
+   backend = SimulatorBackend(device)
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="webapi.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next" href="examples.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="webapi.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next" href="examples.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

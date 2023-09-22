@@ -1,0 +1,32 @@
+qoqo\_qryd.pragma\_operations.PragmaSwitchDeviceLayout
+======================================================
+
+.. currentmodule:: qoqo_qryd.pragma_operations
+
+.. autoclass:: PragmaSwitchDeviceLayout
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~PragmaSwitchDeviceLayout.__init__
+      ~PragmaSwitchDeviceLayout.from_bincode
+      ~PragmaSwitchDeviceLayout.hqslang
+      ~PragmaSwitchDeviceLayout.involved_qubits
+      ~PragmaSwitchDeviceLayout.is_parametrized
+      ~PragmaSwitchDeviceLayout.new_layout
+      ~PragmaSwitchDeviceLayout.remap_qubits
+      ~PragmaSwitchDeviceLayout.substitute_parameters
+      ~PragmaSwitchDeviceLayout.tags
+      ~PragmaSwitchDeviceLayout.to_bincode
+      ~PragmaSwitchDeviceLayout.to_pragma_change_device
+   
+   
+
+   
+   
+   

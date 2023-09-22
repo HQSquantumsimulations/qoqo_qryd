@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>qoqo_qryd.pragma_operations &mdash; qoqo_qryd 0.11.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=b4a3dd51"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="qoqo_qryd.pragma_operations.PragmaChangeQRydLayout" href="generated/qoqo_qryd.pragma_operations.PragmaChangeQRydLayout.html" />
+    <link rel="prev" title="qoqo_qryd.api_devices.QrydEmuTriangularDevice" href="generated/qoqo_qryd.api_devices.QrydEmuTriangularDevice.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            qoqo_qryd
+          </a>
+              <div class="version">
+                0.11.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../modules.html">qoqo_qryd documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../qoqo_qryd.html">qoqo_qryd</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="qoqo_qryd.qryd_devices.html">qoqo_qryd.qryd_devices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qoqo_qryd.api_devices.html">qoqo_qryd.api_devices</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">qoqo_qryd.pragma_operations</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="generated/qoqo_qryd.pragma_operations.PragmaChangeQRydLayout.html">qoqo_qryd.pragma_operations.PragmaChangeQRydLayout</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/qoqo_qryd.pragma_operations.PragmaShiftQRydQubit.html">qoqo_qryd.pragma_operations.PragmaShiftQRydQubit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit.html">qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/qoqo_qryd.pragma_operations.PragmaShiftQubitsTweezers.html">qoqo_qryd.pragma_operations.PragmaShiftQubitsTweezers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/qoqo_qryd.pragma_operations.PragmaSwitchDeviceLayout.html">qoqo_qryd.pragma_operations.PragmaSwitchDeviceLayout</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.pragma_operations.PragmaChangeQRydLayout"><code class="docutils literal notranslate"><span class="pre">PragmaChangeQRydLayout</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit"><code class="docutils literal notranslate"><span class="pre">PragmaDeactivateQRydQubit</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.pragma_operations.PragmaShiftQRydQubit"><code class="docutils literal notranslate"><span class="pre">PragmaShiftQRydQubit</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.pragma_operations.PragmaShiftQubitsTweezers"><code class="docutils literal notranslate"><span class="pre">PragmaShiftQubitsTweezers</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.pragma_operations.PragmaSwitchDeviceLayout"><code class="docutils literal notranslate"><span class="pre">PragmaSwitchDeviceLayout</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="qoqo_qryd.SimulatorBackend.html">qoqo_qryd.SimulatorBackend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qoqo_qryd.APIBackend.html">qoqo_qryd.APIBackend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qoqo_qryd.tweezer_devices.html">qoqo_qryd.tweezer_devices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../qoqo_qryd.html#qoqo_qryd.APIBackend"><code class="docutils literal notranslate"><span class="pre">APIBackend</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../qoqo_qryd.html#qoqo_qryd.SimulatorBackend"><code class="docutils literal notranslate"><span class="pre">SimulatorBackend</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">qoqo_qryd</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../modules.html">qoqo_qryd documentation</a></li>
+          <li class="breadcrumb-item"><a href="../qoqo_qryd.html">qoqo_qryd</a></li>
+      <li class="breadcrumb-item active">qoqo_qryd.pragma_operations</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/generated/generated/qoqo_qryd.pragma_operations.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-qoqo_qryd.pragma_operations">
+<span id="qoqo-qryd-pragma-operations"></span><h1>qoqo_qryd.pragma_operations<a class="headerlink" href="#module-qoqo_qryd.pragma_operations" title="Link to this heading"></a></h1>
+<p>QRyd specific PragmaOperations that support changing the QRyd device during a circuit evaluation</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#qoqo_qryd.pragma_operations.PragmaChangeQRydLayout" title="qoqo_qryd.pragma_operations.PragmaChangeQRydLayout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PragmaChangeQRydLayout</span></code></a>(new_layout, /)</p></td>
+<td><p>This PRAGMA operation changes the layout of a QRyd device.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#qoqo_qryd.pragma_operations.PragmaShiftQRydQubit" title="qoqo_qryd.pragma_operations.PragmaShiftQRydQubit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PragmaShiftQRydQubit</span></code></a>(new_positions, /)</p></td>
+<td><p>This PRAGMA operation shifts qubits between tweezer positions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit" title="qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PragmaDeactivateQRydQubit</span></code></a>(qubit, /)</p></td>
+<td><p>This PRAGMA Operation deactivates a qubit in a QRyd Experimental device.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#qoqo_qryd.pragma_operations.PragmaShiftQubitsTweezers" title="qoqo_qryd.pragma_operations.PragmaShiftQubitsTweezers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PragmaShiftQubitsTweezers</span></code></a>(shifts, /)</p></td>
+<td><p>This PRAGMA Operation lists the shift operations to be executed in a QRyd Tweezer device.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#qoqo_qryd.pragma_operations.PragmaSwitchDeviceLayout" title="qoqo_qryd.pragma_operations.PragmaSwitchDeviceLayout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PragmaSwitchDeviceLayout</span></code></a>(new_layout, /)</p></td>
+<td><p>This PRAGMA operation changes the layout of a Tweezer device.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#qoqo_qryd.pragma_operations.PragmaChangeQRydLayout" title="qoqo_qryd.pragma_operations.PragmaChangeQRydLayout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PragmaChangeQRydLayout</span></code></a>(new_layout, /)</p></td>
+<td><p>This PRAGMA operation changes the layout of a QRyd device.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit" title="qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PragmaDeactivateQRydQubit</span></code></a>(qubit, /)</p></td>
+<td><p>This PRAGMA Operation deactivates a qubit in a QRyd Experimental device.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#qoqo_qryd.pragma_operations.PragmaShiftQRydQubit" title="qoqo_qryd.pragma_operations.PragmaShiftQRydQubit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PragmaShiftQRydQubit</span></code></a>(new_positions, /)</p></td>
+<td><p>This PRAGMA operation shifts qubits between tweezer positions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#qoqo_qryd.pragma_operations.PragmaShiftQubitsTweezers" title="qoqo_qryd.pragma_operations.PragmaShiftQubitsTweezers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PragmaShiftQubitsTweezers</span></code></a>(shifts, /)</p></td>
+<td><p>This PRAGMA Operation lists the shift operations to be executed in a QRyd Tweezer device.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#qoqo_qryd.pragma_operations.PragmaSwitchDeviceLayout" title="qoqo_qryd.pragma_operations.PragmaSwitchDeviceLayout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PragmaSwitchDeviceLayout</span></code></a>(new_layout, /)</p></td>
+<td><p>This PRAGMA operation changes the layout of a Tweezer device.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaChangeQRydLayout">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.pragma_operations.</span></span><span class="sig-name descname"><span class="pre">PragmaChangeQRydLayout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_layout</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaChangeQRydLayout" title="Link to this definition"></a></dt>
+<dd><p>This PRAGMA operation changes the layout of a QRyd device.</p>
+<p>Before running a circuit a number of layouts can be registered
+in the device with the <cite>add_layout</cite> method.</p>
+<p>This PRAGMA operation switches between the predefined operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>new_layout</strong> (<em>int</em>) -- The index of the new layout.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaChangeQRydLayout.from_bincode">
+<span class="sig-name descname"><span class="pre">from_bincode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaChangeQRydLayout.from_bincode" title="Link to this definition"></a></dt>
+<dd><p>Convert the bincode representation of the PragmaChangeQRydLayout to a PragmaChangeQRydLayout using the bincode crate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input</strong> (<em>ByteArray</em>) -- The serialized PragmaChangeQRydLayout (in bincode form).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The deserialized PragmaChangeQRydLayout.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#qoqo_qryd.pragma_operations.PragmaChangeQRydLayout" title="qoqo_qryd.pragma_operations.PragmaChangeQRydLayout">PragmaChangeQRydLayout</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> -- Input cannot be converted to byte array.</p></li>
+<li><p><strong>ValueError</strong> -- Input cannot be deserialized to PragmaChangeQRydLayout.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaChangeQRydLayout.hqslang">
+<span class="sig-name descname"><span class="pre">hqslang</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaChangeQRydLayout.hqslang" title="Link to this definition"></a></dt>
+<dd><p>Return hqslang name of the operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The hqslang name of the operation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaChangeQRydLayout.involved_qubits">
+<span class="sig-name descname"><span class="pre">involved_qubits</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaChangeQRydLayout.involved_qubits" title="Link to this definition"></a></dt>
+<dd><p>List all involved qubits (here, all).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The involved qubits of the PRAGMA operation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>set[int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaChangeQRydLayout.is_parametrized">
+<span class="sig-name descname"><span class="pre">is_parametrized</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaChangeQRydLayout.is_parametrized" title="Link to this definition"></a></dt>
+<dd><p>Return true when the operation has symbolic parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the operation contains symbolic parameters, False if it does not.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaChangeQRydLayout.new_layout">
+<span class="sig-name descname"><span class="pre">new_layout</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaChangeQRydLayout.new_layout" title="Link to this definition"></a></dt>
+<dd><p>Return the index of the new layout the Pragma changes the device to.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The index of the layout.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaChangeQRydLayout.remap_qubits">
+<span class="sig-name descname"><span class="pre">remap_qubits</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaChangeQRydLayout.remap_qubits" title="Link to this definition"></a></dt>
+<dd><p>Remap qubits in a clone of the PRAGMA operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mapping</strong> (<em>dict</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em>) -- The dictionary containing the {qubit: qubit} mapping to use in the PRAGMA operation.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The PRAGMA operation with the qubits remapped.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> -- The qubit remapping failed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaChangeQRydLayout.substitute_parameters">
+<span class="sig-name descname"><span class="pre">substitute_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaChangeQRydLayout.substitute_parameters" title="Link to this definition"></a></dt>
+<dd><p>Substitute the symbolic parameters in a clone of the PRAGMA operation according to the substitution_parameters input.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>substitution_parameters</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em>) -- The dictionary containing the substitutions to use in the PRAGMA operation.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The PRAGMA operation operation with the parameters substituted.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> -- The parameter substitution failed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaChangeQRydLayout.tags">
+<span class="sig-name descname"><span class="pre">tags</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaChangeQRydLayout.tags" title="Link to this definition"></a></dt>
+<dd><p>Return tags classifying the type of the operation.</p>
+<p>Used for the type based dispatch in ffi interfaces.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The tags of the operation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaChangeQRydLayout.to_bincode">
+<span class="sig-name descname"><span class="pre">to_bincode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaChangeQRydLayout.to_bincode" title="Link to this definition"></a></dt>
+<dd><p>Return the bincode representation of the PragmaChangeQRydLayout using the bincode crate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The serialized Circuit (in bincode form).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>ByteArray</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> -- Cannot serialize PragmaChangeQRydLayout to bytes.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaChangeQRydLayout.to_pragma_change_device">
+<span class="sig-name descname"><span class="pre">to_pragma_change_device</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaChangeQRydLayout.to_pragma_change_device" title="Link to this definition"></a></dt>
+<dd><p>Wrap PragmaChangeQRydLayout in PragmaChangeDevice operation</p>
+<p>PragmaChangeQRydLayout is device specific and can not be directly added to a Circuit.
+Instead it is first wrapped in a PragmaChangeDevice operation that is in turn added
+to the circuit.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">qoqo</span> <span class="kn">import</span> <span class="n">Circuit</span>
+<span class="gp">... </span><span class="kn">from</span> <span class="nn">qoqo_qryd.pragma_operations</span> <span class="kn">import</span> <span class="n">PragmaChangeQRydLayout</span>
+<span class="gp">... </span><span class="n">circuit</span> <span class="o">=</span> <span class="n">Circuit</span><span class="p">()</span>
+<span class="gp">... </span><span class="n">circuit</span> <span class="o">+=</span> <span class="n">PragmaChangeQRydLayout</span><span class="p">(</span><span class="n">new_layout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to_pragma_change_device</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PragmaChangeDevice</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.pragma_operations.</span></span><span class="sig-name descname"><span class="pre">PragmaDeactivateQRydQubit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qubit</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit" title="Link to this definition"></a></dt>
+<dd><p>This PRAGMA Operation deactivates a qubit in a QRyd Experimental device.</p>
+<p>In QRyd Experimental devices a quantum state is trapped within an optical tweezer.
+This Operation signals the device to drop the quantum state related to the given qubit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>qubit</strong> (<em>int</em>) -- The qubit to deactivate.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit.from_bincode">
+<span class="sig-name descname"><span class="pre">from_bincode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit.from_bincode" title="Link to this definition"></a></dt>
+<dd><p>Convert the bincode representation of the PragmaDeactivateQRydQubit to a PragmaDeactivateQRydQubit using the bincode crate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input</strong> (<em>ByteArray</em>) -- The serialized PragmaDeactivateQRydQubit (in bincode form).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The deserialized PragmaDeactivateQRydQubit.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit" title="qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit">PragmaDeactivateQRydQubit</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> -- Input cannot be converted to byte array.</p></li>
+<li><p><strong>ValueError</strong> -- Input cannot be deserialized to PragmaDeactivateQRydQubit.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit.hqslang">
+<span class="sig-name descname"><span class="pre">hqslang</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit.hqslang" title="Link to this definition"></a></dt>
+<dd><p>Return hqslang name of the operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The hqslang name of the operation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit.involved_qubits">
+<span class="sig-name descname"><span class="pre">involved_qubits</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit.involved_qubits" title="Link to this definition"></a></dt>
+<dd><p>List all involved qubits (here, all).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The involved qubits of the PRAGMA operation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>set[int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit.is_parametrized">
+<span class="sig-name descname"><span class="pre">is_parametrized</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit.is_parametrized" title="Link to this definition"></a></dt>
+<dd><p>Return true when the operation has symbolic parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the operation contains symbolic parameters, False if it does not.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit.qubit">
+<span class="sig-name descname"><span class="pre">qubit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit.qubit" title="Link to this definition"></a></dt>
+<dd><p>Return the qubit involved in the Operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The qubit involved in the Operation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit.remap_qubits">
+<span class="sig-name descname"><span class="pre">remap_qubits</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit.remap_qubits" title="Link to this definition"></a></dt>
+<dd><p>Remap qubits in a clone of the PRAGMA operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mapping</strong> (<em>dict</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em>) -- The dictionary containing the {qubit: qubit} mapping to use in the PRAGMA operation.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The PRAGMA operation with the qubits remapped.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> -- The qubit remapping failed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit.substitute_parameters">
+<span class="sig-name descname"><span class="pre">substitute_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit.substitute_parameters" title="Link to this definition"></a></dt>
+<dd><p>Substitute the symbolic parameters in a clone of the PRAGMA operation according to the substitution_parameters input.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>substitution_parameters</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em>) -- The dictionary containing the substitutions to use in the PRAGMA operation.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The PRAGMA operation operation with the parameters substituted.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> -- The parameter substitution failed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit.tags">
+<span class="sig-name descname"><span class="pre">tags</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit.tags" title="Link to this definition"></a></dt>
+<dd><p>Return tags classifying the type of the operation.</p>
+<p>Used for the type based dispatch in ffi interfaces.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The tags of the operation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit.to_bincode">
+<span class="sig-name descname"><span class="pre">to_bincode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit.to_bincode" title="Link to this definition"></a></dt>
+<dd><p>Return the bincode representation of the PragmaDeactivateQRydQubit using the bincode crate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The serialized PragmaDeactivateQRydQubit (in bincode form).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>ByteArray</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> -- Cannot serialize PragmaDeactivateQRydQubit to bytes.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit.to_pragma_change_device">
+<span class="sig-name descname"><span class="pre">to_pragma_change_device</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaDeactivateQRydQubit.to_pragma_change_device" title="Link to this definition"></a></dt>
+<dd><p>Wrap PragmaDeactivateQRydQubit in PragmaChangeDevice operation</p>
+<p>PragmaDeactivateQRydQubit is device specific and can not be directly added to a Circuit.
+Instead it is first wrapped in a PragmaChangeDevice operation that is in turn added
+to the circuit.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">qoqo</span> <span class="kn">import</span> <span class="n">Circuit</span>
+<span class="gp">... </span><span class="kn">from</span> <span class="nn">qoqo_qryd.pragma_operations</span> <span class="kn">import</span> <span class="n">PragmaDeactivateQRydQubit</span>
+<span class="gp">... </span><span class="n">circuit</span> <span class="o">=</span> <span class="n">Circuit</span><span class="p">()</span>
+<span class="gp">... </span><span class="n">circuit</span> <span class="o">+=</span> <span class="n">PragmaDeactivateQRydQubit</span><span class="p">(</span><span class="n">qubit</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">to_pragma_change_device</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PragmaChangeDevice</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaShiftQRydQubit">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.pragma_operations.</span></span><span class="sig-name descname"><span class="pre">PragmaShiftQRydQubit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_positions</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaShiftQRydQubit" title="Link to this definition"></a></dt>
+<dd><p>This PRAGMA operation shifts qubits between tweezer positions.</p>
+<p>The tweezer positions in a FirstQryd device do not all have to be occupied.
+In a partially occupied device the qubits can be shifted between positions inside a row.
+The shift is defined by giving a mapping of qubit number and new row-column positions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>new_positions</strong> (<em>Dict</em><em>[</em><em>int</em><em>, </em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em><em>]</em>) -- The new positions of the qubits.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaShiftQRydQubit.from_bincode">
+<span class="sig-name descname"><span class="pre">from_bincode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaShiftQRydQubit.from_bincode" title="Link to this definition"></a></dt>
+<dd><p>Convert the bincode representation of the PragmaShiftQRydQubit to a PragmaShiftQRydQubit using the bincode crate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input</strong> (<em>ByteArray</em>) -- The serialized PragmaShiftQRydQubit (in bincode form).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The deserialized PragmaShiftQRydQubit.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#qoqo_qryd.pragma_operations.PragmaShiftQRydQubit" title="qoqo_qryd.pragma_operations.PragmaShiftQRydQubit">PragmaShiftQRydQubit</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> -- Input cannot be converted to byte array.</p></li>
+<li><p><strong>ValueError</strong> -- Input cannot be deserialized to PragmaShiftQRydQubit.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaShiftQRydQubit.hqslang">
+<span class="sig-name descname"><span class="pre">hqslang</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaShiftQRydQubit.hqslang" title="Link to this definition"></a></dt>
+<dd><p>Return hqslang name of the operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The hqslang name of the operation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaShiftQRydQubit.involved_qubits">
+<span class="sig-name descname"><span class="pre">involved_qubits</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaShiftQRydQubit.involved_qubits" title="Link to this definition"></a></dt>
+<dd><p>List all involved qubits (here, all).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The involved qubits of the PRAGMA operation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>set[int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaShiftQRydQubit.is_parametrized">
+<span class="sig-name descname"><span class="pre">is_parametrized</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaShiftQRydQubit.is_parametrized" title="Link to this definition"></a></dt>
+<dd><p>Return true when the operation has symbolic parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the operation contains symbolic parameters, False if it does not.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaShiftQRydQubit.new_positions">
+<span class="sig-name descname"><span class="pre">new_positions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaShiftQRydQubit.new_positions" title="Link to this definition"></a></dt>
+<dd><p>Return the map of qubit numbers to new positions in the QRyd device.</p>
+<p>The new positions are the</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Map of qubits to new positions in the 2d grid.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[int, (int, int)]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaShiftQRydQubit.remap_qubits">
+<span class="sig-name descname"><span class="pre">remap_qubits</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaShiftQRydQubit.remap_qubits" title="Link to this definition"></a></dt>
+<dd><p>Remap qubits in a clone of the PRAGMA operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mapping</strong> (<em>dict</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em>) -- The dictionary containing the {qubit: qubit} mapping to use in the PRAGMA operation.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The PRAGMA operation with the qubits remapped.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> -- The qubit remapping failed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaShiftQRydQubit.substitute_parameters">
+<span class="sig-name descname"><span class="pre">substitute_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaShiftQRydQubit.substitute_parameters" title="Link to this definition"></a></dt>
+<dd><p>Substitute the symbolic parameters in a clone of the PRAGMA operation according to the substitution_parameters input.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>substitution_parameters</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em>) -- The dictionary containing the substitutions to use in the PRAGMA operation.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The PRAGMA operation operation with the parameters substituted.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> -- The parameter substitution failed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaShiftQRydQubit.tags">
+<span class="sig-name descname"><span class="pre">tags</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaShiftQRydQubit.tags" title="Link to this definition"></a></dt>
+<dd><p>Return tags classifying the type of the operation.</p>
+<p>Used for the type based dispatch in ffi interfaces.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The tags of the operation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaShiftQRydQubit.to_bincode">
+<span class="sig-name descname"><span class="pre">to_bincode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaShiftQRydQubit.to_bincode" title="Link to this definition"></a></dt>
+<dd><p>Return the bincode representation of the PragmaShiftQRydQubit using the bincode crate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The serialized PragmaShiftQRydQubit (in bincode form).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>ByteArray</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> -- Cannot serialize PragmaShiftQRydQubit to bytes.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaShiftQRydQubit.to_pragma_change_device">
+<span class="sig-name descname"><span class="pre">to_pragma_change_device</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaShiftQRydQubit.to_pragma_change_device" title="Link to this definition"></a></dt>
+<dd><p>Wrap PragmaShiftQRydQubit in PragmaChangeDevice operation</p>
+<p>PragmaShiftQRydQubit is device specific and can not be directly added to a Circuit.
+Instead it is first wrapped in a PragmaChangeDevice operation that is in turn added
+to the circuit.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">qoqo</span> <span class="kn">import</span> <span class="n">Circuit</span>
+<span class="gp">... </span><span class="kn">from</span> <span class="nn">qoqo_qryd.pragma_operations</span> <span class="kn">import</span> <span class="n">PragmaShiftQRydQubit</span>
+<span class="gp">... </span><span class="n">circuit</span> <span class="o">=</span> <span class="n">Circuit</span><span class="p">()</span>
+<span class="gp">... </span><span class="n">circuit</span> <span class="o">+=</span> <span class="n">PragmaShiftQRydQubit</span><span class="p">(</span><span class="n">new_layout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to_pragma_change_device</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PragmaChangeDevice</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaShiftQubitsTweezers">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.pragma_operations.</span></span><span class="sig-name descname"><span class="pre">PragmaShiftQubitsTweezers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shifts</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaShiftQubitsTweezers" title="Link to this definition"></a></dt>
+<dd><p>This PRAGMA Operation lists the shift operations to be executed in a QRyd Tweezer device.</p>
+<p>Each tuple contains first the starting tweezer identifier and second the ending tweezer identifier.
+Multiple instances indicate parallel operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>shifts</strong> (<em>list</em><em>(</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em><em>)</em>) -- The list of shifts that can run in parallel.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaShiftQubitsTweezers.from_bincode">
+<span class="sig-name descname"><span class="pre">from_bincode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaShiftQubitsTweezers.from_bincode" title="Link to this definition"></a></dt>
+<dd><p>Convert the bincode representation of the PragmaShiftQubitsTweezers to a PragmaShiftQubitsTweezers using the bincode crate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input</strong> (<em>ByteArray</em>) -- The serialized PragmaShiftQubitsTweezers (in bincode form).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The deserialized PragmaShiftQubitsTweezers.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#qoqo_qryd.pragma_operations.PragmaShiftQubitsTweezers" title="qoqo_qryd.pragma_operations.PragmaShiftQubitsTweezers">PragmaShiftQubitsTweezers</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> -- Input cannot be converted to byte array.</p></li>
+<li><p><strong>ValueError</strong> -- Input cannot be deserialized to PragmaShiftQubitsTweezers.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaShiftQubitsTweezers.hqslang">
+<span class="sig-name descname"><span class="pre">hqslang</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaShiftQubitsTweezers.hqslang" title="Link to this definition"></a></dt>
+<dd><p>Return hqslang name of the operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The hqslang name of the operation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaShiftQubitsTweezers.involved_qubits">
+<span class="sig-name descname"><span class="pre">involved_qubits</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaShiftQubitsTweezers.involved_qubits" title="Link to this definition"></a></dt>
+<dd><p>List all involved qubits (here, all).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The involved qubits of the PRAGMA operation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>set[int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaShiftQubitsTweezers.is_parametrized">
+<span class="sig-name descname"><span class="pre">is_parametrized</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaShiftQubitsTweezers.is_parametrized" title="Link to this definition"></a></dt>
+<dd><p>Return true when the operation has symbolic parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the operation contains symbolic parameters, False if it does not.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaShiftQubitsTweezers.remap_qubits">
+<span class="sig-name descname"><span class="pre">remap_qubits</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaShiftQubitsTweezers.remap_qubits" title="Link to this definition"></a></dt>
+<dd><p>Remap qubits in a clone of the PRAGMA operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mapping</strong> (<em>dict</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em>) -- The dictionary containing the {qubit: qubit} mapping to use in the PRAGMA operation.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The PRAGMA operation with the qubits remapped.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> -- The qubit remapping failed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaShiftQubitsTweezers.shifts">
+<span class="sig-name descname"><span class="pre">shifts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaShiftQubitsTweezers.shifts" title="Link to this definition"></a></dt>
+<dd><p>Return the shifts involved in the Operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The shifts involved in the Operation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list(Tuple[int, int])</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaShiftQubitsTweezers.substitute_parameters">
+<span class="sig-name descname"><span class="pre">substitute_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaShiftQubitsTweezers.substitute_parameters" title="Link to this definition"></a></dt>
+<dd><p>Substitute the symbolic parameters in a clone of the PRAGMA operation according to the substitution_parameters input.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>substitution_parameters</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em>) -- The dictionary containing the substitutions to use in the PRAGMA operation.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The PRAGMA operation operation with the parameters substituted.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> -- The parameter substitution failed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaShiftQubitsTweezers.tags">
+<span class="sig-name descname"><span class="pre">tags</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaShiftQubitsTweezers.tags" title="Link to this definition"></a></dt>
+<dd><p>Return tags classifying the type of the operation.</p>
+<p>Used for the type based dispatch in ffi interfaces.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The tags of the operation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaShiftQubitsTweezers.to_bincode">
+<span class="sig-name descname"><span class="pre">to_bincode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaShiftQubitsTweezers.to_bincode" title="Link to this definition"></a></dt>
+<dd><p>Return the bincode representation of the PragmaShiftQubitsTweezers using the bincode crate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The serialized PragmaShiftQubitsTweezers (in bincode form).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>ByteArray</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> -- Cannot serialize PragmaShiftQubitsTweezers to bytes.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaShiftQubitsTweezers.to_pragma_change_device">
+<span class="sig-name descname"><span class="pre">to_pragma_change_device</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaShiftQubitsTweezers.to_pragma_change_device" title="Link to this definition"></a></dt>
+<dd><p>Wrap PragmaShiftQubitsTweezers in PragmaChangeDevice operation</p>
+<p>PragmaShiftQubitsTweezers is device specific and can not be directly added to a Circuit.
+Instead it is first wrapped in a PragmaChangeDevice operation that is in turn added
+to the circuit.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">qoqo</span> <span class="kn">import</span> <span class="n">Circuit</span>
+<span class="gp">... </span><span class="kn">from</span> <span class="nn">qoqo_qryd.pragma_operations</span> <span class="kn">import</span> <span class="n">PragmaShiftQubitsTweezers</span>
+<span class="gp">... </span><span class="n">circuit</span> <span class="o">=</span> <span class="n">Circuit</span><span class="p">()</span>
+<span class="gp">... </span><span class="n">circuit</span> <span class="o">+=</span> <span class="n">PragmaShiftQubitsTweezers</span><span class="p">(</span><span class="n">shifts</span><span class="o">=</span><span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span><span class="o">.</span><span class="n">to_pragma_change_device</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PragmaChangeDevice</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaSwitchDeviceLayout">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.pragma_operations.</span></span><span class="sig-name descname"><span class="pre">PragmaSwitchDeviceLayout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_layout</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaSwitchDeviceLayout" title="Link to this definition"></a></dt>
+<dd><p>This PRAGMA operation changes the layout of a Tweezer device.</p>
+<p>Before running a circuit a number of layouts can be registered
+in the device with the <cite>add_layout</cite> method.</p>
+<p>This PRAGMA operation switches between the predefined operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>new_layout</strong> (<em>str</em>) -- The name of the new layout.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaSwitchDeviceLayout.from_bincode">
+<span class="sig-name descname"><span class="pre">from_bincode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaSwitchDeviceLayout.from_bincode" title="Link to this definition"></a></dt>
+<dd><p>Convert the bincode representation of the PragmaSwitchDeviceLayout to
+a PragmaSwitchDeviceLayout using the bincode crate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input</strong> (<em>ByteArray</em>) -- The serialized PragmaSwitchDeviceLayout (in bincode form).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The deserialized PragmaSwitchDeviceLayout.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#qoqo_qryd.pragma_operations.PragmaSwitchDeviceLayout" title="qoqo_qryd.pragma_operations.PragmaSwitchDeviceLayout">PragmaSwitchDeviceLayout</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> -- Input cannot be converted to byte array.</p></li>
+<li><p><strong>ValueError</strong> -- Input cannot be deserialized to PragmaSwitchDeviceLayout.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaSwitchDeviceLayout.hqslang">
+<span class="sig-name descname"><span class="pre">hqslang</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaSwitchDeviceLayout.hqslang" title="Link to this definition"></a></dt>
+<dd><p>Return hqslang name of the operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The hqslang name of the operation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaSwitchDeviceLayout.involved_qubits">
+<span class="sig-name descname"><span class="pre">involved_qubits</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaSwitchDeviceLayout.involved_qubits" title="Link to this definition"></a></dt>
+<dd><p>List all involved qubits (here, all).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The involved qubits of the PRAGMA operation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>set[int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaSwitchDeviceLayout.is_parametrized">
+<span class="sig-name descname"><span class="pre">is_parametrized</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaSwitchDeviceLayout.is_parametrized" title="Link to this definition"></a></dt>
+<dd><p>Return true when the operation has symbolic parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the operation contains symbolic parameters, False if it does not.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaSwitchDeviceLayout.new_layout">
+<span class="sig-name descname"><span class="pre">new_layout</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaSwitchDeviceLayout.new_layout" title="Link to this definition"></a></dt>
+<dd><p>Return the name of the new layout the Pragma changes the device to.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The name of the layout.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaSwitchDeviceLayout.remap_qubits">
+<span class="sig-name descname"><span class="pre">remap_qubits</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaSwitchDeviceLayout.remap_qubits" title="Link to this definition"></a></dt>
+<dd><p>Remap qubits in a clone of the PRAGMA operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mapping</strong> (<em>dict</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em>) -- The dictionary containing the {qubit: qubit} mapping to use in the PRAGMA operation.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The PRAGMA operation with the qubits remapped.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> -- The qubit remapping failed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaSwitchDeviceLayout.substitute_parameters">
+<span class="sig-name descname"><span class="pre">substitute_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaSwitchDeviceLayout.substitute_parameters" title="Link to this definition"></a></dt>
+<dd><p>Substitute the symbolic parameters in a clone of the PRAGMA operation according to the substitution_parameters input.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>substitution_parameters</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em>) -- The dictionary containing the substitutions to use in the PRAGMA operation.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The PRAGMA operation operation with the parameters substituted.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> -- The parameter substitution failed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaSwitchDeviceLayout.tags">
+<span class="sig-name descname"><span class="pre">tags</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaSwitchDeviceLayout.tags" title="Link to this definition"></a></dt>
+<dd><p>Return tags classifying the type of the operation.</p>
+<p>Used for the type based dispatch in ffi interfaces.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The tags of the operation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaSwitchDeviceLayout.to_bincode">
+<span class="sig-name descname"><span class="pre">to_bincode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaSwitchDeviceLayout.to_bincode" title="Link to this definition"></a></dt>
+<dd><p>Return the bincode representation of the PragmaSwitchDeviceLayout using the bincode crate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The serialized Circuit (in bincode form).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>ByteArray</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> -- Cannot serialize PragmaSwitchDeviceLayout to bytes.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.pragma_operations.PragmaSwitchDeviceLayout.to_pragma_change_device">
+<span class="sig-name descname"><span class="pre">to_pragma_change_device</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.pragma_operations.PragmaSwitchDeviceLayout.to_pragma_change_device" title="Link to this definition"></a></dt>
+<dd><p>Wrap PragmaSwitchDeviceLayout in PragmaChangeDevice operation</p>
+<p>PragmaSwitchDeviceLayout is device specific and can not be directly added to a Circuit.
+Instead it is first wrapped in a PragmaChangeDevice operation that is in turn added
+to the circuit.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">qoqo</span> <span class="kn">import</span> <span class="n">Circuit</span>
+<span class="gp">... </span><span class="kn">from</span> <span class="nn">qoqo_qryd.pragma_operations</span> <span class="kn">import</span> <span class="n">PragmaSwitchDeviceLayout</span>
+<span class="gp">... </span><span class="n">circuit</span> <span class="o">=</span> <span class="n">Circuit</span><span class="p">()</span>
+<span class="gp">... </span><span class="n">circuit</span> <span class="o">+=</span> <span class="n">PragmaSwitchDeviceLayout</span><span class="p">(</span><span class="n">new_layout</span><span class="o">=</span><span class="s2">&quot;Square&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to_pragma_change_device</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PragmaChangeDevice</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="generated/qoqo_qryd.api_devices.QrydEmuTriangularDevice.html" class="btn btn-neutral float-left" title="qoqo_qryd.api_devices.QrydEmuTriangularDevice" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="generated/qoqo_qryd.pragma_operations.PragmaChangeQRydLayout.html" class="btn btn-neutral float-right" title="qoqo_qryd.pragma_operations.PragmaChangeQRydLayout" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, HQS Quantum Simulations GmbH.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

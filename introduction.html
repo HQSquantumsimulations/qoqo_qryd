@@ -1,0 +1,392 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Introduction - HQS qoqo-qryd User Documentation</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var html = document.querySelector('html');
+            var sidebar = null;
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Index</a></li><li class="chapter-item expanded "><a href="introduction.html" class="active"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="execution.html"><strong aria-hidden="true">2.</strong> Execution</a></li><li class="chapter-item expanded "><a href="webapi.html"><strong aria-hidden="true">3.</strong> WebAPI</a></li><li class="chapter-item expanded "><a href="qrydspecifics.html"><strong aria-hidden="true">4.</strong> QRyd Specifics</a></li><li class="chapter-item expanded "><a href="examples.html"><strong aria-hidden="true">5.</strong> Examples</a></li><li class="chapter-item expanded "><a href="qoqo_qryd_api.html"><strong aria-hidden="true">6.</strong> qoqo-qryd API</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">HQS qoqo-qryd User Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
+<p>The qoqo-qryd package is designed to enable the execution of quantum algorithms implemented in <a href="https://github.com/HQSquantumsimulations/qoqo">qoqo</a> on QRydDemo hardware.</p>
+<h2 id="low-level-quantum-circuits"><a class="header" href="#low-level-quantum-circuits">Low level: quantum circuits</a></h2>
+<p>Qoqo is a circuit based quantum computing toolkit. Like many other quantum computing toolkits it can be used to construct quantum circuits - sequences of quantum operations that are to be executed on a quantum computer.</p>
+<p>Examples for quantum operations are the controlled NOT (CNOT) operation on two qubits and the Hadamard gate on a single qubit.</p>
+<pre><code class="language-python">   from qoqo import Circuit
+   from qoqo import operations as ops
+   circuit = Circuit()
+   # Initializing first qubit in superposition of |0&gt; and |1&gt;
+   circuit += ops.Hadamard(0)
+   # Entangling qubits 0 and 1 with CNOT
+   circuit += ops.CNOT(0,1)
+</code></pre>
+<p>To extract information from a quantum computer results must be measured.
+For measurements qoqo defines classical registers in the quantum circuits.
+The classical measurement results will be written to the classical registers.
+The definition of classical registers is similar to a variable declaration in normal programs.</p>
+<p>The measurement of a qubit (on hardware) is always a projective measurement in the <code>Z</code>-basis yielding <code>0</code> or <code>1</code>.</p>
+<pre><code class="language-python">   from qoqo import Circuit
+   from qoqo import operations as ops
+   circuit = Circuit()
+   # Defining a bit readout with name &quot;ro&quot; containing 2 bits
+   circuit += ops.DefinitionBit(&quot;ro&quot;, 2, is_output=True)
+   # Initializing first qubit in superposition of |0&gt; and |1&gt;
+   circuit += ops.Hadamard(0)
+   # Entangling qubits 0 and 1 with CNOT
+   circuit += ops.CNOT(0,1)
+   # Measuring all qubits and writing the results into register 'ro'
+   # Repeating the circuit 100 times to create 100 projective measurements
+   circuit += ops.PragmaRepeatedMeasurement(&quot;ro&quot;, 100, None)
+</code></pre>
+<h2 id="high-level-quantum-programs"><a class="header" href="#high-level-quantum-programs">High-level: quantum programs</a></h2>
+<p>On a more abstract level a quantum program can be defined as a program that can be executed on a quantum computer after receiving a list of classical parameters and returns a list of classical results.</p>
+<p>Qoqo provides the QuantumProgram class for this purpose. A QuantumProgram is the preferred way to communicate between different programs (for example with hardware or simulators) and to save quantum programs with the qoqo toolkit.</p>
+<p>For many applications the measurement results of several circuits need to be combined to extract the required information from a quantum state prepared by the quantum operations in a quantum circuit.
+The combination of the results of each quantum circuit happens in a post-processing of classical measurement.</p>
+<p>A qoqo measurement combines one <code>constant_circuit</code> that is always executed first, a list of <code>circuits</code> that are executed after the constant circuit, and a <code>measurement_input</code> that encodes the classical post-processing.</p>
+<p>As an example take the measurement of a Hamiltonian <code>H = 0.1 * X + 0.2 * Z</code> where <code>X</code> and <code>Z</code> are Pauli operators. We want to measure <code>H</code> with respect to a state <code>|psi&gt; = (|0&gt; + |1&gt;)/sqrt(2)</code>. 
+We will use a Hadamard gate in the <code>constant_circuit</code> to prepare <code>|psi&gt;</code>. Since we cannot measure <code>X</code> and <code>Z</code> at the same time, the <code>circuits</code> list will include one quantum circuit that does not apply any additional gate and one circuit that rotates the qubit basis into the <code>X</code>-basis so that the expectation value <code>&lt;X&gt;</code> is equivalent to the measurement of <code>&lt;Z&gt;</code> in the new basis.
+This kind of measurement is referred to as a PauliZProduct measurement because each qubit is rotated in the correct basis for the readout. 
+For the post-processing the PauliZProduct measurement needs two more details to be added to the input (<code>PauliZProductInput</code>): Which qubits to combine into expectation values (<code>add_pauliz_product()</code>) and which weight to use for each result (<code>add_linear_exp_val()</code>).</p>
+<p>In general one can measure the expectation values of the products of local Z operators, e.g. <code>&lt;Z0&gt;</code>, <code>&lt;Z1&gt;</code>, <code>&lt;Z0*Z1&gt;</code>, <code>&lt;Z0*Z3&gt;</code>, ...
+The PauliZProductInput needs to define all of these products that are measured. Here we will measure two products <code>&lt;Z0&gt;</code> after a rotation in the X basis and <code>&lt;Z0&gt;</code> without an additional rotation.
+The PauliZProductInput also defines the weights of the products in the final result. Here 0.1 for the first product and 0.2 for the second.</p>
+<pre><code class="language-python">   from qoqo import Circuit
+   from qoqo import operations as ops
+   from qoqo.measurements import PauliZProduct, PauliZProductInput
+   from qoqo import QuantumProgram
+   # Initialize |psi&gt;
+   init_circuit = Circuit()
+   init_circuit += ops.Hadamard(0)
+   # Z-basis measurement circuit with 1000 shots
+   z_circuit = Circuit()
+   z_circuit += ops.DefinitionBit(&quot;ro_z&quot;, 1, is_output=True)
+   z_circuit += ops.PragmaRepeatedMeasurement(&quot;ro_z&quot;, 1000, None)
+   # X-basis measurement circuit with 1000 shots   
+   x_circuit = Circuit()
+   x_circuit += ops.DefinitionBit(&quot;ro_x&quot;, 1, is_output=True)
+   # Changing to the X basis with a Hadamard gate
+   x_circuit += ops.Hadamard(0)
+   x_circuit += ops.PragmaRepeatedMeasurement(&quot;ro_x&quot;, 1000, None)
+
+   # Preparing the measurement input for one qubit
+   # The PauliZProductInput starts with just the number of qubits
+   # and if to use a flipped measurements set.
+   measurement_input = PauliZProductInput(1, False)
+   # Next, pauli products are added to the PauliZProductInput
+   # Read out product of Z on site 0 for register ro_z (no basis change)
+   z_basis_index = measurement_input.add_pauliz_product(&quot;ro_z&quot;, [0,])
+   # Read out product of Z on site 0 for register ro_x
+   # (after basis change effectively a &lt;X&gt; measurement)
+   x_basis_index = measurement_input.add_pauliz_product(&quot;ro_x&quot;, [0,])
+   
+   # Last, instructions on how to combine the single expectation values
+   # into the total result are provided.
+   # Add a result (the expectation value of H) that is a combination of
+   # the PauliProduct expectation values.
+   measurement_input.add_linear_exp_val(&quot;&lt;H&gt;&quot;, {x_basis_index: 0.1, z_basis_index: 0.2})
+
+   measurement = PauliZProduct(
+      constant_circuit=init_circuit,
+      circuits=[z_circuit, x_circuit],
+      input=measurement_input,
+   )
+</code></pre>
+<p>For details on how to execute QuantumPrograms see <a href="execution.html">Execution</a>.</p>
+<p>The qoqo QuantumProgram combines a measurement with a list of free parameters that are not set at compilation time but can be dynamically set whenever the QuantumProgram is run.
+To demonstrate this we modify the example from above to use a state <code>|psi&gt;</code> with a free angle between <code>|0&gt;</code> and <code>|1&gt;</code>. Such a state can be prepared by a <code>RotateX</code> quantum operation.</p>
+<pre><code class="language-python">   from qoqo import Circuit
+   from qoqo import operations as ops
+   from qoqo.measurements import PauliZProduct, PauliZProductInput
+   from qoqo import QuantumProgram
+   # initialize |psi&gt;
+   init_circuit = Circuit()
+   # Apply a RotateY gate with a symbolic angle
+   # To execute the circuit this symbolic parameter needs to be replaced 
+   # by a real number with the help of a QuantumProgram
+   init_circuit += ops.RotateX(0, &quot;angle&quot;)
+   # Z-basis measurement circuit with 1000 shots
+   z_circuit = Circuit()
+   z_circuit += ops.DefinitionBit(&quot;ro_z&quot;, 1, is_output=True)
+   z_circuit += ops.PragmaRepeatedMeasurement(&quot;ro_z&quot;, 1000, None)
+   # X-basis measurement circuit with 1000 shots   
+   x_circuit = Circuit()
+   x_circuit += ops.DefinitionBit(&quot;ro_x&quot;, 1, is_output=True)
+   # Changing to the X basis with a Hadamard gate
+   x_circuit += ops.Hadamard(0)
+   x_circuit += ops.PragmaRepeatedMeasurement(&quot;ro_x&quot;, 1000, None)
+
+   # Preparing the measurement input for one qubit
+   measurement_input = PauliZProductInput(1, False)
+   # Read out product of Z on site 0 for register ro_z (no basis change)
+   z_basis_index = measurement_input.add_pauliz_product(&quot;ro_z&quot;, [0,])
+   # Read out product of Z on site 0 for register ro_x
+   # (after basis change effectively a &lt;X&gt; measurement)
+   x_basis_index = measurement_input.add_pauliz_product(&quot;ro_x&quot;, [0,])
+   
+   # Add a result (the expectation value of H) that is a combination of
+   # the PauliProduct expectation values
+   measurement_input.add_linear_exp_val(&quot;&lt;H&gt;&quot;, {x_basis_index: 0.1, z_basis_index: 0.2})
+
+   measurement = PauliZProduct(
+      constant_circuit=init_circuit,
+      circuits=[z_circuit, x_circuit],
+      input=measurement_input,
+   )
+
+   # A quantum program is created from the measurement and &quot;angle&quot; is registered as
+   # a free input parameter.
+   # The QuantumProgram now has one free parameter that needs to set when executing it.
+   # The symbolic value angle in the circuits will be replaced by that free parameter
+   # during execution.
+   program = QuantumProgram(
+      measurement=measurement,
+      input_parameter_names=[&quot;angle&quot;],
+   )
+</code></pre>
+<p>For details on how to execute QuantumPrograms see <a href="execution.html">Execution</a>.</p>
+<h2 id="a-quantumprogram-returning-unprocessed-measurements"><a class="header" href="#a-quantumprogram-returning-unprocessed-measurements">A QuantumProgram returning unprocessed measurements</a></h2>
+<p>There also exist many use cases where end users want to receive the full measurement output without post-processing.
+For example when working with external tools that expect full  measurement records or when implementing custom post-processing.
+For these use cases the <code>ClassicalRegister</code> measurement can be used to create three dictionaries, one for all registers with bit values, one for all registers with float values and one for all registers with complex values.
+Note that this measurement does not need a separate measurement input as no post-processing takes place.</p>
+<pre><code class="language-python">   from qoqo import Circuit
+   from qoqo import operations as ops
+   from qoqo.measurements import ClassicalRegister
+   from qoqo import QuantumProgram
+   # initialize |psi&gt;
+   init_circuit = Circuit()
+   # Apply a RotateY gate with a symbolic angle
+   # To execute the circuit this symbolic parameter needs to be replaced 
+   # with a real number with the help of a QuantumProgram
+   init_circuit += ops.RotateX(0, &quot;angle&quot;)
+   # Z-basis measurement circuit with 1000 shots
+   z_circuit = Circuit()
+   z_circuit += ops.DefinitionBit(&quot;ro_z&quot;, 1, is_output=True)
+   z_circuit += ops.PragmaRepeatedMeasurement(&quot;ro_z&quot;, 1000, None)
+   # X-basis measurement circuit with 1000 shots   
+   x_circuit = Circuit()
+   x_circuit += ops.DefinitionBit(&quot;ro_x&quot;, 1, is_output=True)
+   # Changing to the X basis with a Hadamard gate
+   x_circuit += ops.Hadamard(0)
+   x_circuit += ops.PragmaRepeatedMeasurement(&quot;ro_x&quot;, 1000, None)
+
+   measurement = ClassicalRegister(constant_circuit=init_circuit, circuits=[z_circuit, x_circuit])
+
+   # A quantum program is created from the measurement and &quot;angle&quot; is registered as a free input parameter
+   # The QuantumProgram now has one free parameter that needs to set when executing it.
+   # The symbolic value angle in the circuits will be replaced by that free parameter during execution.
+   program = QuantumProgram(measurement=measurement, input_parameter_names=[&quot;angle&quot;])
+</code></pre>
+<p>For details on how to execute QuantumPrograms see <a href="execution.html">Execution</a>.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next" href="execution.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next" href="execution.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

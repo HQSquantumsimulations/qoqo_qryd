@@ -1,0 +1,32 @@
+qoqo\_qryd.pragma\_operations.PragmaShiftQubitsTweezers
+=======================================================
+
+.. currentmodule:: qoqo_qryd.pragma_operations
+
+.. autoclass:: PragmaShiftQubitsTweezers
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~PragmaShiftQubitsTweezers.__init__
+      ~PragmaShiftQubitsTweezers.from_bincode
+      ~PragmaShiftQubitsTweezers.hqslang
+      ~PragmaShiftQubitsTweezers.involved_qubits
+      ~PragmaShiftQubitsTweezers.is_parametrized
+      ~PragmaShiftQubitsTweezers.remap_qubits
+      ~PragmaShiftQubitsTweezers.shifts
+      ~PragmaShiftQubitsTweezers.substitute_parameters
+      ~PragmaShiftQubitsTweezers.tags
+      ~PragmaShiftQubitsTweezers.to_bincode
+      ~PragmaShiftQubitsTweezers.to_pragma_change_device
+   
+   
+
+   
+   
+   

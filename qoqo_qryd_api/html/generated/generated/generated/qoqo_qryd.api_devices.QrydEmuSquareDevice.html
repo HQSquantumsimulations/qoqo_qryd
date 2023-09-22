@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>qoqo_qryd.api_devices.QrydEmuSquareDevice &mdash; qoqo_qryd 0.11.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=b4a3dd51"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="qoqo_qryd.api_devices.QrydEmuTriangularDevice" href="qoqo_qryd.api_devices.QrydEmuTriangularDevice.html" />
+    <link rel="prev" title="qoqo_qryd.api_devices" href="../qoqo_qryd.api_devices.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            qoqo_qryd
+          </a>
+              <div class="version">
+                0.11.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../modules.html">qoqo_qryd documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../qoqo_qryd.html">qoqo_qryd</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../qoqo_qryd.qryd_devices.html">qoqo_qryd.qryd_devices</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../qoqo_qryd.api_devices.html">qoqo_qryd.api_devices</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">qoqo_qryd.api_devices.QrydEmuSquareDevice</a></li>
+<li class="toctree-l4"><a class="reference internal" href="qoqo_qryd.api_devices.QrydEmuTriangularDevice.html">qoqo_qryd.api_devices.QrydEmuTriangularDevice</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../qoqo_qryd.api_devices.html#qoqo_qryd.api_devices.QrydEmuSquareDevice"><code class="docutils literal notranslate"><span class="pre">QrydEmuSquareDevice</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../qoqo_qryd.api_devices.html#qoqo_qryd.api_devices.QrydEmuTriangularDevice"><code class="docutils literal notranslate"><span class="pre">QrydEmuTriangularDevice</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../qoqo_qryd.pragma_operations.html">qoqo_qryd.pragma_operations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../qoqo_qryd.SimulatorBackend.html">qoqo_qryd.SimulatorBackend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../qoqo_qryd.APIBackend.html">qoqo_qryd.APIBackend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html">qoqo_qryd.tweezer_devices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../qoqo_qryd.html#qoqo_qryd.APIBackend"><code class="docutils literal notranslate"><span class="pre">APIBackend</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../qoqo_qryd.html#qoqo_qryd.SimulatorBackend"><code class="docutils literal notranslate"><span class="pre">SimulatorBackend</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">qoqo_qryd</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../modules.html">qoqo_qryd documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../qoqo_qryd.html">qoqo_qryd</a></li>
+          <li class="breadcrumb-item"><a href="../qoqo_qryd.api_devices.html">qoqo_qryd.api_devices</a></li>
+      <li class="breadcrumb-item active">qoqo_qryd.api_devices.QrydEmuSquareDevice</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/generated/generated/generated/qoqo_qryd.api_devices.QrydEmuSquareDevice.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="qoqo-qryd-api-devices-qrydemusquaredevice">
+<h1>qoqo_qryd.api_devices.QrydEmuSquareDevice<a class="headerlink" href="#qoqo-qryd-api-devices-qrydemusquaredevice" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuSquareDevice">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.api_devices.</span></span><span class="sig-name descname"><span class="pre">QrydEmuSquareDevice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlled_z_phase_relation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlled_phase_phase_relation</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice" title="Link to this definition"></a></dt>
+<dd><p>QRyd quantum device having a squared configuration.</p>
+<p>Provides an emulated quantum computing device with up to 30 qubits
+that can be accessed via the QRyd WebAPI.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seed</strong> (<em>int</em>) -- Seed, if not provided will be set to 0 per default (not recommended!)</p></li>
+<li><p><strong>controlled_z_phase_relation</strong> (<em>Optinal</em><em>[</em><em>Union</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em><em>]</em>) -- The String used to choose what kind of phi-theta relation
+to use for the PhaseShiftedControlledZ gate</p></li>
+<li><p><strong>controlled_phase_phase_relation</strong> (<em>Optinal</em><em>[</em><em>Union</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em><em>]</em>) -- The String used to choose what kind of phi-theta relation
+to use for the PhaseShiftedControlledPhase gate</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuSquareDevice.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice.__init__" title="qoqo_qryd.api_devices.QrydEmuSquareDevice.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.api_devices.html#qoqo_qryd.api_devices.QrydEmuSquareDevice.from_bincode" title="qoqo_qryd.api_devices.QrydEmuSquareDevice.from_bincode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_bincode</span></code></a>(input, /)</p></td>
+<td><p>Convert the bincode representation of the QrydEmuSquareDevice to a QrydEmuSquareDevice using the bincode crate.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.api_devices.html#qoqo_qryd.api_devices.QrydEmuSquareDevice.from_json" title="qoqo_qryd.api_devices.QrydEmuSquareDevice.from_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_json</span></code></a>(input, /)</p></td>
+<td><p>Convert the json representation of a QrydEmuSquareDevice to a QrydEmuSquareDevice.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.api_devices.html#qoqo_qryd.api_devices.QrydEmuSquareDevice.gate_time_controlled_phase" title="qoqo_qryd.api_devices.QrydEmuSquareDevice.gate_time_controlled_phase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gate_time_controlled_phase</span></code></a>(control, target, ...)</p></td>
+<td><p>Returns the gate time of a PhaseShiftedControlledPhase operation with the given qubits and phi and theta angles.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.api_devices.html#qoqo_qryd.api_devices.QrydEmuSquareDevice.gate_time_controlled_z" title="qoqo_qryd.api_devices.QrydEmuSquareDevice.gate_time_controlled_z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gate_time_controlled_z</span></code></a>(control, target, phi)</p></td>
+<td><p>Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.api_devices.html#qoqo_qryd.api_devices.QrydEmuSquareDevice.generic_device" title="qoqo_qryd.api_devices.QrydEmuSquareDevice.generic_device"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generic_device</span></code></a>()</p></td>
+<td><p>Turns Device into GenericDevice</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.api_devices.html#qoqo_qryd.api_devices.QrydEmuSquareDevice.multi_qubit_gate_time" title="qoqo_qryd.api_devices.QrydEmuSquareDevice.multi_qubit_gate_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multi_qubit_gate_time</span></code></a>(hqslang, qubits)</p></td>
+<td><p>Returns the gate time of a multi qubit operation on this device.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.api_devices.html#qoqo_qryd.api_devices.QrydEmuSquareDevice.number_qubits" title="qoqo_qryd.api_devices.QrydEmuSquareDevice.number_qubits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">number_qubits</span></code></a>()</p></td>
+<td><p>Return number of qubits in device.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.api_devices.html#qoqo_qryd.api_devices.QrydEmuSquareDevice.phase_shift_controlled_phase" title="qoqo_qryd.api_devices.QrydEmuSquareDevice.phase_shift_controlled_phase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">phase_shift_controlled_phase</span></code></a>(theta)</p></td>
+<td><p>Returns the PhaseShiftedControlledPhase phase shift according to the device's relation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.api_devices.html#qoqo_qryd.api_devices.QrydEmuSquareDevice.phase_shift_controlled_z" title="qoqo_qryd.api_devices.QrydEmuSquareDevice.phase_shift_controlled_z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">phase_shift_controlled_z</span></code></a>()</p></td>
+<td><p>Returns the PhaseShiftedControlledZ phase shift according to the device's relation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.api_devices.html#qoqo_qryd.api_devices.QrydEmuSquareDevice.qrydbackend" title="qoqo_qryd.api_devices.QrydEmuSquareDevice.qrydbackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">qrydbackend</span></code></a>()</p></td>
+<td><p>Returns the backend associated with the device.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.api_devices.html#qoqo_qryd.api_devices.QrydEmuSquareDevice.seed" title="qoqo_qryd.api_devices.QrydEmuSquareDevice.seed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seed</span></code></a>()</p></td>
+<td><p>Returns the seed usized for the API.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.api_devices.html#qoqo_qryd.api_devices.QrydEmuSquareDevice.single_qubit_gate_time" title="qoqo_qryd.api_devices.QrydEmuSquareDevice.single_qubit_gate_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">single_qubit_gate_time</span></code></a>(hqslang, qubit)</p></td>
+<td><p>Returns the gate time of a single qubit operation on this device.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.api_devices.html#qoqo_qryd.api_devices.QrydEmuSquareDevice.three_qubit_gate_time" title="qoqo_qryd.api_devices.QrydEmuSquareDevice.three_qubit_gate_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">three_qubit_gate_time</span></code></a>(hqslang, control_0, ...)</p></td>
+<td><p>Returns the gate time of a three qubit operation on this device.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.api_devices.html#qoqo_qryd.api_devices.QrydEmuSquareDevice.to_bincode" title="qoqo_qryd.api_devices.QrydEmuSquareDevice.to_bincode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_bincode</span></code></a>()</p></td>
+<td><p>Return the bincode representation of the QrydEmuSquareDevice using the bincode crate.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.api_devices.html#qoqo_qryd.api_devices.QrydEmuSquareDevice.to_json" title="qoqo_qryd.api_devices.QrydEmuSquareDevice.to_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_json</span></code></a>()</p></td>
+<td><p>Return the json representation of the QrydEmuSquareDevice.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.api_devices.html#qoqo_qryd.api_devices.QrydEmuSquareDevice.two_qubit_edges" title="qoqo_qryd.api_devices.QrydEmuSquareDevice.two_qubit_edges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">two_qubit_edges</span></code></a>()</p></td>
+<td><p>Return the list of pairs of qubits linked by a native two-qubit-gate in the device.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.api_devices.html#qoqo_qryd.api_devices.QrydEmuSquareDevice.two_qubit_gate_time" title="qoqo_qryd.api_devices.QrydEmuSquareDevice.two_qubit_gate_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">two_qubit_gate_time</span></code></a>(hqslang, control, target)</p></td>
+<td><p>Returns the gate time of a two qubit operation on this device.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuSquareDevice.from_bincode">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_bincode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice.from_bincode" title="Link to this definition"></a></dt>
+<dd><p>Convert the bincode representation of the QrydEmuSquareDevice to a QrydEmuSquareDevice using the bincode crate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input</strong> (<em>ByteArray</em>) -- The serialized QrydEmuSquareDevice (in bincode form).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The deserialized QrydEmuSquareDevice.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../qoqo_qryd.api_devices.html#qoqo_qryd.api_devices.QrydEmuSquareDevice" title="qoqo_qryd.api_devices.QrydEmuSquareDevice">QrydEmuSquareDevice</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> -- Input cannot be converted to byte array.</p></li>
+<li><p><strong>ValueError</strong> -- Input cannot be deserialized to QrydEmuSquareDevice.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuSquareDevice.from_json">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice.from_json" title="Link to this definition"></a></dt>
+<dd><p>Convert the json representation of a QrydEmuSquareDevice to a QrydEmuSquareDevice.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input</strong> (<em>str</em>) -- The serialized QrydEmuSquareDevice in json form.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The deserialized QrydEmuSquareDevice.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../qoqo_qryd.api_devices.html#qoqo_qryd.api_devices.QrydEmuSquareDevice" title="qoqo_qryd.api_devices.QrydEmuSquareDevice">QrydEmuSquareDevice</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> -- Input cannot be deserialized to QrydEmuSquareDevice.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuSquareDevice.gate_time_controlled_phase">
+<span class="sig-name descname"><span class="pre">gate_time_controlled_phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">control</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice.gate_time_controlled_phase" title="Link to this definition"></a></dt>
+<dd><p>Returns the gate time of a PhaseShiftedControlledPhase operation with the given qubits and phi and theta angles.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuSquareDevice.gate_time_controlled_z">
+<span class="sig-name descname"><span class="pre">gate_time_controlled_z</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">control</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice.gate_time_controlled_z" title="Link to this definition"></a></dt>
+<dd><p>Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuSquareDevice.generic_device">
+<span class="sig-name descname"><span class="pre">generic_device</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice.generic_device" title="Link to this definition"></a></dt>
+<dd><p>Turns Device into GenericDevice</p>
+<p>Can be used as a generic interface for devices when a boxed dyn trait object cannot be used
+(for example when the interface needs to be serialized)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The device in generic representation</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>GenericDevice</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>GenericDevice uses nested HashMaps to represent the most general device connectivity.
+The memory usage will be inefficient for devices with large qubit numbers.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuSquareDevice.multi_qubit_gate_time">
+<span class="sig-name descname"><span class="pre">multi_qubit_gate_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hqslang</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qubits</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice.multi_qubit_gate_time" title="Link to this definition"></a></dt>
+<dd><p>Returns the gate time of a multi qubit operation on this device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The gate time.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>f64</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> -- The gate is not available in the device.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuSquareDevice.number_qubits">
+<span class="sig-name descname"><span class="pre">number_qubits</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice.number_qubits" title="Link to this definition"></a></dt>
+<dd><p>Return number of qubits in device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The number of qubits.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuSquareDevice.phase_shift_controlled_phase">
+<span class="sig-name descname"><span class="pre">phase_shift_controlled_phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice.phase_shift_controlled_phase" title="Link to this definition"></a></dt>
+<dd><p>Returns the PhaseShiftedControlledPhase phase shift according to the device's relation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuSquareDevice.phase_shift_controlled_z">
+<span class="sig-name descname"><span class="pre">phase_shift_controlled_z</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice.phase_shift_controlled_z" title="Link to this definition"></a></dt>
+<dd><p>Returns the PhaseShiftedControlledZ phase shift according to the device's relation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuSquareDevice.qrydbackend">
+<span class="sig-name descname"><span class="pre">qrydbackend</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice.qrydbackend" title="Link to this definition"></a></dt>
+<dd><p>Returns the backend associated with the device.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuSquareDevice.seed">
+<span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice.seed" title="Link to this definition"></a></dt>
+<dd><p>Returns the seed usized for the API.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuSquareDevice.single_qubit_gate_time">
+<span class="sig-name descname"><span class="pre">single_qubit_gate_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hqslang</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qubit</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice.single_qubit_gate_time" title="Link to this definition"></a></dt>
+<dd><p>Returns the gate time of a single qubit operation on this device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The gate time.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>f64</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> -- The gate is not available in the device.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuSquareDevice.three_qubit_gate_time">
+<span class="sig-name descname"><span class="pre">three_qubit_gate_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hqslang</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">control_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">control_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice.three_qubit_gate_time" title="Link to this definition"></a></dt>
+<dd><p>Returns the gate time of a three qubit operation on this device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The gate time.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>f64</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> -- The gate is not available in the device.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuSquareDevice.to_bincode">
+<span class="sig-name descname"><span class="pre">to_bincode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice.to_bincode" title="Link to this definition"></a></dt>
+<dd><p>Return the bincode representation of the QrydEmuSquareDevice using the bincode crate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The serialized QrydEmuSquareDevice (in bincode form).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>ByteArray</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> -- Cannot serialize QrydEmuSquareDevice to bytes.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuSquareDevice.to_json">
+<span class="sig-name descname"><span class="pre">to_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice.to_json" title="Link to this definition"></a></dt>
+<dd><p>Return the json representation of the QrydEmuSquareDevice.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The serialized form of QrydEmuSquareDevice.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> -- Cannot serialize QrydEmuSquareDevice to json.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuSquareDevice.two_qubit_edges">
+<span class="sig-name descname"><span class="pre">two_qubit_edges</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice.two_qubit_edges" title="Link to this definition"></a></dt>
+<dd><p>Return the list of pairs of qubits linked by a native two-qubit-gate in the device.</p>
+<p>A pair of qubits is considered linked by a native two-qubit-gate if the device
+can implement a two-qubit-gate between the two qubits without decomposing it
+into a sequence of gates that involves a third qubit of the device.
+The two-qubit-gate also has to form a universal set together with the available
+single qubit gates.</p>
+<p>The returned vectors is a simple, graph-library independent, representation of
+the undirected connectivity graph of the device.
+It can be used to construct the connectivity graph in a graph library of the user's
+choice from a list of edges and can be used for applications like routing in quantum algorithms.</p>
+<p class="rubric">Example</p>
+<p>To construct a networkx graph from this output one can use</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="gp">... </span><span class="kn">from</span> <span class="nn">qoqo_qryd</span> <span class="kn">import</span> <span class="n">QrydEmuSquareDevice</span>
+<span class="gp">...</span>
+<span class="gp">... </span><span class="n">device</span> <span class="o">=</span> <span class="n">QrydEmuSquareDevice</span><span class="p">(</span><span class="n">number_rows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">number_columns</span><span class="o">=</span> <span class="mi">2</span> <span class="n">qubits_per_row</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">row_distance</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="gp">... </span><span class="n">edges</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">two_qubit_edges</span><span class="p">()</span>
+<span class="gp">... </span><span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
+<span class="gp">... </span><span class="n">graph</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of two qubit edges in the undirected connectivity graph</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sequence[(int, int)]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.api_devices.QrydEmuSquareDevice.two_qubit_gate_time">
+<span class="sig-name descname"><span class="pre">two_qubit_gate_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hqslang</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">control</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.api_devices.QrydEmuSquareDevice.two_qubit_gate_time" title="Link to this definition"></a></dt>
+<dd><p>Returns the gate time of a two qubit operation on this device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The gate time.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>f64</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> -- The gate is not available in the device.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../qoqo_qryd.api_devices.html" class="btn btn-neutral float-left" title="qoqo_qryd.api_devices" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="qoqo_qryd.api_devices.QrydEmuTriangularDevice.html" class="btn btn-neutral float-right" title="qoqo_qryd.api_devices.QrydEmuTriangularDevice" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, HQS Quantum Simulations GmbH.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

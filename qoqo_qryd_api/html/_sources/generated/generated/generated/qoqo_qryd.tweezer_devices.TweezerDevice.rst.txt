@@ -1,0 +1,44 @@
+qoqo\_qryd.tweezer\_devices.TweezerDevice
+=========================================
+
+.. currentmodule:: qoqo_qryd.tweezer_devices
+
+.. autoclass:: TweezerDevice
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~TweezerDevice.__init__
+      ~TweezerDevice.add_qubit_tweezer_mapping
+      ~TweezerDevice.available_layouts
+      ~TweezerDevice.current_layout
+      ~TweezerDevice.deactivate_qubit
+      ~TweezerDevice.from_api
+      ~TweezerDevice.from_bincode
+      ~TweezerDevice.from_json
+      ~TweezerDevice.gate_time_controlled_phase
+      ~TweezerDevice.gate_time_controlled_z
+      ~TweezerDevice.generic_device
+      ~TweezerDevice.multi_qubit_gate_time
+      ~TweezerDevice.number_qubits
+      ~TweezerDevice.phase_shift_controlled_phase
+      ~TweezerDevice.phase_shift_controlled_z
+      ~TweezerDevice.single_qubit_gate_time
+      ~TweezerDevice.switch_layout
+      ~TweezerDevice.three_qubit_gate_time
+      ~TweezerDevice.to_bincode
+      ~TweezerDevice.to_json
+      ~TweezerDevice.two_qubit_edges
+      ~TweezerDevice.two_qubit_gate_time
+      ~TweezerDevice.two_tweezer_edges
+   
+   
+
+   
+   
+   
