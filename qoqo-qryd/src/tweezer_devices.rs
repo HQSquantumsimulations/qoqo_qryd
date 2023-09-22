@@ -1056,7 +1056,7 @@ impl TweezerMutableDeviceWrapper {
     /// Set the allowed Tweezer shifts from a list of tweezers.
     ///
     /// The items in the rows give the allowed tweezers that qubit can be shifted into.
-    /// For a row defined as 1,2,3, a qubit in tweezer 1 can be shifted into tweezer 2, 
+    /// For a row defined as 1,2,3, a qubit in tweezer 1 can be shifted into tweezer 2,
     /// and into tweezer 3 if tweezer 2 is not occupied by a qubit.
     ///
     /// Args:
