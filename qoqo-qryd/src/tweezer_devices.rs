@@ -1056,8 +1056,8 @@ impl TweezerMutableDeviceWrapper {
     /// Set the allowed Tweezer shifts from a list of tweezers.
     ///
     /// The items in the rows give the allowed tweezers that qubit can be shifted into.
-    /// For a list 1,2,3 the qubit can be shifted into tweezer 1, into tweezer 2 if tweezer 1 is not occupied,
-    /// and into tweezer 3 if tweezer 1 and 2 are not occupied.
+    /// For a row defined as 1,2,3, a qubit in tweezer 1 can be shifted into tweezer 2, 
+    /// and into tweezer 3 if tweezer 2 is not occupied by a qubit.
     ///
     /// Args:
     ///     row_shifts (list(list(int))): A list of lists, each representing a row of tweezers.
