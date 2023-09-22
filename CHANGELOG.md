@@ -2,6 +2,15 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+# 0.11.1
+
+* Corrected the check of the validity of a `PragmaShiftQubitsTweezers` operation for `TweezerDevice`
+* Added `TweezerDevice.set_allowed_tweezer_shifts_from_rows()`
+* Added `TweezerDevice.two_tweezer_edges()`
+* Added `TweezerDevice.set_default_layout()`
+* Added `APIBackend.set_dev()`
+* Corrected docs after mdbook port
+
 # 0.11.0
 
 * Substituted `httpmock` with `mockito` in mock testing

@@ -27,6 +27,11 @@ use roqoqo_qryd::TweezerDevice;
 ///
 /// This interface does not allow setting any piece of information about the device
 /// tweezers. This class is meant to be used by the end user.
+///
+/// Args:
+///     controlled_z_phase_relation ((Optional[Union[str, float]])): The relation to use for the PhaseShiftedControlledZ gate.
+///                                   It can be hardcoded to a specific value if a float is passed in as String.
+///     controlled_phase_phase_relation ((Optional[Union[str, float]])): The relation to use for the PhaseShiftedControlledPhase gate.
 #[pyclass(name = "TweezerDevice", module = "qoqo_qryd")]
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct TweezerDeviceWrapper {
@@ -461,12 +466,28 @@ impl TweezerDeviceWrapper {
     fn two_qubit_edges(&self) -> Vec<(usize, usize)> {
         self.internal.two_qubit_edges()
     }
+
+    /// Returns the two tweezer edges of the device.
+    ///
+    /// And edge between two tweezer is valid only if the
+    /// PhaseShiftedControlledPhase gate can be performed.
+    ///
+    /// Returns:
+    ///     Sequence[(int, int)]: List of two tweezer edges
+    fn two_tweezer_edges(&self) -> Vec<(usize, usize)> {
+        self.internal.two_tweezer_edges()
+    }
 }
 
 /// Tweezer Mutable Device
 ///
 /// This interface allows setting any piece of information about the device
 /// tweezer.
+///
+/// Args:
+///     controlled_z_phase_relation ((Optional[Union[str, float]])): The relation to use for the PhaseShiftedControlledZ gate.
+///                                   It can be hardcoded to a specific value if a float is passed in as String.
+///     controlled_phase_phase_relation ((Optional[Union[str, float]])): The relation to use for the PhaseShiftedControlledPhase gate.
 #[pyclass(name = "TweezerMutableDevice", module = "qoqo_qryd")]
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct TweezerMutableDeviceWrapper {
@@ -887,6 +908,17 @@ impl TweezerMutableDeviceWrapper {
         self.internal.two_qubit_edges()
     }
 
+    /// Returns the two tweezer edges of the device.
+    ///
+    /// And edge between two tweezer is valid only if the
+    /// PhaseShiftedControlledPhase gate can be performed.
+    ///
+    /// Returns:
+    ///     Sequence[(int, int)]: List of two tweezer edges
+    fn two_tweezer_edges(&self) -> Vec<(usize, usize)> {
+        self.internal.two_tweezer_edges()
+    }
+
     /// Set the time of a single-qubit gate for a tweezer in a given Layout.
     ///
     /// Args:
@@ -995,7 +1027,7 @@ impl TweezerMutableDeviceWrapper {
     /// Args:
     ///     tweezer (int): The index of the tweezer.
     ///     allowed_shifts (list(list(int))): The allowed tweezer shifts.
-    ///     layout_name (Optional[str]): The name of the Layout to apply the gate time in.
+    ///     layout_name (Optional[str]): The name of the Layout to apply the allowed shifts in.
     ///         Defaults to the current Layout.
     ///
     /// Raises:
@@ -1018,6 +1050,50 @@ impl TweezerMutableDeviceWrapper {
                     .as_slice(),
                 layout_name,
             )
+            .map_err(|err| PyValueError::new_err(format!("{:}", err)))
+    }
+
+    /// Set the allowed Tweezer shifts from a list of tweezers.
+    ///
+    /// The items in the rows give the allowed tweezers that qubit can be shifted into.
+    /// For a row defined as 1,2,3, a qubit in tweezer 1 can be shifted into tweezer 2,
+    /// and into tweezer 3 if tweezer 2 is not occupied by a qubit.
+    ///
+    /// Args:
+    ///     row_shifts (list(list(int))): A list of lists, each representing a row of tweezers.
+    ///     layout_name (Optional[str]): The name of the Layout to apply the allowed shifts in.
+    ///         Defaults to the current Layout.
+    ///
+    /// Raises:
+    ///     ValueError: The involved tweezers are not present in the device.
+    #[pyo3(text_signature = "(row_shifts, layout_name, /)")]
+    pub fn set_allowed_tweezer_shifts_from_rows(
+        &mut self,
+        row_shifts: Vec<Vec<usize>>,
+        layout_name: Option<String>,
+    ) -> PyResult<()> {
+        self.internal
+            .set_allowed_tweezer_shifts_from_rows(
+                row_shifts
+                    .iter()
+                    .map(|vec| vec.as_slice())
+                    .collect::<Vec<&[usize]>>()
+                    .as_slice(),
+                layout_name,
+            )
+            .map_err(|err| PyValueError::new_err(format!("{:}", err)))
+    }
+
+    /// Set the name of the default layout to use.
+    ///
+    /// Args:
+    ///     layout (str): The name of the layout to use.
+    ///
+    /// Raises:
+    ///     ValueError: The given layout name is not present in the layout register.
+    pub fn set_default_layout(&mut self, layout: &str) -> PyResult<()> {
+        self.internal
+            .set_default_layout(layout)
             .map_err(|err| PyValueError::new_err(format!("{:}", err)))
     }
 }

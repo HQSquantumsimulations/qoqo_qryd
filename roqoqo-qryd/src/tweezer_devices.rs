@@ -45,6 +45,8 @@ pub struct TweezerDevice {
     pub controlled_z_phase_relation: String,
     /// The specific PhaseShiftedControlledPhase relation to use.
     pub controlled_phase_phase_relation: String,
+    /// The default layout to use at first intantiation.
+    pub default_layout: Option<String>,
 }
 
 /// Tweezers information relative to a Layout
@@ -175,7 +177,7 @@ impl TweezerDevice {
         controlled_phase_phase_relation: Option<String>,
     ) -> Self {
         let mut layout_register: HashMap<String, TweezerLayoutInfo> = HashMap::new();
-        layout_register.insert(String::from("Default"), TweezerLayoutInfo::default());
+        layout_register.insert(String::from("default"), TweezerLayoutInfo::default());
         let controlled_z_phase_relation =
             controlled_z_phase_relation.unwrap_or_else(|| "DefaultRelation".to_string());
         let controlled_phase_phase_relation =
@@ -184,9 +186,10 @@ impl TweezerDevice {
         TweezerDevice {
             qubit_to_tweezer: None,
             layout_register,
-            current_layout: String::from("Default"),
+            current_layout: String::from("default"),
             controlled_z_phase_relation,
             controlled_phase_phase_relation,
+            default_layout: None,
         }
     }
 
@@ -216,7 +219,7 @@ impl TweezerDevice {
         mock_port: Option<String>,
     ) -> Result<Self, RoqoqoBackendError> {
         // Preparing variables
-        let device_name_internal = device_name.unwrap_or_else(|| String::from("Default"));
+        let device_name_internal = device_name.unwrap_or_else(|| String::from("default"));
         let access_token_internal: String = if mock_port.is_some() {
             "".to_string()
         } else {
@@ -249,7 +252,7 @@ impl TweezerDevice {
         // Response gathering
         let resp = if let Some(port) = mock_port {
             client
-                .post(format!("http://127.0.0.1:{}", port))
+                .get(format!("http://127.0.0.1:{}", port))
                 .body(device_name_internal)
                 .send()
                 .map_err(|e| RoqoqoBackendError::NetworkError {
@@ -257,9 +260,11 @@ impl TweezerDevice {
                 })?
         } else {
             client
-                .post("https://api.qryddemo.itp3.uni-stuttgart.de/v2_0/get_device")
+                .get(format!(
+                    "https://api.qryddemo.itp3.uni-stuttgart.de/v1_0/backends/devices/{}",
+                    device_name_internal
+                ))
                 .header("X-API-KEY", access_token_internal)
-                .body(device_name_internal)
                 .send()
                 .map_err(|e| RoqoqoBackendError::NetworkError {
                     msg: format!("{:?}", e),
@@ -269,7 +274,11 @@ impl TweezerDevice {
         // Response handling
         let status_code = resp.status();
         if status_code == reqwest::StatusCode::OK {
-            Ok(resp.json::<TweezerDevice>().unwrap())
+            let mut device = resp.json::<TweezerDevice>().unwrap();
+            if let Some(default) = device.default_layout.clone() {
+                device.switch_layout(&default).unwrap();
+            }
+            Ok(device)
         } else {
             Err(RoqoqoBackendError::NetworkError {
                 msg: format!(
@@ -515,6 +524,11 @@ impl TweezerDevice {
     /// * `tweezer` - The index of the tweezer.
     /// * `allowed_shifts` - The allowed Tweezer shifts.
     /// * `layout_name` - The name of the Layout to apply the gate time in. Defaults to the current Layout.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(())` - The allowed shifts have been set.
+    /// * `Err(RoqoqoBackendError)` - The given shifts are not valid.
     pub fn set_allowed_tweezer_shifts(
         &mut self,
         tweezer: &usize,
@@ -525,6 +539,7 @@ impl TweezerDevice {
             .clone()
             .unwrap_or_else(|| self.current_layout.clone());
 
+        // Check that all the involved tweezers exist
         if !self.is_tweezer_present(*tweezer, Some(layout_name.clone()))
             || allowed_shifts.iter().any(|s| {
                 s.iter()
@@ -536,6 +551,7 @@ impl TweezerDevice {
                     .to_string(),
             });
         }
+        // Check the input tweezer is not present in the input allowed shifts
         if allowed_shifts
             .iter()
             .any(|shift_list| shift_list.contains(tweezer))
@@ -550,6 +566,91 @@ impl TweezerDevice {
                 allowed_shifts.iter().map(|&slice| slice.to_vec()).collect(),
             );
         }
+        Ok(())
+    }
+
+    /// Set the allowed Tweezer shifts from a list of tweezers.
+    ///
+    /// # Arguments
+    ///
+    /// * `row_shifts` - A list of lists, each representing a row of tweezers.
+    /// * `layout_name` - The name of the Layout to apply the gate time in. Defaults to the current Layout.
+    pub fn set_allowed_tweezer_shifts_from_rows(
+        &mut self,
+        row_shifts: &[&[usize]],
+        layout_name: Option<String>,
+    ) -> Result<(), RoqoqoBackendError> {
+        let layout_name = layout_name
+            .clone()
+            .unwrap_or_else(|| self.current_layout.clone());
+
+        // Check that all the involved tweezers exist
+        if row_shifts.iter().any(|row| {
+            row.iter()
+                .any(|t| !self.is_tweezer_present(*t, Some(layout_name.clone())))
+        }) {
+            return Err(RoqoqoBackendError::GenericError {
+                msg: "A given Tweezer is not present in the device Tweezer data.".to_string(),
+            });
+        }
+        // Check that there are no repetitions in the input shifts
+        for row in row_shifts.iter() {
+            if row.iter().duplicates().count() > 0 {
+                return Err(RoqoqoBackendError::GenericError {
+                    msg: "The given Tweezers contain repetitions.".to_string(),
+                });
+            }
+        }
+
+        let allowed_shifts = &mut self
+            .layout_register
+            .get_mut(&layout_name)
+            .unwrap()
+            .allowed_tweezer_shifts;
+
+        // For each row in the input..
+        row_shifts.iter().for_each(|row| {
+            // ... divide in left, mid (the tweezer) and right parts
+            for i in 0..row.len() {
+                let (left_slice, mid) = row.split_at(i);
+                let mid = mid.first().unwrap_or(&0);
+                let mut vec_left = left_slice.to_vec();
+                vec_left.reverse();
+                let vec_right = &row[i + 1..].to_vec();
+
+                // Insert the left and right side
+                allowed_shifts.insert(*mid, vec![]);
+                if let Some(val) = allowed_shifts.get_mut(mid) {
+                    if !vec_left.is_empty() {
+                        val.push(vec_left.to_vec());
+                    }
+                    if !vec_right.is_empty() {
+                        val.push(vec_right.to_vec());
+                    }
+                }
+            }
+        });
+
+        Ok(())
+    }
+
+    /// Set the name of the default layout to use.
+    ///
+    /// # Arguments
+    ///
+    /// * `layout` - The name of the layout to use.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(())` - The default layout has been set.
+    /// * `Err(RoqoqoBackendError)` - The given layout name is not present in the layout register.
+    pub fn set_default_layout(&mut self, layout: &str) -> Result<(), RoqoqoBackendError> {
+        if !self.layout_register.contains_key(layout) {
+            return Err(RoqoqoBackendError::GenericError {
+                msg: "The given layout name is not present in the layout register.".to_string(),
+            });
+        }
+        self.default_layout = Some(layout.to_string());
         Ok(())
     }
 
@@ -828,10 +929,44 @@ impl TweezerDevice {
     }
 
     fn _are_all_shifts_valid(&mut self, pragma: &PragmaShiftQubitsTweezers) -> bool {
+        #[inline]
+        fn _is_tweezer_in_shift_lists(tweezer_id: &usize, shift_lists: &[Vec<usize>]) -> bool {
+            shift_lists.iter().any(|list| list.contains(tweezer_id))
+        }
+        #[inline]
+        fn _is_tweezer_occupied(qbt_to_twz: &HashMap<usize, usize>, tweezer_id: &usize) -> bool {
+            qbt_to_twz.iter().any(|(_, twz)| twz == tweezer_id)
+        }
+        #[inline]
+        fn _is_path_free(
+            qbt_to_twz: &HashMap<usize, usize>,
+            end_tweezer: &usize,
+            shift_lists: &[Vec<usize>],
+        ) -> bool {
+            let correct_shift_list = shift_lists
+                .iter()
+                .find(|list| list.contains(end_tweezer))
+                .unwrap();
+            // Check the path up to the target tweezer
+            for el in correct_shift_list
+                .iter()
+                .take_while(|tw| *tw != end_tweezer)
+            {
+                if _is_tweezer_occupied(qbt_to_twz, el) {
+                    return false;
+                }
+            }
+            // Check the target tweezer itself
+            if _is_tweezer_occupied(qbt_to_twz, end_tweezer) {
+                return false;
+            }
+            true
+        }
         // Checks for all shifts from pragma:
         // - if the starting tweezer has any valid shifts associated with it in the device
         // - if the ending tweezer is contained in the associated valid shifts
         // - if the device has has a quantum state to move in the starting tweezer position
+        // - if any tweezer in between the staring and ending tweezers is free (ending included)
         for (shift_start, shift_end) in &pragma.shifts {
             match self
                 .get_current_layout_info()
@@ -839,16 +974,16 @@ impl TweezerDevice {
                 .get(shift_start)
             {
                 Some(allowed_shifts) => {
-                    // Check if each shift is valid and that there's a quantum state to move
-                    if !allowed_shifts
-                        .iter()
-                        .any(|allowed_dest| allowed_dest.contains(shift_end))
-                        && !self
-                            .qubit_to_tweezer
-                            .as_ref()
-                            .unwrap()
-                            .iter()
-                            .any(|(_, twz)| twz == shift_start)
+                    if !_is_tweezer_in_shift_lists(shift_end, allowed_shifts)
+                        || !_is_tweezer_occupied(
+                            self.qubit_to_tweezer.as_ref().unwrap(),
+                            shift_start,
+                        )
+                        || !_is_path_free(
+                            self.qubit_to_tweezer.as_ref().unwrap(),
+                            shift_end,
+                            allowed_shifts,
+                        )
                     {
                         return false;
                     }
@@ -1023,13 +1158,6 @@ impl Device for TweezerDevice {
                         // Start applying the shifts
                         if let Some(map) = &mut self.qubit_to_tweezer {
                             for (shift_start, shift_end) in &pragma.shifts {
-                                if let Some(qubit_to_remove) =
-                                    map.iter()
-                                        .find_map(|(&qbt, &twz)| if twz == *shift_end { Some(qbt) } else { None })
-                                {
-                                    // Remove qubit previously present in target tweezer
-                                    map.remove(&qubit_to_remove);
-                                }
                                 if let Some(qubit_to_move) =
                                     map.iter()
                                         .find_map(|(&qbt, &twz)| if twz == *shift_start { Some(qbt) } else { None })

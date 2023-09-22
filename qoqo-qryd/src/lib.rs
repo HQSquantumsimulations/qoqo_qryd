@@ -34,16 +34,17 @@ use pyo3::wrap_pymodule;
 /// Provides devices for the QRyd quantum hardware for the qoqo quantum toolkit.
 /// Also provides qoqo PRAGMA operations specific to those devices.
 /// Includes an optional QRydSimulator backend.
-/// Furthermore, provides a collection of all QRyd devices for the WebAPI.
+/// Furthermore, provides a collection of all QRyd as well as Tweezer devices for the WebAPI.
 ///
 /// .. autosummary::
 ///     :toctree: generated/
 ///
+///     qryd_devices
 ///     api_devices
-///     APIBackend
-///     Backend
 ///     pragma_operations
-///     devices
+///     SimulatorBackend
+///     APIBackend
+///     tweezer_devices
 ///
 pub mod qryd_devices;
 pub use qryd_devices::*;
@@ -88,7 +89,7 @@ pub use api_devices::*;
 ///     Backend
 ///     pragma_operations
 ///     qryd_devices
-///     experimental_devices
+///     tweezer_devices
 ///
 ///
 #[pymodule]

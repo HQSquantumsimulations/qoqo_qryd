@@ -27,10 +27,10 @@ use mockito::Server;
 fn test_new() {
     let device = TweezerDevice::new(None, None);
 
-    assert_eq!(device.current_layout, "Default");
+    assert_eq!(device.current_layout, "default");
     assert!(device.qubit_to_tweezer.is_none());
     assert_eq!(device.layout_register.len(), 1);
-    assert!(device.layout_register.get("Default").is_some());
+    assert!(device.layout_register.get("default").is_some());
 }
 
 // Test TweezerDevice add_layout(), switch_layout() methods
@@ -38,14 +38,14 @@ fn test_new() {
 fn test_layouts() {
     let mut device = TweezerDevice::new(None, None);
 
-    assert!(device.available_layouts().contains(&"Default"));
+    assert!(device.available_layouts().contains(&"default"));
 
     device.add_layout("Test").unwrap();
 
     assert!(device.add_layout("Test").is_err());
 
     assert_eq!(device.layout_register.len(), 2);
-    assert!(device.layout_register.contains_key("Default"));
+    assert!(device.layout_register.contains_key("default"));
     assert!(device.layout_register.contains_key("Test"));
 
     device.set_tweezer_single_qubit_gate_time("RotateX", 0, 0.23, None);
@@ -63,7 +63,7 @@ fn test_layouts() {
         Some("Test".to_string()),
     );
 
-    let default_layout = device.layout_register.get("Default").unwrap();
+    let default_layout = device.layout_register.get("default").unwrap();
     let test_layout = device.layout_register.get("Test").unwrap();
     assert!(default_layout
         .tweezer_single_qubit_gate_times
@@ -160,7 +160,7 @@ fn test_layouts() {
         0.13
     );
 
-    assert_eq!(device.current_layout, "Default");
+    assert_eq!(device.current_layout, "default");
     assert!(device.qubit_to_tweezer.is_none());
 
     device.switch_layout("Test").unwrap();
@@ -170,7 +170,7 @@ fn test_layouts() {
 
     assert!(device.switch_layout("Error").is_err());
 
-    assert!(device.available_layouts().contains(&"Default"));
+    assert!(device.available_layouts().contains(&"default"));
     assert!(device.available_layouts().contains(&"Test"));
 }
 
@@ -197,9 +197,55 @@ fn test_qubit_tweezer_mapping() {
     assert_eq!(add_01.unwrap(), vec![(0, 1), (2, 3)].into_iter().collect());
 }
 
+/// Test TweezerDevice set_allowed_tweezer_shifts_from_rows() method
+#[test]
+fn test_allowed_tweezer_shifts_from_rows() {
+    let mut device = TweezerDevice::new(None, None);
+    device.add_layout("triangle").unwrap();
+    device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.0, Some("triangle".to_string()));
+    device.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.0, Some("triangle".to_string()));
+    device.set_tweezer_single_qubit_gate_time("PauliX", 2, 0.0, Some("triangle".to_string()));
+    device.set_tweezer_single_qubit_gate_time("PauliX", 3, 0.0, Some("triangle".to_string()));
+    device.set_tweezer_single_qubit_gate_time("PauliX", 4, 0.0, Some("triangle".to_string()));
+    device.set_tweezer_single_qubit_gate_time("PauliX", 5, 0.0, Some("triangle".to_string()));
+
+    assert!(device
+        .set_allowed_tweezer_shifts_from_rows(
+            &[&[0, 1, 2], &[3, 4, 5]],
+            Some("triangle".to_string())
+        )
+        .is_ok());
+
+    let saved_shifts = &device
+        .layout_register
+        .get("triangle")
+        .unwrap()
+        .allowed_tweezer_shifts;
+    assert!(!saved_shifts.is_empty());
+    assert!(saved_shifts.contains_key(&0));
+    assert!(saved_shifts.get(&0).unwrap().contains(&vec![1, 2]));
+    assert!(saved_shifts.get(&1).unwrap().contains(&vec![0]));
+    assert!(saved_shifts.get(&1).unwrap().contains(&vec![2]));
+    assert!(saved_shifts.get(&2).unwrap().contains(&vec![1, 0]));
+    assert!(saved_shifts.get(&3).unwrap().contains(&vec![4, 5]));
+    assert!(saved_shifts.get(&4).unwrap().contains(&vec![3]));
+    assert!(saved_shifts.get(&4).unwrap().contains(&vec![5]));
+    assert!(saved_shifts.get(&5).unwrap().contains(&vec![4, 3]));
+
+    let incorrect_tweezer =
+        device.set_allowed_tweezer_shifts_from_rows(&[&[9]], Some("triangle".to_string()));
+    assert!(incorrect_tweezer.is_err());
+    assert_eq!(
+        incorrect_tweezer.unwrap_err(),
+        RoqoqoBackendError::GenericError {
+            msg: "A given Tweezer is not present in the device Tweezer data.".to_string(),
+        }
+    );
+}
+
 /// Test TweezerDevice set_allowed_tweezer_shifts() method
 #[test]
-fn test_allowed_tweezer_shifts() {
+fn test_allowed_tweezer_shifts_row() {
     let mut device = TweezerDevice::new(None, None);
     device.add_layout("OtherLayout").unwrap();
     device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.0, Some("OtherLayout".to_string()));
@@ -414,7 +460,7 @@ fn test_change_device() {
     assert!(device
         .change_device("PragmaChangeQRydLayout", &Vec::<u8>::new())
         .is_err());
-    assert_eq!(device.current_layout, "Default");
+    assert_eq!(device.current_layout, "default");
     assert!(device
         .change_device("PragmaChangeQRydLayout", &serialize(&pragma_old_c).unwrap())
         .is_err());
@@ -439,13 +485,23 @@ fn test_change_device() {
 #[test]
 fn test_change_device_shift() {
     let mut device = TweezerDevice::new(None, None);
-    device.add_layout("0").unwrap();
-    device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("0".to_string()));
-    device.set_tweezer_single_qubit_gate_time("PauliY", 1, 0.23, Some("0".to_string()));
-    device.set_tweezer_two_qubit_gate_time("CNOT", 2, 3, 0.34, Some("0".to_string()));
-    device.set_tweezer_two_qubit_gate_time("ControlledPauliZ", 1, 2, 0.34, Some("0".to_string()));
+    device.add_layout("triangle").unwrap();
+    device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("triangle".to_string()));
+    device.set_tweezer_single_qubit_gate_time("PauliY", 1, 0.23, Some("triangle".to_string()));
+    device.set_tweezer_two_qubit_gate_time("CNOT", 2, 3, 0.34, Some("triangle".to_string()));
+    device.set_tweezer_two_qubit_gate_time(
+        "ControlledPauliZ",
+        1,
+        2,
+        0.34,
+        Some("triangle".to_string()),
+    );
+    device.set_tweezer_two_qubit_gate_time("Toffoli", 4, 5, 0.34, Some("triangle".to_string()));
     device
-        .set_allowed_tweezer_shifts(&0, &[&[1, 2], &[3]], Some("0".to_string()))
+        .set_allowed_tweezer_shifts(&0, &[&[1, 2], &[3]], Some("triangle".to_string()))
+        .unwrap();
+    device
+        .set_allowed_tweezer_shifts(&1, &[&[4, 5]], Some("triangle".to_string()))
         .unwrap();
 
     let pragma_s = PragmaShiftQubitsTweezers::new(vec![(0, 1), (2, 3)]);
@@ -459,7 +515,10 @@ fn test_change_device_shift() {
         }
     );
 
-    device.switch_layout("0").unwrap();
+    device.current_layout = "triangle".to_string();
+    device.add_qubit_tweezer_mapping(0, 0).unwrap();
+    device.add_qubit_tweezer_mapping(1, 1).unwrap();
+    device.add_qubit_tweezer_mapping(2, 2).unwrap();
 
     let err2 = device.change_device("PragmaShiftQubitsTweezers", &serialize(&pragma_s).unwrap());
     assert!(err2.is_err());
@@ -474,6 +533,12 @@ fn test_change_device_shift() {
         .set_allowed_tweezer_shifts(&2, &[&[3]], None)
         .unwrap();
 
+    // Target already occupied
+    let err3 = device.change_device("PragmaShiftQubitsTweezers", &serialize(&pragma_s).unwrap());
+    assert!(err3.is_err());
+
+    device.deactivate_qubit(1).unwrap();
+
     let ok = device.change_device("PragmaShiftQubitsTweezers", &serialize(&pragma_s).unwrap());
     assert!(ok.is_ok());
     assert_eq!(device.qubit_to_tweezer.as_ref().unwrap().len(), 2);
@@ -485,6 +550,15 @@ fn test_change_device_shift() {
         device.qubit_to_tweezer.as_ref().unwrap().get(&2).unwrap(),
         &3
     );
+
+    device.add_qubit_tweezer_mapping(4, 4).unwrap();
+
+    // Path is blocked
+    let pragma_s = PragmaShiftQubitsTweezers::new(vec![(1, 5)]);
+    let err4 = device.change_device("PragmaShiftQubitsTweezers", &serialize(&pragma_s).unwrap());
+    assert!(err4.is_err());
+
+    // device.set_allowed_tweezer_shifts_from_rows(&[&[0, 1, 2, 3], &[4, 5, 6]], Some("triangle".to_string())).unwrap();
 }
 
 /// Test TweezerDevice from_api() method
@@ -504,7 +578,7 @@ fn test_from_api() {
         .rev()
         .collect::<String>();
     let mut mock = server
-        .mock("POST", mockito::Matcher::Any)
+        .mock("GET", mockito::Matcher::Any)
         .with_status(200)
         .with_body(
             serde_json::to_string(&returned_device_default)
@@ -522,7 +596,7 @@ fn test_from_api() {
 
     mock.remove();
     mock = server
-        .mock("POST", mockito::Matcher::Any)
+        .mock("GET", mockito::Matcher::Any)
         .with_status(400)
         .create();
 
@@ -592,6 +666,7 @@ fn test_phi_theta_relation() {
         .is_none());
 }
 
+// Test TweezerDevice two_tweezer_edges() method
 #[test]
 fn test_two_tweezer_edges() {
     let mut device = TweezerDevice::new(None, None);
@@ -608,4 +683,16 @@ fn test_two_tweezer_edges() {
         .two_tweezer_edges()
         .iter()
         .all(|el| [(0, 1), (0, 2), (1, 3), (2, 3)].contains(el)));
+}
+
+#[test]
+fn test_default_layout() {
+    let mut device = TweezerDevice::new(None, None);
+    device.add_layout("triangle").unwrap();
+    device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("triangle".to_string()));
+
+    assert!(device.set_default_layout("square").is_err());
+
+    assert!(device.set_default_layout("triangle").is_ok());
+    assert_eq!(device.default_layout, Some("triangle".to_string()));
 }
