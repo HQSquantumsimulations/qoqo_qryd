@@ -2,6 +2,10 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+# 0.11.2
+
+* Modified `APIBackend.post_job()` to substitute `PragmaRepeatedMeasurement` into `MeasureQubit` and `PragmaSetNumberOfMeasurements` instances
+
 # 0.11.1
 
 * Corrected the check of the validity of a `PragmaShiftQubitsTweezers` operation for `TweezerDevice`

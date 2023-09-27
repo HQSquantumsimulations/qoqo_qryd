@@ -16,9 +16,11 @@ use num_complex::Complex64;
 use reqwest::blocking::Client;
 use reqwest::blocking::Response;
 use roqoqo::backends::RegisterResult;
+use roqoqo::devices::Device;
 use roqoqo::measurements::ClassicalRegister;
 use roqoqo::operations::Define;
 use roqoqo::operations::Operation;
+use roqoqo::operations::*;
 use roqoqo::prelude::EvaluatingBackend;
 use roqoqo::prelude::Operate;
 use roqoqo::Circuit;
@@ -393,6 +395,8 @@ impl APIBackend {
     pub fn post_job(&self, quantumprogram: QuantumProgram) -> Result<String, RoqoqoBackendError> {
         // Prepare data that need to be passed to the WebAPI client
         let seed_param: usize = self.device.seed(); // seed.unwrap_or(0);
+        let mut transform_pragma_repeated_measurement: bool = false;
+
         match &quantumprogram {
             QuantumProgram::ClassicalRegister { measurement, .. } => {
                 if measurement.circuits.len() != 1 {
@@ -400,6 +404,14 @@ impl APIBackend {
                 }
                 if measurement.circuits[0].is_parametrized() {
                     return Err(RoqoqoBackendError::GenericError { msg: "Qoqo circuit contains symbolic parameters. The QrydWebAPI does not support symbolic parameters.".to_string() });
+                }
+                if measurement.circuits[0].count_occurences(&["PragmaRepeatedMeasurement"]) >= 1 {
+                    transform_pragma_repeated_measurement = true;
+                }
+                if let Some(const_c) = &measurement.constant_circuit {
+                    if const_c.count_occurences(&["PragmaRepeatedMeasurement"]) >= 1 {
+                        transform_pragma_repeated_measurement = true;
+                    }
                 }
             }
             _ => {
@@ -409,13 +421,70 @@ impl APIBackend {
                 })
             }
         }
+
         check_for_api_compatability(&quantumprogram)?;
+
+        // If a PragmaRepeatedMeasurement is present, substitute it with a set of MeasureQubit operations
+        //  followed by a PragmaSetNumberOfMeasurements.
+        // If not, take user's input directly.
+        let filtered_qp: QuantumProgram = if transform_pragma_repeated_measurement {
+            let (previous_circuit, previous_const_circuit) = match &quantumprogram {
+                QuantumProgram::ClassicalRegister { measurement, .. } => (
+                    measurement.circuits[0].clone(),
+                    measurement.constant_circuit.clone(),
+                ),
+                _ => return Err(RoqoqoBackendError::GenericError {
+                    msg: "QRyd API Backend only supports posting ClassicalRegister QuantumPrograms"
+                        .to_string(),
+                }),
+            };
+
+            let mut modified_circuit = Circuit::new();
+            let mut modified_const_circuit: Option<Circuit> = None;
+
+            for op in previous_circuit.iter() {
+                match op {
+                    Operation::PragmaRepeatedMeasurement(pragma) => {
+                        modified_circuit +=
+                            self._transform_pragma_repeated_measurements(pragma.clone());
+                    }
+                    _ => {
+                        modified_circuit.add_operation(op.clone());
+                    }
+                }
+            }
+            if let Some(const_circuit) = previous_const_circuit {
+                let mut inner_const = Circuit::new();
+                for op in const_circuit.iter() {
+                    match op {
+                        Operation::PragmaRepeatedMeasurement(pragma) => {
+                            inner_const +=
+                                self._transform_pragma_repeated_measurements(pragma.clone());
+                        }
+                        _ => {
+                            inner_const.add_operation(op.clone());
+                        }
+                    }
+                }
+                modified_const_circuit = Some(inner_const);
+            }
+            QuantumProgram::ClassicalRegister {
+                measurement: ClassicalRegister {
+                    constant_circuit: modified_const_circuit,
+                    circuits: vec![modified_circuit],
+                },
+                input_parameter_names: vec![],
+            }
+        } else {
+            quantumprogram
+        };
+
         // let quantumprogram: roqoqo_1_0::QuantumProgram =
         //     downconvert_roqoqo_version(quantumprogram)?;
         // dbg!(&serde_json::to_string(&quantumprogram).unwrap());
         let data = QRydRunData {
             backend: self.device.qrydbackend(),
-            program: quantumprogram,
+            program: filtered_qp,
             dev: self.dev,
             fusion_max_qubits: 4,
             seed_simulator: Some(seed_param),
@@ -773,6 +842,24 @@ impl APIBackend {
     pub fn set_dev(&mut self, dev: bool) {
         self.dev = dev;
     }
+
+    /// Transforms a PragmaRepeatedMeasurement operation into a set of
+    /// MeasureQubit operations followed by a PragmaSetNumberOfMeasurements.
+    ///
+    fn _transform_pragma_repeated_measurements(
+        &self,
+        operation: PragmaRepeatedMeasurement,
+    ) -> Circuit {
+        let mut equivalent_circuit = Circuit::new();
+        for i in 0..self.device.number_qubits() {
+            equivalent_circuit += MeasureQubit::new(i, operation.readout().to_string(), i);
+        }
+        equivalent_circuit += PragmaSetNumberOfMeasurements::new(
+            *operation.number_measurements(),
+            operation.readout().to_string(),
+        );
+        equivalent_circuit
+    }
 }
 
 impl EvaluatingBackend for APIBackend {
@@ -852,6 +939,7 @@ mod test {
     use mockito::Server;
     use roqoqo::operations;
     use roqoqo::{Circuit, QuantumProgram};
+    use serde_json::json;
 
     /// Test Debug, Clone and PartialEq of ApiBackend
     #[test]
@@ -1113,5 +1201,95 @@ mod test {
             job_delete.unwrap_err(),
             RoqoqoBackendError::NetworkError { .. }
         ));
+    }
+
+    // Test PragmaRepeatedMeasurement `.post_job()` transformation
+    #[test]
+    fn api_backend_repeated_measurement() {
+        let mut server = Server::new();
+        let port = server
+            .url()
+            .chars()
+            .rev()
+            .take(5)
+            .collect::<String>()
+            .chars()
+            .rev()
+            .collect::<String>();
+        let device = QrydEmuSquareDevice::new(Some(1), None, None);
+        let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
+        let api_backend_new = APIBackend::new(qryd_device, None, None, Some(port)).unwrap();
+
+        let mut input_circuit = Circuit::new();
+        input_circuit += operations::DefinitionBit::new("ro".to_string(), 3, true);
+        input_circuit += operations::RotateX::new(0, std::f64::consts::FRAC_PI_2.into());
+        input_circuit += operations::RotateX::new(1, std::f64::consts::FRAC_PI_2.into());
+        input_circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
+        input_circuit += operations::PragmaRepeatedMeasurement::new("ro".to_string(), 10, None);
+        let mut const_input_circuit = Circuit::new();
+        const_input_circuit += operations::DefinitionBit::new("ro".to_string(), 3, true);
+        const_input_circuit += operations::RotateX::new(0, std::f64::consts::FRAC_PI_2.into());
+        const_input_circuit += operations::RotateX::new(1, std::f64::consts::FRAC_PI_2.into());
+        const_input_circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
+        const_input_circuit +=
+            operations::PragmaRepeatedMeasurement::new("ro".to_string(), 10, None);
+        let input_measurement = ClassicalRegister {
+            constant_circuit: Some(const_input_circuit),
+            circuits: vec![input_circuit.clone()],
+        };
+        let input_program = QuantumProgram::ClassicalRegister {
+            measurement: input_measurement,
+            input_parameter_names: vec![],
+        };
+
+        let mut output_circuit = Circuit::new();
+        output_circuit += operations::DefinitionBit::new("ro".to_string(), 3, true);
+        output_circuit += operations::RotateX::new(0, std::f64::consts::FRAC_PI_2.into());
+        output_circuit += operations::RotateX::new(1, std::f64::consts::FRAC_PI_2.into());
+        output_circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
+        for i in 0..30 {
+            output_circuit += operations::MeasureQubit::new(i, "ro".to_string(), i);
+        }
+        output_circuit += operations::PragmaSetNumberOfMeasurements::new(10, "ro".to_string());
+        let mut const_output_circuit = Circuit::new();
+        const_output_circuit += operations::DefinitionBit::new("ro".to_string(), 3, true);
+        const_output_circuit += operations::RotateX::new(0, std::f64::consts::FRAC_PI_2.into());
+        const_output_circuit += operations::RotateX::new(1, std::f64::consts::FRAC_PI_2.into());
+        const_output_circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
+        for i in 0..30 {
+            const_output_circuit += operations::MeasureQubit::new(i, "ro".to_string(), i);
+        }
+        const_output_circuit +=
+            operations::PragmaSetNumberOfMeasurements::new(10, "ro".to_string());
+        let output_measurement = ClassicalRegister {
+            constant_circuit: Some(const_output_circuit),
+            circuits: vec![output_circuit.clone()],
+        };
+        let output_program = QuantumProgram::ClassicalRegister {
+            measurement: output_measurement,
+            input_parameter_names: vec![],
+        };
+        let data = QRydRunData {
+            backend: device.qrydbackend(),
+            program: output_program,
+            dev: false,
+            fusion_max_qubits: 4,
+            extended_set_size: 5,
+            extended_set_weight: 0.5,
+            seed_simulator: Some(1),
+            seed_compiler: None,
+            use_extended_set: true,
+            use_reverse_traversal: true,
+            reverse_traversal_iterations: 2,
+        };
+
+        let mock = server
+            .mock("POST", mockito::Matcher::Any)
+            .match_body(mockito::Matcher::Json(json!(data)))
+            .create();
+
+        let _ = api_backend_new.post_job(input_program);
+
+        mock.assert();
     }
 }
