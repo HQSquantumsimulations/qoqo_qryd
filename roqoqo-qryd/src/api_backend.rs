@@ -426,7 +426,7 @@ impl APIBackend {
 
         // If a PragmaRepeatedMeasurement is present, substitute it with a set of MeasureQubit operations
         //  followed by a PragmaSetNumberOfMeasurements.
-        // If not, take user's directly.
+        // If not, take user's input directly.
         let filtered_qp: QuantumProgram = if transform_pragma_repeated_measurement {
             let (previous_circuit, previous_const_circuit) = match &quantumprogram {
                 QuantumProgram::ClassicalRegister { measurement, .. } => (
@@ -851,11 +851,7 @@ impl APIBackend {
         operation: PragmaRepeatedMeasurement,
     ) -> Circuit {
         let mut equivalent_circuit = Circuit::new();
-        let num_qubits = match &self.device {
-            QRydAPIDevice::QrydEmuSquareDevice(sq) => sq.number_qubits(),
-            QRydAPIDevice::QrydEmuTriangularDevice(tr) => tr.number_qubits(),
-        };
-        for i in 0..num_qubits {
+        for i in 0..self.device.number_qubits() {
             equivalent_circuit += MeasureQubit::new(i, operation.readout().to_string(), i);
         }
         equivalent_circuit += PragmaSetNumberOfMeasurements::new(
