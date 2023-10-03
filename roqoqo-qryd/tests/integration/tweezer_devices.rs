@@ -695,4 +695,5 @@ fn test_default_layout() {
 
     assert!(device.set_default_layout("triangle").is_ok());
     assert_eq!(device.default_layout, Some("triangle".to_string()));
+    assert_eq!(device.current_layout, "triangle".to_string());
 }

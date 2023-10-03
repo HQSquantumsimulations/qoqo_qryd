@@ -1045,5 +1045,14 @@ fn test_default_layout() {
         assert!(device_mut
             .call_method1("set_default_layout", ("triangle",))
             .is_ok());
+
+        assert_eq!(
+            device_mut
+                .call_method0("current_layout")
+                .unwrap()
+                .extract::<String>()
+                .unwrap(),
+            "triangle"
+        );
     })
 }

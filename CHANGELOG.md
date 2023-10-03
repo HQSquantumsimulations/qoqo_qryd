@@ -4,7 +4,7 @@ Tracks qoqo-qryd changes after 0.5
 
 # 0.11.3
 
-* Modified `TweezerDevice.from_json()` to automatically switch the layout of the device if a default one was set
+* Modified `TweezerDevice.from_json()` and `TweezerMutableDevice.set_default_layout()` to automatically switch the layout of the device if a default one was set
 
 # 0.11.2
 

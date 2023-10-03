@@ -438,7 +438,7 @@ impl TweezerDeviceWrapper {
         if let Some(layout) = &internal.default_layout {
             internal
                 .switch_layout(&layout.to_string())
-                .expect("Internal error, switching to default layout failed");
+                .expect("Internal error: switching to default layout failed");
         }
         Ok(TweezerDeviceWrapper { internal })
     }
@@ -1088,6 +1088,8 @@ impl TweezerMutableDeviceWrapper {
     }
 
     /// Set the name of the default layout to use.
+    ///
+    /// Additionally, switch to the layout.
     ///
     /// Args:
     ///     layout (str): The name of the layout to use.

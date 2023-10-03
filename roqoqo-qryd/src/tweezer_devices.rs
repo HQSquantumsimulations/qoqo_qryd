@@ -636,13 +636,15 @@ impl TweezerDevice {
 
     /// Set the name of the default layout to use.
     ///
+    /// Additionally, switch to the layout.
+    ///
     /// # Arguments
     ///
     /// * `layout` - The name of the layout to use.
     ///
     /// # Returns
     ///
-    /// * `Ok(())` - The default layout has been set.
+    /// * `Ok(())` - The default layout has been set and switched to.
     /// * `Err(RoqoqoBackendError)` - The given layout name is not present in the layout register.
     pub fn set_default_layout(&mut self, layout: &str) -> Result<(), RoqoqoBackendError> {
         if !self.layout_register.contains_key(layout) {
@@ -651,6 +653,8 @@ impl TweezerDevice {
             });
         }
         self.default_layout = Some(layout.to_string());
+        self.switch_layout(layout)
+            .expect("Internal error: switching to default layout failed");
         Ok(())
     }
 
