@@ -433,11 +433,14 @@ impl TweezerDeviceWrapper {
     #[staticmethod]
     #[pyo3(text_signature = "(input, /)")]
     fn from_json(input: &str) -> PyResult<TweezerDeviceWrapper> {
-        Ok(TweezerDeviceWrapper {
-            internal: serde_json::from_str(input).map_err(|_| {
-                PyValueError::new_err("Input cannot be deserialized to TweezerDevice")
-            })?,
-        })
+        let mut internal: TweezerDevice = serde_json::from_str(input)
+            .map_err(|_| PyValueError::new_err("Input cannot be deserialized to TweezerDevice"))?;
+        if let Some(layout) = &internal.default_layout {
+            internal
+                .switch_layout(&layout.to_string())
+                .expect("Internal error, switching to default layout failed");
+        }
+        Ok(TweezerDeviceWrapper { internal })
     }
 
     /// Return number of qubits in device.

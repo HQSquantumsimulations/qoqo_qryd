@@ -550,23 +550,33 @@ fn test_to_from_json() {
         let device_mut = device_type_mut.call0().unwrap();
 
         device_mut
-            .call_method1("set_tweezer_single_qubit_gate_time", ("RotateZ", 0, 0.23))
+            .call_method1("add_layout", ("Triangle",))
+            .unwrap();
+        device_mut
+            .call_method1(
+                "set_tweezer_single_qubit_gate_time",
+                ("RotateZ", 0, 0.23, "Triangle"),
+            )
             .unwrap();
         device_mut
             .call_method1(
                 "set_tweezer_two_qubit_gate_time",
-                ("PhaseShiftedControlledPhase", 0, 1, 0.13),
+                ("PhaseShiftedControlledPhase", 0, 1, 0.13, "Triangle"),
             )
             .unwrap();
         device_mut
             .call_method1(
                 "set_tweezer_three_qubit_gate_time",
-                ("ControlledControlledPhaseShift", 0, 1, 2, 0.13),
+                ("ControlledControlledPhaseShift", 0, 1, 2, 0.13, "Triangle"),
             )
             .unwrap();
 
         device_mut
-            .call_method1("set_allowed_tweezer_shifts", (0, vec![vec![1]]))
+            .call_method1("set_allowed_tweezer_shifts", (0, vec![vec![1]], "Triangle"))
+            .unwrap();
+
+        device_mut
+            .call_method1("set_default_layout", ("Triangle",))
             .unwrap();
 
         let serialised = device.call_method0("to_json").unwrap();
@@ -600,6 +610,15 @@ fn test_to_from_json() {
         let device_wrapper_mut = device_mut.extract::<TweezerMutableDeviceWrapper>().unwrap();
         assert_eq!(device_wrapper, serde_wrapper);
         assert_eq!(device_wrapper_mut, serde_wrapper_mut);
+
+        let device_from_mut = device_type.call0().unwrap();
+        let deserialized_dev_from_mut_dev = device_from_mut
+            .call_method1("from_json", (serialised_mut,))
+            .unwrap();
+        let device_from_mut_wrapper = deserialized_dev_from_mut_dev
+            .extract::<TweezerDeviceWrapper>()
+            .unwrap();
+        assert_eq!(device_from_mut_wrapper.current_layout(), "Triangle");
     });
 }
 

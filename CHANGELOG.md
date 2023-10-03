@@ -2,6 +2,10 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+# 0.11.3
+
+* Modified `TweezerDevice.from_json()` to automatically switch the layout of the device if a default one was set
+
 # 0.11.2
 
 * Modified `APIBackend.post_job()` to substitute `PragmaRepeatedMeasurement` into `MeasureQubit` and `PragmaSetNumberOfMeasurements` instances
