@@ -39,6 +39,32 @@ fn test_new() {
     })
 }
 
+/// Test from_mutable() of TweezerDeviceWrapper
+#[test]
+fn test_from_mutable() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let device_type = py.get_type::<TweezerDeviceWrapper>();
+        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
+        let device_mut = device_type_mut.call0().unwrap();
+
+        device_mut
+            .call_method1("add_layout", ("triangle",))
+            .unwrap();
+
+        let dev = device_type.call_method1("from_mutable", (device_mut,));
+
+        assert!(dev.is_ok());
+        assert!(dev
+            .unwrap()
+            .call_method0("available_layouts")
+            .unwrap()
+            .extract::<Vec<String>>()
+            .unwrap()
+            .contains(&"triangle".to_string()))
+    })
+}
+
 /// Test available_ switch_ and add_layout methods of TweezerDeviceWrapper and TweezerMutableDeviceWrapper
 #[test]
 fn test_layouts() {

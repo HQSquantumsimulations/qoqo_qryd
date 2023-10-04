@@ -88,6 +88,20 @@ impl TweezerDeviceWrapper {
         }
     }
 
+    /// Creates a new TweezerDevice instance from a TweezerMutableDevice instance.
+    ///
+    /// Args:
+    ///     device (TweezerMutableDevice): The TweezerMutableDevice instance.
+    ///
+    /// Returns:
+    ///     TweezerDevice: The new TweezerDevice instance.
+    #[staticmethod]
+    #[pyo3(text_signature = "(device, /)")]
+    fn from_mutable(device: Py<PyAny>) -> PyResult<Self> {
+        let rust_dev = TweezerMutableDeviceWrapper::from_pyany(device)?;
+        Ok(Self { internal: rust_dev })
+    }
+
     /// Creates a new TweezerDevice instance containing populated tweezer data.
     ///
     /// This requires a valid QRYD_API_TOKEN. Visit `https://thequantumlaend.de/get-access/` to get one.
@@ -1130,6 +1144,34 @@ impl TweezerMutableDeviceWrapper {
         self.internal
             .set_default_layout(layout)
             .map_err(|err| PyValueError::new_err(format!("{:}", err)))
+    }
+}
+
+impl TweezerMutableDeviceWrapper {
+    /// Extracts a TweezerDevice from a TweezerDeviceWrapper python object.
+    ///
+    /// # Arguments:
+    ///
+    /// `input` - The Python object that should be casted to a [roqoqo_qryd::TweezerDevice]
+    pub fn from_pyany(input: Py<PyAny>) -> PyResult<TweezerDevice> {
+        Python::with_gil(|py| -> PyResult<TweezerDevice> {
+            let input = input.as_ref(py);
+            if let Ok(try_downcast) = input.extract::<TweezerMutableDeviceWrapper>() {
+                Ok(try_downcast.internal)
+            } else {
+                Err(PyTypeError::new_err(
+                    "Input cannot be converted to a TweezerMutableDevice instance.",
+                ))
+            }
+        })
+    }
+}
+
+impl From<TweezerMutableDeviceWrapper> for TweezerDeviceWrapper {
+    fn from(mutable: TweezerMutableDeviceWrapper) -> Self {
+        Self {
+            internal: mutable.internal,
+        }
     }
 }
 
