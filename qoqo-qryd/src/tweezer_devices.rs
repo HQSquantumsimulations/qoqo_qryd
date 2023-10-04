@@ -413,11 +413,26 @@ impl TweezerDeviceWrapper {
     ///     str: The serialized form of TweezerDevice.
     ///
     /// Raises:
-    ///     ValueError: Cannot serialize TweezerDevice to json.
+    ///     ValueError: Cannot serialize TweezerDevice to json or
+    ///         the device does not have valid QRyd gates available.
     fn to_json(&self) -> PyResult<String> {
-        let serialized = serde_json::to_string(&self.internal)
-            .map_err(|_| PyValueError::new_err("Cannot serialize TweezerDevice to json"))?;
-        Ok(serialized)
+        const SINGLE_GATES: [&str; 2] = ["PhaseShiftState1", "RotateXY"];
+        const DOUBLE_GATES: &str = "PhaseShiftedControlledPhase";
+        if self.internal.layout_register.values().any(|info| {
+            SINGLE_GATES
+                .iter()
+                .any(|&g| info.tweezer_single_qubit_gate_times.contains_key(g))
+                || info.tweezer_two_qubit_gate_times.contains_key(DOUBLE_GATES)
+        }) {
+            let serialized = serde_json::to_string(&self.internal)
+                .map_err(|_| PyValueError::new_err("Cannot serialize TweezerDevice to json"))?;
+            Ok(serialized)
+        } else {
+            Err(PyValueError::new_err(
+                "The device does not allow any valid gate in any layout. ".to_owned() +
+                "The valid gates are RotateXY, PhaseShiftState1 and PhaseShiftedControlledPhase.",
+            ))
+        }
     }
 
     /// Convert the json representation of a TweezerDevice to a TweezerDevice.
@@ -855,12 +870,27 @@ impl TweezerMutableDeviceWrapper {
     ///     str: The serialized form of TweezerMutableDevice.
     ///
     /// Raises:
-    ///     ValueError: Cannot serialize TweezerMutableDevice to json.
+    ///     ValueError: Cannot serialize TweezerMutableDevice to json or
+    ///         the device does not have valid QRyd gates available.
     fn to_json(&self) -> PyResult<String> {
-        let serialized = serde_json::to_string(&self.internal).map_err(|_| {
-            PyValueError::new_err("Cannot serialize ExperimentalMutableDevice to json")
-        })?;
-        Ok(serialized)
+        const SINGLE_GATES: [&str; 2] = ["PhaseShiftState1", "RotateXY"];
+        const DOUBLE_GATES: &str = "PhaseShiftedControlledPhase";
+        if self.internal.layout_register.values().any(|info| {
+            SINGLE_GATES
+                .iter()
+                .any(|&g| info.tweezer_single_qubit_gate_times.contains_key(g))
+                || info.tweezer_two_qubit_gate_times.contains_key(DOUBLE_GATES)
+        }) {
+            let serialized = serde_json::to_string(&self.internal).map_err(|_| {
+                PyValueError::new_err("Cannot serialize TweezerMutableDevice to json")
+            })?;
+            Ok(serialized)
+        } else {
+            Err(PyValueError::new_err(
+                "The device does not allow any valid gate in any layout. ".to_owned() +
+                "The valid gates are RotateXY, PhaseShiftState1 and PhaseShiftedControlledPhase.",
+            ))
+        }
     }
 
     /// Convert the json representation of a TweezerMutableDevice to an TweezerMutableDevice.

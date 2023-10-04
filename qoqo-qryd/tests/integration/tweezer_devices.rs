@@ -12,7 +12,7 @@
 
 //! Integration test for Tweezer Devices
 
-use pyo3::{prelude::*, types::PyDict};
+use pyo3::{exceptions::PyValueError, prelude::*, types::PyDict};
 #[cfg(feature = "web-api")]
 use serde_json::Value;
 
@@ -542,11 +542,18 @@ fn test_copy_deepcopy() {
 /// Test to_ and from_json functions of TweezerDeviceWrapper and TweezerMutableDeviceWrapper
 #[test]
 fn test_to_from_json() {
+    // Setup fake preconfigured device
+    let mut ext = TweezerDevice::new(None, None);
+    ext.set_tweezer_single_qubit_gate_time("PhaseShiftState1", 0, 0.23, None);
+    ext.set_tweezer_single_qubit_gate_time("PhaseShiftState1", 1, 0.23, None);
+    let fake_api_device = TweezerDeviceWrapper { internal: ext };
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
+        let fake_api_pypyany = fake_api_device.into_py(py);
         let device_type = py.get_type::<TweezerDeviceWrapper>();
         let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
-        let device = device_type.call0().unwrap();
+        let device = fake_api_pypyany.as_ref(py);
+        let device_empty = device_type.call0().unwrap();
         let device_mut = device_type_mut.call0().unwrap();
 
         device_mut
@@ -619,6 +626,16 @@ fn test_to_from_json() {
             .extract::<TweezerDeviceWrapper>()
             .unwrap();
         assert_eq!(device_from_mut_wrapper.current_layout(), "Triangle");
+
+        let serialised_empty = device_empty.call_method0("to_json");
+        assert!(serialised_empty.is_err());
+        assert_eq!(
+            serialised_empty.unwrap_err().to_string(),
+            PyValueError::new_err(
+                "The device does not allow any valid gate in any layout. ".to_owned() +
+                "The valid gates are RotateXY, PhaseShiftState1 and PhaseShiftedControlledPhase.",
+            ).to_string()
+        );
     });
 }
 
