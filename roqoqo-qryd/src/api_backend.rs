@@ -344,6 +344,7 @@ impl APIBackend {
     ///               In synchronous operation the WebAPI is queried every 30 seconds until it has
     ///               been queried `timeout` times.
     /// * `mock_port` - Server port to be used for testing purposes.
+    /// * `dev` - The boolean to set the dev option to.
     ///
     pub fn new(
         device: QRydAPIDevice,

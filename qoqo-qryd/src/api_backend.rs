@@ -60,7 +60,8 @@ impl APIBackendWrapper {
     ///               In synchronous operation the WebAPI is queried every 30 seconds until it has
     ///               been queried `timeout` times.
     ///     mock_port (Optional[str]): Server port to be used for testing purposes.
-    ///
+    ///     dev (Optional[bool]): The boolean to set the dev option to.
+    /// 
     /// Raises:
     ///     TypeError: Device Parameter is not QRydAPIDevice
     ///     RuntimeError: No access token found
