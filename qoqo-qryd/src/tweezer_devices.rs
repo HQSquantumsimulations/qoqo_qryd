@@ -44,14 +44,18 @@ impl TweezerDeviceWrapper {
     /// Creates a new TweezerDevice instance.
     ///
     /// Args:
+    ///     seed (int): Seed, if not provided will be set to 0 per default (not recommended!)
     ///     controlled_z_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledZ gate.
     ///     controlled_phase_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledPhase gate.
     ///
     /// Returns:
     ///     TweezerDevice: The new TweezerDevice instance.
     #[new]
-    #[pyo3(text_signature = "(controlled_z_phase_relation, controlled_phase_phase_relation, /)")]
+    #[pyo3(
+        text_signature = "(seed, controlled_z_phase_relation, controlled_phase_phase_relation, /)"
+    )]
     pub fn new(
+        seed: Option<usize>,
         controlled_z_phase_relation: Option<&PyAny>,
         controlled_phase_phase_relation: Option<&PyAny>,
     ) -> Self {
@@ -84,7 +88,7 @@ impl TweezerDeviceWrapper {
             None
         };
         Self {
-            internal: TweezerDevice::new(czpr, cppr),
+            internal: TweezerDevice::new(seed, czpr, cppr),
         }
     }
 
@@ -509,6 +513,16 @@ impl TweezerDeviceWrapper {
     fn two_tweezer_edges(&self) -> Vec<(usize, usize)> {
         self.internal.two_tweezer_edges()
     }
+
+    /// Returns the backend associated with the device.
+    pub fn qrydbackend(&self) -> String {
+        self.internal.qrydbackend.clone()
+    }
+
+    /// Returns the seed usized for the API.
+    pub fn seed(&self) -> usize {
+        self.internal.seed
+    }
 }
 
 /// Tweezer Mutable Device
@@ -532,14 +546,18 @@ impl TweezerMutableDeviceWrapper {
     /// Creates a new TweezerMutableDevice instance.
     ///
     /// Args:
+    ///     seed (int): Seed, if not provided will be set to 0 per default (not recommended!)
     ///     controlled_z_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledZ gate.
     ///     controlled_phase_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledPhase gate.
     ///
     /// Returns:
     ///     TweezerMutableDevice: The new TweezerMutableDevice instance.
     #[new]
-    #[pyo3(text_signature = "(controlled_z_phase_relation, controlled_phase_phase_relation, /)")]
+    #[pyo3(
+        text_signature = "(seed, controlled_z_phase_relation, controlled_phase_phase_relation, /)"
+    )]
     pub fn new(
+        seed: Option<usize>,
         controlled_z_phase_relation: Option<&PyAny>,
         controlled_phase_phase_relation: Option<&PyAny>,
     ) -> Self {
@@ -572,7 +590,7 @@ impl TweezerMutableDeviceWrapper {
             None
         };
         Self {
-            internal: TweezerDevice::new(czpr, cppr),
+            internal: TweezerDevice::new(seed, czpr, cppr),
         }
     }
 
@@ -964,6 +982,16 @@ impl TweezerMutableDeviceWrapper {
     ///     Sequence[(int, int)]: List of two tweezer edges
     fn two_tweezer_edges(&self) -> Vec<(usize, usize)> {
         self.internal.two_tweezer_edges()
+    }
+
+    /// Returns the backend associated with the device.
+    pub fn qrydbackend(&self) -> String {
+        self.internal.qrydbackend.clone()
+    }
+
+    /// Returns the seed usized for the API.
+    pub fn seed(&self) -> usize {
+        self.internal.seed
     }
 
     /// Set the time of a single-qubit gate for a tweezer in a given Layout.

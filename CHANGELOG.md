@@ -8,6 +8,7 @@ Tracks qoqo-qryd changes after 0.5
 * Modified `TweezerDevice.` and `TweezerMutableDevice.to_json()` such that it returns an error in case no QRyd-valid gates are executable
 * Added `TweezerDevice.from_mutable()` static method
 * Added `dev` parameter in `APIBackend` constructor
+* Added `TweezerDevice` support for `APIBackend`
 
 # 0.11.2
 

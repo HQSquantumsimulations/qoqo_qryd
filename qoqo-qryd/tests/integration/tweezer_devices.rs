@@ -31,11 +31,44 @@ fn test_new() {
     Python::with_gil(|py| {
         let device_type = py.get_type::<TweezerDeviceWrapper>();
         let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
-        let res = device_type.call0();
-        let res_mut = device_type_mut.call0();
+        let res = device_type.call1((2,));
+        let res_mut = device_type_mut.call1((2,));
 
         assert!(res.is_ok());
         assert!(res_mut.is_ok());
+
+        let res = res.unwrap();
+        let res_mut = res_mut.unwrap();
+        assert_eq!(
+            res.call_method0("qrydbackend")
+                .unwrap()
+                .extract::<String>()
+                .unwrap(),
+            "qryd_tweezer_device"
+        );
+        assert_eq!(
+            res_mut
+                .call_method0("qrydbackend")
+                .unwrap()
+                .extract::<String>()
+                .unwrap(),
+            "qryd_tweezer_device"
+        );
+        assert_eq!(
+            res.call_method0("seed")
+                .unwrap()
+                .extract::<usize>()
+                .unwrap(),
+            2
+        );
+        assert_eq!(
+            res_mut
+                .call_method0("seed")
+                .unwrap()
+                .extract::<usize>()
+                .unwrap(),
+            2
+        );
     })
 }
 
@@ -69,7 +102,7 @@ fn test_from_mutable() {
 #[test]
 fn test_layouts() {
     // Setup fake preconfigured device
-    let mut exp = TweezerDevice::new(None, None);
+    let mut exp = TweezerDevice::new(None, None, None);
     exp.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None);
     exp.add_qubit_tweezer_mapping(0, 0).unwrap();
     exp.add_layout("OtherLayout").unwrap();
@@ -148,7 +181,7 @@ fn test_layouts() {
 #[test]
 fn test_qubit_tweezer_mapping() {
     // Setup fake preconfigured device
-    let mut exp = TweezerDevice::new(None, None);
+    let mut exp = TweezerDevice::new(None, None, None);
     exp.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.23, None);
     exp.set_tweezer_single_qubit_gate_time("PauliX", 2, 0.23, None);
     let fake_api_device = TweezerDeviceWrapper { internal: exp };
@@ -260,7 +293,7 @@ fn test_allowed_tweezer_shifts_from_rows() {
 #[test]
 fn test_deactivate_qubit() {
     // Setup fake preconfigured device
-    let mut exp = TweezerDevice::new(None, None);
+    let mut exp = TweezerDevice::new(None, None, None);
     exp.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.23, None);
     exp.set_tweezer_single_qubit_gate_time("PauliY", 0, 0.23, None);
     let fake_api_device = TweezerDeviceWrapper { internal: exp };
@@ -311,7 +344,7 @@ fn test_deactivate_qubit() {
 #[test]
 fn test_qubit_times() {
     // Setup fake preconfigured device
-    let mut exp = TweezerDevice::new(None, None);
+    let mut exp = TweezerDevice::new(None, None, None);
     exp.add_layout("OtherLayout").unwrap();
     exp.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("OtherLayout".to_string()));
     exp.set_tweezer_two_qubit_gate_time("CNOT", 0, 1, 0.13, Some("OtherLayout".to_string()));
@@ -424,7 +457,7 @@ fn test_qubit_times() {
 #[test]
 fn test_number_qubits() {
     // Setup fake preconfigured device
-    let mut exp = TweezerDevice::new(None, None);
+    let mut exp = TweezerDevice::new(None, None, None);
     exp.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None);
     exp.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.23, None);
     let fake_api_device = TweezerDeviceWrapper { internal: exp };
@@ -569,7 +602,7 @@ fn test_copy_deepcopy() {
 #[test]
 fn test_to_from_json() {
     // Setup fake preconfigured device
-    let mut ext = TweezerDevice::new(None, None);
+    let mut ext = TweezerDevice::new(None, None, None);
     ext.set_tweezer_single_qubit_gate_time("PhaseShiftState1", 0, 0.23, None);
     ext.set_tweezer_single_qubit_gate_time("PhaseShiftState1", 1, 0.23, None);
     let fake_api_device = TweezerDeviceWrapper { internal: ext };
@@ -786,14 +819,14 @@ fn test_two_qubit_edges() {
 #[test]
 #[cfg(feature = "web-api")]
 fn test_from_api() {
-    let mut sent_device = TweezerDevice::new(None, None);
+    let mut sent_device = TweezerDevice::new(None, None, None);
     sent_device.add_layout("triangle").unwrap();
     sent_device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("triangle".to_string()));
     sent_device.set_default_layout("triangle").unwrap();
     // let sent_device_wrapper = TweezerDeviceWrapper {
     //     internal: sent_device.clone(),
     // };
-    let mut received_device = TweezerDevice::new(None, None);
+    let mut received_device = TweezerDevice::new(None, None, None);
     received_device.add_layout("triangle").unwrap();
     received_device.set_tweezer_single_qubit_gate_time(
         "PauliX",
@@ -922,7 +955,7 @@ fn test_convert_to_device() {
         let device = device_type.call0().unwrap();
 
         let converted = convert_into_device(device).unwrap();
-        let rust_dev: TweezerDevice = TweezerDevice::new(None, None);
+        let rust_dev: TweezerDevice = TweezerDevice::new(None, None, None);
 
         assert_eq!(converted, rust_dev);
     });
@@ -935,7 +968,9 @@ fn test_phi_theta_relations() {
     Python::with_gil(|py| {
         let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
         let device_type = py.get_type::<TweezerDeviceWrapper>();
-        let device_f = device_type_mut.call1(("2.15", "2.13")).unwrap();
+        let device_f = device_type_mut
+            .call1((Option::<usize>::None, "2.15", "2.13"))
+            .unwrap();
         let device = device_type.call0().unwrap();
         let device_mut = device_type_mut.call0().unwrap();
 
@@ -1021,7 +1056,7 @@ fn test_phi_theta_relations() {
 #[test]
 fn test_two_tweezer_edges() {
     // Setup fake preconfigured device
-    let mut exp = TweezerDevice::new(None, None);
+    let mut exp = TweezerDevice::new(None, None, None);
     exp.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 0, 1, 0.23, None);
     exp.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 1, 2, 0.23, None);
     let fake_api_device = TweezerDeviceWrapper { internal: exp };

@@ -35,7 +35,7 @@ use std::collections::HashMap;
 /// For simulations of the QRyd quantum computer use the Backend simulator [crate::Backend].
 ///
 #[pyclass(name = "APIBackend", module = "qoqo_qryd")]
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct APIBackendWrapper {
     /// Internal storage of [roqoqo_qryd::APIBackend]
     pub internal: APIBackend,
@@ -61,7 +61,7 @@ impl APIBackendWrapper {
     ///               been queried `timeout` times.
     ///     mock_port (Optional[str]): Server port to be used for testing purposes.
     ///     dev (Optional[bool]): The boolean to set the dev option to.
-    /// 
+    ///
     /// Raises:
     ///     TypeError: Device Parameter is not QRydAPIDevice
     ///     RuntimeError: No access token found
