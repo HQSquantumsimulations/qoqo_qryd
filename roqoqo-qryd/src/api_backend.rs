@@ -16,7 +16,6 @@ use num_complex::Complex64;
 use reqwest::blocking::Client;
 use reqwest::blocking::Response;
 use roqoqo::backends::RegisterResult;
-use roqoqo::devices::Device;
 use roqoqo::measurements::ClassicalRegister;
 use roqoqo::operations::Define;
 use roqoqo::operations::Operation;
@@ -27,7 +26,7 @@ use roqoqo::Circuit;
 use roqoqo::QuantumProgram;
 use roqoqo::RoqoqoBackendError;
 // use roqoqo_1_0;
-use std::collections::HashMap;
+use std::collections::{BTreeSet, HashMap, HashSet};
 use std::env;
 use std::{thread, time};
 
@@ -444,26 +443,44 @@ impl APIBackend {
             let mut modified_circuit = Circuit::new();
             let mut modified_const_circuit: Option<Circuit> = None;
 
+            let mut involved_set = HashSet::<usize>::new();
             for op in previous_circuit.iter() {
                 match op {
                     Operation::PragmaRepeatedMeasurement(pragma) => {
-                        modified_circuit +=
-                            self._transform_pragma_repeated_measurements(pragma.clone());
+                        modified_circuit += self
+                            ._transform_pragma_repeated_measurements(pragma.clone(), &involved_set);
                     }
                     _ => {
+                        match op.involved_qubits() {
+                            InvolvedQubits::All => {}
+                            InvolvedQubits::None => {}
+                            InvolvedQubits::Set(op_set) => {
+                                involved_set.extend(op_set);
+                            }
+                        }
                         modified_circuit.add_operation(op.clone());
                     }
                 }
             }
             if let Some(const_circuit) = previous_const_circuit {
                 let mut inner_const = Circuit::new();
+                let mut involved_set = HashSet::<usize>::new();
                 for op in const_circuit.iter() {
                     match op {
                         Operation::PragmaRepeatedMeasurement(pragma) => {
-                            inner_const +=
-                                self._transform_pragma_repeated_measurements(pragma.clone());
+                            inner_const += self._transform_pragma_repeated_measurements(
+                                pragma.clone(),
+                                &involved_set,
+                            );
                         }
                         _ => {
+                            match op.involved_qubits() {
+                                InvolvedQubits::All => {}
+                                InvolvedQubits::None => {}
+                                InvolvedQubits::Set(op_set) => {
+                                    involved_set.extend(op_set);
+                                }
+                            }
                             inner_const.add_operation(op.clone());
                         }
                     }
@@ -851,10 +868,12 @@ impl APIBackend {
     fn _transform_pragma_repeated_measurements(
         &self,
         operation: PragmaRepeatedMeasurement,
+        involved_qubits: &HashSet<usize>,
     ) -> Circuit {
+        let involved_ordered = BTreeSet::from_iter(involved_qubits.iter().cloned());
         let mut equivalent_circuit = Circuit::new();
-        for i in 0..self.device.number_qubits() {
-            equivalent_circuit += MeasureQubit::new(i, operation.readout().to_string(), i);
+        for qbt in involved_ordered {
+            equivalent_circuit += MeasureQubit::new(qbt, operation.readout().to_string(), qbt);
         }
         equivalent_circuit += PragmaSetNumberOfMeasurements::new(
             *operation.number_measurements(),
@@ -1250,7 +1269,7 @@ mod test {
         output_circuit += operations::RotateX::new(0, std::f64::consts::FRAC_PI_2.into());
         output_circuit += operations::RotateX::new(1, std::f64::consts::FRAC_PI_2.into());
         output_circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
-        for i in 0..30 {
+        for i in 0..3 {
             output_circuit += operations::MeasureQubit::new(i, "ro".to_string(), i);
         }
         output_circuit += operations::PragmaSetNumberOfMeasurements::new(10, "ro".to_string());
@@ -1259,7 +1278,7 @@ mod test {
         const_output_circuit += operations::RotateX::new(0, std::f64::consts::FRAC_PI_2.into());
         const_output_circuit += operations::RotateX::new(1, std::f64::consts::FRAC_PI_2.into());
         const_output_circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
-        for i in 0..30 {
+        for i in 0..3 {
             const_output_circuit += operations::MeasureQubit::new(i, "ro".to_string(), i);
         }
         const_output_circuit +=
