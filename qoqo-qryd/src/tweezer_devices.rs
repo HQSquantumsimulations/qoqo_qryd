@@ -447,7 +447,7 @@ impl TweezerDeviceWrapper {
             Ok(serialized)
         } else {
             Err(PyValueError::new_err(
-                "The device does not have valid QRyd gates available.".to_owned() +
+                "The device does not have valid QRyd gates available. ".to_owned() +
                 "The valid gates are RotateXY, PhaseShiftState1 and PhaseShiftedControlledPhase.",
             ))
         }
@@ -1159,9 +1159,7 @@ impl TweezerMutableDeviceWrapper {
             .map_err(|err| PyValueError::new_err(format!("{:}", err)))
     }
 
-    /// Set the name of the default layout to use.
-    ///
-    /// Additionally, switch to the layout.
+    /// Set the name of the default layout to use and switch to it.
     ///
     /// Args:
     ///     layout (str): The name of the layout to use.
