@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>qoqo_qryd.tweezer_devices.TweezerMutableDevice &mdash; qoqo_qryd 0.11.2 documentation</title>
+  <title>qoqo_qryd.tweezer_devices.TweezerMutableDevice &mdash; qoqo_qryd 0.11.3 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -13,7 +13,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=ce1566be"></script>
+        <script src="../../../_static/documentation_options.js?v=5157f224"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -35,7 +35,7 @@
             qoqo_qryd
           </a>
               <div class="version">
-                0.11.2
+                0.11.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -100,7 +100,7 @@
 <h1>qoqo_qryd.tweezer_devices.TweezerMutableDevice<a class="headerlink" href="#qoqo-qryd-tweezer-devices-tweezermutabledevice" title="Link to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="qoqo_qryd.tweezer_devices.TweezerMutableDevice">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.tweezer_devices.</span></span><span class="sig-name descname"><span class="pre">TweezerMutableDevice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controlled_z_phase_relation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlled_phase_phase_relation</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.tweezer_devices.TweezerMutableDevice" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.tweezer_devices.</span></span><span class="sig-name descname"><span class="pre">TweezerMutableDevice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlled_z_phase_relation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlled_phase_phase_relation</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.tweezer_devices.TweezerMutableDevice" title="Link to this definition"></a></dt>
 <dd><p>Tweezer Mutable Device</p>
 <p>This interface allows setting any piece of information about the device
 tweezer.</p>
@@ -166,6 +166,12 @@ It can be hardcoded to a specific value if a float is passed in as String.</p></
 <tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerMutableDevice.phase_shift_controlled_z" title="qoqo_qryd.tweezer_devices.TweezerMutableDevice.phase_shift_controlled_z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">phase_shift_controlled_z</span></code></a>()</p></td>
 <td><p>Returns the PhaseShiftedControlledZ phase shift according to the device's relation.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerMutableDevice.qrydbackend" title="qoqo_qryd.tweezer_devices.TweezerMutableDevice.qrydbackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">qrydbackend</span></code></a>()</p></td>
+<td><p>Returns the backend associated with the device.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerMutableDevice.seed" title="qoqo_qryd.tweezer_devices.TweezerMutableDevice.seed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seed</span></code></a>()</p></td>
+<td><p>Returns the seed usized for the API.</p></td>
+</tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerMutableDevice.set_allowed_tweezer_shifts" title="qoqo_qryd.tweezer_devices.TweezerMutableDevice.set_allowed_tweezer_shifts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_allowed_tweezer_shifts</span></code></a>(allowed_shifts, ...)</p></td>
 <td><p>Set the allowed Tweezer shifts of a specified Tweezer.</p></td>
 </tr>
@@ -173,7 +179,7 @@ It can be hardcoded to a specific value if a float is passed in as String.</p></
 <td><p>Set the allowed Tweezer shifts from a list of tweezers.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerMutableDevice.set_default_layout" title="qoqo_qryd.tweezer_devices.TweezerMutableDevice.set_default_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_default_layout</span></code></a>(layout)</p></td>
-<td><p>Set the name of the default layout to use.</p></td>
+<td><p>Set the name of the default layout to use and switch to it.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerMutableDevice.set_tweezer_multi_qubit_gate_time" title="qoqo_qryd.tweezer_devices.TweezerMutableDevice.set_tweezer_multi_qubit_gate_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_tweezer_multi_qubit_gate_time</span></code></a>(tweezers, ...)</p></td>
 <td><p>Set the time of a multi-qubit gate for a list of tweezers in a given Layout.</p></td>
@@ -476,6 +482,18 @@ The memory usage will be inefficient for devices with large qubit numbers.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.tweezer_devices.TweezerMutableDevice.qrydbackend">
+<span class="sig-name descname"><span class="pre">qrydbackend</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.tweezer_devices.TweezerMutableDevice.qrydbackend" title="Link to this definition"></a></dt>
+<dd><p>Returns the backend associated with the device.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.tweezer_devices.TweezerMutableDevice.seed">
+<span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.tweezer_devices.TweezerMutableDevice.seed" title="Link to this definition"></a></dt>
+<dd><p>Returns the seed usized for the API.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.tweezer_devices.TweezerMutableDevice.set_allowed_tweezer_shifts">
 <span class="sig-name descname"><span class="pre">set_allowed_tweezer_shifts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">allowed_shifts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout_name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.tweezer_devices.TweezerMutableDevice.set_allowed_tweezer_shifts" title="Link to this definition"></a></dt>
 <dd><p>Set the allowed Tweezer shifts of a specified Tweezer.</p>
@@ -524,7 +542,7 @@ Defaults to the current Layout.</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.tweezer_devices.TweezerMutableDevice.set_default_layout">
 <span class="sig-name descname"><span class="pre">set_default_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.tweezer_devices.TweezerMutableDevice.set_default_layout" title="Link to this definition"></a></dt>
-<dd><p>Set the name of the default layout to use.</p>
+<dd><p>Set the name of the default layout to use and switch to it.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>layout</strong> (<em>str</em>) -- The name of the layout to use.</p>
@@ -683,7 +701,8 @@ Defaults to the current Layout.</p></li>
 <dd class="field-even"><p>str</p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>ValueError</strong> -- Cannot serialize TweezerMutableDevice to json.</p>
+<dd class="field-odd"><p><strong>ValueError</strong> -- Cannot serialize TweezerMutableDevice to json or
+    the device does not have valid QRyd gates available.</p>
 </dd>
 </dl>
 </dd></dl>

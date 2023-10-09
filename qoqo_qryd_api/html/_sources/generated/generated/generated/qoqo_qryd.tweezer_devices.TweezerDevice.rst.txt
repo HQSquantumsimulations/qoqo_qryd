@@ -21,6 +21,7 @@ qoqo\_qryd.tweezer\_devices.TweezerDevice
       ~TweezerDevice.from_api
       ~TweezerDevice.from_bincode
       ~TweezerDevice.from_json
+      ~TweezerDevice.from_mutable
       ~TweezerDevice.gate_time_controlled_phase
       ~TweezerDevice.gate_time_controlled_z
       ~TweezerDevice.generic_device
@@ -28,6 +29,8 @@ qoqo\_qryd.tweezer\_devices.TweezerDevice
       ~TweezerDevice.number_qubits
       ~TweezerDevice.phase_shift_controlled_phase
       ~TweezerDevice.phase_shift_controlled_z
+      ~TweezerDevice.qrydbackend
+      ~TweezerDevice.seed
       ~TweezerDevice.single_qubit_gate_time
       ~TweezerDevice.switch_layout
       ~TweezerDevice.three_qubit_gate_time

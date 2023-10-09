@@ -28,6 +28,8 @@ qoqo\_qryd.tweezer\_devices.TweezerMutableDevice
       ~TweezerMutableDevice.number_qubits
       ~TweezerMutableDevice.phase_shift_controlled_phase
       ~TweezerMutableDevice.phase_shift_controlled_z
+      ~TweezerMutableDevice.qrydbackend
+      ~TweezerMutableDevice.seed
       ~TweezerMutableDevice.set_allowed_tweezer_shifts
       ~TweezerMutableDevice.set_allowed_tweezer_shifts_from_rows
       ~TweezerMutableDevice.set_default_layout
