@@ -656,8 +656,7 @@ impl TweezerDevice {
             });
         }
         self.default_layout = Some(layout.to_string());
-        self.switch_layout(layout)
-            .expect("Internal error: switching to default layout failed");
+        self.switch_layout(layout)?;
         Ok(())
     }
 

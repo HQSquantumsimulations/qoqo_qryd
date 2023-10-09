@@ -469,9 +469,9 @@ impl TweezerDeviceWrapper {
         let mut internal: TweezerDevice = serde_json::from_str(input)
             .map_err(|_| PyValueError::new_err("Input cannot be deserialized to TweezerDevice"))?;
         if let Some(layout) = &internal.default_layout {
-            internal
+            let _ = internal
                 .switch_layout(&layout.to_string())
-                .expect("Internal error: switching to default layout failed");
+                .map_err(|err| PyValueError::new_err(format!("{:}", err)));
         }
         Ok(TweezerDeviceWrapper { internal })
     }
