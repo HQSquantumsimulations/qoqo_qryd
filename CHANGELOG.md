@@ -5,7 +5,7 @@ Tracks qoqo-qryd changes after 0.5
 # 0.11.3
 
 * Modified `TweezerDevice.from_json()` and `TweezerMutableDevice.set_default_layout()` to automatically switch the layout of the device if a default one was set
-* Modified `TweezerDevice.` and `TweezerMutableDevice.to_json()` such that it returns an error in case no QRyd-valid gates are executable
+* Modified `TweezerDevice` and `TweezerMutableDevice.to_json()` such that it returns an error in case no QRyd-valid gates are executable
 * Added `TweezerDevice.from_mutable()` static method
 * Added `dev` parameter in `APIBackend` constructor
 * Added `TweezerDevice` support for `APIBackend`
