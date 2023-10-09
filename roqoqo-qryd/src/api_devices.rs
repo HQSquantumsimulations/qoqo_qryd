@@ -18,7 +18,7 @@ use std::str::FromStr;
 
 /// Collection of all QRyd devices for WebAPI.
 ///
-/// It contains a square and a triangular device, as well the tweezer device.
+/// Contains a square device, a triangular device, and a tweezer device.
 #[derive(Debug, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
 pub enum QRydAPIDevice {
     /// Square Device
