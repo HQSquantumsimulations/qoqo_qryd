@@ -16,7 +16,6 @@ use num_complex::Complex64;
 use reqwest::blocking::Client;
 use reqwest::blocking::Response;
 use roqoqo::backends::RegisterResult;
-use roqoqo::devices::Device;
 use roqoqo::measurements::ClassicalRegister;
 use roqoqo::operations::Define;
 use roqoqo::operations::Operation;
@@ -27,7 +26,7 @@ use roqoqo::Circuit;
 use roqoqo::QuantumProgram;
 use roqoqo::RoqoqoBackendError;
 // use roqoqo_1_0;
-use std::collections::HashMap;
+use std::collections::{BTreeSet, HashMap, HashSet};
 use std::env;
 use std::{thread, time};
 
@@ -39,7 +38,7 @@ use std::{thread, time};
 /// This limitation is introduced by design to check the compatability of quantum programs with a model of the QRyd hardware.
 /// For simulations of the QRyd quantum computer use the backend simulator [crate::Backend].
 ///
-#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 pub struct APIBackend {
     /// Device representing the model of a QRyd device.
     pub device: QRydAPIDevice,
@@ -344,12 +343,14 @@ impl APIBackend {
     ///               In synchronous operation the WebAPI is queried every 30 seconds until it has
     ///               been queried `timeout` times.
     /// * `mock_port` - Server port to be used for testing purposes.
+    /// * `dev` - The boolean to set the dev option to.
     ///
     pub fn new(
         device: QRydAPIDevice,
         access_token: Option<String>,
         timeout: Option<usize>,
         mock_port: Option<String>,
+        dev: Option<bool>,
     ) -> Result<Self, RoqoqoBackendError> {
         if mock_port.is_some() {
             Ok(Self {
@@ -374,7 +375,7 @@ impl APIBackend {
                 access_token: access_token_internal,
                 timeout: timeout.unwrap_or(30),
                 mock_port,
-                dev: false,
+                dev: dev.unwrap_or(false),
             })
         }
     }
@@ -442,26 +443,44 @@ impl APIBackend {
             let mut modified_circuit = Circuit::new();
             let mut modified_const_circuit: Option<Circuit> = None;
 
+            let mut involved_set = HashSet::<usize>::new();
             for op in previous_circuit.iter() {
                 match op {
                     Operation::PragmaRepeatedMeasurement(pragma) => {
-                        modified_circuit +=
-                            self._transform_pragma_repeated_measurements(pragma.clone());
+                        modified_circuit += self
+                            ._transform_pragma_repeated_measurements(pragma.clone(), &involved_set);
                     }
                     _ => {
+                        match op.involved_qubits() {
+                            InvolvedQubits::All => {}
+                            InvolvedQubits::None => {}
+                            InvolvedQubits::Set(op_set) => {
+                                involved_set.extend(op_set);
+                            }
+                        }
                         modified_circuit.add_operation(op.clone());
                     }
                 }
             }
             if let Some(const_circuit) = previous_const_circuit {
                 let mut inner_const = Circuit::new();
+                let mut involved_set = HashSet::<usize>::new();
                 for op in const_circuit.iter() {
                     match op {
                         Operation::PragmaRepeatedMeasurement(pragma) => {
-                            inner_const +=
-                                self._transform_pragma_repeated_measurements(pragma.clone());
+                            inner_const += self._transform_pragma_repeated_measurements(
+                                pragma.clone(),
+                                &involved_set,
+                            );
                         }
                         _ => {
+                            match op.involved_qubits() {
+                                InvolvedQubits::All => {}
+                                InvolvedQubits::None => {}
+                                InvolvedQubits::Set(op_set) => {
+                                    involved_set.extend(op_set);
+                                }
+                            }
                             inner_const.add_operation(op.clone());
                         }
                     }
@@ -849,10 +868,12 @@ impl APIBackend {
     fn _transform_pragma_repeated_measurements(
         &self,
         operation: PragmaRepeatedMeasurement,
+        involved_qubits: &HashSet<usize>,
     ) -> Circuit {
+        let involved_ordered = BTreeSet::from_iter(involved_qubits.iter().cloned());
         let mut equivalent_circuit = Circuit::new();
-        for i in 0..self.device.number_qubits() {
-            equivalent_circuit += MeasureQubit::new(i, operation.readout().to_string(), i);
+        for qbt in involved_ordered {
+            equivalent_circuit += MeasureQubit::new(qbt, operation.readout().to_string(), qbt);
         }
         equivalent_circuit += PragmaSetNumberOfMeasurements::new(
             *operation.number_measurements(),
@@ -945,10 +966,11 @@ mod test {
     #[test]
     fn debug_and_clone() {
         let device: QRydAPIDevice = QrydEmuSquareDevice::new(None, None, None).into();
-        let backend = APIBackend::new(device.clone(), Some("".to_string()), Some(2), None).unwrap();
+        let backend =
+            APIBackend::new(device.clone(), Some("".to_string()), Some(2), None, None).unwrap();
         let a = format!("{:?}", backend);
         assert!(a.contains("QrydEmuSquareDevice"));
-        let backend2 = APIBackend::new(device, Some("a".to_string()), Some(2), None).unwrap();
+        let backend2 = APIBackend::new(device, Some("a".to_string()), Some(2), None, None).unwrap();
         assert_eq!(backend.clone(), backend);
         assert_ne!(backend, backend2);
     }
@@ -1066,7 +1088,7 @@ mod test {
         let number_qubits = 6;
         let device = QrydEmuSquareDevice::new(Some(2), None, None);
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-        let api_backend_new = APIBackend::new(qryd_device, None, None, Some(port)).unwrap();
+        let api_backend_new = APIBackend::new(qryd_device, None, None, Some(port), None).unwrap();
         let mut circuit = Circuit::new();
         circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
         circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
@@ -1151,7 +1173,7 @@ mod test {
         let number_qubits = 6;
         let device = QrydEmuSquareDevice::new(Some(2), None, None);
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-        let api_backend_new = APIBackend::new(qryd_device, None, None, Some(port)).unwrap();
+        let api_backend_new = APIBackend::new(qryd_device, None, None, Some(port), None).unwrap();
         let mut circuit = Circuit::new();
         circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
         circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
@@ -1218,7 +1240,7 @@ mod test {
             .collect::<String>();
         let device = QrydEmuSquareDevice::new(Some(1), None, None);
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-        let api_backend_new = APIBackend::new(qryd_device, None, None, Some(port)).unwrap();
+        let api_backend_new = APIBackend::new(qryd_device, None, None, Some(port), None).unwrap();
 
         let mut input_circuit = Circuit::new();
         input_circuit += operations::DefinitionBit::new("ro".to_string(), 3, true);
@@ -1247,7 +1269,7 @@ mod test {
         output_circuit += operations::RotateX::new(0, std::f64::consts::FRAC_PI_2.into());
         output_circuit += operations::RotateX::new(1, std::f64::consts::FRAC_PI_2.into());
         output_circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
-        for i in 0..30 {
+        for i in 0..3 {
             output_circuit += operations::MeasureQubit::new(i, "ro".to_string(), i);
         }
         output_circuit += operations::PragmaSetNumberOfMeasurements::new(10, "ro".to_string());
@@ -1256,7 +1278,7 @@ mod test {
         const_output_circuit += operations::RotateX::new(0, std::f64::consts::FRAC_PI_2.into());
         const_output_circuit += operations::RotateX::new(1, std::f64::consts::FRAC_PI_2.into());
         const_output_circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
-        for i in 0..30 {
+        for i in 0..3 {
             const_output_circuit += operations::MeasureQubit::new(i, "ro".to_string(), i);
         }
         const_output_circuit +=

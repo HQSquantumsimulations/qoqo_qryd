@@ -748,9 +748,9 @@ fn test_convert_into_backend() {
         let rust_dev: QrydEmuSquareDevice = QrydEmuSquareDevice::new(Some(11), None, None);
         let rust_api: QRydAPIDevice = QRydAPIDevice::from(rust_dev);
         let rust_backend: APIBackend = if env::var("QRYD_API_TOKEN").is_ok() {
-            APIBackend::new(rust_api, none_string.clone(), Some(30), none_string).unwrap()
+            APIBackend::new(rust_api, none_string.clone(), Some(30), none_string, None).unwrap()
         } else {
-            APIBackend::new(rust_api, none_string, Some(30), Some(port)).unwrap()
+            APIBackend::new(rust_api, none_string, Some(30), Some(port), None).unwrap()
         };
 
         assert_eq!(converted, rust_backend);
@@ -792,15 +792,35 @@ fn test_bincode_square() {
 }
 
 #[test]
-fn test_dev_setter() {
+fn test_dev() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let backend = create_backend_with_square_device(py, Some(11));
+        let device_type = py.get_type::<QrydEmuSquareDeviceWrapper>();
+        let device: &PyCell<QrydEmuSquareDeviceWrapper> = device_type
+            .call1((11,))
+            .unwrap()
+            .downcast::<PyCell<QrydEmuSquareDeviceWrapper>>()
+            .unwrap();
 
-        assert!(backend.call_method1("set_dev", (true,)).is_ok());
+        let backend_type: &PyType = py.get_type::<APIBackendWrapper>();
+        let backend: &PyCell<APIBackendWrapper> = backend_type
+            .call1((
+                device,
+                Option::<String>::None,
+                Option::<usize>::None,
+                Option::<String>::None,
+                true,
+            ))
+            .unwrap()
+            .downcast::<PyCell<APIBackendWrapper>>()
+            .unwrap();
 
         let internal = &backend.borrow().internal;
 
         assert!(internal.dev);
+
+        assert!(backend.call_method1("set_dev", (false,)).is_ok());
+
+        assert!(!internal.dev);
     });
 }

@@ -47,6 +47,8 @@ pub struct TweezerDevice {
     pub controlled_phase_phase_relation: String,
     /// The default layout to use at first intantiation.
     pub default_layout: Option<String>,
+    /// Seed, if not provided will be set to 0 per default (not recommended!)
+    seed: usize,
 }
 
 /// Tweezers information relative to a Layout
@@ -165,6 +167,7 @@ impl TweezerDevice {
     ///
     /// # Arguments
     ///
+    /// * `seed` - Seed, if not provided will be set to 0 by default (not recommended!)
     /// * `controlled_z_phase_relation` - The relation to use for the PhaseShiftedControlledZ gate.
     ///                                   It can be hardcoded to a specific value if a float is passed in as String.
     /// * `controlled_phase_phase_relation` - The relation to use for the PhaseShiftedControlledPhase gate.
@@ -173,6 +176,7 @@ impl TweezerDevice {
     ///
     /// * `TweezerDevice` - The new TweezerDevice instance.
     pub fn new(
+        seed: Option<usize>,
         controlled_z_phase_relation: Option<String>,
         controlled_phase_phase_relation: Option<String>,
     ) -> Self {
@@ -190,6 +194,7 @@ impl TweezerDevice {
             controlled_z_phase_relation,
             controlled_phase_phase_relation,
             default_layout: None,
+            seed: seed.unwrap_or_default(),
         }
     }
 
@@ -634,7 +639,7 @@ impl TweezerDevice {
         Ok(())
     }
 
-    /// Set the name of the default layout to use.
+    /// Set the name of the default layout to use and switch to it.
     ///
     /// # Arguments
     ///
@@ -642,7 +647,7 @@ impl TweezerDevice {
     ///
     /// # Returns
     ///
-    /// * `Ok(())` - The default layout has been set.
+    /// * `Ok(())` - The default layout has been set and switched to.
     /// * `Err(RoqoqoBackendError)` - The given layout name is not present in the layout register.
     pub fn set_default_layout(&mut self, layout: &str) -> Result<(), RoqoqoBackendError> {
         if !self.layout_register.contains_key(layout) {
@@ -651,6 +656,7 @@ impl TweezerDevice {
             });
         }
         self.default_layout = Some(layout.to_string());
+        self.switch_layout(layout)?;
         Ok(())
     }
 
@@ -993,6 +999,16 @@ impl TweezerDevice {
             }
         }
         true
+    }
+
+    /// Returns the seed usized for the API.
+    pub fn seed(&self) -> usize {
+        self.seed
+    }
+
+    /// Returns the backend associated with the device.
+    pub fn qrydbackend(&self) -> String {
+        "qryd_tweezer_device".to_string()
     }
 }
 

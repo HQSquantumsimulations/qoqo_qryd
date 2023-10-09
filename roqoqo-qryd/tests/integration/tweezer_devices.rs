@@ -25,18 +25,20 @@ use mockito::Server;
 /// Test TweezerDevice new()
 #[test]
 fn test_new() {
-    let device = TweezerDevice::new(None, None);
+    let device = TweezerDevice::new(Some(2), None, None);
 
     assert_eq!(device.current_layout, "default");
     assert!(device.qubit_to_tweezer.is_none());
     assert_eq!(device.layout_register.len(), 1);
     assert!(device.layout_register.get("default").is_some());
+    assert_eq!(device.seed(), 2);
+    assert_eq!(device.qrydbackend(), "qryd_tweezer_device");
 }
 
 // Test TweezerDevice add_layout(), switch_layout() methods
 #[test]
 fn test_layouts() {
-    let mut device = TweezerDevice::new(None, None);
+    let mut device = TweezerDevice::new(None, None, None);
 
     assert!(device.available_layouts().contains(&"default"));
 
@@ -177,7 +179,7 @@ fn test_layouts() {
 // Test TweezerDevice add_qubit_tweezer_mapping(), get_tweezer_from_qubit() methods
 #[test]
 fn test_qubit_tweezer_mapping() {
-    let mut device = TweezerDevice::new(None, None);
+    let mut device = TweezerDevice::new(None, None, None);
 
     assert!(device.add_qubit_tweezer_mapping(0, 0).is_err());
     assert!(device.get_tweezer_from_qubit(&0).is_err());
@@ -200,7 +202,7 @@ fn test_qubit_tweezer_mapping() {
 /// Test TweezerDevice set_allowed_tweezer_shifts_from_rows() method
 #[test]
 fn test_allowed_tweezer_shifts_from_rows() {
-    let mut device = TweezerDevice::new(None, None);
+    let mut device = TweezerDevice::new(None, None, None);
     device.add_layout("triangle").unwrap();
     device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.0, Some("triangle".to_string()));
     device.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.0, Some("triangle".to_string()));
@@ -246,7 +248,7 @@ fn test_allowed_tweezer_shifts_from_rows() {
 /// Test TweezerDevice set_allowed_tweezer_shifts() method
 #[test]
 fn test_allowed_tweezer_shifts_row() {
-    let mut device = TweezerDevice::new(None, None);
+    let mut device = TweezerDevice::new(None, None, None);
     device.add_layout("OtherLayout").unwrap();
     device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.0, Some("OtherLayout".to_string()));
     device.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.0, Some("OtherLayout".to_string()));
@@ -303,7 +305,7 @@ fn test_allowed_tweezer_shifts_row() {
 /// Test TweezerDevice deactivate_qubit()
 #[test]
 fn test_deactivate_qubit() {
-    let mut device = TweezerDevice::new(None, None);
+    let mut device = TweezerDevice::new(None, None, None);
 
     assert!(device.deactivate_qubit(0).is_err());
 
@@ -317,7 +319,7 @@ fn test_deactivate_qubit() {
 /// Test TweezerDevice ..._qubit_gate_time() methods
 #[test]
 fn test_qubit_times() {
-    let mut device = TweezerDevice::new(None, None);
+    let mut device = TweezerDevice::new(None, None, None);
 
     assert!(device.single_qubit_gate_time("PauliX", &0).is_none());
 
@@ -359,7 +361,7 @@ fn test_qubit_times() {
 /// Test TweezerDevice number_qubits() method
 #[test]
 fn test_number_qubits() {
-    let mut device = TweezerDevice::new(None, None);
+    let mut device = TweezerDevice::new(None, None, None);
 
     assert_eq!(device.number_qubits(), 0);
 
@@ -377,7 +379,7 @@ fn test_number_qubits() {
 /// Test TweezerDevice to_generic_device() method method
 #[test]
 fn test_to_generic_device() {
-    let mut device = TweezerDevice::new(None, None);
+    let mut device = TweezerDevice::new(None, None, None);
     device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None);
     device.set_tweezer_single_qubit_gate_time("PauliY", 1, 0.23, None);
     device.set_tweezer_two_qubit_gate_time("CNOT", 2, 3, 0.34, None);
@@ -438,7 +440,7 @@ fn test_to_generic_device() {
 /// Test TweezerDevice change_device() method
 #[test]
 fn test_change_device() {
-    let mut device = TweezerDevice::new(None, None);
+    let mut device = TweezerDevice::new(None, None, None);
     device.add_layout("Test").unwrap();
     device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("Test".to_string()));
     device.set_tweezer_single_qubit_gate_time("PauliY", 1, 0.23, Some("Test".to_string()));
@@ -484,7 +486,7 @@ fn test_change_device() {
 /// Test TweezerDevice change_device() method with PragmaShiftQubitsTweezers
 #[test]
 fn test_change_device_shift() {
-    let mut device = TweezerDevice::new(None, None);
+    let mut device = TweezerDevice::new(None, None, None);
     device.add_layout("triangle").unwrap();
     device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("triangle".to_string()));
     device.set_tweezer_single_qubit_gate_time("PauliY", 1, 0.23, Some("triangle".to_string()));
@@ -565,7 +567,7 @@ fn test_change_device_shift() {
 #[test]
 #[cfg(feature = "web-api")]
 fn test_from_api() {
-    let mut returned_device_default = TweezerDevice::new(None, None);
+    let mut returned_device_default = TweezerDevice::new(None, None, None);
     returned_device_default.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None);
     let mut server = Server::new();
     let port = server
@@ -614,8 +616,8 @@ fn test_from_api() {
 /// Test TweezerDevice phase_shift_controlled_...() and gate_time_controlled_...()  methods
 #[test]
 fn test_phi_theta_relation() {
-    let mut device = TweezerDevice::new(None, None);
-    let device_f = TweezerDevice::new(Some(2.13.to_string()), Some(2.15.to_string()));
+    let mut device = TweezerDevice::new(None, None, None);
+    let device_f = TweezerDevice::new(None, Some(2.13.to_string()), Some(2.15.to_string()));
 
     assert_eq!(
         device.phase_shift_controlled_z().unwrap(),
@@ -669,7 +671,7 @@ fn test_phi_theta_relation() {
 // Test TweezerDevice two_tweezer_edges() method
 #[test]
 fn test_two_tweezer_edges() {
-    let mut device = TweezerDevice::new(None, None);
+    let mut device = TweezerDevice::new(None, None, None);
 
     assert_eq!(device.two_tweezer_edges().len(), 0);
 
@@ -687,7 +689,7 @@ fn test_two_tweezer_edges() {
 
 #[test]
 fn test_default_layout() {
-    let mut device = TweezerDevice::new(None, None);
+    let mut device = TweezerDevice::new(None, None, None);
     device.add_layout("triangle").unwrap();
     device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("triangle".to_string()));
 
@@ -695,4 +697,5 @@ fn test_default_layout() {
 
     assert!(device.set_default_layout("triangle").is_ok());
     assert_eq!(device.default_layout, Some("triangle".to_string()));
+    assert_eq!(device.current_layout, "triangle".to_string());
 }

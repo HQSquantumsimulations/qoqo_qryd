@@ -12,7 +12,7 @@
 
 use roqoqo::devices::Device;
 use roqoqo_qryd::api_devices::{QRydAPIDevice, QrydEmuSquareDevice, QrydEmuTriangularDevice};
-use roqoqo_qryd::phi_theta_relation;
+use roqoqo_qryd::{phi_theta_relation, TweezerDevice};
 
 use ndarray::Array2;
 
@@ -23,8 +23,6 @@ fn test_new_square() {
     let apidevice = QRydAPIDevice::from(&device);
     assert_eq!(device.seed(), 0);
     assert_eq!(device.seed(), apidevice.seed());
-    // assert_eq!(device.pcz_theta(), PI);
-    // assert_eq!(device.pcz_theta(), apidevice.pcz_theta());
     assert_eq!(device.qrydbackend(), "qryd_emu_cloudcomp_square");
     assert_eq!(device.qrydbackend(), apidevice.qrydbackend());
 }
@@ -36,9 +34,18 @@ fn test_new_triangular() {
     let apidevice = QRydAPIDevice::from(&device);
     assert_eq!(device.seed(), 1);
     assert_eq!(device.seed(), apidevice.seed());
-    // assert_eq!(device.pcz_theta(), 0.0);
-    // assert_eq!(device.pcz_theta(), apidevice.pcz_theta());
     assert_eq!(device.qrydbackend(), "qryd_emu_cloudcomp_triangle");
+    assert_eq!(device.qrydbackend(), apidevice.qrydbackend());
+}
+
+// Test the new function of the tweezer device
+#[test]
+fn test_new_tweezer() {
+    let device = TweezerDevice::new(Some(1), None, None);
+    let apidevice = QRydAPIDevice::from(&device);
+    assert_eq!(device.seed(), 1);
+    assert_eq!(device.seed(), apidevice.seed());
+    assert_eq!(device.qrydbackend(), "qryd_tweezer_device");
     assert_eq!(device.qrydbackend(), apidevice.qrydbackend());
 }
 
@@ -79,6 +86,30 @@ fn test_numberqubits_triangular() {
 #[test]
 fn test_decoherencerates_triangular() {
     let device = QrydEmuTriangularDevice::new(None, None, None, None, None);
+    let apidevice = QRydAPIDevice::from(&device);
+    assert_eq!(
+        device.qubit_decoherence_rates(&0),
+        Some(Array2::zeros((3, 3).to_owned()))
+    );
+    assert_eq!(
+        apidevice.qubit_decoherence_rates(&0),
+        device.qubit_decoherence_rates(&0)
+    );
+}
+
+// Test the functions from device trait of the tweezer device
+#[test]
+fn test_numberqubits_tweezer() {
+    let device = TweezerDevice::new(None, None, None);
+    let apidevice = QRydAPIDevice::from(&device);
+    assert_eq!(device.number_qubits(), 0);
+    assert_eq!(apidevice.number_qubits(), device.number_qubits());
+}
+
+// Test the functions from device trait of the tweezer device
+#[test]
+fn test_decoherencerates_tweezer() {
+    let device = TweezerDevice::new(None, None, None);
     let apidevice = QRydAPIDevice::from(&device);
     assert_eq!(
         device.qubit_decoherence_rates(&0),
@@ -374,6 +405,57 @@ fn test_gatetimes_triangular() {
     );
 }
 
+// Test the functions from device trait of the tweezer device
+#[test]
+fn test_gatetimes_tweezer() {
+    let mut device = TweezerDevice::new(None, None, None);
+    device.set_tweezer_single_qubit_gate_time("PhaseShiftState1", 0, 0.34, None);
+    device.set_tweezer_single_qubit_gate_time("PhaseShiftState1", 1, 0.34, None);
+    device.set_tweezer_single_qubit_gate_time("PhaseShiftState1", 2, 0.34, None);
+    device.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 0, 1, 0.34, None);
+    device.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 1, 2, 0.34, None);
+    device.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 2, 0, 0.34, None);
+    device.set_tweezer_three_qubit_gate_time("Toffoli", 0, 1, 2, 0.34, None);
+    device.set_tweezer_multi_qubit_gate_time("MultiQubitZZ", &[0, 1, 2], 0.23, None);
+    device.add_qubit_tweezer_mapping(0, 0).unwrap();
+    device.add_qubit_tweezer_mapping(1, 1).unwrap();
+    device.add_qubit_tweezer_mapping(2, 2).unwrap();
+    let apidevice = QRydAPIDevice::from(&device);
+
+    assert_eq!(
+        device.single_qubit_gate_time("PhaseShiftState1", &0),
+        apidevice.single_qubit_gate_time("PhaseShiftState1", &0)
+    );
+    assert_eq!(
+        device.single_qubit_gate_time("PhaseShiftState1", &1),
+        apidevice.single_qubit_gate_time("PhaseShiftState1", &1)
+    );
+    assert_eq!(
+        device.single_qubit_gate_time("PhaseShiftState1", &2),
+        apidevice.single_qubit_gate_time("PhaseShiftState1", &2)
+    );
+    assert_eq!(
+        device.two_qubit_gate_time("PhaseShiftedControlledPhase", &0, &1),
+        apidevice.two_qubit_gate_time("PhaseShiftedControlledPhase", &0, &1)
+    );
+    assert_eq!(
+        device.two_qubit_gate_time("PhaseShiftedControlledPhase", &1, &2),
+        apidevice.two_qubit_gate_time("PhaseShiftedControlledPhase", &1, &2)
+    );
+    assert_eq!(
+        device.two_qubit_gate_time("PhaseShiftedControlledPhase", &2, &0),
+        apidevice.two_qubit_gate_time("PhaseShiftedControlledPhase", &2, &0)
+    );
+    assert_eq!(
+        device.three_qubit_gate_time("Toffoli", &0, &1, &2),
+        apidevice.three_qubit_gate_time("Toffoli", &0, &1, &2)
+    );
+    assert_eq!(
+        device.multi_qubit_gate_time("MultiQubitZZ", &[0, 1, 2]),
+        apidevice.multi_qubit_gate_time("MultiQubitZZ", &[0, 1, 2])
+    );
+}
+
 // Test gatetime gate category
 #[test]
 fn test_gatetime_type() {
@@ -443,6 +525,18 @@ fn test_changedevice_square() {
 #[test]
 fn test_changedevice_triangular() {
     let mut device = QrydEmuTriangularDevice::new(None, None, None, None, None);
+    let mut apidevice = QRydAPIDevice::from(&device);
+    assert!(device.change_device("", &[]).is_err());
+    assert_eq!(
+        apidevice.change_device("", &[]),
+        device.change_device("", &[])
+    );
+}
+
+// Test the functions from device trait of the tweezer device
+#[test]
+fn test_changedevice_tweezer() {
+    let mut device = TweezerDevice::new(None, None, None);
     let mut apidevice = QRydAPIDevice::from(&device);
     assert!(device.change_device("", &[]).is_err());
     assert_eq!(
@@ -591,6 +685,26 @@ fn test_twoqubitedges_triangular() {
     assert_eq!(apidevice.two_qubit_edges(), device.two_qubit_edges());
 }
 
+#[test]
+fn test_twoqubitedges_tweezer() {
+    let mut device = TweezerDevice::new(None, None, None);
+    device.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 0, 1, 0.34, None);
+    device.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 1, 2, 0.34, None);
+    device.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 2, 0, 0.34, None);
+    device.add_qubit_tweezer_mapping(0, 0).unwrap();
+    device.add_qubit_tweezer_mapping(1, 1).unwrap();
+    device.add_qubit_tweezer_mapping(2, 2).unwrap();
+    let apidevice = QRydAPIDevice::from(&device);
+    let two_qubit_edges: Vec<(usize, usize)> = vec![(0, 1), (1, 2), (2, 0)];
+    assert!(two_qubit_edges
+        .iter()
+        .all(|el| device.two_qubit_edges().contains(el)));
+    assert!(apidevice
+        .two_qubit_edges()
+        .iter()
+        .all(|el| device.two_qubit_edges().contains(el)));
+}
+
 // Test to_generic_device() for square device
 #[test]
 fn test_to_generic_device_square() {
@@ -671,13 +785,68 @@ fn test_to_generic_device_triangular() {
     }
 }
 
+// Test to_generic_device() for tweezer device
+#[test]
+fn test_to_generic_device_tweezer() {
+    let mut device = TweezerDevice::new(None, None, None);
+    device.set_tweezer_single_qubit_gate_time("PhaseShiftState1", 0, 0.34, None);
+    device.set_tweezer_single_qubit_gate_time("PhaseShiftState1", 1, 0.34, None);
+    device.set_tweezer_single_qubit_gate_time("PhaseShiftState1", 2, 0.34, None);
+    device.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 0, 1, 0.34, None);
+    device.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 1, 2, 0.34, None);
+    device.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 2, 0, 0.34, None);
+    device.add_qubit_tweezer_mapping(0, 0).unwrap();
+    device.add_qubit_tweezer_mapping(1, 1).unwrap();
+    device.add_qubit_tweezer_mapping(2, 2).unwrap();
+    let apidevice = QRydAPIDevice::from(&device);
+    let genericdevice = apidevice.to_generic_device();
+
+    assert_eq!(apidevice.number_qubits(), genericdevice.number_qubits());
+    assert_eq!(device.number_qubits(), genericdevice.number_qubits());
+    for qubit in 0..genericdevice.number_qubits() {
+        assert_eq!(
+            genericdevice
+                .single_qubit_gate_time("PhaseShiftState1", &qubit)
+                .unwrap(),
+            apidevice
+                .single_qubit_gate_time("PhaseShiftState1", &qubit)
+                .unwrap()
+        );
+    }
+    for qubit in 0..genericdevice.number_qubits() {
+        assert_eq!(
+            genericdevice.qubit_decoherence_rates(&qubit),
+            apidevice.qubit_decoherence_rates(&qubit)
+        );
+    }
+    for row in 0..genericdevice.number_qubits() {
+        for column in row + 1..genericdevice.number_qubits() {
+            if genericdevice
+                .two_qubit_gate_time("PhaseShiftedControlledPhase", &row, &column)
+                .is_some()
+            {
+                assert_eq!(
+                    genericdevice.two_qubit_gate_time("PhaseShiftedControlledPhase", &row, &column),
+                    apidevice.two_qubit_gate_time("PhaseShiftedControlledPhase", &row, &column)
+                )
+            }
+        }
+    }
+}
+
 #[test]
 fn test_phi_theta_relation() {
     let triangular = QrydEmuTriangularDevice::new(Some(0), None, None, None, None);
     let square = QrydEmuSquareDevice::new(Some(0), None, None);
+    let mut tweezer = TweezerDevice::new(Some(0), None, None);
+    tweezer.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledZ", 0, 1, 0.10, None);
+    tweezer.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 0, 1, 0.10, None);
+    tweezer.add_qubit_tweezer_mapping(0, 0).unwrap();
+    tweezer.add_qubit_tweezer_mapping(1, 1).unwrap();
     let triangular_f =
         QrydEmuTriangularDevice::new(Some(0), Some("2.13".to_string()), None, None, None);
     let square_f = QrydEmuSquareDevice::new(Some(0), Some("2.13".to_string()), None);
+    let tweezer_f = TweezerDevice::new(Some(0), Some("2.13".to_string()), None);
 
     assert_eq!(
         triangular.phase_shift_controlled_z().unwrap(),
@@ -688,6 +857,10 @@ fn test_phi_theta_relation() {
         phi_theta_relation("DefaultRelation", std::f64::consts::PI).unwrap()
     );
     assert_eq!(
+        tweezer.phase_shift_controlled_z().unwrap(),
+        phi_theta_relation("DefaultRelation", std::f64::consts::PI).unwrap()
+    );
+    assert_eq!(
         triangular.phase_shift_controlled_phase(1.2).unwrap(),
         phi_theta_relation("DefaultRelation", 1.2).unwrap()
     );
@@ -695,8 +868,13 @@ fn test_phi_theta_relation() {
         square.phase_shift_controlled_phase(1.2).unwrap(),
         phi_theta_relation("DefaultRelation", 1.2).unwrap()
     );
+    assert_eq!(
+        tweezer.phase_shift_controlled_phase(1.2).unwrap(),
+        phi_theta_relation("DefaultRelation", 1.2).unwrap()
+    );
     assert_eq!(triangular_f.phase_shift_controlled_z(), Some(2.13));
     assert_eq!(square_f.phase_shift_controlled_z(), Some(2.13));
+    assert_eq!(tweezer_f.phase_shift_controlled_z(), Some(2.13));
 
     assert!(triangular.gate_time_controlled_z(&0, &13, 1.4).is_none());
     assert!(triangular
@@ -706,12 +884,19 @@ fn test_phi_theta_relation() {
     assert!(square
         .gate_time_controlled_phase(&0, &13, 0.6, 1.4)
         .is_none());
+    assert!(tweezer.gate_time_controlled_z(&0, &9, 1.3).is_none());
+    assert!(tweezer
+        .gate_time_controlled_phase(&0, &9, 1.3, 1.4)
+        .is_none());
 
     assert!(triangular
         .gate_time_controlled_z(&0, &1, triangular.phase_shift_controlled_z().unwrap())
         .is_some());
     assert!(square
         .gate_time_controlled_z(&0, &1, square.phase_shift_controlled_z().unwrap())
+        .is_some());
+    assert!(tweezer
+        .gate_time_controlled_z(&0, &1, triangular.phase_shift_controlled_z().unwrap())
         .is_some());
     assert!(triangular
         .gate_time_controlled_phase(
@@ -729,11 +914,22 @@ fn test_phi_theta_relation() {
             0.1
         )
         .is_some());
+    assert!(tweezer
+        .gate_time_controlled_phase(
+            &0,
+            &1,
+            square.phase_shift_controlled_phase(0.1).unwrap(),
+            0.1
+        )
+        .is_some());
 
     assert!(triangular
         .gate_time_controlled_z(&0, &1, triangular.phase_shift_controlled_z().unwrap() + 0.2)
         .is_none());
     assert!(square
+        .gate_time_controlled_z(&0, &1, square.phase_shift_controlled_z().unwrap() + 0.2)
+        .is_none());
+    assert!(tweezer
         .gate_time_controlled_z(&0, &1, square.phase_shift_controlled_z().unwrap() + 0.2)
         .is_none());
     assert!(triangular
@@ -745,6 +941,14 @@ fn test_phi_theta_relation() {
         )
         .is_none());
     assert!(square
+        .gate_time_controlled_phase(
+            &0,
+            &1,
+            square.phase_shift_controlled_phase(0.1).unwrap() + 0.2,
+            0.1
+        )
+        .is_none());
+    assert!(tweezer
         .gate_time_controlled_phase(
             &0,
             &1,

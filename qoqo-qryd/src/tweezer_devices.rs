@@ -44,14 +44,18 @@ impl TweezerDeviceWrapper {
     /// Creates a new TweezerDevice instance.
     ///
     /// Args:
+    ///     seed (int): Seed, if not provided will be set to 0 per default (not recommended!)
     ///     controlled_z_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledZ gate.
     ///     controlled_phase_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledPhase gate.
     ///
     /// Returns:
     ///     TweezerDevice: The new TweezerDevice instance.
     #[new]
-    #[pyo3(text_signature = "(controlled_z_phase_relation, controlled_phase_phase_relation, /)")]
+    #[pyo3(
+        text_signature = "(seed, controlled_z_phase_relation, controlled_phase_phase_relation, /)"
+    )]
     pub fn new(
+        seed: Option<usize>,
         controlled_z_phase_relation: Option<&PyAny>,
         controlled_phase_phase_relation: Option<&PyAny>,
     ) -> Self {
@@ -84,8 +88,22 @@ impl TweezerDeviceWrapper {
             None
         };
         Self {
-            internal: TweezerDevice::new(czpr, cppr),
+            internal: TweezerDevice::new(seed, czpr, cppr),
         }
+    }
+
+    /// Creates a new TweezerDevice instance from a TweezerMutableDevice instance.
+    ///
+    /// Args:
+    ///     device (TweezerMutableDevice): The TweezerMutableDevice instance.
+    ///
+    /// Returns:
+    ///     TweezerDevice: The new TweezerDevice instance.
+    #[staticmethod]
+    #[pyo3(text_signature = "(device, /)")]
+    fn from_mutable(device: Py<PyAny>) -> PyResult<Self> {
+        let rust_dev = TweezerMutableDeviceWrapper::from_pyany(device)?;
+        Ok(Self { internal: rust_dev })
     }
 
     /// Creates a new TweezerDevice instance containing populated tweezer data.
@@ -413,11 +431,26 @@ impl TweezerDeviceWrapper {
     ///     str: The serialized form of TweezerDevice.
     ///
     /// Raises:
-    ///     ValueError: Cannot serialize TweezerDevice to json.
+    ///     ValueError: Cannot serialize TweezerDevice to json or
+    ///         the device does not have valid QRyd gates available.
     fn to_json(&self) -> PyResult<String> {
-        let serialized = serde_json::to_string(&self.internal)
-            .map_err(|_| PyValueError::new_err("Cannot serialize TweezerDevice to json"))?;
-        Ok(serialized)
+        const SINGLE_GATES: [&str; 2] = ["PhaseShiftState1", "RotateXY"];
+        const DOUBLE_GATES: &str = "PhaseShiftedControlledPhase";
+        if self.internal.layout_register.values().any(|info| {
+            SINGLE_GATES
+                .iter()
+                .any(|&g| info.tweezer_single_qubit_gate_times.contains_key(g))
+                || info.tweezer_two_qubit_gate_times.contains_key(DOUBLE_GATES)
+        }) {
+            let serialized = serde_json::to_string(&self.internal)
+                .map_err(|_| PyValueError::new_err("Cannot serialize TweezerDevice to json"))?;
+            Ok(serialized)
+        } else {
+            Err(PyValueError::new_err(
+                "The device does not have valid QRyd gates available. ".to_owned() +
+                "The valid gates are RotateXY, PhaseShiftState1 and PhaseShiftedControlledPhase.",
+            ))
+        }
     }
 
     /// Convert the json representation of a TweezerDevice to a TweezerDevice.
@@ -433,11 +466,14 @@ impl TweezerDeviceWrapper {
     #[staticmethod]
     #[pyo3(text_signature = "(input, /)")]
     fn from_json(input: &str) -> PyResult<TweezerDeviceWrapper> {
-        Ok(TweezerDeviceWrapper {
-            internal: serde_json::from_str(input).map_err(|_| {
-                PyValueError::new_err("Input cannot be deserialized to TweezerDevice")
-            })?,
-        })
+        let mut internal: TweezerDevice = serde_json::from_str(input)
+            .map_err(|_| PyValueError::new_err("Input cannot be deserialized to TweezerDevice"))?;
+        if let Some(layout) = &internal.default_layout {
+            let _ = internal
+                .switch_layout(&layout.to_string())
+                .map_err(|err| PyValueError::new_err(format!("{:}", err)));
+        }
+        Ok(TweezerDeviceWrapper { internal })
     }
 
     /// Return number of qubits in device.
@@ -477,6 +513,16 @@ impl TweezerDeviceWrapper {
     fn two_tweezer_edges(&self) -> Vec<(usize, usize)> {
         self.internal.two_tweezer_edges()
     }
+
+    /// Returns the backend associated with the device.
+    pub fn qrydbackend(&self) -> String {
+        self.internal.qrydbackend()
+    }
+
+    /// Returns the seed usized for the API.
+    pub fn seed(&self) -> usize {
+        self.internal.seed()
+    }
 }
 
 /// Tweezer Mutable Device
@@ -500,14 +546,18 @@ impl TweezerMutableDeviceWrapper {
     /// Creates a new TweezerMutableDevice instance.
     ///
     /// Args:
+    ///     seed (int): Seed, if not provided will be set to 0 per default (not recommended!)
     ///     controlled_z_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledZ gate.
     ///     controlled_phase_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledPhase gate.
     ///
     /// Returns:
     ///     TweezerMutableDevice: The new TweezerMutableDevice instance.
     #[new]
-    #[pyo3(text_signature = "(controlled_z_phase_relation, controlled_phase_phase_relation, /)")]
+    #[pyo3(
+        text_signature = "(seed, controlled_z_phase_relation, controlled_phase_phase_relation, /)"
+    )]
     pub fn new(
+        seed: Option<usize>,
         controlled_z_phase_relation: Option<&PyAny>,
         controlled_phase_phase_relation: Option<&PyAny>,
     ) -> Self {
@@ -540,7 +590,7 @@ impl TweezerMutableDeviceWrapper {
             None
         };
         Self {
-            internal: TweezerDevice::new(czpr, cppr),
+            internal: TweezerDevice::new(seed, czpr, cppr),
         }
     }
 
@@ -852,12 +902,27 @@ impl TweezerMutableDeviceWrapper {
     ///     str: The serialized form of TweezerMutableDevice.
     ///
     /// Raises:
-    ///     ValueError: Cannot serialize TweezerMutableDevice to json.
+    ///     ValueError: Cannot serialize TweezerMutableDevice to json or
+    ///         the device does not have valid QRyd gates available.
     fn to_json(&self) -> PyResult<String> {
-        let serialized = serde_json::to_string(&self.internal).map_err(|_| {
-            PyValueError::new_err("Cannot serialize ExperimentalMutableDevice to json")
-        })?;
-        Ok(serialized)
+        const SINGLE_GATES: [&str; 2] = ["PhaseShiftState1", "RotateXY"];
+        const DOUBLE_GATES: &str = "PhaseShiftedControlledPhase";
+        if self.internal.layout_register.values().any(|info| {
+            SINGLE_GATES
+                .iter()
+                .any(|&g| info.tweezer_single_qubit_gate_times.contains_key(g))
+                || info.tweezer_two_qubit_gate_times.contains_key(DOUBLE_GATES)
+        }) {
+            let serialized = serde_json::to_string(&self.internal).map_err(|_| {
+                PyValueError::new_err("Cannot serialize TweezerMutableDevice to json")
+            })?;
+            Ok(serialized)
+        } else {
+            Err(PyValueError::new_err(
+                "The device does not allow any valid gate in any layout. ".to_owned() +
+                "The valid gates are RotateXY, PhaseShiftState1 and PhaseShiftedControlledPhase.",
+            ))
+        }
     }
 
     /// Convert the json representation of a TweezerMutableDevice to an TweezerMutableDevice.
@@ -917,6 +982,16 @@ impl TweezerMutableDeviceWrapper {
     ///     Sequence[(int, int)]: List of two tweezer edges
     fn two_tweezer_edges(&self) -> Vec<(usize, usize)> {
         self.internal.two_tweezer_edges()
+    }
+
+    /// Returns the backend associated with the device.
+    pub fn qrydbackend(&self) -> String {
+        self.internal.qrydbackend()
+    }
+
+    /// Returns the seed usized for the API.
+    pub fn seed(&self) -> usize {
+        self.internal.seed()
     }
 
     /// Set the time of a single-qubit gate for a tweezer in a given Layout.
@@ -1084,7 +1159,7 @@ impl TweezerMutableDeviceWrapper {
             .map_err(|err| PyValueError::new_err(format!("{:}", err)))
     }
 
-    /// Set the name of the default layout to use.
+    /// Set the name of the default layout to use and switch to it.
     ///
     /// Args:
     ///     layout (str): The name of the layout to use.
@@ -1095,6 +1170,34 @@ impl TweezerMutableDeviceWrapper {
         self.internal
             .set_default_layout(layout)
             .map_err(|err| PyValueError::new_err(format!("{:}", err)))
+    }
+}
+
+impl TweezerMutableDeviceWrapper {
+    /// Extracts a TweezerDevice from a TweezerDeviceWrapper python object.
+    ///
+    /// # Arguments:
+    ///
+    /// `input` - The Python object that should be casted to a [roqoqo_qryd::TweezerDevice]
+    pub fn from_pyany(input: Py<PyAny>) -> PyResult<TweezerDevice> {
+        Python::with_gil(|py| -> PyResult<TweezerDevice> {
+            let input = input.as_ref(py);
+            if let Ok(try_downcast) = input.extract::<TweezerMutableDeviceWrapper>() {
+                Ok(try_downcast.internal)
+            } else {
+                Err(PyTypeError::new_err(
+                    "Input cannot be converted to a TweezerMutableDevice instance.",
+                ))
+            }
+        })
+    }
+}
+
+impl From<TweezerMutableDeviceWrapper> for TweezerDeviceWrapper {
+    fn from(mutable: TweezerMutableDeviceWrapper) -> Self {
+        Self {
+            internal: mutable.internal,
+        }
     }
 }
 

@@ -10,7 +10,7 @@
 // express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::phi_theta_relation;
+use crate::{phi_theta_relation, TweezerDevice};
 use ndarray::Array2;
 use roqoqo::devices::{Device, GenericDevice};
 use roqoqo::RoqoqoBackendError;
@@ -18,13 +18,15 @@ use std::str::FromStr;
 
 /// Collection of all QRyd devices for WebAPI.
 ///
-/// At the moment only contains a square and a triangular device.
-#[derive(Debug, PartialEq, Eq, Clone, serde::Serialize, serde::Deserialize)]
+/// Contains a square device, a triangular device, and a tweezer device.
+#[derive(Debug, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
 pub enum QRydAPIDevice {
     /// Square Device
     QrydEmuSquareDevice(QrydEmuSquareDevice),
     /// Triangular Device
     QrydEmuTriangularDevice(QrydEmuTriangularDevice),
+    /// Tweezer Device
+    TweezerDevice(TweezerDevice),
 }
 
 /// Implements the trait to return field values of the QRydAPIDevice.
@@ -34,6 +36,7 @@ impl QRydAPIDevice {
         match self {
             Self::QrydEmuSquareDevice(x) => x.qrydbackend(),
             Self::QrydEmuTriangularDevice(x) => x.qrydbackend(),
+            Self::TweezerDevice(x) => x.qrydbackend(),
         }
     }
 
@@ -42,6 +45,7 @@ impl QRydAPIDevice {
         match self {
             Self::QrydEmuSquareDevice(x) => x.seed(),
             Self::QrydEmuTriangularDevice(x) => x.seed(),
+            Self::TweezerDevice(x) => x.seed(),
         }
     }
 
@@ -50,6 +54,7 @@ impl QRydAPIDevice {
         match self {
             Self::QrydEmuSquareDevice(x) => x.phase_shift_controlled_z(),
             Self::QrydEmuTriangularDevice(x) => x.phase_shift_controlled_z(),
+            Self::TweezerDevice(x) => x.phase_shift_controlled_z(),
         }
     }
 
@@ -58,6 +63,7 @@ impl QRydAPIDevice {
         match self {
             Self::QrydEmuSquareDevice(x) => x.phase_shift_controlled_phase(theta),
             Self::QrydEmuTriangularDevice(x) => x.phase_shift_controlled_phase(theta),
+            Self::TweezerDevice(x) => x.phase_shift_controlled_phase(theta),
         }
     }
 
@@ -66,6 +72,7 @@ impl QRydAPIDevice {
         match self {
             Self::QrydEmuSquareDevice(x) => x.gate_time_controlled_z(control, target, phi),
             Self::QrydEmuTriangularDevice(x) => x.gate_time_controlled_z(control, target, phi),
+            Self::TweezerDevice(x) => x.gate_time_controlled_z(control, target, phi),
         }
     }
 
@@ -84,6 +91,7 @@ impl QRydAPIDevice {
             Self::QrydEmuTriangularDevice(x) => {
                 x.gate_time_controlled_phase(control, target, phi, theta)
             }
+            Self::TweezerDevice(x) => x.gate_time_controlled_phase(control, target, phi, theta),
         }
     }
 }
@@ -108,6 +116,7 @@ impl Device for QRydAPIDevice {
         match self {
             Self::QrydEmuSquareDevice(d) => d.single_qubit_gate_time(hqslang, qubit),
             Self::QrydEmuTriangularDevice(d) => d.single_qubit_gate_time(hqslang, qubit),
+            Self::TweezerDevice(d) => d.single_qubit_gate_time(hqslang, qubit),
         }
     }
 
@@ -128,6 +137,7 @@ impl Device for QRydAPIDevice {
         match self {
             Self::QrydEmuSquareDevice(d) => d.two_qubit_gate_time(hqslang, control, target),
             Self::QrydEmuTriangularDevice(d) => d.two_qubit_gate_time(hqslang, control, target),
+            Self::TweezerDevice(d) => d.two_qubit_gate_time(hqslang, control, target),
         }
     }
 
@@ -159,6 +169,9 @@ impl Device for QRydAPIDevice {
             Self::QrydEmuTriangularDevice(d) => {
                 d.three_qubit_gate_time(hqslang, control_0, control_1, target)
             }
+            Self::TweezerDevice(d) => {
+                d.three_qubit_gate_time(hqslang, control_0, control_1, target)
+            }
         }
     }
 
@@ -178,6 +191,7 @@ impl Device for QRydAPIDevice {
         match self {
             Self::QrydEmuSquareDevice(d) => d.multi_qubit_gate_time(hqslang, qubits),
             Self::QrydEmuTriangularDevice(d) => d.multi_qubit_gate_time(hqslang, qubits),
+            Self::TweezerDevice(d) => d.multi_qubit_gate_time(hqslang, qubits),
         }
     }
 
@@ -203,6 +217,7 @@ impl Device for QRydAPIDevice {
         match self {
             Self::QrydEmuSquareDevice(d) => d.qubit_decoherence_rates(qubit),
             Self::QrydEmuTriangularDevice(d) => d.qubit_decoherence_rates(qubit),
+            Self::TweezerDevice(d) => d.qubit_decoherence_rates(qubit),
         }
     }
 
@@ -216,6 +231,7 @@ impl Device for QRydAPIDevice {
         match self {
             Self::QrydEmuSquareDevice(d) => d.number_qubits(),
             Self::QrydEmuTriangularDevice(d) => d.number_qubits(),
+            Self::TweezerDevice(d) => d.number_qubits(),
         }
     }
 
@@ -235,6 +251,7 @@ impl Device for QRydAPIDevice {
         match self {
             Self::QrydEmuSquareDevice(d) => d.change_device(hqslang, operation),
             Self::QrydEmuTriangularDevice(d) => d.change_device(hqslang, operation),
+            Self::TweezerDevice(d) => d.change_device(hqslang, operation),
         }
     }
 
@@ -259,6 +276,7 @@ impl Device for QRydAPIDevice {
         match self {
             Self::QrydEmuSquareDevice(d) => d.two_qubit_edges(),
             Self::QrydEmuTriangularDevice(d) => d.two_qubit_edges(),
+            Self::TweezerDevice(d) => d.two_qubit_edges(),
         }
     }
 
@@ -280,6 +298,7 @@ impl Device for QRydAPIDevice {
         match self {
             Self::QrydEmuSquareDevice(d) => d.to_generic_device(),
             Self::QrydEmuTriangularDevice(d) => d.to_generic_device(),
+            Self::TweezerDevice(d) => d.to_generic_device(),
         }
     }
 }
@@ -305,6 +324,18 @@ impl From<&QrydEmuTriangularDevice> for QRydAPIDevice {
 impl From<QrydEmuTriangularDevice> for QRydAPIDevice {
     fn from(input: QrydEmuTriangularDevice) -> Self {
         Self::QrydEmuTriangularDevice(input)
+    }
+}
+
+impl From<&TweezerDevice> for QRydAPIDevice {
+    fn from(input: &TweezerDevice) -> Self {
+        Self::TweezerDevice(input.clone())
+    }
+}
+
+impl From<TweezerDevice> for QRydAPIDevice {
+    fn from(input: TweezerDevice) -> Self {
+        Self::TweezerDevice(input)
     }
 }
 

@@ -1,6 +1,6 @@
 [package]
 name = "roqoqo-qryd"
-version = "0.11.2"
+version = "0.11.3"
 authors = ["HQS Quantum Simulations <info@quantumsimulations.de>"]
 edition = "2021"
 license = "Apache-2.0"
