@@ -639,9 +639,7 @@ impl TweezerDevice {
         Ok(())
     }
 
-    /// Set the name of the default layout to use.
-    ///
-    /// Additionally, switch to the layout.
+    /// Set the name of the default layout to use and switch to it.
     ///
     /// # Arguments
     ///
