@@ -447,7 +447,7 @@ impl TweezerDeviceWrapper {
             Ok(serialized)
         } else {
             Err(PyValueError::new_err(
-                "The device does not allow any valid gate in any layout. ".to_owned() +
+                "The device does not have valid QRyd gates available.".to_owned() +
                 "The valid gates are RotateXY, PhaseShiftState1 and PhaseShiftedControlledPhase.",
             ))
         }
