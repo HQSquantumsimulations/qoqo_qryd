@@ -43,10 +43,10 @@ fn test_new_triangular() {
 fn test_new_tweezer() {
     let device = TweezerDevice::new(Some(1), None, None);
     let apidevice = QRydAPIDevice::from(&device);
-    assert_eq!(device.seed, 1);
-    assert_eq!(device.seed, apidevice.seed());
-    assert_eq!(device.qrydbackend, "qryd_tweezer_device");
-    assert_eq!(device.qrydbackend, apidevice.qrydbackend());
+    assert_eq!(device.seed(), 1);
+    assert_eq!(device.seed(), apidevice.seed());
+    assert_eq!(device.qrydbackend(), "qryd_tweezer_device");
+    assert_eq!(device.qrydbackend(), apidevice.qrydbackend());
 }
 
 // Test the functions from device trait of the square device emulator

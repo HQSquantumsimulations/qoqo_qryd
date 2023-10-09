@@ -516,12 +516,12 @@ impl TweezerDeviceWrapper {
 
     /// Returns the backend associated with the device.
     pub fn qrydbackend(&self) -> String {
-        self.internal.qrydbackend.clone()
+        self.internal.qrydbackend()
     }
 
     /// Returns the seed usized for the API.
     pub fn seed(&self) -> usize {
-        self.internal.seed
+        self.internal.seed()
     }
 }
 
@@ -986,12 +986,12 @@ impl TweezerMutableDeviceWrapper {
 
     /// Returns the backend associated with the device.
     pub fn qrydbackend(&self) -> String {
-        self.internal.qrydbackend.clone()
+        self.internal.qrydbackend()
     }
 
     /// Returns the seed usized for the API.
     pub fn seed(&self) -> usize {
-        self.internal.seed
+        self.internal.seed()
     }
 
     /// Set the time of a single-qubit gate for a tweezer in a given Layout.

@@ -31,8 +31,8 @@ fn test_new() {
     assert!(device.qubit_to_tweezer.is_none());
     assert_eq!(device.layout_register.len(), 1);
     assert!(device.layout_register.get("default").is_some());
-    assert_eq!(device.seed, 2);
-    assert_eq!(device.qrydbackend, "qryd_tweezer_device");
+    assert_eq!(device.seed(), 2);
+    assert_eq!(device.qrydbackend(), "qryd_tweezer_device");
 }
 
 // Test TweezerDevice add_layout(), switch_layout() methods

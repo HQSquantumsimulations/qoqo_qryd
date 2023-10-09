@@ -48,9 +48,7 @@ pub struct TweezerDevice {
     /// The default layout to use at first intantiation.
     pub default_layout: Option<String>,
     /// Seed, if not provided will be set to 0 per default (not recommended!)
-    pub seed: usize,
-    /// The backend associated with the device.
-    pub qrydbackend: String,
+    seed: usize,
 }
 
 /// Tweezers information relative to a Layout
@@ -197,7 +195,6 @@ impl TweezerDevice {
             controlled_phase_phase_relation,
             default_layout: None,
             seed: seed.unwrap_or_default(),
-            qrydbackend: "qryd_tweezer_device".to_string(),
         }
     }
 
@@ -1005,6 +1002,16 @@ impl TweezerDevice {
             }
         }
         true
+    }
+
+    /// Returns the seed usized for the API.
+    pub fn seed(&self) -> usize {
+        self.seed
+    }
+
+    /// Returns the backend associated with the device.
+    pub fn qrydbackend(&self) -> String {
+        "qryd_tweezer_device".to_string()
     }
 }
 

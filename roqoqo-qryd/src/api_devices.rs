@@ -36,7 +36,7 @@ impl QRydAPIDevice {
         match self {
             Self::QrydEmuSquareDevice(x) => x.qrydbackend(),
             Self::QrydEmuTriangularDevice(x) => x.qrydbackend(),
-            Self::TweezerDevice(x) => x.qrydbackend.clone(),
+            Self::TweezerDevice(x) => x.qrydbackend(),
         }
     }
 
@@ -45,7 +45,7 @@ impl QRydAPIDevice {
         match self {
             Self::QrydEmuSquareDevice(x) => x.seed(),
             Self::QrydEmuTriangularDevice(x) => x.seed(),
-            Self::TweezerDevice(x) => x.seed,
+            Self::TweezerDevice(x) => x.seed(),
         }
     }
 
