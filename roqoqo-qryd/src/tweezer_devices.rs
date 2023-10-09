@@ -167,7 +167,7 @@ impl TweezerDevice {
     ///
     /// # Arguments
     ///
-    /// * `seed` - Seed, if not provided will be set to 0 per default (not recommended!)
+    /// * `seed` - Seed, if not provided will be set to 0 by default (not recommended!)
     /// * `controlled_z_phase_relation` - The relation to use for the PhaseShiftedControlledZ gate.
     ///                                   It can be hardcoded to a specific value if a float is passed in as String.
     /// * `controlled_phase_phase_relation` - The relation to use for the PhaseShiftedControlledPhase gate.
