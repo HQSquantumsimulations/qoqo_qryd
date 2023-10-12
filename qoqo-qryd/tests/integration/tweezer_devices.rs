@@ -821,15 +821,17 @@ fn test_two_qubit_edges() {
 fn test_from_api() {
     let mut sent_device = TweezerDevice::new(None, None, None);
     sent_device.add_layout("triangle").unwrap();
-    sent_device.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("triangle".to_string()));
+    sent_device.set_tweezer_single_qubit_gate_time(
+        "PhaseShiftState1",
+        0,
+        0.23,
+        Some("triangle".to_string()),
+    );
     sent_device.set_default_layout("triangle").unwrap();
-    // let sent_device_wrapper = TweezerDeviceWrapper {
-    //     internal: sent_device.clone(),
-    // };
     let mut received_device = TweezerDevice::new(None, None, None);
     received_device.add_layout("triangle").unwrap();
     received_device.set_tweezer_single_qubit_gate_time(
-        "PauliX",
+        "PhaseShiftState1",
         0,
         0.23,
         Some("triangle".to_string()),
@@ -867,7 +869,7 @@ fn test_from_api() {
         let device = device_type
             .call_method1(
                 "from_api",
-                (Option::<String>::None, Option::<String>::None, port),
+                (Option::<String>::None, Option::<String>::None, port, 42),
             )
             .unwrap();
 
@@ -880,6 +882,14 @@ fn test_from_api() {
                 .extract::<String>()
                 .unwrap(),
             "triangle"
+        );
+        assert_eq!(
+            device
+                .call_method0("seed")
+                .unwrap()
+                .extract::<usize>()
+                .unwrap(),
+            42
         );
 
         let returned_device_string = device

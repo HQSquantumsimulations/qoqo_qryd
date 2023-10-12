@@ -2,6 +2,10 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+# 0.11.4
+
+* Added `seed` parameter to `TweezerDevice.from_api()`
+
 # 0.11.3
 
 * Modified `TweezerDevice.from_json()` and `TweezerMutableDevice.set_default_layout()` to automatically switch the layout of the device if a default one was set

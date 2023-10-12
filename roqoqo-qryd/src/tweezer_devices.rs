@@ -209,6 +209,7 @@ impl TweezerDevice {
     ///                    The access_token can either be given as an argument here
     ///                         or set via the environmental variable `$QRYD_API_TOKEN`.
     /// * `mock_port` - The address of the Mock server, used for testing purposes.
+    /// * `seed` - Optionally overwrite seed value from downloaded device instance.
     ///
     /// # Returns
     ///
@@ -222,9 +223,10 @@ impl TweezerDevice {
         device_name: Option<String>,
         access_token: Option<String>,
         mock_port: Option<String>,
+        seed: Option<usize>,
     ) -> Result<Self, RoqoqoBackendError> {
         // Preparing variables
-        let device_name_internal = device_name.unwrap_or_else(|| String::from("default"));
+        let device_name_internal = device_name.unwrap_or_else(|| String::from("testdevice"));
         let access_token_internal: String = if mock_port.is_some() {
             "".to_string()
         } else {
@@ -282,6 +284,9 @@ impl TweezerDevice {
             let mut device = resp.json::<TweezerDevice>().unwrap();
             if let Some(default) = device.default_layout.clone() {
                 device.switch_layout(&default).unwrap();
+            }
+            if let Some(new_seed) = seed {
+                device.seed = new_seed;
             }
             Ok(device)
         } else {

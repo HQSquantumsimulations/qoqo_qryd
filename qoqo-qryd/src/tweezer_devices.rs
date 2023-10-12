@@ -116,6 +116,7 @@ impl TweezerDeviceWrapper {
     ///                         The access_token can either be given as an argument here
     ///                             or set via the environmental variable `$QRYD_API_TOKEN`.
     ///     mock_port (Optional[str]): Server port to be used for testing purposes.
+    ///     seed (Optional[int]): Optionally overwrite seed value from downloaded device instance.
     ///
     /// Returns
     ///     TweezerDevice: The new TweezerDevice instance with populated tweezer data.
@@ -124,13 +125,14 @@ impl TweezerDeviceWrapper {
     ///     RoqoqoBackendError
     #[staticmethod]
     #[cfg(feature = "web-api")]
-    #[pyo3(text_signature = "(device_name, access_token, /)")]
+    #[pyo3(text_signature = "(device_name, access_token, seed, /)")]
     pub fn from_api(
         device_name: Option<String>,
         access_token: Option<String>,
         mock_port: Option<String>,
+        seed: Option<usize>,
     ) -> PyResult<Self> {
-        let internal = TweezerDevice::from_api(device_name, access_token, mock_port)
+        let internal = TweezerDevice::from_api(device_name, access_token, mock_port, seed)
             .map_err(|err| PyValueError::new_err(format!("{:}", err)))?;
         Ok(TweezerDeviceWrapper { internal })
     }

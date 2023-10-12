@@ -587,14 +587,21 @@ fn test_from_api() {
                 .unwrap()
                 .into_bytes(),
         )
+        .expect(2)
         .create();
 
-    let response = TweezerDevice::from_api(None, None, Some(port.clone()));
-    mock.assert();
+    let response = TweezerDevice::from_api(None, None, Some(port.clone()), None);
     assert!(response.is_ok());
 
     let device = response.unwrap();
     assert_eq!(device, returned_device_default);
+
+    let response_new_seed = TweezerDevice::from_api(None, None, Some(port.clone()), Some(42));
+    mock.assert();
+    assert!(response_new_seed.is_ok());
+
+    let device_new_seed = response_new_seed.unwrap();
+    assert_eq!(device_new_seed.seed(), 42);
 
     mock.remove();
     mock = server
@@ -602,7 +609,7 @@ fn test_from_api() {
         .with_status(400)
         .create();
 
-    let response = TweezerDevice::from_api(None, None, Some(port));
+    let response = TweezerDevice::from_api(None, None, Some(port), None);
     mock.assert();
     assert!(response.is_err());
     assert_eq!(
