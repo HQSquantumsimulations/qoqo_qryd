@@ -21,7 +21,7 @@ use qoqo::{devices::GenericDeviceWrapper, QoqoBackendError};
 use qoqo_calculator_pyo3::convert_into_calculator_float;
 use roqoqo::devices::Device;
 
-use roqoqo_qryd::TweezerDevice;
+use roqoqo_qryd::{QRydAPIDevice, TweezerDevice};
 
 /// Tweezer Device
 ///
@@ -525,6 +525,25 @@ impl TweezerDeviceWrapper {
     pub fn seed(&self) -> usize {
         self.internal.seed()
     }
+
+    /// Return the bincode representation of the Enum variant of the Device.
+    ///
+    /// Only used for internal interfacing.
+    ///
+    /// Returns:
+    ///     ByteArray: The serialized TweezerDevice (in [bincode] form).
+    ///
+    /// Raises:
+    ///     ValueError: Cannot serialize Device to bytes.
+    pub fn _enum_to_bincode(&self) -> PyResult<Py<PyByteArray>> {
+        let qryd_enum: QRydAPIDevice = (&self.internal).into();
+        let serialized = bincode::serialize(&qryd_enum)
+            .map_err(|_| PyValueError::new_err("Cannot serialize TweezerDevice to bytes"))?;
+        let b: Py<PyByteArray> = Python::with_gil(|py| -> Py<PyByteArray> {
+            PyByteArray::new(py, &serialized[..]).into()
+        });
+        Ok(b)
+    }
 }
 
 /// Tweezer Mutable Device
@@ -994,6 +1013,25 @@ impl TweezerMutableDeviceWrapper {
     /// Returns the seed usized for the API.
     pub fn seed(&self) -> usize {
         self.internal.seed()
+    }
+
+    /// Return the bincode representation of the Enum variant of the Device.
+    ///
+    /// Only used for internal interfacing.
+    ///
+    /// Returns:
+    ///     ByteArray: The serialized TweezerMutableDevice (in [bincode] form).
+    ///
+    /// Raises:
+    ///     ValueError: Cannot serialize Device to bytes.
+    pub fn _enum_to_bincode(&self) -> PyResult<Py<PyByteArray>> {
+        let qryd_enum: QRydAPIDevice = (&self.internal).into();
+        let serialized = bincode::serialize(&qryd_enum)
+            .map_err(|_| PyValueError::new_err("Cannot serialize TweezerMutableDevice to bytes"))?;
+        let b: Py<PyByteArray> = Python::with_gil(|py| -> Py<PyByteArray> {
+            PyByteArray::new(py, &serialized[..]).into()
+        });
+        Ok(b)
     }
 
     /// Set the time of a single-qubit gate for a tweezer in a given Layout.

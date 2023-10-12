@@ -5,6 +5,7 @@ Tracks qoqo-qryd changes after 0.5
 # 0.11.4
 
 * Added `seed` parameter to `TweezerDevice.from_api()`
+* Fixed `TweezerDevice` support for `APIBackend`
 
 # 0.11.3
 
