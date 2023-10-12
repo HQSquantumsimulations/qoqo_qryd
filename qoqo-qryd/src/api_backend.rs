@@ -461,6 +461,7 @@ impl APIBackendWrapper {
     /// Args:
     ///     dev (bool): The boolean to set the dev option to.
     ///
+    #[pyo3(text_signature = "($self, dev, /)")]
     pub fn set_dev(&mut self, dev: bool) {
         self.internal.set_dev(dev);
     }
