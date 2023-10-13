@@ -61,26 +61,29 @@ impl APIBackendWrapper {
     ///               been queried `timeout` times.
     ///     mock_port (Optional[str]): Server port to be used for testing purposes.
     ///     dev (Optional[bool]): The boolean to set the dev option to.
+    ///     api_version(Optional[str]): The version of the QRyd WebAPI to use. Defaults to "v3_0".
     ///
     /// Raises:
     ///     TypeError: Device Parameter is not QRydAPIDevice
     ///     RuntimeError: No access token found
     #[new]
-    #[pyo3(text_signature = "(device, access_token, timeout, mock_port, /)")]
+    #[pyo3(text_signature = "(device, access_token, timeout, mock_port, dev, api_version, /)")]
     pub fn new(
         device: &PyAny,
         access_token: Option<String>,
         timeout: Option<usize>,
         mock_port: Option<String>,
         dev: Option<bool>,
+        api_version: Option<String>,
     ) -> PyResult<Self> {
         let device: QRydAPIDevice = convert_into_device(device).map_err(|err| {
             PyTypeError::new_err(format!("Device Parameter is not QRydAPIDevice {:?}", err))
         })?;
         Ok(Self {
-            internal: APIBackend::new(device, access_token, timeout, mock_port, dev).map_err(
-                |err| PyRuntimeError::new_err(format!("No access token found {:?}", err)),
-            )?,
+            internal: APIBackend::new(device, access_token, timeout, mock_port, dev, api_version)
+                .map_err(|err| {
+                PyRuntimeError::new_err(format!("No access token found {:?}", err))
+            })?,
         })
     }
 
@@ -493,12 +496,20 @@ mod test {
     #[test]
     fn debug_and_clone() {
         let device: QRydAPIDevice = QrydEmuSquareDevice::new(None, None, None).into();
-        let backend =
-            APIBackend::new(device.clone(), Some("".to_string()), Some(2), None, None).unwrap();
+        let backend = APIBackend::new(
+            device.clone(),
+            Some("".to_string()),
+            Some(2),
+            None,
+            None,
+            None,
+        )
+        .unwrap();
         let wrapper = APIBackendWrapper { internal: backend };
         let a = format!("{:?}", wrapper);
         assert!(a.contains("QrydEmuSquareDevice"));
-        let backend2 = APIBackend::new(device, Some("a".to_string()), Some(2), None, None).unwrap();
+        let backend2 =
+            APIBackend::new(device, Some("a".to_string()), Some(2), None, None, None).unwrap();
         let wrapper2 = APIBackendWrapper { internal: backend2 };
         assert_eq!(wrapper.clone(), wrapper);
         assert_ne!(wrapper, wrapper2);

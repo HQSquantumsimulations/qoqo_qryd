@@ -52,6 +52,8 @@ pub struct APIBackend {
     mock_port: Option<String>,
     /// Is develop version. Defaults to `false`.
     pub dev: bool,
+    /// API version.
+    api_version: String,
 }
 
 /// Local struct representing the body of the request message
@@ -344,6 +346,7 @@ impl APIBackend {
     ///               been queried `timeout` times.
     /// * `mock_port` - Server port to be used for testing purposes.
     /// * `dev` - The boolean to set the dev option to.
+    /// * `api_version` - The version of the QRyd WebAPI to use. Defaults to "v3_0".
     ///
     pub fn new(
         device: QRydAPIDevice,
@@ -351,6 +354,7 @@ impl APIBackend {
         timeout: Option<usize>,
         mock_port: Option<String>,
         dev: Option<bool>,
+        api_version: Option<String>,
     ) -> Result<Self, RoqoqoBackendError> {
         if mock_port.is_some() {
             Ok(Self {
@@ -359,6 +363,7 @@ impl APIBackend {
                 timeout: timeout.unwrap_or(30),
                 mock_port,
                 dev: false,
+                api_version: api_version.unwrap_or("v3_0".to_string()),
             })
         } else {
             let access_token_internal: String = match access_token {
@@ -376,6 +381,7 @@ impl APIBackend {
                 timeout: timeout.unwrap_or(30),
                 mock_port,
                 dev: dev.unwrap_or(false),
+                api_version: api_version.unwrap_or("v3_0".to_string()),
             })
         }
     }
@@ -545,7 +551,7 @@ impl APIBackend {
                 })?;
         } else {
             resp = client
-                .post("https://api.qryddemo.itp3.uni-stuttgart.de/v3_0/jobs")
+                .post(format!("https://api.qryddemo.itp3.uni-stuttgart.de/{}/jobs", self.api_version))
                 .header("X-API-KEY", self.access_token.clone())
                 .json(&data)
                 .send()
@@ -966,11 +972,19 @@ mod test {
     #[test]
     fn debug_and_clone() {
         let device: QRydAPIDevice = QrydEmuSquareDevice::new(None, None, None).into();
-        let backend =
-            APIBackend::new(device.clone(), Some("".to_string()), Some(2), None, None).unwrap();
+        let backend = APIBackend::new(
+            device.clone(),
+            Some("".to_string()),
+            Some(2),
+            None,
+            None,
+            None,
+        )
+        .unwrap();
         let a = format!("{:?}", backend);
         assert!(a.contains("QrydEmuSquareDevice"));
-        let backend2 = APIBackend::new(device, Some("a".to_string()), Some(2), None, None).unwrap();
+        let backend2 =
+            APIBackend::new(device, Some("a".to_string()), Some(2), None, None, None).unwrap();
         assert_eq!(backend.clone(), backend);
         assert_ne!(backend, backend2);
     }
@@ -1088,7 +1102,8 @@ mod test {
         let number_qubits = 6;
         let device = QrydEmuSquareDevice::new(Some(2), None, None);
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-        let api_backend_new = APIBackend::new(qryd_device, None, None, Some(port), None).unwrap();
+        let api_backend_new =
+            APIBackend::new(qryd_device, None, None, Some(port), None, None).unwrap();
         let mut circuit = Circuit::new();
         circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
         circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
@@ -1173,7 +1188,8 @@ mod test {
         let number_qubits = 6;
         let device = QrydEmuSquareDevice::new(Some(2), None, None);
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-        let api_backend_new = APIBackend::new(qryd_device, None, None, Some(port), None).unwrap();
+        let api_backend_new =
+            APIBackend::new(qryd_device, None, None, Some(port), None, None).unwrap();
         let mut circuit = Circuit::new();
         circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
         circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
@@ -1240,7 +1256,8 @@ mod test {
             .collect::<String>();
         let device = QrydEmuSquareDevice::new(Some(1), None, None);
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-        let api_backend_new = APIBackend::new(qryd_device, None, None, Some(port), None).unwrap();
+        let api_backend_new =
+            APIBackend::new(qryd_device, None, None, Some(port), None, None).unwrap();
 
         let mut input_circuit = Circuit::new();
         input_circuit += operations::DefinitionBit::new("ro".to_string(), 3, true);
