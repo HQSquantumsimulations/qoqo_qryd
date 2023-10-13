@@ -59,6 +59,8 @@ pub struct APIBackend {
 /// Local struct representing the body of the request message
 #[derive(Debug, serde::Serialize)]
 struct QRydRunData {
+    /// Format of the quantum program: qoqo
+    format: String,
     /// The QRyd WebAPI Backend used to execute operations and circuits.
     /// At the moment limited to the QRyd emulators
     /// ('qryd_emu_localcomp_square', 'qryd_emu_localcomp_triangle',
@@ -508,6 +510,7 @@ impl APIBackend {
         //     downconvert_roqoqo_version(quantumprogram)?;
         // dbg!(&serde_json::to_string(&quantumprogram).unwrap());
         let data = QRydRunData {
+            format: "qoqo".to_string(),
             backend: self.device.qrydbackend(),
             program: filtered_qp,
             dev: self.dev,
@@ -551,7 +554,10 @@ impl APIBackend {
                 })?;
         } else {
             resp = client
-                .post(format!("https://api.qryddemo.itp3.uni-stuttgart.de/{}/jobs", self.api_version))
+                .post(format!(
+                    "https://api.qryddemo.itp3.uni-stuttgart.de/{}/jobs",
+                    self.api_version
+                ))
                 .header("X-API-KEY", self.access_token.clone())
                 .json(&data)
                 .send()
@@ -1004,6 +1010,7 @@ mod test {
         // let program: roqoqo_1_0::QuantumProgram = downconvert_roqoqo_version(program).unwrap();
 
         let test = QRydRunData {
+            format: "qoqo".to_string(),
             backend: "qryd_emu_cloudcomp_square".to_string(),
             program,
             dev: false,
@@ -1016,7 +1023,7 @@ mod test {
             extended_set_weight: 0.5,
             reverse_traversal_iterations: 2,
         };
-        assert_eq!(format!("{:?}", test), "QRydRunData { backend: \"qryd_emu_cloudcomp_square\", dev: false, fusion_max_qubits: 4, seed_simulator: None, seed_compiler: None, use_extended_set: true, use_reverse_traversal: true, reverse_traversal_iterations: 2, extended_set_size: 5, extended_set_weight: 0.5, program: ClassicalRegister { measurement: ClassicalRegister { constant_circuit: None, circuits: [Circuit { definitions: [], operations: [], _roqoqo_version: RoqoqoVersion }] }, input_parameter_names: [\"test\"] } }");
+        assert_eq!(format!("{:?}", test), "QRydRunData { format: \"qoqo\", backend: \"qryd_emu_cloudcomp_square\", dev: false, fusion_max_qubits: 4, seed_simulator: None, seed_compiler: None, use_extended_set: true, use_reverse_traversal: true, reverse_traversal_iterations: 2, extended_set_size: 5, extended_set_weight: 0.5, program: ClassicalRegister { measurement: ClassicalRegister { constant_circuit: None, circuits: [Circuit { definitions: [], operations: [], _roqoqo_version: RoqoqoVersion }] }, input_parameter_names: [\"test\"] } }");
     }
 
     /// Test Debug of QRydJobResult
@@ -1309,6 +1316,7 @@ mod test {
             input_parameter_names: vec![],
         };
         let data = QRydRunData {
+            format: "qoqo".to_string(),
             backend: device.qrydbackend(),
             program: output_program,
             dev: false,
