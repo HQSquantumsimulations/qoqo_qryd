@@ -876,9 +876,9 @@ dependencies = [
 
 [[package]]
 name = "qoqo"
-version = "1.7.0"
+version = "1.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6348fdb820ba16927418cdf5368c1a5d52bd11fdfb6393f0f9e998d3ee5d8065"
+checksum = "d1dbcc69ae965d0c19f9ce0d4290db77689e3a22462fe0fbcf93fc85939a969e"
 dependencies = [
  "bincode",
  "ndarray",
@@ -903,9 +903,9 @@ dependencies = [
 
 [[package]]
 name = "qoqo-macros"
-version = "1.7.0"
+version = "1.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f31f71e03276b5a5381d74ee3d77f23e528d1e9ec40b2cecbb88665bd5dbc62f"
+checksum = "e0361ef299a5691f0ae9ed9bf6eccaa468d61d98635e6aa60730dc46585d2cc6"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1062,9 +1062,9 @@ dependencies = [
 
 [[package]]
 name = "regex-syntax"
-version = "0.8.0"
+version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c3cbb081b9784b07cceb8824c8583f86db4814d172ab043f3c23f7dc600bf83d"
+checksum = "56d84fdd47036b038fc80dd333d10b6aab10d5d31f4a366e20014def75328d33"
 
 [[package]]
 name = "reqwest"
@@ -1123,9 +1123,9 @@ dependencies = [
 
 [[package]]
 name = "roqoqo"
-version = "1.7.0"
+version = "1.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "302b7db9cf1e9e264ec07e09fe5bc22ffd142f9dac0f73335d7197ddc778255f"
+checksum = "8a707439111ba01be3495fe64c9c2d92b8033c08781b0b91162ca43383c65c0e"
 dependencies = [
  "bincode",
  "nalgebra",
@@ -1146,9 +1146,9 @@ dependencies = [
 
 [[package]]
 name = "roqoqo-derive"
-version = "1.7.0"
+version = "1.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "29d9c82a1720f928bb19df60c57864d56efabcb9aec416bc00f2b22e9267ea55"
+checksum = "0db8bafb647b00998af3cd0e9073a82a60a1f87cfc925b56b3cc94c03cf0cb25"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1195,9 +1195,9 @@ dependencies = [
 
 [[package]]
 name = "roqoqo-test"
-version = "1.7.0"
+version = "1.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "977c118d6958be1cde7a90b40af0f633704a70df0b01c9cd5551d9031013c21e"
+checksum = "66d6c4a2f14b78a963f382812de4ad3a2065ad8c9954260eb0c0af0a132a6f8d"
 dependencies = [
  "nalgebra",
  "ndarray",
@@ -1309,18 +1309,18 @@ dependencies = [
 
 [[package]]
 name = "serde"
-version = "1.0.188"
+version = "1.0.189"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cf9e0fcba69a370eed61bcf2b728575f726b50b55cba78064753d708ddc7549e"
+checksum = "8e422a44e74ad4001bdc8eede9a4570ab52f71190e9c076d14369f38b9200537"
 dependencies = [
  "serde_derive",
 ]
 
 [[package]]
 name = "serde_derive"
-version = "1.0.188"
+version = "1.0.189"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4eca7ac642d82aa35b60049a6eccb4be6be75e599bd2e9adb5f875a737654af2"
+checksum = "1e48d1f918009ce3145511378cf68d613e3b3d9137d67272562080d68a2b32d5"
 dependencies = [
  "proc-macro2",
  "quote",
