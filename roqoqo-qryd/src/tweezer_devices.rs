@@ -47,8 +47,8 @@ pub struct TweezerDevice {
     pub controlled_phase_phase_relation: String,
     /// The default layout to use at first intantiation.
     pub default_layout: Option<String>,
-    /// Seed, if not provided will be set to 0 per default (not recommended!)
-    seed: usize,
+    /// Optional seed, for simulation purposes.
+    seed: Option<usize>,
 }
 
 /// Tweezers information relative to a Layout
@@ -167,7 +167,7 @@ impl TweezerDevice {
     ///
     /// # Arguments
     ///
-    /// * `seed` - Seed, if not provided will be set to 0 by default (not recommended!)
+    /// * `seed` - Optional seed, for simulation purposes.
     /// * `controlled_z_phase_relation` - The relation to use for the PhaseShiftedControlledZ gate.
     ///                                   It can be hardcoded to a specific value if a float is passed in as String.
     /// * `controlled_phase_phase_relation` - The relation to use for the PhaseShiftedControlledPhase gate.
@@ -194,7 +194,7 @@ impl TweezerDevice {
             controlled_z_phase_relation,
             controlled_phase_phase_relation,
             default_layout: None,
-            seed: seed.unwrap_or_default(),
+            seed,
         }
     }
 
@@ -286,7 +286,7 @@ impl TweezerDevice {
                 device.switch_layout(&default).unwrap();
             }
             if let Some(new_seed) = seed {
-                device.seed = new_seed;
+                device.seed = Some(new_seed);
             }
             Ok(device)
         } else {
@@ -1007,7 +1007,7 @@ impl TweezerDevice {
     }
 
     /// Returns the seed usized for the API.
-    pub fn seed(&self) -> usize {
+    pub fn seed(&self) -> Option<usize> {
         self.seed
     }
 

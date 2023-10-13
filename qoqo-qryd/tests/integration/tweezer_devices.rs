@@ -57,17 +57,37 @@ fn test_new() {
         assert_eq!(
             res.call_method0("seed")
                 .unwrap()
-                .extract::<usize>()
+                .extract::<Option<usize>>()
                 .unwrap(),
-            2
+            Some(2)
         );
         assert_eq!(
             res_mut
                 .call_method0("seed")
                 .unwrap()
-                .extract::<usize>()
+                .extract::<Option<usize>>()
                 .unwrap(),
-            2
+            Some(2)
+        );
+
+        let res_emp = device_type.call0().unwrap();
+        let res_mut_emp = device_type_mut.call0().unwrap();
+
+        assert_eq!(
+            res_emp
+                .call_method0("seed")
+                .unwrap()
+                .extract::<Option<usize>>()
+                .unwrap(),
+            None
+        );
+        assert_eq!(
+            res_mut_emp
+                .call_method0("seed")
+                .unwrap()
+                .extract::<Option<usize>>()
+                .unwrap(),
+            None
         );
     })
 }

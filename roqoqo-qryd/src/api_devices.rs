@@ -41,10 +41,10 @@ impl QRydAPIDevice {
     }
 
     /// Returns the seed usized for the API.
-    pub fn seed(&self) -> usize {
+    pub fn seed(&self) -> Option<usize> {
         match self {
-            Self::QrydEmuSquareDevice(x) => x.seed(),
-            Self::QrydEmuTriangularDevice(x) => x.seed(),
+            Self::QrydEmuSquareDevice(x) => Some(x.seed()),
+            Self::QrydEmuTriangularDevice(x) => Some(x.seed()),
             Self::TweezerDevice(x) => x.seed(),
         }
     }

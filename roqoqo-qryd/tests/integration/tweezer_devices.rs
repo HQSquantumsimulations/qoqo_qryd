@@ -31,8 +31,12 @@ fn test_new() {
     assert!(device.qubit_to_tweezer.is_none());
     assert_eq!(device.layout_register.len(), 1);
     assert!(device.layout_register.get("default").is_some());
-    assert_eq!(device.seed(), 2);
+    assert_eq!(device.seed(), Some(2));
     assert_eq!(device.qrydbackend(), "qryd_tweezer_device");
+
+    let device_emp = TweezerDevice::new(None, None, None);
+
+    assert_eq!(device_emp.seed(), None);
 }
 
 // Test TweezerDevice add_layout(), switch_layout() methods
@@ -601,7 +605,7 @@ fn test_from_api() {
     assert!(response_new_seed.is_ok());
 
     let device_new_seed = response_new_seed.unwrap();
-    assert_eq!(device_new_seed.seed(), 42);
+    assert_eq!(device_new_seed.seed(), Some(42));
 
     mock.remove();
     mock = server

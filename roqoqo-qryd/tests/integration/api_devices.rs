@@ -22,7 +22,7 @@ fn test_new_square() {
     let device = QrydEmuSquareDevice::new(None, None, None);
     let apidevice = QRydAPIDevice::from(&device);
     assert_eq!(device.seed(), 0);
-    assert_eq!(device.seed(), apidevice.seed());
+    assert_eq!(device.seed(), apidevice.seed().unwrap());
     assert_eq!(device.qrydbackend(), "qryd_emu_cloudcomp_square");
     assert_eq!(device.qrydbackend(), apidevice.qrydbackend());
 }
@@ -33,7 +33,7 @@ fn test_new_triangular() {
     let device = QrydEmuTriangularDevice::new(Some(1), None, None, None, None);
     let apidevice = QRydAPIDevice::from(&device);
     assert_eq!(device.seed(), 1);
-    assert_eq!(device.seed(), apidevice.seed());
+    assert_eq!(device.seed(), apidevice.seed().unwrap());
     assert_eq!(device.qrydbackend(), "qryd_emu_cloudcomp_triangle");
     assert_eq!(device.qrydbackend(), apidevice.qrydbackend());
 }
@@ -43,7 +43,7 @@ fn test_new_triangular() {
 fn test_new_tweezer() {
     let device = TweezerDevice::new(Some(1), None, None);
     let apidevice = QRydAPIDevice::from(&device);
-    assert_eq!(device.seed(), 1);
+    assert_eq!(device.seed(), Some(1));
     assert_eq!(device.seed(), apidevice.seed());
     assert_eq!(device.qrydbackend(), "qryd_tweezer_device");
     assert_eq!(device.qrydbackend(), apidevice.qrydbackend());

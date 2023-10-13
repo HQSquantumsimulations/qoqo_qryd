@@ -395,7 +395,7 @@ impl APIBackend {
     ///
     pub fn post_job(&self, quantumprogram: QuantumProgram) -> Result<String, RoqoqoBackendError> {
         // Prepare data that need to be passed to the WebAPI client
-        let seed_param: usize = self.device.seed(); // seed.unwrap_or(0);
+        let seed_param: Option<usize> = self.device.seed(); // seed.unwrap_or(0);
         let mut transform_pragma_repeated_measurement: bool = false;
 
         match &quantumprogram {
@@ -506,7 +506,7 @@ impl APIBackend {
             program: filtered_qp,
             dev: self.dev,
             fusion_max_qubits: 4,
-            seed_simulator: Some(seed_param),
+            seed_simulator: seed_param,
             seed_compiler: None,
             use_extended_set: true,
             use_reverse_traversal: true,

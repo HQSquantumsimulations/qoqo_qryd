@@ -44,7 +44,7 @@ impl TweezerDeviceWrapper {
     /// Creates a new TweezerDevice instance.
     ///
     /// Args:
-    ///     seed (int): Seed, if not provided will be set to 0 per default (not recommended!)
+    ///     seed (int): Optional seed, for simulation purposes.
     ///     controlled_z_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledZ gate.
     ///     controlled_phase_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledPhase gate.
     ///
@@ -522,7 +522,7 @@ impl TweezerDeviceWrapper {
     }
 
     /// Returns the seed usized for the API.
-    pub fn seed(&self) -> usize {
+    pub fn seed(&self) -> Option<usize> {
         self.internal.seed()
     }
 
@@ -567,7 +567,7 @@ impl TweezerMutableDeviceWrapper {
     /// Creates a new TweezerMutableDevice instance.
     ///
     /// Args:
-    ///     seed (int): Seed, if not provided will be set to 0 per default (not recommended!)
+    ///     seed (int): Optional seed, for simulation purposes.
     ///     controlled_z_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledZ gate.
     ///     controlled_phase_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledPhase gate.
     ///
@@ -1011,7 +1011,7 @@ impl TweezerMutableDeviceWrapper {
     }
 
     /// Returns the seed usized for the API.
-    pub fn seed(&self) -> usize {
+    pub fn seed(&self) -> Option<usize> {
         self.internal.seed()
     }
 
