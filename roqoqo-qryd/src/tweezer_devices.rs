@@ -210,6 +210,7 @@ impl TweezerDevice {
     ///                         or set via the environmental variable `$QRYD_API_TOKEN`.
     /// * `mock_port` - The address of the Mock server, used for testing purposes.
     /// * `seed` - Optionally overwrite seed value from downloaded device instance.
+    /// * `dev` - The boolean to set the dev header to.
     /// * `api_version` - The version of the QRYD API to use. Defaults to "v1_0".
     ///
     /// # Returns
@@ -225,6 +226,7 @@ impl TweezerDevice {
         access_token: Option<String>,
         mock_port: Option<String>,
         seed: Option<usize>,
+        dev: Option<bool>,
         api_version: Option<String>,
     ) -> Result<Self, RoqoqoBackendError> {
         // Preparing variables
@@ -263,6 +265,19 @@ impl TweezerDevice {
             client
                 .get(format!("http://127.0.0.1:{}", port))
                 .body(device_name_internal)
+                .send()
+                .map_err(|e| RoqoqoBackendError::NetworkError {
+                    msg: format!("{:?}", e),
+                })?
+        } else if dev.unwrap_or(false) {
+            client
+                .get(format!(
+                    "https://api.qryddemo.itp3.uni-stuttgart.de/{}/backends/devices/{}",
+                    api_version.unwrap_or_else(|| String::from("v1_0")),
+                    device_name_internal
+                ))
+                .header("X-API-KEY", access_token_internal)
+                .header("X-DEV", "?1")
                 .send()
                 .map_err(|e| RoqoqoBackendError::NetworkError {
                     msg: format!("{:?}", e),

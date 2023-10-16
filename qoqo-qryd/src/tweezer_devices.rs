@@ -117,6 +117,7 @@ impl TweezerDeviceWrapper {
     ///                             or set via the environmental variable `$QRYD_API_TOKEN`.
     ///     mock_port (Optional[str]): Server port to be used for testing purposes.
     ///     seed (Optional[int]): Optionally overwrite seed value from downloaded device instance.
+    ///     dev (Optional[bool]): The boolean to set the dev header to.
     ///     api_version (Optional[str]): The version of the QRYD API to use. Defaults to "v1_0".
     ///
     /// Returns
@@ -132,10 +133,11 @@ impl TweezerDeviceWrapper {
         access_token: Option<String>,
         mock_port: Option<String>,
         seed: Option<usize>,
+        dev: Option<bool>,
         api_version: Option<String>,
     ) -> PyResult<Self> {
         let internal =
-            TweezerDevice::from_api(device_name, access_token, mock_port, seed, api_version)
+            TweezerDevice::from_api(device_name, access_token, mock_port, seed, dev, api_version)
                 .map_err(|err| PyValueError::new_err(format!("{:}", err)))?;
         Ok(TweezerDeviceWrapper { internal })
     }

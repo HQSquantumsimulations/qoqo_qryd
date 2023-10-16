@@ -14,7 +14,6 @@ use crate::api_devices::QRydAPIDevice;
 use bitvec::prelude::*;
 use num_complex::Complex64;
 use reqwest::blocking::Client;
-use reqwest::blocking::Response;
 use roqoqo::backends::RegisterResult;
 use roqoqo::measurements::ClassicalRegister;
 use roqoqo::operations::Define;
@@ -543,17 +542,29 @@ impl APIBackend {
         // Call WebAPI client
         // here: value for put() temporarily fixed.
         // needs to be derived dynamically based on the provided parameter 'qrydbackend'
-        let resp: Response;
-        if let Some(mock_port) = &self.mock_port {
-            resp = client
+        let resp = if let Some(mock_port) = &self.mock_port {
+            client
                 .post(format!("http://127.0.0.1:{}", mock_port))
                 .json(&data)
                 .send()
                 .map_err(|e| RoqoqoBackendError::NetworkError {
                     msg: format!("{:?}", e),
-                })?;
+                })?
+        } else if self.dev {
+            client
+                .post(format!(
+                    "https://api.qryddemo.itp3.uni-stuttgart.de/{}/jobs",
+                    self.api_version
+                ))
+                .header("X-API-KEY", self.access_token.clone())
+                .header("X-DEV", "?1")
+                .json(&data)
+                .send()
+                .map_err(|e| RoqoqoBackendError::NetworkError {
+                    msg: format!("{:?}", e),
+                })?
         } else {
-            resp = client
+            client
                 .post(format!(
                     "https://api.qryddemo.itp3.uni-stuttgart.de/{}/jobs",
                     self.api_version
@@ -563,8 +574,8 @@ impl APIBackend {
                 .send()
                 .map_err(|e| RoqoqoBackendError::NetworkError {
                     msg: format!("{:?}", e),
-                })?;
-        }
+                })?
+        };
 
         let status_code = resp.status();
         if status_code != reqwest::StatusCode::CREATED {
@@ -637,14 +648,26 @@ impl APIBackend {
         let url_string: String = job_location + "/status";
 
         // Call WebAPI client
-        let resp = client
-            .get(url_string)
-            .header("X-API-KEY", self.access_token.clone())
-            // .json(&data)
-            .send()
-            .map_err(|e| RoqoqoBackendError::NetworkError {
-                msg: format!("{:?}", e),
-            })?;
+        let resp = if self.dev {
+            client
+                .get(url_string)
+                .header("X-API-KEY", self.access_token.clone())
+                .header("X-DEV", "?1")
+                // .json(&data)
+                .send()
+                .map_err(|e| RoqoqoBackendError::NetworkError {
+                    msg: format!("{:?}", e),
+                })?
+        } else {
+            client
+                .get(url_string)
+                .header("X-API-KEY", self.access_token.clone())
+                // .json(&data)
+                .send()
+                .map_err(|e| RoqoqoBackendError::NetworkError {
+                    msg: format!("{:?}", e),
+                })?
+        };
 
         let status_code = resp.status();
         if status_code != reqwest::StatusCode::OK {
@@ -710,14 +733,26 @@ impl APIBackend {
         let url_string: String = job_location + "/result";
 
         // Call WebAPI client
-        let resp = client
-            .get(url_string)
-            .header("X-API-KEY", self.access_token.clone())
-            // .json(&data)
-            .send()
-            .map_err(|e| RoqoqoBackendError::NetworkError {
-                msg: format!("{:?}", e),
-            })?;
+        let resp = if self.dev {
+            client
+                .get(url_string)
+                .header("X-API-KEY", self.access_token.clone())
+                .header("X-DEV", "?1")
+                // .json(&data)
+                .send()
+                .map_err(|e| RoqoqoBackendError::NetworkError {
+                    msg: format!("{:?}", e),
+                })?
+        } else {
+            client
+                .get(url_string)
+                .header("X-API-KEY", self.access_token.clone())
+                // .json(&data)
+                .send()
+                .map_err(|e| RoqoqoBackendError::NetworkError {
+                    msg: format!("{:?}", e),
+                })?
+        };
 
         let status_code = resp.status();
         if status_code != reqwest::StatusCode::OK {
@@ -775,13 +810,24 @@ impl APIBackend {
                 })?
         };
         // Call WebAPI client
-        let resp = client
-            .delete(job_location)
-            .header("X-API-KEY", self.access_token.clone())
-            .send()
-            .map_err(|e| RoqoqoBackendError::NetworkError {
-                msg: format!("{:?}", e),
-            })?;
+        let resp = if self.dev {
+            client
+                .delete(job_location)
+                .header("X-API-KEY", self.access_token.clone())
+                .header("X-DEV", "?1")
+                .send()
+                .map_err(|e| RoqoqoBackendError::NetworkError {
+                    msg: format!("{:?}", e),
+                })?
+        } else {
+            client
+                .delete(job_location)
+                .header("X-API-KEY", self.access_token.clone())
+                .send()
+                .map_err(|e| RoqoqoBackendError::NetworkError {
+                    msg: format!("{:?}", e),
+                })?
+        };
 
         let status_code = resp.status();
         if status_code != reqwest::StatusCode::OK {
