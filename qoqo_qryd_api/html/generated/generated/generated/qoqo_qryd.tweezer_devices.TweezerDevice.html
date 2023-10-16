@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>qoqo_qryd.tweezer_devices.TweezerDevice &mdash; qoqo_qryd 0.11.3 documentation</title>
+  <title>qoqo_qryd.tweezer_devices.TweezerDevice &mdash; qoqo_qryd 0.11.4 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -13,7 +13,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=5157f224"></script>
+        <script src="../../../_static/documentation_options.js?v=3b781160"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -36,7 +36,7 @@
             qoqo_qryd
           </a>
               <div class="version">
-                0.11.3
+                0.11.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -137,7 +137,7 @@ It can be hardcoded to a specific value if a float is passed in as String.</p></
 <tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.deactivate_qubit" title="qoqo_qryd.tweezer_devices.TweezerDevice.deactivate_qubit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">deactivate_qubit</span></code></a>()</p></td>
 <td><p>Deactivate the given qubit in the device.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.from_api" title="qoqo_qryd.tweezer_devices.TweezerDevice.from_api"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_api</span></code></a>(device_name, access_token, /)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.from_api" title="qoqo_qryd.tweezer_devices.TweezerDevice.from_api"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_api</span></code></a>(device_name, access_token, ...)</p></td>
 <td><p>Creates a new TweezerDevice instance containing populated tweezer data.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.from_bincode" title="qoqo_qryd.tweezer_devices.TweezerDevice.from_bincode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_bincode</span></code></a>(input, /)</p></td>
@@ -276,11 +276,11 @@ It can be hardcoded to a specific value if a float is passed in as String.</p></
 
 <dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.tweezer_devices.TweezerDevice.from_api">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_api</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">access_token</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.tweezer_devices.TweezerDevice.from_api" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_api</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">access_token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_port</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_version</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.tweezer_devices.TweezerDevice.from_api" title="Link to this definition"></a></dt>
 <dd><p>Creates a new TweezerDevice instance containing populated tweezer data.</p>
 <p>This requires a valid QRYD_API_TOKEN. Visit <cite>https://thequantumlaend.de/get-access/</cite> to get one.</p>
 <dl>
-<dt>Args</dt><dd><p>device_name (Optional[str]): The name of the device to instantiate. Defaults to &quot;Default&quot;.
+<dt>Args</dt><dd><p>device_name (Optional[str]): The name of the device to instantiate. Defaults to &quot;test_device&quot;.
 access_token (Optional[str]): An access_token is required to access QRYD hardware and emulators.</p>
 <blockquote>
 <div><dl class="simple">
@@ -288,7 +288,10 @@ access_token (Optional[str]): An access_token is required to access QRYD hardwar
 </dd>
 </dl>
 </div></blockquote>
-<p>mock_port (Optional[str]): Server port to be used for testing purposes.</p>
+<p>mock_port (Optional[str]): Server port to be used for testing purposes.
+seed (Optional[int]): Optionally overwrite seed value from downloaded device instance.
+dev (Optional[bool]): The boolean to set the dev header to.
+api_version (Optional[str]): The version of the QRYD API to use. Defaults to &quot;v1_0&quot;.</p>
 </dd>
 <dt>Returns</dt><dd><p>TweezerDevice: The new TweezerDevice instance with populated tweezer data.</p>
 </dd>
