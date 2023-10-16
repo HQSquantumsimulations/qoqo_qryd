@@ -111,12 +111,13 @@ impl TweezerDeviceWrapper {
     /// This requires a valid QRYD_API_TOKEN. Visit `https://thequantumlaend.de/get-access/` to get one.
     ///
     /// Args
-    ///     device_name (Optional[str]): The name of the device to instantiate. Defaults to "Default".
+    ///     device_name (Optional[str]): The name of the device to instantiate. Defaults to "test_device".
     ///     access_token (Optional[str]): An access_token is required to access QRYD hardware and emulators.
     ///                         The access_token can either be given as an argument here
     ///                             or set via the environmental variable `$QRYD_API_TOKEN`.
     ///     mock_port (Optional[str]): Server port to be used for testing purposes.
     ///     seed (Optional[int]): Optionally overwrite seed value from downloaded device instance.
+    ///     api_version (Optional[str]): The version of the QRYD API to use. Defaults to "v1_0".
     ///
     /// Returns
     ///     TweezerDevice: The new TweezerDevice instance with populated tweezer data.
@@ -125,15 +126,17 @@ impl TweezerDeviceWrapper {
     ///     RoqoqoBackendError
     #[staticmethod]
     #[cfg(feature = "web-api")]
-    #[pyo3(text_signature = "(device_name, access_token, seed, /)")]
+    #[pyo3(text_signature = "(device_name, access_token, mock_port, seed, api_version, /)")]
     pub fn from_api(
         device_name: Option<String>,
         access_token: Option<String>,
         mock_port: Option<String>,
         seed: Option<usize>,
+        api_version: Option<String>,
     ) -> PyResult<Self> {
-        let internal = TweezerDevice::from_api(device_name, access_token, mock_port, seed)
-            .map_err(|err| PyValueError::new_err(format!("{:}", err)))?;
+        let internal =
+            TweezerDevice::from_api(device_name, access_token, mock_port, seed, api_version)
+                .map_err(|err| PyValueError::new_err(format!("{:}", err)))?;
         Ok(TweezerDeviceWrapper { internal })
     }
 

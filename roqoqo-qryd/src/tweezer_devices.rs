@@ -204,12 +204,13 @@ impl TweezerDevice {
     ///
     /// # Arguments
     ///
-    /// * `device_name` - The name of the device to instantiate. Defaults to "Default".
+    /// * `device_name` - The name of the device to instantiate. Defaults to "test_device".
     /// * `access_token` - An access_token is required to access QRYD hardware and emulators.
     ///                    The access_token can either be given as an argument here
     ///                         or set via the environmental variable `$QRYD_API_TOKEN`.
     /// * `mock_port` - The address of the Mock server, used for testing purposes.
     /// * `seed` - Optionally overwrite seed value from downloaded device instance.
+    /// * `api_version` - The version of the QRYD API to use. Defaults to "v1_0".
     ///
     /// # Returns
     ///
@@ -224,6 +225,7 @@ impl TweezerDevice {
         access_token: Option<String>,
         mock_port: Option<String>,
         seed: Option<usize>,
+        api_version: Option<String>,
     ) -> Result<Self, RoqoqoBackendError> {
         // Preparing variables
         let device_name_internal = device_name.unwrap_or_else(|| String::from("testdevice"));
@@ -268,7 +270,8 @@ impl TweezerDevice {
         } else {
             client
                 .get(format!(
-                    "https://api.qryddemo.itp3.uni-stuttgart.de/v1_0/backends/devices/{}",
+                    "https://api.qryddemo.itp3.uni-stuttgart.de/{}/backends/devices/{}",
+                    api_version.unwrap_or_else(|| String::from("v1_0")),
                     device_name_internal
                 ))
                 .header("X-API-KEY", access_token_internal)

@@ -4,7 +4,7 @@ Tracks qoqo-qryd changes after 0.5
 
 # 0.11.4
 
-* Added `seed` parameter to `TweezerDevice.from_api()`
+* Added `api_version`, `seed` parameters to `TweezerDevice.from_api()`
 * Fixed `TweezerDevice` support for `APIBackend`
 * Modified `TweezerDevice` seed parameter to default to None, instead of 0
 * Added `api_version` parameter to `APIBackend`
