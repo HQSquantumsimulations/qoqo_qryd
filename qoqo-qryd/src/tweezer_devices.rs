@@ -21,7 +21,7 @@ use qoqo::{devices::GenericDeviceWrapper, QoqoBackendError};
 use qoqo_calculator_pyo3::convert_into_calculator_float;
 use roqoqo::devices::Device;
 
-use roqoqo_qryd::TweezerDevice;
+use roqoqo_qryd::{QRydAPIDevice, TweezerDevice};
 
 /// Tweezer Device
 ///
@@ -44,7 +44,7 @@ impl TweezerDeviceWrapper {
     /// Creates a new TweezerDevice instance.
     ///
     /// Args:
-    ///     seed (int): Seed, if not provided will be set to 0 per default (not recommended!)
+    ///     seed (int): Optional seed, for simulation purposes.
     ///     controlled_z_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledZ gate.
     ///     controlled_phase_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledPhase gate.
     ///
@@ -111,11 +111,14 @@ impl TweezerDeviceWrapper {
     /// This requires a valid QRYD_API_TOKEN. Visit `https://thequantumlaend.de/get-access/` to get one.
     ///
     /// Args
-    ///     device_name (Optional[str]): The name of the device to instantiate. Defaults to "Default".
+    ///     device_name (Optional[str]): The name of the device to instantiate. Defaults to "test_device".
     ///     access_token (Optional[str]): An access_token is required to access QRYD hardware and emulators.
     ///                         The access_token can either be given as an argument here
     ///                             or set via the environmental variable `$QRYD_API_TOKEN`.
     ///     mock_port (Optional[str]): Server port to be used for testing purposes.
+    ///     seed (Optional[int]): Optionally overwrite seed value from downloaded device instance.
+    ///     dev (Optional[bool]): The boolean to set the dev header to.
+    ///     api_version (Optional[str]): The version of the QRYD API to use. Defaults to "v1_0".
     ///
     /// Returns
     ///     TweezerDevice: The new TweezerDevice instance with populated tweezer data.
@@ -124,14 +127,18 @@ impl TweezerDeviceWrapper {
     ///     RoqoqoBackendError
     #[staticmethod]
     #[cfg(feature = "web-api")]
-    #[pyo3(text_signature = "(device_name, access_token, /)")]
+    #[pyo3(text_signature = "(device_name, access_token, mock_port, seed, api_version, /)")]
     pub fn from_api(
         device_name: Option<String>,
         access_token: Option<String>,
         mock_port: Option<String>,
+        seed: Option<usize>,
+        dev: Option<bool>,
+        api_version: Option<String>,
     ) -> PyResult<Self> {
-        let internal = TweezerDevice::from_api(device_name, access_token, mock_port)
-            .map_err(|err| PyValueError::new_err(format!("{:}", err)))?;
+        let internal =
+            TweezerDevice::from_api(device_name, access_token, mock_port, seed, dev, api_version)
+                .map_err(|err| PyValueError::new_err(format!("{:}", err)))?;
         Ok(TweezerDeviceWrapper { internal })
     }
 
@@ -520,8 +527,27 @@ impl TweezerDeviceWrapper {
     }
 
     /// Returns the seed usized for the API.
-    pub fn seed(&self) -> usize {
+    pub fn seed(&self) -> Option<usize> {
         self.internal.seed()
+    }
+
+    /// Return the bincode representation of the Enum variant of the Device.
+    ///
+    /// Only used for internal interfacing.
+    ///
+    /// Returns:
+    ///     ByteArray: The serialized TweezerDevice (in [bincode] form).
+    ///
+    /// Raises:
+    ///     ValueError: Cannot serialize Device to bytes.
+    pub fn _enum_to_bincode(&self) -> PyResult<Py<PyByteArray>> {
+        let qryd_enum: QRydAPIDevice = (&self.internal).into();
+        let serialized = bincode::serialize(&qryd_enum)
+            .map_err(|_| PyValueError::new_err("Cannot serialize TweezerDevice to bytes"))?;
+        let b: Py<PyByteArray> = Python::with_gil(|py| -> Py<PyByteArray> {
+            PyByteArray::new(py, &serialized[..]).into()
+        });
+        Ok(b)
     }
 }
 
@@ -546,7 +572,7 @@ impl TweezerMutableDeviceWrapper {
     /// Creates a new TweezerMutableDevice instance.
     ///
     /// Args:
-    ///     seed (int): Seed, if not provided will be set to 0 per default (not recommended!)
+    ///     seed (int): Optional seed, for simulation purposes.
     ///     controlled_z_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledZ gate.
     ///     controlled_phase_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledPhase gate.
     ///
@@ -990,8 +1016,27 @@ impl TweezerMutableDeviceWrapper {
     }
 
     /// Returns the seed usized for the API.
-    pub fn seed(&self) -> usize {
+    pub fn seed(&self) -> Option<usize> {
         self.internal.seed()
+    }
+
+    /// Return the bincode representation of the Enum variant of the Device.
+    ///
+    /// Only used for internal interfacing.
+    ///
+    /// Returns:
+    ///     ByteArray: The serialized TweezerMutableDevice (in [bincode] form).
+    ///
+    /// Raises:
+    ///     ValueError: Cannot serialize Device to bytes.
+    pub fn _enum_to_bincode(&self) -> PyResult<Py<PyByteArray>> {
+        let qryd_enum: QRydAPIDevice = (&self.internal).into();
+        let serialized = bincode::serialize(&qryd_enum)
+            .map_err(|_| PyValueError::new_err("Cannot serialize TweezerMutableDevice to bytes"))?;
+        let b: Py<PyByteArray> = Python::with_gil(|py| -> Py<PyByteArray> {
+            PyByteArray::new(py, &serialized[..]).into()
+        });
+        Ok(b)
     }
 
     /// Set the time of a single-qubit gate for a tweezer in a given Layout.

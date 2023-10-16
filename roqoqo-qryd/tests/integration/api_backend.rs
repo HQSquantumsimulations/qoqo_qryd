@@ -35,7 +35,7 @@ fn api_backend() {
         let number_qubits = 6;
         let device = QrydEmuSquareDevice::new(Some(2), None, None);
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-        let api_backend_new = APIBackend::new(qryd_device, None, None, None, None).unwrap();
+        let api_backend_new = APIBackend::new(qryd_device, None, None, None, None, None).unwrap();
         let mut circuit = Circuit::new();
         circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
         circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
@@ -168,7 +168,8 @@ fn api_backend() {
         let number_qubits = 6;
         let device = QrydEmuSquareDevice::new(Some(2), None, None);
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-        let api_backend_new = APIBackend::new(qryd_device, None, None, Some(port), None).unwrap();
+        let api_backend_new =
+            APIBackend::new(qryd_device, None, None, Some(port), None, None).unwrap();
         let mut circuit = Circuit::new();
         circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
         circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
@@ -260,7 +261,7 @@ fn api_backend_failing() {
         let number_qubits = 6;
         let device = QrydEmuSquareDevice::new(Some(2), None, None);
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-        let api_backend_new = APIBackend::new(qryd_device, None, None, None, None).unwrap();
+        let api_backend_new = APIBackend::new(qryd_device, None, None, None, None, None).unwrap();
         // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
         let mut circuit = Circuit::new();
         circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
@@ -291,7 +292,7 @@ fn api_backend_with_constant_circuit() {
         let number_qubits = 6;
         let device = QrydEmuSquareDevice::new(Some(2), None, None);
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-        let api_backend_new = APIBackend::new(qryd_device, None, None, None, None).unwrap();
+        let api_backend_new = APIBackend::new(qryd_device, None, None, None, None, None).unwrap();
         // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
         let mut circuit = Circuit::new();
         circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
@@ -411,7 +412,7 @@ fn api_triangular() {
     };
 
     if env::var("QRYD_API_TOKEN").is_ok() {
-        let api_backend_new = APIBackend::new(qryd_device, None, None, None, None).unwrap();
+        let api_backend_new = APIBackend::new(qryd_device, None, None, None, None, None).unwrap();
 
         let job_loc = api_backend_new.post_job(program).unwrap();
         assert!(!job_loc.is_empty());
@@ -493,7 +494,8 @@ fn api_triangular() {
             )
             .create();
 
-        let api_backend_new = APIBackend::new(qryd_device, None, None, Some(port), None).unwrap();
+        let api_backend_new =
+            APIBackend::new(qryd_device, None, None, Some(port), None, None).unwrap();
 
         let job_loc = api_backend_new.post_job(program).unwrap();
         assert!(!job_loc.is_empty());
@@ -512,6 +514,7 @@ fn api_triangular() {
         mock_result.assert();
     }
 }
+
 #[test]
 fn evaluating_backend() {
     let number_qubits = 6;
@@ -547,7 +550,8 @@ fn evaluating_backend() {
     };
 
     if env::var("QRYD_API_TOKEN").is_ok() {
-        let api_backend_new = APIBackend::new(qryd_device, None, Some(20), None, None).unwrap();
+        let api_backend_new =
+            APIBackend::new(qryd_device, None, Some(20), None, None, None).unwrap();
 
         let program_result = program.run(api_backend_new, &[]).unwrap().unwrap();
         assert_eq!(program_result.get("test"), Some(&-3.0));
@@ -617,7 +621,7 @@ fn evaluating_backend() {
             .create();
 
         let api_backend_new =
-            APIBackend::new(qryd_device, None, Some(20), Some(port), None).unwrap();
+            APIBackend::new(qryd_device, None, Some(20), Some(port), None, None).unwrap();
 
         let program_result = program.run(api_backend_new.clone(), &[]).unwrap().unwrap();
 
@@ -738,7 +742,7 @@ fn api_delete() {
     };
 
     if env::var("QRYD_API_TOKEN").is_ok() {
-        let api_backend_new = APIBackend::new(qryd_device, None, None, None, None).unwrap();
+        let api_backend_new = APIBackend::new(qryd_device, None, None, None, None, None).unwrap();
 
         let job_loc = api_backend_new
             .post_job(
@@ -770,7 +774,8 @@ fn api_delete() {
             .mock("DELETE", mockito::Matcher::Any)
             .with_status(200)
             .create();
-        let api_backend_new = APIBackend::new(qryd_device, None, None, Some(port), None).unwrap();
+        let api_backend_new =
+            APIBackend::new(qryd_device, None, None, Some(port), None, None).unwrap();
 
         let job_loc = api_backend_new.post_job(program).unwrap();
 
@@ -789,7 +794,7 @@ fn api_backend_errorcase_const() {
     let device = QrydEmuSquareDevice::new(Some(2), None, None);
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
     let api_backend_new: APIBackend = if env::var("QRYD_API_TOKEN").is_ok() {
-        APIBackend::new(qryd_device, None, None, None, None).unwrap()
+        APIBackend::new(qryd_device, None, None, None, None, None).unwrap()
     } else {
         let server = Server::new();
         let port = server
@@ -801,7 +806,7 @@ fn api_backend_errorcase_const() {
             .chars()
             .rev()
             .collect::<String>();
-        APIBackend::new(qryd_device, None, None, Some(port), None).unwrap()
+        APIBackend::new(qryd_device, None, None, Some(port), None, None).unwrap()
     };
     // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
     let qubit_mapping: HashMap<usize, usize> = (0..number_qubits).map(|x| (x, x)).collect();
@@ -831,7 +836,7 @@ fn api_backend_errorcase3() {
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
 
     if env::var("QRYD_API_TOKEN").is_err() {
-        let api_backend_err = APIBackend::new(qryd_device.clone(), None, None, None, None);
+        let api_backend_err = APIBackend::new(qryd_device.clone(), None, None, None, None, None);
         assert!(api_backend_err.is_err());
         assert_eq!(
             api_backend_err.unwrap_err(),
@@ -843,6 +848,7 @@ fn api_backend_errorcase3() {
     let api_backend_new = APIBackend::new(
         qryd_device,
         Some("DummyString".to_string()),
+        None,
         None,
         None,
         None,
@@ -884,7 +890,7 @@ fn api_backend_errorcase4() {
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
 
     let api_backend_new: APIBackend = if env::var("QRYD_API_TOKEN").is_ok() {
-        APIBackend::new(qryd_device, None, None, None, None).unwrap()
+        APIBackend::new(qryd_device, None, None, None, None, None).unwrap()
     } else {
         let server = Server::new();
         let port = server
@@ -896,7 +902,7 @@ fn api_backend_errorcase4() {
             .chars()
             .rev()
             .collect::<String>();
-        APIBackend::new(qryd_device, None, None, Some(port), None).unwrap()
+        APIBackend::new(qryd_device, None, None, Some(port), None, None).unwrap()
     };
     let job_loc: String = "DummyString".to_string();
     let job_status = api_backend_new.get_job_status(job_loc.clone());
@@ -915,7 +921,7 @@ fn api_backend_errorcase5() {
     let device = QrydEmuSquareDevice::new(Some(2), None, None);
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
     let api_backend_new: APIBackend = if env::var("QRYD_API_TOKEN").is_ok() {
-        APIBackend::new(qryd_device, None, None, None, None).unwrap()
+        APIBackend::new(qryd_device, None, None, None, None, None).unwrap()
     } else {
         let server = Server::new();
         let port = server
@@ -928,7 +934,7 @@ fn api_backend_errorcase5() {
             .rev()
             .collect::<String>();
 
-        APIBackend::new(qryd_device, None, None, Some(port), None).unwrap()
+        APIBackend::new(qryd_device, None, None, Some(port), None, None).unwrap()
     };
     let measurement = ClassicalRegister {
         constant_circuit: None,
@@ -1008,7 +1014,7 @@ fn api_backend_errorcase6() {
         .create();
     let device = QrydEmuSquareDevice::new(Some(1), None, None);
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-    let api_backend_new = APIBackend::new(qryd_device, None, None, Some(port), None).unwrap();
+    let api_backend_new = APIBackend::new(qryd_device, None, None, Some(port), None, None).unwrap();
     let mut circuit = Circuit::new();
     circuit += operations::DefinitionBit::new("ro".to_string(), 6, true);
     circuit += operations::RotateX::new(0, std::f64::consts::FRAC_PI_2.into());
@@ -1056,8 +1062,15 @@ fn api_backend_errorcase6() {
 fn api_backend_errorcase7() {
     let device = QrydEmuSquareDevice::new(Some(1), None, None);
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-    let api_backend_new =
-        APIBackend::new(qryd_device, None, None, Some("12345".to_string()), None).unwrap();
+    let api_backend_new = APIBackend::new(
+        qryd_device,
+        None,
+        None,
+        Some("12345".to_string()),
+        None,
+        None,
+    )
+    .unwrap();
     let mut circuit = Circuit::new();
     circuit += operations::DefinitionBit::new("ro".to_string(), 6, true);
     circuit += operations::RotateX::new(0, std::f64::consts::FRAC_PI_2.into());
@@ -1141,7 +1154,7 @@ fn api_backend_errorcase8() {
 
     let device = QrydEmuSquareDevice::new(Some(1), None, None);
     let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-    let api_backend_new = APIBackend::new(qryd_device, None, None, Some(port), None).unwrap();
+    let api_backend_new = APIBackend::new(qryd_device, None, None, Some(port), None, None).unwrap();
     let mut circuit = Circuit::new();
     circuit += operations::DefinitionBit::new("ro".to_string(), 6, true);
     circuit += operations::RotateX::new(0, std::f64::consts::FRAC_PI_2.into());

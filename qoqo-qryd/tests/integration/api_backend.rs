@@ -748,9 +748,17 @@ fn test_convert_into_backend() {
         let rust_dev: QrydEmuSquareDevice = QrydEmuSquareDevice::new(Some(11), None, None);
         let rust_api: QRydAPIDevice = QRydAPIDevice::from(rust_dev);
         let rust_backend: APIBackend = if env::var("QRYD_API_TOKEN").is_ok() {
-            APIBackend::new(rust_api, none_string.clone(), Some(30), none_string, None).unwrap()
+            APIBackend::new(
+                rust_api,
+                none_string.clone(),
+                Some(30),
+                none_string,
+                None,
+                None,
+            )
+            .unwrap()
         } else {
-            APIBackend::new(rust_api, none_string, Some(30), Some(port), None).unwrap()
+            APIBackend::new(rust_api, none_string, Some(30), Some(port), None, None).unwrap()
         };
 
         assert_eq!(converted, rust_backend);
@@ -795,6 +803,16 @@ fn test_bincode_square() {
 fn test_dev() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
+        let server = Server::new();
+        let port = server
+            .url()
+            .chars()
+            .rev()
+            .take(5)
+            .collect::<String>()
+            .chars()
+            .rev()
+            .collect::<String>();
         let device_type = py.get_type::<QrydEmuSquareDeviceWrapper>();
         let device: &PyCell<QrydEmuSquareDeviceWrapper> = device_type
             .call1((11,))
@@ -808,19 +826,16 @@ fn test_dev() {
                 device,
                 Option::<String>::None,
                 Option::<usize>::None,
-                Option::<String>::None,
-                true,
+                port,
+                false,
             ))
             .unwrap()
             .downcast::<PyCell<APIBackendWrapper>>()
             .unwrap();
 
+        assert!(backend.call_method1("set_dev", (true,)).is_ok());
+
         let internal = &backend.borrow().internal;
-
         assert!(internal.dev);
-
-        assert!(backend.call_method1("set_dev", (false,)).is_ok());
-
-        assert!(!internal.dev);
     });
 }

@@ -47,8 +47,8 @@ pub struct TweezerDevice {
     pub controlled_phase_phase_relation: String,
     /// The default layout to use at first intantiation.
     pub default_layout: Option<String>,
-    /// Seed, if not provided will be set to 0 per default (not recommended!)
-    seed: usize,
+    /// Optional seed, for simulation purposes.
+    seed: Option<usize>,
 }
 
 /// Tweezers information relative to a Layout
@@ -167,7 +167,7 @@ impl TweezerDevice {
     ///
     /// # Arguments
     ///
-    /// * `seed` - Seed, if not provided will be set to 0 by default (not recommended!)
+    /// * `seed` - Optional seed, for simulation purposes.
     /// * `controlled_z_phase_relation` - The relation to use for the PhaseShiftedControlledZ gate.
     ///                                   It can be hardcoded to a specific value if a float is passed in as String.
     /// * `controlled_phase_phase_relation` - The relation to use for the PhaseShiftedControlledPhase gate.
@@ -194,7 +194,7 @@ impl TweezerDevice {
             controlled_z_phase_relation,
             controlled_phase_phase_relation,
             default_layout: None,
-            seed: seed.unwrap_or_default(),
+            seed,
         }
     }
 
@@ -204,11 +204,14 @@ impl TweezerDevice {
     ///
     /// # Arguments
     ///
-    /// * `device_name` - The name of the device to instantiate. Defaults to "Default".
+    /// * `device_name` - The name of the device to instantiate. Defaults to "test_device".
     /// * `access_token` - An access_token is required to access QRYD hardware and emulators.
     ///                    The access_token can either be given as an argument here
     ///                         or set via the environmental variable `$QRYD_API_TOKEN`.
     /// * `mock_port` - The address of the Mock server, used for testing purposes.
+    /// * `seed` - Optionally overwrite seed value from downloaded device instance.
+    /// * `dev` - The boolean to set the dev header to.
+    /// * `api_version` - The version of the QRYD API to use. Defaults to "v1_0".
     ///
     /// # Returns
     ///
@@ -222,9 +225,12 @@ impl TweezerDevice {
         device_name: Option<String>,
         access_token: Option<String>,
         mock_port: Option<String>,
+        seed: Option<usize>,
+        dev: Option<bool>,
+        api_version: Option<String>,
     ) -> Result<Self, RoqoqoBackendError> {
         // Preparing variables
-        let device_name_internal = device_name.unwrap_or_else(|| String::from("default"));
+        let device_name_internal = device_name.unwrap_or_else(|| String::from("testdevice"));
         let access_token_internal: String = if mock_port.is_some() {
             "".to_string()
         } else {
@@ -263,10 +269,24 @@ impl TweezerDevice {
                 .map_err(|e| RoqoqoBackendError::NetworkError {
                     msg: format!("{:?}", e),
                 })?
+        } else if dev.unwrap_or(false) {
+            client
+                .get(format!(
+                    "https://api.qryddemo.itp3.uni-stuttgart.de/{}/backends/devices/{}",
+                    api_version.unwrap_or_else(|| String::from("v1_0")),
+                    device_name_internal
+                ))
+                .header("X-API-KEY", access_token_internal)
+                .header("X-DEV", "?1")
+                .send()
+                .map_err(|e| RoqoqoBackendError::NetworkError {
+                    msg: format!("{:?}", e),
+                })?
         } else {
             client
                 .get(format!(
-                    "https://api.qryddemo.itp3.uni-stuttgart.de/v1_0/backends/devices/{}",
+                    "https://api.qryddemo.itp3.uni-stuttgart.de/{}/backends/devices/{}",
+                    api_version.unwrap_or_else(|| String::from("v1_0")),
                     device_name_internal
                 ))
                 .header("X-API-KEY", access_token_internal)
@@ -282,6 +302,9 @@ impl TweezerDevice {
             let mut device = resp.json::<TweezerDevice>().unwrap();
             if let Some(default) = device.default_layout.clone() {
                 device.switch_layout(&default).unwrap();
+            }
+            if let Some(new_seed) = seed {
+                device.seed = Some(new_seed);
             }
             Ok(device)
         } else {
@@ -1002,7 +1025,7 @@ impl TweezerDevice {
     }
 
     /// Returns the seed usized for the API.
-    pub fn seed(&self) -> usize {
+    pub fn seed(&self) -> Option<usize> {
         self.seed
     }
 
