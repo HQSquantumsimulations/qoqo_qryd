@@ -2,6 +2,10 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+# 0.11.5
+
+* Modified `TweezerDevice.from_api()` endpoint
+
 # 0.11.4
 
 * Added `api_version`, `seed`, `dev` parameters to `TweezerDevice.from_api()`
