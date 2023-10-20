@@ -7847,7 +7847,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-hashbrown 0.14.1
+hashbrown 0.14.2
 https://github.com/rust-lang/hashbrown
 by Amanieu d'Antras <amanieu@gmail.com>
 A Rust port of Google's SwissTable hash map
@@ -12148,7 +12148,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-lock_api 0.4.10
+lock_api 0.4.11
 https://github.com/Amanieu/parking_lot
 by Amanieu d'Antras <amanieu@gmail.com>
 Wrappers to create fully-featured Mutex and RwLock types. Compatible with no_std.
@@ -15944,7 +15944,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-parking_lot_core 0.9.8
+parking_lot_core 0.9.9
 https://github.com/Amanieu/parking_lot
 by Amanieu d'Antras <amanieu@gmail.com>
 An advanced API for creating custom synchronization primitives.
@@ -20119,7 +20119,7 @@ LICENSE:
 
 
 ====================================================
-qoqo-qryd 0.11.4
+qoqo-qryd 0.11.5
 https://github.com/HQSquantumsimulations/qoqo_qryd
 by HQS Quantum Simulations <info@quantumsimulations.de>
 QRyd backend for qoqo quantum computing toolkit
@@ -22439,7 +22439,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-redox_syscall 0.3.5
+redox_syscall 0.4.1
 https://gitlab.redox-os.org/redox-os/syscall
 by Jeremy Soller <jackpot51@gmail.com>
 A Rust library to access raw Redox system calls
@@ -22472,7 +22472,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-regex 1.10.0
+regex 1.10.2
 https://github.com/rust-lang/regex
 by The Rust Project Developers, Andrew Gallant <jamslam@gmail.com>
 An implementation of regular expressions for Rust. This implementation uses
@@ -22715,7 +22715,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-regex-automata 0.4.1
+regex-automata 0.4.3
 https://github.com/rust-lang/regex/tree/master/regex-automata
 by The Rust Project Developers, Andrew Gallant <jamslam@gmail.com>
 Automata construction and matching using regular expressions.
@@ -22956,7 +22956,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-regex-syntax 0.8.1
+regex-syntax 0.8.2
 https://github.com/rust-lang/regex/tree/master/regex-syntax
 by The Rust Project Developers, Andrew Gallant <jamslam@gmail.com>
 A regular expression parser.
@@ -23862,7 +23862,7 @@ LICENSE:
 
 
 ====================================================
-roqoqo-qryd 0.11.4
+roqoqo-qryd 0.11.5
 https://github.com/HQSquantumsimulations/qoqo_qryd
 by HQS Quantum Simulations <info@quantumsimulations.de>
 QRyd interface for roqoqo rust quantum computing toolkit
@@ -30141,7 +30141,7 @@ SOFTWARE.
 
 
 ====================================================
-target-lexicon 0.12.11
+target-lexicon 0.12.12
 https://github.com/bytecodealliance/target-lexicon
 by Dan Gohman <sunfish@mozilla.com>
 Targeting utilities for compilers and related tools
@@ -30468,7 +30468,7 @@ SOFTWARE.
 
 
 ====================================================
-thiserror 1.0.49
+thiserror 1.0.50
 https://github.com/dtolnay/thiserror
 by David Tolnay <dtolnay@gmail.com>
 derive(Error)
@@ -30682,7 +30682,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-thiserror-impl 1.0.49
+thiserror-impl 1.0.50
 https://github.com/dtolnay/thiserror
 by David Tolnay <dtolnay@gmail.com>
 Implementation detail of the `thiserror` crate
@@ -31807,7 +31807,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-tracing 0.1.37
+tracing 0.1.40
 https://tokio.rs
 by Eliza Weisman <eliza@buoyant.io>, Tokio Contributors <team@tokio.rs>
 Application-level tracing for Rust.
@@ -31844,7 +31844,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-tracing-core 0.1.31
+tracing-core 0.1.32
 https://tokio.rs
 by Tokio Contributors <team@tokio.rs>
 Core primitives for application-level tracing.
@@ -35865,7 +35865,7 @@ one at http://mozilla.org/MPL/2.0/.
 
 
 ====================================================
-wide 0.7.12
+wide 0.7.13
 https://github.com/Lokathor/wide
 by Lokathor <zefria@gmail.com>
 A crate to help you go wide.
