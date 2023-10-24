@@ -11,7 +11,7 @@ Note that all functionality described here is a preview and does not represent a
 Special operations
 ------------------
 
-To support the full flexibility of the QRydDemo devices, two additional qoqo operations are provided ``PragmaChangeQRydLayout``, ``PragmaSwitchDeviceLayout``, ``PragmaShiftQRydQubit`` and ``PragmaShiftQubitsTweezers``.
+To support the full flexibility of the QRydDemo devices, four additional qoqo operations are provided ``PragmaChangeQRydLayout``, ``PragmaSwitchDeviceLayout``, ``PragmaShiftQRydQubit`` and ``PragmaShiftQubitsTweezers``.
 ``PragmaChangeQRydLayout`` allows a quantum circuit to change between predefined calibrated optical tweezer positions. It indexes the layouts by integer. A similar operation, but meant for ``TweezerDevice`` and ``TweezerMutableDevice``, is ``PragmaSwitchDeviceLayout``, which indexes the new layout via a string.
 ``PragmaShiftQRydQubit`` allows a quantum circuit to shift a qubit from one tweezer position to another. ``PragmaShiftQubitsTweezers`` is the equivalent operation meant to be used with ``TweezerDevice`` and ``TweezerMutableDevice``.
 
