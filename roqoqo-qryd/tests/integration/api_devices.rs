@@ -45,7 +45,7 @@ fn test_new_tweezer() {
     let apidevice = QRydAPIDevice::from(&device);
     assert_eq!(device.seed(), Some(1));
     assert_eq!(device.seed(), apidevice.seed());
-    assert_eq!(device.qrydbackend(), "qryd_tweezer_device");
+    assert_eq!(device.qrydbackend(), "testdevice");
     assert_eq!(device.qrydbackend(), apidevice.qrydbackend());
 }
 

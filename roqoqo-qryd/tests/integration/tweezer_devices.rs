@@ -14,7 +14,7 @@ use bincode::serialize;
 use ndarray::Array2;
 use std::collections::HashMap;
 
-use roqoqo::{devices::Device, RoqoqoBackendError};
+use roqoqo::{devices::Device, operations::PragmaActiveReset, RoqoqoBackendError};
 use roqoqo_qryd::{
     phi_theta_relation, PragmaChangeQRydLayout, PragmaShiftQRydQubit, PragmaShiftQubitsTweezers,
     PragmaSwitchDeviceLayout, TweezerDevice,
@@ -32,7 +32,7 @@ fn test_new() {
     assert_eq!(device.layout_register.len(), 1);
     assert!(device.layout_register.get("default").is_some());
     assert_eq!(device.seed(), Some(2));
-    assert_eq!(device.qrydbackend(), "qryd_tweezer_device");
+    assert_eq!(device.qrydbackend(), "testdevice");
 
     let device_emp = TweezerDevice::new(None, None, None);
 
@@ -485,6 +485,21 @@ fn test_change_device() {
         )
         .is_ok());
     assert_eq!(device.current_layout, "Test");
+
+    let pragma_a_r = PragmaActiveReset::new(0);
+    let res = device.change_device("PragmaActiveReset", &serialize(&pragma_a_r).unwrap());
+    assert!(res.is_err());
+    assert_eq!(
+        res.unwrap_err(),
+        RoqoqoBackendError::GenericError {
+            msg: "The TweezerDevice instance does not support PragmaActiveReset operations."
+                .to_string(),
+        }
+    );
+    device.set_allow_reset(true);
+    assert!(device
+        .change_device("PragmaActiveReset", &serialize(&pragma_a_r).unwrap())
+        .is_ok());
 }
 
 /// Test TweezerDevice change_device() method with PragmaShiftQubitsTweezers

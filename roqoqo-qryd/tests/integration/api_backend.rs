@@ -74,6 +74,8 @@ fn api_backend() {
         }
         circuit += operations::PragmaSetNumberOfMeasurements::new(40, "ro".to_string()); // assert!(api_backend_new.is_ok());
         circuit += operations::PragmaRepeatedMeasurement::new("ro".to_string(), 40, None);
+        circuit += operations::PragmaActiveReset::new(0);
+
         let measurement = ClassicalRegister {
             constant_circuit: None,
             circuits: vec![circuit.clone()],
@@ -204,6 +206,7 @@ fn api_backend() {
         circuit += operations::MeasureQubit::new(0, "ro".to_string(), 0);
         circuit += operations::PragmaSetNumberOfMeasurements::new(10, "ro".to_string());
         circuit += operations::PragmaRepeatedMeasurement::new("ro".to_string(), 40, None);
+        circuit += operations::PragmaActiveReset::new(0);
 
         let measurement = ClassicalRegister {
             constant_circuit: None,

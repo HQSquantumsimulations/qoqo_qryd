@@ -49,6 +49,8 @@ pub struct TweezerDevice {
     pub default_layout: Option<String>,
     /// Optional seed, for simulation purposes.
     seed: Option<usize>,
+    /// Whether to allow PragmaActiveReset operations on the device.
+    allow_reset: bool,
 }
 
 /// Tweezers information relative to a Layout
@@ -195,6 +197,7 @@ impl TweezerDevice {
             controlled_phase_phase_relation,
             default_layout: None,
             seed,
+            allow_reset: false,
         }
     }
 
@@ -662,6 +665,15 @@ impl TweezerDevice {
         Ok(())
     }
 
+    /// Set whether the device allows PragmaActiveReset operations or not.
+    ///
+    /// # Arguments
+    ///
+    /// * `allow_reset` - Whether the device should allow PragmaActiveReset operations or not.
+    pub fn set_allow_reset(&mut self, allow_reset: bool) {
+        self.allow_reset = allow_reset
+    }
+
     /// Set the name of the default layout to use and switch to it.
     ///
     /// # Arguments
@@ -1031,7 +1043,7 @@ impl TweezerDevice {
 
     /// Returns the backend associated with the device.
     pub fn qrydbackend(&self) -> String {
-        "qryd_tweezer_device".to_string()
+        "testdevice".to_string()
     }
 }
 
@@ -1213,7 +1225,16 @@ impl Device for TweezerDevice {
                         msg: "Wrapped operation not supported in TweezerDevice".to_string(),
                     }),
                 }
-            }
+            },
+            "PragmaActiveReset" => {
+                if self.allow_reset {
+                    Ok(())
+                } else {
+                    Err(RoqoqoBackendError::GenericError {
+                        msg: "The TweezerDevice instance does not support PragmaActiveReset operations.".to_string(),
+                    })
+                }
+            },
             _ => Err(RoqoqoBackendError::GenericError {
                 msg: "Wrapped operation not supported in TweezerDevice".to_string(),
             }),

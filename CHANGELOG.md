@@ -5,6 +5,7 @@ Tracks qoqo-qryd changes after 0.5
 # 0.11.5
 
 * Modified `TweezerDevice.from_api()` endpoint
+* Added support for `PragmaActiveReset` for `APIBackend`, `TweezerDevice`
 
 # 0.11.4
 
