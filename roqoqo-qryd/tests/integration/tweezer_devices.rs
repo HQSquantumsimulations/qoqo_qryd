@@ -485,21 +485,15 @@ fn test_change_device() {
         )
         .is_ok());
     assert_eq!(device.current_layout, "Test");
+}
 
-    let pragma_a_r = PragmaActiveReset::new(0);
-    let res = device.change_device("PragmaActiveReset", &serialize(&pragma_a_r).unwrap());
-    assert!(res.is_err());
-    assert_eq!(
-        res.unwrap_err(),
-        RoqoqoBackendError::GenericError {
-            msg: "The TweezerDevice instance does not support PragmaActiveReset operations."
-                .to_string(),
-        }
-    );
+/// Test TweezerDevice allow_reset field
+#[test]
+fn test_allow_reset() {
+    let mut device = TweezerDevice::new(None, None, None);
+    assert!(!device.allow_reset);
     device.set_allow_reset(true);
-    assert!(device
-        .change_device("PragmaActiveReset", &serialize(&pragma_a_r).unwrap())
-        .is_ok());
+    assert!(device.allow_reset);
 }
 
 /// Test TweezerDevice change_device() method with PragmaShiftQubitsTweezers

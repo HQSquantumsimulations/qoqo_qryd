@@ -1226,15 +1226,6 @@ impl Device for TweezerDevice {
                     }),
                 }
             },
-            "PragmaActiveReset" => {
-                if self.allow_reset {
-                    Ok(())
-                } else {
-                    Err(RoqoqoBackendError::GenericError {
-                        msg: "The TweezerDevice instance does not support PragmaActiveReset operations.".to_string(),
-                    })
-                }
-            },
             _ => Err(RoqoqoBackendError::GenericError {
                 msg: "Wrapped operation not supported in TweezerDevice".to_string(),
             }),
