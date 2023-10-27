@@ -1208,6 +1208,7 @@ impl TweezerMutableDeviceWrapper {
     ///
     /// Args:
     ///     allow_reset(bool): Whether the device should allow PragmaActiveReset operations or not.
+    #[pyo3(text_signature = "(allow_reset, /)")]
     pub fn set_allow_reset(&mut self, allow_reset: bool) {
         self.internal.set_allow_reset(allow_reset);
     }
