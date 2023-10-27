@@ -50,7 +50,7 @@ pub struct TweezerDevice {
     /// Optional seed, for simulation purposes.
     seed: Option<usize>,
     /// Whether to allow PragmaActiveReset operations on the device.
-    allow_reset: bool,
+    pub allow_reset: bool,
 }
 
 /// Tweezers information relative to a Layout
