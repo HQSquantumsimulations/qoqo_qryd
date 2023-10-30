@@ -1374,7 +1374,7 @@ mod test {
             seed_compiler: None,
             use_extended_set: true,
             use_reverse_traversal: true,
-            reverse_traversal_iterations: 2,
+            reverse_traversal_iterations: 3,
         };
 
         let mock = server
