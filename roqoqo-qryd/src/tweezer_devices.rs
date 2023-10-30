@@ -278,7 +278,7 @@ impl TweezerDevice {
         } else if dev.unwrap_or(false) {
             client
                 .get(format!(
-                    "https://api.qryddemo.itp3.uni-stuttgart.de/{}/backends/devices/{}",
+                    "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
                     api_version.unwrap_or_else(|| String::from("v1_0")),
                     device_name_internal.clone()
                 ))
@@ -291,7 +291,7 @@ impl TweezerDevice {
         } else {
             client
                 .get(format!(
-                    "https://api.qryddemo.itp3.uni-stuttgart.de/{}/backends/devices/{}",
+                    "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
                     api_version.unwrap_or_else(|| String::from("v1_0")),
                     device_name_internal.clone()
                 ))
