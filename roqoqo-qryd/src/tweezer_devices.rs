@@ -51,6 +51,8 @@ pub struct TweezerDevice {
     seed: Option<usize>,
     /// Whether to allow PragmaActiveReset operations on the device.
     pub allow_reset: bool,
+    /// Device name.
+    pub device_name: String,
 }
 
 /// Tweezers information relative to a Layout
@@ -198,6 +200,7 @@ impl TweezerDevice {
             default_layout: None,
             seed,
             allow_reset: false,
+            device_name: String::from("qryd_tweezer_device"),
         }
     }
 
@@ -267,7 +270,7 @@ impl TweezerDevice {
         let resp = if let Some(port) = mock_port {
             client
                 .get(format!("http://127.0.0.1:{}", port))
-                .body(device_name_internal)
+                .body(device_name_internal.clone())
                 .send()
                 .map_err(|e| RoqoqoBackendError::NetworkError {
                     msg: format!("{:?}", e),
@@ -275,9 +278,9 @@ impl TweezerDevice {
         } else if dev.unwrap_or(false) {
             client
                 .get(format!(
-                    "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
+                    "https://api.qryddemo.itp3.uni-stuttgart.de/{}/backends/devices/{}",
                     api_version.unwrap_or_else(|| String::from("v1_0")),
-                    device_name_internal
+                    device_name_internal.clone()
                 ))
                 .header("X-API-KEY", access_token_internal)
                 .header("X-DEV", "?1")
@@ -288,9 +291,9 @@ impl TweezerDevice {
         } else {
             client
                 .get(format!(
-                    "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
+                    "https://api.qryddemo.itp3.uni-stuttgart.de/{}/backends/devices/{}",
                     api_version.unwrap_or_else(|| String::from("v1_0")),
-                    device_name_internal
+                    device_name_internal.clone()
                 ))
                 .header("X-API-KEY", access_token_internal)
                 .send()
@@ -309,6 +312,7 @@ impl TweezerDevice {
             if let Some(new_seed) = seed {
                 device.seed = Some(new_seed);
             }
+            device.device_name = device_name_internal;
             Ok(device)
         } else {
             Err(RoqoqoBackendError::NetworkError {
@@ -1043,7 +1047,7 @@ impl TweezerDevice {
 
     /// Returns the backend associated with the device.
     pub fn qrydbackend(&self) -> String {
-        "testdevice".to_string()
+        self.device_name.clone()
     }
 }
 

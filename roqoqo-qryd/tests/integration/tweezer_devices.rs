@@ -32,7 +32,7 @@ fn test_new() {
     assert_eq!(device.layout_register.len(), 1);
     assert!(device.layout_register.get("default").is_some());
     assert_eq!(device.seed(), Some(2));
-    assert_eq!(device.qrydbackend(), "testdevice");
+    assert_eq!(device.qrydbackend(), "qryd_tweezer_device");
 
     let device_emp = TweezerDevice::new(None, None, None);
 
@@ -582,6 +582,7 @@ fn test_change_device_shift() {
 fn test_from_api() {
     let mut returned_device_default = TweezerDevice::new(None, None, None);
     returned_device_default.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None);
+    returned_device_default.device_name = "testdevice".to_string();
     let mut server = Server::new();
     let port = server
         .url()
@@ -605,15 +606,14 @@ fn test_from_api() {
 
     let response = TweezerDevice::from_api(None, None, Some(port.clone()), None, None, None);
     assert!(response.is_ok());
-
     let device = response.unwrap();
     assert_eq!(device, returned_device_default);
+    assert_eq!(device.qrydbackend(), "testdevice".to_string());
 
     let response_new_seed =
         TweezerDevice::from_api(None, None, Some(port.clone()), Some(42), None, None);
     mock.assert();
     assert!(response_new_seed.is_ok());
-
     let device_new_seed = response_new_seed.unwrap();
     assert_eq!(device_new_seed.seed(), Some(42));
 
