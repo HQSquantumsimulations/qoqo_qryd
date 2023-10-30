@@ -20,7 +20,7 @@ use roqoqo::QuantumProgram;
 use roqoqo::RoqoqoBackendError;
 use roqoqo_qryd::api_devices::{QRydAPIDevice, QrydEmuSquareDevice, QrydEmuTriangularDevice};
 // use roqoqo_qryd::downconvert_roqoqo_version;
-use roqoqo_qryd::{APIBackend, QRydJobResult, QRydJobStatus, ResultCounts};
+use roqoqo_qryd::{APIBackend, QRydJobResult, QRydJobStatus, ResultCounts, TweezerDevice};
 
 use qoqo_calculator::CalculatorFloat;
 
@@ -1217,6 +1217,88 @@ fn api_backend_errorcase8() {
             msg: "Request to server failed with HTTP status code 404".to_string()
         }
     );
+}
+
+/// Test error case. Case 9: unknown device
+///  APIBackend should not support a local TweezerDevice instance,
+///  only one obtained by calling TweezerDevice.from_api()
+#[test]
+fn api_backend_errorcase9() {
+    let mut server = Server::new();
+    let port = server
+        .url()
+        .chars()
+        .rev()
+        .take(5)
+        .collect::<String>()
+        .chars()
+        .rev()
+        .collect::<String>();
+    let mock_post = server
+        .mock("POST", mockito::Matcher::Any)
+        .with_status(422)
+        .create();
+
+    let wrong_device = TweezerDevice::new(Some(1), None, None);
+    let wrong_qryd_device: QRydAPIDevice = QRydAPIDevice::from(&wrong_device);
+    let api_backend = APIBackend::new(
+        wrong_qryd_device,
+        None,
+        None,
+        Some(port.clone()),
+        None,
+        None,
+    )
+    .unwrap();
+
+    let mut circuit = Circuit::new();
+    circuit += operations::DefinitionBit::new("ro".to_string(), 1, true);
+    circuit += operations::RotateX::new(0, std::f64::consts::FRAC_PI_2.into());
+    circuit += operations::MeasureQubit::new(0, "ro".to_string(), 0);
+    circuit += operations::PragmaSetNumberOfMeasurements::new(10, "ro".to_string());
+    let measurement = ClassicalRegister {
+        constant_circuit: None,
+        circuits: vec![circuit.clone()],
+    };
+    let program = QuantumProgram::ClassicalRegister {
+        measurement,
+        input_parameter_names: vec![],
+    };
+
+    let post = api_backend.post_job(program.clone());
+
+    mock_post.assert();
+    assert!(post.is_err());
+
+    mock_post.remove();
+    let mock_post = server
+        .mock("POST", mockito::Matcher::Any)
+        .with_status(201)
+        .with_header("Location", &format!("{}/DummyLocation", server.url()))
+        .create();
+    let mut returned_device_default = TweezerDevice::new(None, None, None);
+    returned_device_default.set_tweezer_single_qubit_gate_time("RotateX", 0, 0.23, None);
+    returned_device_default.device_name = "qryd_emulator".to_string();
+    let mock_get = server
+        .mock("GET", mockito::Matcher::Any)
+        .with_status(200)
+        .with_body(
+            serde_json::to_string(&returned_device_default)
+                .unwrap()
+                .into_bytes(),
+        )
+        .create();
+    let correct_device =
+        TweezerDevice::from_api(None, None, Some(port.clone()), None, None, None).unwrap();
+    mock_get.assert();
+    let correct_qryd_device: QRydAPIDevice = QRydAPIDevice::from(&correct_device);
+    let api_backend =
+        APIBackend::new(correct_qryd_device, None, None, Some(port), None, None).unwrap();
+
+    let post = api_backend.post_job(program);
+
+    mock_post.assert();
+    assert!(post.is_ok());
 }
 
 // /// Test downcovert_roqoqo_version function
