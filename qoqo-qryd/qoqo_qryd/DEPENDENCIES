@@ -1276,7 +1276,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-base64 0.21.4
+base64 0.21.5
 https://github.com/marshallpierce/rust-base64
 by Alice Maz <alice@alicemaz.com>, Marshall Pierce <marshall@mpierce.org>
 encodes and decodes base64 as bytes or utf8
@@ -4890,7 +4890,7 @@ SOFTWARE.
 
 
 ====================================================
-futures 0.3.28
+futures 0.3.29
 https://rust-lang.github.io/futures-rs
 by 
 An implementation of futures and streams featuring zero allocations,
@@ -5135,7 +5135,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-futures-channel 0.3.28
+futures-channel 0.3.29
 https://rust-lang.github.io/futures-rs
 by 
 Channels for asynchronous communication using futures-rs.
@@ -5379,7 +5379,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-futures-core 0.3.28
+futures-core 0.3.29
 https://rust-lang.github.io/futures-rs
 by 
 The core traits and types in for the `futures` library.
@@ -5623,7 +5623,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-futures-executor 0.3.28
+futures-executor 0.3.29
 https://rust-lang.github.io/futures-rs
 by 
 Executors for asynchronous tasks based on the futures-rs library.
@@ -5867,7 +5867,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-futures-io 0.3.28
+futures-io 0.3.29
 https://rust-lang.github.io/futures-rs
 by 
 The `AsyncRead`, `AsyncWrite`, `AsyncSeek`, and `AsyncBufRead` traits for the futures-rs library.
@@ -6111,7 +6111,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-futures-macro 0.3.28
+futures-macro 0.3.29
 https://rust-lang.github.io/futures-rs
 by 
 The futures-rs procedural macro implementations.
@@ -6355,7 +6355,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-futures-sink 0.3.28
+futures-sink 0.3.29
 https://rust-lang.github.io/futures-rs
 by 
 The asynchronous `Sink` trait for the futures-rs library.
@@ -6599,7 +6599,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-futures-task 0.3.28
+futures-task 0.3.29
 https://rust-lang.github.io/futures-rs
 by 
 Tools for working with tasks.
@@ -6843,7 +6843,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-futures-util 0.3.28
+futures-util 0.3.29
 https://rust-lang.github.io/futures-rs
 by 
 Common utilities and extension traits for the futures-rs library.
@@ -9344,7 +9344,7 @@ THE SOFTWARE.
 
 
 ====================================================
-hyper-rustls 0.24.1
+hyper-rustls 0.24.2
 https://github.com/rustls/hyper-rustls
 by 
 Rustls+hyper integration for pure rust HTTPS
@@ -10769,7 +10769,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-ipnet 2.8.0
+ipnet 2.9.0
 https://github.com/krisprice/ipnet
 by Kris Price <kris@krisprice.nz>
 Provides types and useful methods for working with IPv4 and IPv6 network addresses, commonly called IP prefixes. The new `IpNet`, `Ipv4Net`, and `Ipv6Net` types build on the existing `IpAddr`, `Ipv4Addr`, and `Ipv6Addr` types already provided in Rust's standard library and align to their design to stay consistent. The module also provides useful traits that extend `Ipv4Addr` and `Ipv6Addr` with methods for `Add`, `Sub`, `BitAnd`, and `BitOr` operations. The module only uses stable feature so it is guaranteed to compile using the stable toolchain.
@@ -13463,7 +13463,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 
 ====================================================
-mio 0.8.8
+mio 0.8.9
 https://github.com/tokio-rs/mio
 by Carl Lerche <me@carllerche.com>, Thomas de Zeeuw <thomasdezeeuw@gmail.com>, Tokio Contributors <team@tokio.rs>
 Lightweight non-blocking I/O.
@@ -23433,7 +23433,7 @@ THE SOFTWARE.
 
 
 ====================================================
-ring 0.16.20
+ring 0.17.5
 https://github.com/briansmith/ring
 by Brian Smith <brian@briansmith.org>
 Safe, fast, small crypto using Rust.
@@ -24979,7 +24979,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-rustls 0.21.7
+rustls 0.21.8
 https://github.com/rustls/rustls
 by 
 Rustls is a modern TLS library written in Rust.
@@ -25513,7 +25513,7 @@ THIS SOFTWARE.
 
 
 ====================================================
-rustls-webpki 0.101.6
+rustls-webpki 0.101.7
 https://github.com/rustls/webpki
 by 
 Web PKI X.509 Certificate Verification.
@@ -26167,11 +26167,11 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-sct 0.7.0
-https://github.com/ctz/sct.rs
+sct 0.7.1
+https://github.com/rustls/sct.rs
 by Joseph Birr-Pixton <jpixton@gmail.com>
 Certificate transparency SCT verification library
-License: Apache-2.0/ISC/MIT
+License: Apache-2.0 OR ISC OR MIT
 ----------------------------------------------------
 LICENSE-APACHE:
 
@@ -26441,7 +26441,7 @@ THIS SOFTWARE.
 
 
 ====================================================
-serde 1.0.189
+serde 1.0.190
 https://serde.rs
 by Erick Tryzelaar <erick.tryzelaar@gmail.com>, David Tolnay <dtolnay@gmail.com>
 A generic serialization/deserialization framework
@@ -26655,7 +26655,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-serde_derive 1.0.189
+serde_derive 1.0.190
 https://serde.rs
 by Erick Tryzelaar <erick.tryzelaar@gmail.com>, David Tolnay <dtolnay@gmail.com>
 Macros 1.1 implementation of #[derive(Serialize, Deserialize)]
@@ -28694,7 +28694,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-socket2 0.4.9
+socket2 0.4.10
 https://github.com/rust-lang/socket2
 by Alex Crichton <alex@alexcrichton.com>, Thomas de Zeeuw <thomasdezeeuw@gmail.com>
 Utilities for handling networking sockets with a maximal amount of configuration
@@ -28937,7 +28937,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-socket2 0.5.4
+socket2 0.5.5
 https://github.com/rust-lang/socket2
 by Alex Crichton <alex@alexcrichton.com>, Thomas de Zeeuw <thomasdezeeuw@gmail.com>
 Utilities for handling networking sockets with a maximal amount of configuration
@@ -29180,13 +29180,10 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-spin 0.5.2
+spin 0.9.8
 https://github.com/mvdnes/spin-rs.git
-by Mathijs van de Nes <git@mathijs.vd-nes.nl>, John Ericson <git@JohnEricson.me>
-Synchronization primitives based on spinning.
-They may contain data, are usable without `std`,
-and static initializers are available.
-
+by Mathijs van de Nes <git@mathijs.vd-nes.nl>, John Ericson <git@JohnEricson.me>, Joshua Barretto <joshua.s.barretto@gmail.com>
+Spin-based synchronization primitives
 License: MIT
 ----------------------------------------------------
 LICENSE:
@@ -31733,7 +31730,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-tokio-util 0.7.9
+tokio-util 0.7.10
 https://tokio.rs
 by Tokio Contributors <team@tokio.rs>
 Additional utilities for working with Tokio.
@@ -33145,7 +33142,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-untrusted 0.7.1
+untrusted 0.9.0
 https://github.com/briansmith/untrusted
 by Brian Smith <brian@briansmith.org>
 Safe, fast, zero-panic, zero-crashing, zero-allocation parsing of untrusted inputs in Rust.
