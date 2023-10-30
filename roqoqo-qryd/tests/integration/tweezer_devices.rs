@@ -14,7 +14,7 @@ use bincode::serialize;
 use ndarray::Array2;
 use std::collections::HashMap;
 
-use roqoqo::{devices::Device, operations::PragmaActiveReset, RoqoqoBackendError};
+use roqoqo::{devices::Device, RoqoqoBackendError};
 use roqoqo_qryd::{
     phi_theta_relation, PragmaChangeQRydLayout, PragmaShiftQRydQubit, PragmaShiftQubitsTweezers,
     PragmaSwitchDeviceLayout, TweezerDevice,
