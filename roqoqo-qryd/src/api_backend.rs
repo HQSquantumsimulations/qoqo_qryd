@@ -521,7 +521,7 @@ impl APIBackend {
             use_reverse_traversal: true,
             extended_set_size: 5,
             extended_set_weight: 0.5,
-            reverse_traversal_iterations: 2,
+            reverse_traversal_iterations: 3,
         };
 
         // Prepare WebAPI client
