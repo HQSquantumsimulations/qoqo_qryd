@@ -582,7 +582,7 @@ fn test_change_device_shift() {
 fn test_from_api() {
     let mut returned_device_default = TweezerDevice::new(None, None, None);
     returned_device_default.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None);
-    returned_device_default.device_name = "testdevice".to_string();
+    returned_device_default.device_name = "qryd_emulator".to_string();
     let mut server = Server::new();
     let port = server
         .url()
@@ -608,7 +608,7 @@ fn test_from_api() {
     assert!(response.is_ok());
     let device = response.unwrap();
     assert_eq!(device, returned_device_default);
-    assert_eq!(device.qrydbackend(), "testdevice".to_string());
+    assert_eq!(device.qrydbackend(), "qryd_emulator".to_string());
 
     let response_new_seed =
         TweezerDevice::from_api(None, None, Some(port.clone()), Some(42), None, None);
@@ -620,7 +620,7 @@ fn test_from_api() {
     mock.remove();
     mock = server
         .mock("GET", mockito::Matcher::Any)
-        .with_status(400)
+        .with_status(500)
         .create();
 
     let response = TweezerDevice::from_api(None, None, Some(port), None, None, None);
@@ -629,7 +629,7 @@ fn test_from_api() {
     assert_eq!(
         response.unwrap_err(),
         RoqoqoBackendError::NetworkError {
-            msg: format!("Request to server failed with HTTP status code {:?}.", 400),
+            msg: format!("Request to server failed with HTTP status code {:?}.", 500),
         }
     );
 }

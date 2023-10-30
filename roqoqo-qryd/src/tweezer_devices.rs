@@ -236,7 +236,7 @@ impl TweezerDevice {
         api_version: Option<String>,
     ) -> Result<Self, RoqoqoBackendError> {
         // Preparing variables
-        let device_name_internal = device_name.unwrap_or_else(|| String::from("testdevice"));
+        let device_name_internal = device_name.unwrap_or_else(|| String::from("qryd_emulator"));
         let access_token_internal: String = if mock_port.is_some() {
             "".to_string()
         } else {
