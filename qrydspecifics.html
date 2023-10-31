@@ -177,7 +177,7 @@
 Not every tweezer position needs to be filled by a qubit and qubit can be moved between tweezer positions.
 Note that all functionality described here is a preview and does not represent a finalized QRydDemo design.</p>
 <h2 id="special-operations"><a class="header" href="#special-operations">Special operations</a></h2>
-<p>To support the full flexibility of the QRydDemo devices, two additional qoqo operations are provided <code>PragmaChangeQRydLayout</code>, <code>PragmaSwitchDeviceLayout</code>, <code>PragmaShiftQRydQubit</code> and <code>PragmaShiftQubitsTweezers</code>.
+<p>To support the full flexibility of the QRydDemo devices, four additional qoqo operations are provided <code>PragmaChangeQRydLayout</code>, <code>PragmaSwitchDeviceLayout</code>, <code>PragmaShiftQRydQubit</code> and <code>PragmaShiftQubitsTweezers</code>.
 <code>PragmaChangeQRydLayout</code> allows a quantum circuit to change between predefined calibrated optical tweezer positions. It indexes the layouts by integer. A similar operation, but meant for <code>TweezerDevice</code> and <code>TweezerMutableDevice</code>, is <code>PragmaSwitchDeviceLayout</code>, which indexes the new layout via a string.
 <code>PragmaShiftQRydQubit</code> allows a quantum circuit to shift a qubit from one tweezer position to another. <code>PragmaShiftQubitsTweezers</code> is the equivalent operation meant to be used with <code>TweezerDevice</code> and <code>TweezerMutableDevice</code>.</p>
 <pre><code class="language-python">   from qoqo import Circuit

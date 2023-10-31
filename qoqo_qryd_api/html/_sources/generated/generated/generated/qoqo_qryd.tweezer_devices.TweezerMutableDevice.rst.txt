@@ -30,6 +30,7 @@ qoqo\_qryd.tweezer\_devices.TweezerMutableDevice
       ~TweezerMutableDevice.phase_shift_controlled_z
       ~TweezerMutableDevice.qrydbackend
       ~TweezerMutableDevice.seed
+      ~TweezerMutableDevice.set_allow_reset
       ~TweezerMutableDevice.set_allowed_tweezer_shifts
       ~TweezerMutableDevice.set_allowed_tweezer_shifts_from_rows
       ~TweezerMutableDevice.set_default_layout
