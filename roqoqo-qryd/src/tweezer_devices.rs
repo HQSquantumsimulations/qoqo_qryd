@@ -49,6 +49,10 @@ pub struct TweezerDevice {
     pub default_layout: Option<String>,
     /// Optional seed, for simulation purposes.
     seed: Option<usize>,
+    /// Whether to allow PragmaActiveReset operations on the device.
+    pub allow_reset: bool,
+    /// Device name.
+    pub device_name: String,
 }
 
 /// Tweezers information relative to a Layout
@@ -195,6 +199,8 @@ impl TweezerDevice {
             controlled_phase_phase_relation,
             default_layout: None,
             seed,
+            allow_reset: false,
+            device_name: String::from("qryd_tweezer_device"),
         }
     }
 
@@ -230,7 +236,7 @@ impl TweezerDevice {
         api_version: Option<String>,
     ) -> Result<Self, RoqoqoBackendError> {
         // Preparing variables
-        let device_name_internal = device_name.unwrap_or_else(|| String::from("testdevice"));
+        let device_name_internal = device_name.unwrap_or_else(|| String::from("qryd_emulator"));
         let access_token_internal: String = if mock_port.is_some() {
             "".to_string()
         } else {
@@ -264,7 +270,7 @@ impl TweezerDevice {
         let resp = if let Some(port) = mock_port {
             client
                 .get(format!("http://127.0.0.1:{}", port))
-                .body(device_name_internal)
+                .body(device_name_internal.clone())
                 .send()
                 .map_err(|e| RoqoqoBackendError::NetworkError {
                     msg: format!("{:?}", e),
@@ -272,9 +278,9 @@ impl TweezerDevice {
         } else if dev.unwrap_or(false) {
             client
                 .get(format!(
-                    "https://api.qryddemo.itp3.uni-stuttgart.de/{}/backends/devices/{}",
+                    "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
                     api_version.unwrap_or_else(|| String::from("v1_0")),
-                    device_name_internal
+                    device_name_internal.clone()
                 ))
                 .header("X-API-KEY", access_token_internal)
                 .header("X-DEV", "?1")
@@ -285,9 +291,9 @@ impl TweezerDevice {
         } else {
             client
                 .get(format!(
-                    "https://api.qryddemo.itp3.uni-stuttgart.de/{}/backends/devices/{}",
+                    "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
                     api_version.unwrap_or_else(|| String::from("v1_0")),
-                    device_name_internal
+                    device_name_internal.clone()
                 ))
                 .header("X-API-KEY", access_token_internal)
                 .send()
@@ -306,6 +312,7 @@ impl TweezerDevice {
             if let Some(new_seed) = seed {
                 device.seed = Some(new_seed);
             }
+            device.device_name = device_name_internal;
             Ok(device)
         } else {
             Err(RoqoqoBackendError::NetworkError {
@@ -660,6 +667,15 @@ impl TweezerDevice {
         });
 
         Ok(())
+    }
+
+    /// Set whether the device allows PragmaActiveReset operations or not.
+    ///
+    /// # Arguments
+    ///
+    /// * `allow_reset` - Whether the device should allow PragmaActiveReset operations or not.
+    pub fn set_allow_reset(&mut self, allow_reset: bool) {
+        self.allow_reset = allow_reset
     }
 
     /// Set the name of the default layout to use and switch to it.
@@ -1031,7 +1047,7 @@ impl TweezerDevice {
 
     /// Returns the backend associated with the device.
     pub fn qrydbackend(&self) -> String {
-        "qryd_tweezer_device".to_string()
+        self.device_name.clone()
     }
 }
 
@@ -1213,7 +1229,7 @@ impl Device for TweezerDevice {
                         msg: "Wrapped operation not supported in TweezerDevice".to_string(),
                     }),
                 }
-            }
+            },
             _ => Err(RoqoqoBackendError::GenericError {
                 msg: "Wrapped operation not supported in TweezerDevice".to_string(),
             }),

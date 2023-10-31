@@ -1204,6 +1204,15 @@ impl TweezerMutableDeviceWrapper {
             .map_err(|err| PyValueError::new_err(format!("{:}", err)))
     }
 
+    /// Set whether the device allows PragmaActiveReset operations or not.
+    ///
+    /// Args:
+    ///     allow_reset(bool): Whether the device should allow PragmaActiveReset operations or not.
+    #[pyo3(text_signature = "(allow_reset, /)")]
+    pub fn set_allow_reset(&mut self, allow_reset: bool) {
+        self.internal.set_allow_reset(allow_reset);
+    }
+
     /// Set the name of the default layout to use and switch to it.
     ///
     /// Args:

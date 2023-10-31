@@ -309,6 +309,18 @@ fn test_allowed_tweezer_shifts_from_rows() {
     })
 }
 
+/// Test allow_reset for TweezerMutableDeviceWrapper
+#[test]
+fn test_allow_reset() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
+        let device_mut = device_type_mut.call0().unwrap();
+
+        assert!(device_mut.call_method1("set_allow_reset", (true,)).is_ok());
+    })
+}
+
 /// Test deactivate_qubit function of TweezerDeviceWrapper and TweezerMutableDeviceWrapper
 #[test]
 fn test_deactivate_qubit() {

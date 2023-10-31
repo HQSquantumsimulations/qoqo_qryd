@@ -232,9 +232,10 @@ fn check_operation_compatability(op: &Operation) -> Result<(), RoqoqoBackendErro
         Operation::ISwap(_) => Ok(()),
         Operation::PragmaSetNumberOfMeasurements(_) => Ok(()),
         Operation::PragmaRepeatedMeasurement(_) => Ok(()),
+        Operation::PragmaActiveReset(_) => Ok(()),
         _ => Err(RoqoqoBackendError::GenericError {
             msg: format!("Operation {} is not supported by QRydDemo Web API backend.\n
-            Use: MeasureQubit, PragmaSetNumberOfMeasurements, PragmaRepeatedMeasurement, PhaseShiftState1, RotateXY, RotateX, RotateY, RotateZ, RotateZ, Hadamard, PauliX, PauliY, PauliZ, SqrtPauliX, InvSqrtPauliX, PhaseShiftedControlledZ, PhaseShiftedControlledPhase, CNOT, ControlledPauliY, ControlledPauliZ, ControlledPhaseShift, PragmaControlledCircuit, ControlledControlledPauliZ, ControlledControlledPhaseShift, SWAP or ISwap instead.", op.hqslang())
+            Use: MeasureQubit, PragmaSetNumberOfMeasurements, PragmaRepeatedMeasurement, PragmaActiveReset, PhaseShiftState1, RotateXY, RotateX, RotateY, RotateZ, RotateZ, Hadamard, PauliX, PauliY, PauliZ, SqrtPauliX, InvSqrtPauliX, PhaseShiftedControlledZ, PhaseShiftedControlledPhase, CNOT, ControlledPauliY, ControlledPauliZ, ControlledPhaseShift, PragmaControlledCircuit, ControlledControlledPauliZ, ControlledControlledPhaseShift, SWAP or ISwap instead.", op.hqslang())
         })
     }
 }
@@ -520,7 +521,7 @@ impl APIBackend {
             use_reverse_traversal: true,
             extended_set_size: 5,
             extended_set_weight: 0.5,
-            reverse_traversal_iterations: 2,
+            reverse_traversal_iterations: 3,
         };
 
         // Prepare WebAPI client
@@ -1373,7 +1374,7 @@ mod test {
             seed_compiler: None,
             use_extended_set: true,
             use_reverse_traversal: true,
-            reverse_traversal_iterations: 2,
+            reverse_traversal_iterations: 3,
         };
 
         let mock = server
