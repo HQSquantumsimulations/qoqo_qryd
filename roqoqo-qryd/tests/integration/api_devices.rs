@@ -100,7 +100,9 @@ fn test_decoherencerates_triangular() {
 // Test the functions from device trait of the tweezer device
 #[test]
 fn test_numberqubits_tweezer() {
-    let device = TweezerDevice::new(None, None, None);
+    let mut device = TweezerDevice::new(None, None, None);
+    device.add_layout("default").unwrap();
+    device.current_layout = Some("default".to_string());
     let apidevice = QRydAPIDevice::from(&device);
     assert_eq!(device.number_qubits(), 0);
     assert_eq!(apidevice.number_qubits(), device.number_qubits());
@@ -409,6 +411,8 @@ fn test_gatetimes_triangular() {
 #[test]
 fn test_gatetimes_tweezer() {
     let mut device = TweezerDevice::new(None, None, None);
+    device.add_layout("default").unwrap();
+    device.current_layout = Some("default".to_string());
     device
         .set_tweezer_single_qubit_gate_time("PhaseShiftState1", 0, 0.34, None)
         .unwrap();
@@ -704,6 +708,8 @@ fn test_twoqubitedges_triangular() {
 #[test]
 fn test_twoqubitedges_tweezer() {
     let mut device = TweezerDevice::new(None, None, None);
+    device.add_layout("default").unwrap();
+    device.current_layout = Some("default".to_string());
     device
         .set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 0, 1, 0.34, None)
         .unwrap();
@@ -811,6 +817,8 @@ fn test_to_generic_device_triangular() {
 #[test]
 fn test_to_generic_device_tweezer() {
     let mut device = TweezerDevice::new(None, None, None);
+    device.add_layout("default").unwrap();
+    device.current_layout = Some("default".to_string());
     device
         .set_tweezer_single_qubit_gate_time("PhaseShiftState1", 0, 0.34, None)
         .unwrap();
@@ -873,6 +881,8 @@ fn test_phi_theta_relation() {
     let triangular = QrydEmuTriangularDevice::new(Some(0), None, None, None, None);
     let square = QrydEmuSquareDevice::new(Some(0), None, None);
     let mut tweezer = TweezerDevice::new(Some(0), None, None);
+    tweezer.add_layout("default").unwrap();
+    tweezer.current_layout = Some("default".to_string());
     tweezer
         .set_tweezer_two_qubit_gate_time("PhaseShiftedControlledZ", 0, 1, 0.10, None)
         .unwrap();

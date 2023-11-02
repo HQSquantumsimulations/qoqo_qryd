@@ -360,7 +360,7 @@ fn test_deactivate_qubit() {
     device.current_layout = Some("default".to_string());
 
     assert!(device.deactivate_qubit(0).is_err());
-    
+
     device
         .set_tweezer_single_qubit_gate_time("PauliX", 1, 0.1, None)
         .unwrap();

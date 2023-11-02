@@ -1277,7 +1277,11 @@ fn api_backend_errorcase9() {
         .with_header("Location", &format!("{}/DummyLocation", server.url()))
         .create();
     let mut returned_device_default = TweezerDevice::new(None, None, None);
-    returned_device_default.set_tweezer_single_qubit_gate_time("RotateX", 0, 0.23, None).unwrap();
+    returned_device_default.add_layout("default").unwrap();
+    returned_device_default.current_layout = Some("default".to_string());
+    returned_device_default
+        .set_tweezer_single_qubit_gate_time("RotateX", 0, 0.23, None)
+        .unwrap();
     returned_device_default.device_name = "qryd_emulator".to_string();
     let mock_get = server
         .mock("GET", mockito::Matcher::Any)
