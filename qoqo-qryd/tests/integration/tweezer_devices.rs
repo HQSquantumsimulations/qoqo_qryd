@@ -123,10 +123,14 @@ fn test_from_mutable() {
 fn test_layouts() {
     // Setup fake preconfigured device
     let mut exp = TweezerDevice::new(None, None, None);
-    exp.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None);
+    exp.add_layout("default").unwrap();
+    exp.current_layout = Some("default".to_string());
+    exp.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None)
+        .unwrap();
     exp.add_qubit_tweezer_mapping(0, 0).unwrap();
     exp.add_layout("OtherLayout").unwrap();
-    exp.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("OtherLayout".to_string()));
+    exp.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("OtherLayout".to_string()))
+        .unwrap();
     let fake_api_device = TweezerDeviceWrapper { internal: exp };
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
@@ -134,6 +138,10 @@ fn test_layouts() {
         let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
         let device = fake_api_pypyany.as_ref(py);
         let device_mut = device_type_mut.call0().unwrap();
+        device_mut.call_method1("add_layout", ("default",)).unwrap();
+        device_mut
+            .call_method1("switch_layout", ("default",))
+            .unwrap();
 
         assert!(device.call_method1("switch_layout", ("Test",)).is_err());
         assert!(device_mut.call_method1("switch_layout", ("Test",)).is_err());
@@ -202,8 +210,12 @@ fn test_layouts() {
 fn test_qubit_tweezer_mapping() {
     // Setup fake preconfigured device
     let mut exp = TweezerDevice::new(None, None, None);
-    exp.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.23, None);
-    exp.set_tweezer_single_qubit_gate_time("PauliX", 2, 0.23, None);
+    exp.add_layout("default").unwrap();
+    exp.current_layout = Some("default".to_string());
+    exp.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.23, None)
+        .unwrap();
+    exp.set_tweezer_single_qubit_gate_time("PauliX", 2, 0.23, None)
+        .unwrap();
     let fake_api_device = TweezerDeviceWrapper { internal: exp };
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
@@ -212,6 +224,10 @@ fn test_qubit_tweezer_mapping() {
         let device = fake_api_pypyany.as_ref(py);
         let device_mut = device_type_mut.call0().unwrap();
 
+        device_mut.call_method1("add_layout", ("default",)).unwrap();
+        device_mut
+            .call_method1("switch_layout", ("default",))
+            .unwrap();
         device_mut
             .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 1, 0.23))
             .unwrap();
@@ -251,6 +267,10 @@ fn test_allowed_tweezer_shifts() {
         let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
         let device_mut = device_type_mut.call0().unwrap();
 
+        device_mut.call_method1("add_layout", ("default",)).unwrap();
+        device_mut
+            .call_method1("switch_layout", ("default",))
+            .unwrap();
         device_mut
             .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 0, 0.23))
             .unwrap();
@@ -284,6 +304,10 @@ fn test_allowed_tweezer_shifts_from_rows() {
         let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
         let device_mut = device_type_mut.call0().unwrap();
 
+        device_mut.call_method1("add_layout", ("default",)).unwrap();
+        device_mut
+            .call_method1("switch_layout", ("default",))
+            .unwrap();
         device_mut
             .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 0, 0.23))
             .unwrap();
@@ -326,8 +350,12 @@ fn test_allow_reset() {
 fn test_deactivate_qubit() {
     // Setup fake preconfigured device
     let mut exp = TweezerDevice::new(None, None, None);
-    exp.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.23, None);
-    exp.set_tweezer_single_qubit_gate_time("PauliY", 0, 0.23, None);
+    exp.add_layout("default").unwrap();
+    exp.current_layout = Some("default".to_string());
+    exp.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.23, None)
+        .unwrap();
+    exp.set_tweezer_single_qubit_gate_time("PauliY", 0, 0.23, None)
+        .unwrap();
     let fake_api_device = TweezerDeviceWrapper { internal: exp };
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
@@ -339,6 +367,10 @@ fn test_deactivate_qubit() {
         assert!(device.call_method1("deactivate_qubit", (0,)).is_err());
         assert!(device_mut.call_method1("deactivate_qubit", (0,)).is_err());
 
+        device_mut.call_method1("add_layout", ("default",)).unwrap();
+        device_mut
+            .call_method1("switch_layout", ("default",))
+            .unwrap();
         device_mut
             .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 1, 0.23))
             .unwrap();
@@ -378,8 +410,10 @@ fn test_qubit_times() {
     // Setup fake preconfigured device
     let mut exp = TweezerDevice::new(None, None, None);
     exp.add_layout("OtherLayout").unwrap();
-    exp.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("OtherLayout".to_string()));
-    exp.set_tweezer_two_qubit_gate_time("CNOT", 0, 1, 0.13, Some("OtherLayout".to_string()));
+    exp.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("OtherLayout".to_string()))
+        .unwrap();
+    exp.set_tweezer_two_qubit_gate_time("CNOT", 0, 1, 0.13, Some("OtherLayout".to_string()))
+        .unwrap();
     exp.set_tweezer_three_qubit_gate_time(
         "Toffoli",
         0,
@@ -387,13 +421,15 @@ fn test_qubit_times() {
         2,
         0.45,
         Some("OtherLayout".to_string()),
-    );
+    )
+    .unwrap();
     exp.set_tweezer_multi_qubit_gate_time(
         "MultiQubitZZ",
         &[0, 1, 2, 3],
         0.65,
         Some("OtherLayout".to_string()),
-    );
+    )
+    .unwrap();
     exp.switch_layout("OtherLayout").unwrap();
     exp.add_qubit_tweezer_mapping(0, 1).unwrap();
     exp.add_qubit_tweezer_mapping(1, 2).unwrap();
@@ -490,8 +526,12 @@ fn test_qubit_times() {
 fn test_number_qubits() {
     // Setup fake preconfigured device
     let mut exp = TweezerDevice::new(None, None, None);
-    exp.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None);
-    exp.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.23, None);
+    exp.add_layout("default").unwrap();
+    exp.current_layout = Some("default".to_string());
+    exp.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None)
+        .unwrap();
+    exp.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.23, None)
+        .unwrap();
     let fake_api_device = TweezerDeviceWrapper { internal: exp };
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
@@ -499,6 +539,11 @@ fn test_number_qubits() {
         let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
         let device = fake_api_pypyany.as_ref(py);
         let device_mut = device_type_mut.call0().unwrap();
+
+        device_mut.call_method1("add_layout", ("default",)).unwrap();
+        device_mut
+            .call_method1("switch_layout", ("default",))
+            .unwrap();
 
         assert_eq!(
             device_mut
@@ -568,12 +613,32 @@ fn test_number_qubits() {
 /// Test to_generic_device functions of TweezerDeviceWrapper and TweezerMutableDeviceWrapper
 #[test]
 fn test_generic_device() {
+    // Setup fake preconfigured device
+    let mut tw = TweezerDevice::new(None, None, None);
+    tw.add_layout("default").unwrap();
+    tw.current_layout = Some("default".to_string());
+    tw.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None)
+        .unwrap();
+    tw.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.23, None)
+        .unwrap();
+    let fake_api_device = TweezerDeviceWrapper { internal: tw };
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type = py.get_type::<TweezerDeviceWrapper>();
+        let fake_api_pypyany = fake_api_device.into_py(py);
         let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
-        let device = device_type.call0().unwrap();
+        let device = fake_api_pypyany.as_ref(py);
         let device_mut = device_type_mut.call0().unwrap();
+
+        device_mut.call_method1("add_layout", ("default",)).unwrap();
+        device_mut
+            .call_method1("switch_layout", ("default",))
+            .unwrap();
+        device_mut
+            .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 0, 0.23))
+            .unwrap();
+        device_mut
+            .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 1, 0.23))
+            .unwrap();
 
         let gen_dev = device.call_method0("generic_device");
         let gen_dev_mut = device_mut.call_method0("generic_device");
@@ -635,8 +700,12 @@ fn test_copy_deepcopy() {
 fn test_to_from_json() {
     // Setup fake preconfigured device
     let mut ext = TweezerDevice::new(None, None, None);
-    ext.set_tweezer_single_qubit_gate_time("PhaseShiftState1", 0, 0.23, None);
-    ext.set_tweezer_single_qubit_gate_time("PhaseShiftState1", 1, 0.23, None);
+    ext.add_layout("default").unwrap();
+    ext.current_layout = Some("default".to_string());
+    ext.set_tweezer_single_qubit_gate_time("PhaseShiftState1", 0, 0.23, None)
+        .unwrap();
+    ext.set_tweezer_single_qubit_gate_time("PhaseShiftState1", 1, 0.23, None)
+        .unwrap();
     let fake_api_device = TweezerDeviceWrapper { internal: ext };
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
@@ -740,6 +809,10 @@ fn test_to_from_bincode() {
         let device = device_type.call0().unwrap();
         let device_mut = device_type_mut.call0().unwrap();
 
+        device_mut.call_method1("add_layout", ("default",)).unwrap();
+        device_mut
+            .call_method1("switch_layout", ("default",))
+            .unwrap();
         device_mut
             .call_method1("set_tweezer_single_qubit_gate_time", ("RotateZ", 0, 0.23))
             .unwrap();
@@ -803,6 +876,11 @@ fn test_two_qubit_edges() {
         let device = device_type.call0().unwrap();
         let device_mut = device_type_mut.call0().unwrap();
 
+        device_mut.call_method1("add_layout", ("default",)).unwrap();
+        device_mut
+            .call_method1("switch_layout", ("default",))
+            .unwrap();
+
         let edges = device.call_method0("two_qubit_edges").unwrap();
         let edges_mut = device_mut.call_method0("two_qubit_edges").unwrap();
         let edges_wrapper = edges.extract::<Vec<(usize, usize)>>().unwrap();
@@ -853,21 +931,25 @@ fn test_two_qubit_edges() {
 fn test_from_api() {
     let mut sent_device = TweezerDevice::new(None, None, None);
     sent_device.add_layout("triangle").unwrap();
-    sent_device.set_tweezer_single_qubit_gate_time(
-        "PhaseShiftState1",
-        0,
-        0.23,
-        Some("triangle".to_string()),
-    );
+    sent_device
+        .set_tweezer_single_qubit_gate_time(
+            "PhaseShiftState1",
+            0,
+            0.23,
+            Some("triangle".to_string()),
+        )
+        .unwrap();
     sent_device.set_default_layout("triangle").unwrap();
     let mut received_device = TweezerDevice::new(None, None, None);
     received_device.add_layout("triangle").unwrap();
-    received_device.set_tweezer_single_qubit_gate_time(
-        "PhaseShiftState1",
-        0,
-        0.23,
-        Some("triangle".to_string()),
-    );
+    received_device
+        .set_tweezer_single_qubit_gate_time(
+            "PhaseShiftState1",
+            0,
+            0.23,
+            Some("triangle".to_string()),
+        )
+        .unwrap();
     received_device.switch_layout("triangle").unwrap();
     received_device.set_default_layout("triangle").unwrap();
     let received_device_wrapper = TweezerDeviceWrapper {
@@ -1049,6 +1131,11 @@ fn test_phi_theta_relations() {
             phi_theta_relation("DefaultRelation", 1.2).unwrap()
         );
 
+        device_mut.call_method1("add_layout", ("default",)).unwrap();
+        device_mut
+            .call_method1("switch_layout", ("default",))
+            .unwrap();
+
         device_mut
             .call_method1(
                 "set_tweezer_two_qubit_gate_time",
@@ -1099,8 +1186,12 @@ fn test_phi_theta_relations() {
 fn test_two_tweezer_edges() {
     // Setup fake preconfigured device
     let mut exp = TweezerDevice::new(None, None, None);
-    exp.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 0, 1, 0.23, None);
-    exp.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 1, 2, 0.23, None);
+    exp.add_layout("default").unwrap();
+    exp.current_layout = Some("default".to_string());
+    exp.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 0, 1, 0.23, None)
+        .unwrap();
+    exp.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 1, 2, 0.23, None)
+        .unwrap();
     let fake_api_device = TweezerDeviceWrapper { internal: exp };
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
@@ -1108,6 +1199,11 @@ fn test_two_tweezer_edges() {
         let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
         let device = fake_api_pypyany.as_ref(py);
         let device_mut = device_type_mut.call0().unwrap();
+
+        device_mut.call_method1("add_layout", ("default",)).unwrap();
+        device_mut
+            .call_method1("switch_layout", ("default",))
+            .unwrap();
 
         let edges_mut = device_mut.call_method0("two_tweezer_edges").unwrap();
         let edges_wrapper_mut = edges_mut.extract::<Vec<(usize, usize)>>().unwrap();
