@@ -2,6 +2,10 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+# 0.11.6
+
+* Removed the default layout from `TweezerDevice`
+
 # 0.11.5
 
 * Modified `TweezerDevice.from_api()` endpoint, default device name for better `APIBackend` support
