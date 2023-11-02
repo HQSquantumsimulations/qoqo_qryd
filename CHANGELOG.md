@@ -4,7 +4,7 @@ Tracks qoqo-qryd changes after 0.5
 
 # 0.11.6
 
-* Removed the default value of `TweezerDevice`'s layout register
+* Modified `TweezerDevice`'s current layout to be optional
 
 # 0.11.5
 
