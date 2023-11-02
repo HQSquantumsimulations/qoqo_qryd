@@ -147,7 +147,11 @@ impl TweezerDeviceWrapper {
     /// Returns:
     ///     str: The name of the current layout.
     pub fn current_layout(&self) -> &str {
-        self.internal.current_layout.as_str()
+        self.internal
+            .current_layout
+            .as_ref()
+            .expect("None")
+            .as_str()
     }
 
     /// Switch to a different pre-defined layout.
@@ -625,7 +629,11 @@ impl TweezerMutableDeviceWrapper {
     /// Returns:
     ///     str: The name of the current layout.
     pub fn current_layout(&self) -> &str {
-        self.internal.current_layout.as_str()
+        self.internal
+            .current_layout
+            .as_ref()
+            .expect("None")
+            .as_str()
     }
 
     /// Add a new layout to the device.
@@ -1047,6 +1055,9 @@ impl TweezerMutableDeviceWrapper {
     ///     gate_time (float): The the gate time for the given gate.
     ///     layout_name (Optional[str]): The name of the Layout to apply the gate time in.
     ///         Defaults to the current Layout.
+    ///
+    /// Raises:
+    ///     ValueError: No layout name provided and no current layout set.
     #[pyo3(text_signature = "(hqslang, tweezer, gate_time, layout_name, /)")]
     pub fn set_tweezer_single_qubit_gate_time(
         &mut self,
@@ -1054,9 +1065,10 @@ impl TweezerMutableDeviceWrapper {
         tweezer: usize,
         gate_time: f64,
         layout_name: Option<String>,
-    ) {
+    ) -> PyResult<()> {
         self.internal
             .set_tweezer_single_qubit_gate_time(hqslang, tweezer, gate_time, layout_name)
+            .map_err(|err| PyValueError::new_err(format!("{:}", err)))
     }
 
     /// Set the time of a two-qubit gate for a tweezer couple in a given Layout.
@@ -1068,6 +1080,9 @@ impl TweezerMutableDeviceWrapper {
     ///     gate_time (float): The the gate time for the given gate.
     ///     layout_name (Optional[str]): The name of the Layout to apply the gate time in.
     ///         Defaults to the current Layout.
+    ///
+    /// Raises:
+    ///     ValueError: No layout name provided and no current layout set.
     #[pyo3(text_signature = "(hqslang, tweezer0, tweezer1, gate_time, layout_name, /)")]
     pub fn set_tweezer_two_qubit_gate_time(
         &mut self,
@@ -1076,14 +1091,10 @@ impl TweezerMutableDeviceWrapper {
         tweezer1: usize,
         gate_time: f64,
         layout_name: Option<String>,
-    ) {
-        self.internal.set_tweezer_two_qubit_gate_time(
-            hqslang,
-            tweezer0,
-            tweezer1,
-            gate_time,
-            layout_name,
-        )
+    ) -> PyResult<()> {
+        self.internal
+            .set_tweezer_two_qubit_gate_time(hqslang, tweezer0, tweezer1, gate_time, layout_name)
+            .map_err(|err| PyValueError::new_err(format!("{:}", err)))
     }
 
     /// Set the time of a three-qubit gate for a tweezer trio in a given Layout.
@@ -1096,6 +1107,9 @@ impl TweezerMutableDeviceWrapper {
     ///     gate_time (float): The the gate time for the given gate.
     ///     layout_name (Optional[str]): The name of the Layout to apply the gate time in.
     ///         Defaults to the current Layout.
+    ///
+    /// Raises:
+    ///     ValueError: No layout name provided and no current layout set.
     #[pyo3(text_signature = "(hqslang, tweezer0, tweezer1, tweezer2, gate_time, layout_name, /)")]
     pub fn set_tweezer_three_qubit_gate_time(
         &mut self,
@@ -1105,15 +1119,17 @@ impl TweezerMutableDeviceWrapper {
         tweezer2: usize,
         gate_time: f64,
         layout_name: Option<String>,
-    ) {
-        self.internal.set_tweezer_three_qubit_gate_time(
-            hqslang,
-            tweezer0,
-            tweezer1,
-            tweezer2,
-            gate_time,
-            layout_name,
-        )
+    ) -> PyResult<()> {
+        self.internal
+            .set_tweezer_three_qubit_gate_time(
+                hqslang,
+                tweezer0,
+                tweezer1,
+                tweezer2,
+                gate_time,
+                layout_name,
+            )
+            .map_err(|err| PyValueError::new_err(format!("{:}", err)))
     }
 
     /// Set the time of a multi-qubit gate for a list of tweezers in a given Layout.
@@ -1124,6 +1140,9 @@ impl TweezerMutableDeviceWrapper {
     ///     gate_time (float): The the gate time for the given gate.
     ///     layout_name (Optional[str]): The name of the Layout to apply the gate time in.
     ///         Defaults to the current Layout.
+    ///
+    /// Raises:
+    ///     ValueError: No layout name provided and no current layout set.
     #[pyo3(text_signature = "(hqslang, tweezers, gate_time, layout_name, /)")]
     pub fn set_tweezer_multi_qubit_gate_time(
         &mut self,
@@ -1131,9 +1150,10 @@ impl TweezerMutableDeviceWrapper {
         tweezers: Vec<usize>,
         gate_time: f64,
         layout_name: Option<String>,
-    ) {
+    ) -> PyResult<()> {
         self.internal
             .set_tweezer_multi_qubit_gate_time(hqslang, &tweezers, gate_time, layout_name)
+            .map_err(|err| PyValueError::new_err(format!("{:}", err)))
     }
 
     /// Set the allowed Tweezer shifts of a specified Tweezer.
