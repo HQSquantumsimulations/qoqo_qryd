@@ -409,14 +409,30 @@ fn test_gatetimes_triangular() {
 #[test]
 fn test_gatetimes_tweezer() {
     let mut device = TweezerDevice::new(None, None, None);
-    device.set_tweezer_single_qubit_gate_time("PhaseShiftState1", 0, 0.34, None);
-    device.set_tweezer_single_qubit_gate_time("PhaseShiftState1", 1, 0.34, None);
-    device.set_tweezer_single_qubit_gate_time("PhaseShiftState1", 2, 0.34, None);
-    device.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 0, 1, 0.34, None);
-    device.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 1, 2, 0.34, None);
-    device.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 2, 0, 0.34, None);
-    device.set_tweezer_three_qubit_gate_time("Toffoli", 0, 1, 2, 0.34, None);
-    device.set_tweezer_multi_qubit_gate_time("MultiQubitZZ", &[0, 1, 2], 0.23, None);
+    device
+        .set_tweezer_single_qubit_gate_time("PhaseShiftState1", 0, 0.34, None)
+        .unwrap();
+    device
+        .set_tweezer_single_qubit_gate_time("PhaseShiftState1", 1, 0.34, None)
+        .unwrap();
+    device
+        .set_tweezer_single_qubit_gate_time("PhaseShiftState1", 2, 0.34, None)
+        .unwrap();
+    device
+        .set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 0, 1, 0.34, None)
+        .unwrap();
+    device
+        .set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 1, 2, 0.34, None)
+        .unwrap();
+    device
+        .set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 2, 0, 0.34, None)
+        .unwrap();
+    device
+        .set_tweezer_three_qubit_gate_time("Toffoli", 0, 1, 2, 0.34, None)
+        .unwrap();
+    device
+        .set_tweezer_multi_qubit_gate_time("MultiQubitZZ", &[0, 1, 2], 0.23, None)
+        .unwrap();
     device.add_qubit_tweezer_mapping(0, 0).unwrap();
     device.add_qubit_tweezer_mapping(1, 1).unwrap();
     device.add_qubit_tweezer_mapping(2, 2).unwrap();
@@ -688,9 +704,15 @@ fn test_twoqubitedges_triangular() {
 #[test]
 fn test_twoqubitedges_tweezer() {
     let mut device = TweezerDevice::new(None, None, None);
-    device.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 0, 1, 0.34, None);
-    device.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 1, 2, 0.34, None);
-    device.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 2, 0, 0.34, None);
+    device
+        .set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 0, 1, 0.34, None)
+        .unwrap();
+    device
+        .set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 1, 2, 0.34, None)
+        .unwrap();
+    device
+        .set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 2, 0, 0.34, None)
+        .unwrap();
     device.add_qubit_tweezer_mapping(0, 0).unwrap();
     device.add_qubit_tweezer_mapping(1, 1).unwrap();
     device.add_qubit_tweezer_mapping(2, 2).unwrap();
@@ -789,12 +811,24 @@ fn test_to_generic_device_triangular() {
 #[test]
 fn test_to_generic_device_tweezer() {
     let mut device = TweezerDevice::new(None, None, None);
-    device.set_tweezer_single_qubit_gate_time("PhaseShiftState1", 0, 0.34, None);
-    device.set_tweezer_single_qubit_gate_time("PhaseShiftState1", 1, 0.34, None);
-    device.set_tweezer_single_qubit_gate_time("PhaseShiftState1", 2, 0.34, None);
-    device.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 0, 1, 0.34, None);
-    device.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 1, 2, 0.34, None);
-    device.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 2, 0, 0.34, None);
+    device
+        .set_tweezer_single_qubit_gate_time("PhaseShiftState1", 0, 0.34, None)
+        .unwrap();
+    device
+        .set_tweezer_single_qubit_gate_time("PhaseShiftState1", 1, 0.34, None)
+        .unwrap();
+    device
+        .set_tweezer_single_qubit_gate_time("PhaseShiftState1", 2, 0.34, None)
+        .unwrap();
+    device
+        .set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 0, 1, 0.34, None)
+        .unwrap();
+    device
+        .set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 1, 2, 0.34, None)
+        .unwrap();
+    device
+        .set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 2, 0, 0.34, None)
+        .unwrap();
     device.add_qubit_tweezer_mapping(0, 0).unwrap();
     device.add_qubit_tweezer_mapping(1, 1).unwrap();
     device.add_qubit_tweezer_mapping(2, 2).unwrap();
@@ -839,8 +873,12 @@ fn test_phi_theta_relation() {
     let triangular = QrydEmuTriangularDevice::new(Some(0), None, None, None, None);
     let square = QrydEmuSquareDevice::new(Some(0), None, None);
     let mut tweezer = TweezerDevice::new(Some(0), None, None);
-    tweezer.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledZ", 0, 1, 0.10, None);
-    tweezer.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 0, 1, 0.10, None);
+    tweezer
+        .set_tweezer_two_qubit_gate_time("PhaseShiftedControlledZ", 0, 1, 0.10, None)
+        .unwrap();
+    tweezer
+        .set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 0, 1, 0.10, None)
+        .unwrap();
     tweezer.add_qubit_tweezer_mapping(0, 0).unwrap();
     tweezer.add_qubit_tweezer_mapping(1, 1).unwrap();
     let triangular_f =
