@@ -1181,15 +1181,25 @@ impl Device for TweezerDevice {
     }
 
     fn two_qubit_edges(&self) -> Vec<(usize, usize)> {
+        let tw_two_qubit_gate_times = &self
+            .get_current_layout_info()
+            .unwrap()
+            .tweezer_two_qubit_gate_times;
         if let Some(map) = &self.qubit_to_tweezer {
             let mut edges: Vec<(usize, usize)> = Vec::new();
             for qbt0 in map.keys() {
                 for qbt1 in map.keys() {
-                    if self
-                        .two_qubit_gate_time("PhaseShiftedControlledPhase", qbt0, qbt1)
-                        .is_some()
-                    {
-                        edges.push((*qbt0, *qbt1));
+                    let mapped_qbt0 = self.get_tweezer_from_qubit(qbt0).ok();
+                    let mapped_qbt1 = self.get_tweezer_from_qubit(qbt1).ok();
+                    for gate in tw_two_qubit_gate_times.keys() {
+                        if mapped_qbt0.is_some()
+                            && mapped_qbt1.is_some()
+                            && tw_two_qubit_gate_times[gate]
+                                .get(&(mapped_qbt0.unwrap(), mapped_qbt1.unwrap()))
+                                .is_some()
+                        {
+                            edges.push((*qbt0, *qbt1));
+                        }
                     }
                 }
             }
