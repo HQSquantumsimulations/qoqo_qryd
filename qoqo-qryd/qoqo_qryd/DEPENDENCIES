@@ -3166,7 +3166,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-dyn-clone 1.0.14
+dyn-clone 1.0.16
 https://github.com/dtolnay/dyn-clone
 by David Tolnay <dtolnay@gmail.com>
 Clone trait that is object-safe
@@ -10100,7 +10100,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-indexmap 2.0.2
+indexmap 2.1.0
 https://github.com/bluss/indexmap
 by 
 A hash table with consistent order and fast iteration.
@@ -10555,7 +10555,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-inventory 0.3.12
+inventory 0.3.13
 https://github.com/dtolnay/inventory
 by David Tolnay <dtolnay@gmail.com>
 Typed distributed plugin registration
@@ -11447,13 +11447,13 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-js-sys 0.3.64
+js-sys 0.3.65
 https://rustwasm.github.io/wasm-bindgen/
 by The wasm-bindgen Developers
 Bindings for all JS global objects and functions in all JS environments like
 Node.js and browsers, built on `#[wasm_bindgen]` using the `wasm-bindgen` crate.
 
-License: MIT/Apache-2.0
+License: MIT OR Apache-2.0
 ----------------------------------------------------
 LICENSE-APACHE:
 
@@ -11690,7 +11690,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-libc 0.2.149
+libc 0.2.150
 https://github.com/rust-lang/libc
 by The Rust Project Developers
 Raw FFI bindings to platform libraries like libc.
@@ -20119,7 +20119,7 @@ LICENSE:
 
 
 ====================================================
-qoqo-qryd 0.11.5
+qoqo-qryd 0.11.7
 https://github.com/HQSquantumsimulations/qoqo_qryd
 by HQS Quantum Simulations <info@quantumsimulations.de>
 QRyd backend for qoqo quantum computing toolkit
@@ -23862,7 +23862,7 @@ LICENSE:
 
 
 ====================================================
-roqoqo-qryd 0.11.5
+roqoqo-qryd 0.11.7
 https://github.com/HQSquantumsimulations/qoqo_qryd
 by HQS Quantum Simulations <info@quantumsimulations.de>
 QRyd interface for roqoqo rust quantum computing toolkit
@@ -27108,7 +27108,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-serde_json 1.0.107
+serde_json 1.0.108
 https://github.com/serde-rs/json
 by Erick Tryzelaar <erick.tryzelaar@gmail.com>, David Tolnay <dtolnay@gmail.com>
 A JSON serialization file format
@@ -29878,7 +29878,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-syn 2.0.38
+syn 2.0.39
 https://github.com/dtolnay/syn
 by David Tolnay <dtolnay@gmail.com>
 Parser for Rust source code
@@ -34136,12 +34136,12 @@ Software.
 
 
 ====================================================
-wasm-bindgen 0.2.87
+wasm-bindgen 0.2.88
 https://rustwasm.github.io/
 by The wasm-bindgen Developers
 Easy support for interacting between JS and Rust.
 
-License: MIT/Apache-2.0
+License: MIT OR Apache-2.0
 ----------------------------------------------------
 LICENSE-APACHE:
 
@@ -34378,12 +34378,12 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-wasm-bindgen-backend 0.2.87
+wasm-bindgen-backend 0.2.88
 https://rustwasm.github.io/wasm-bindgen/
 by The wasm-bindgen Developers
 Backend code generation of the wasm-bindgen tool
 
-License: MIT/Apache-2.0
+License: MIT OR Apache-2.0
 ----------------------------------------------------
 LICENSE-APACHE:
 
@@ -34620,11 +34620,11 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-wasm-bindgen-futures 0.4.37
+wasm-bindgen-futures 0.4.38
 https://rustwasm.github.io/wasm-bindgen/
 by The wasm-bindgen Developers
 Bridging the gap between Rust Futures and JavaScript Promises
-License: MIT/Apache-2.0
+License: MIT OR Apache-2.0
 ----------------------------------------------------
 LICENSE-APACHE:
 
@@ -34861,12 +34861,12 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-wasm-bindgen-macro 0.2.87
+wasm-bindgen-macro 0.2.88
 https://rustwasm.github.io/wasm-bindgen/
 by The wasm-bindgen Developers
 Definition of the `#[wasm_bindgen]` attribute, an internal dependency
 
-License: MIT/Apache-2.0
+License: MIT OR Apache-2.0
 ----------------------------------------------------
 LICENSE-APACHE:
 
@@ -35103,12 +35103,12 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-wasm-bindgen-macro-support 0.2.87
+wasm-bindgen-macro-support 0.2.88
 https://rustwasm.github.io/wasm-bindgen/
 by The wasm-bindgen Developers
 The part of the implementation of the `#[wasm_bindgen]` attribute that is not in the shared backend crate
 
-License: MIT/Apache-2.0
+License: MIT OR Apache-2.0
 ----------------------------------------------------
 LICENSE-APACHE:
 
@@ -35345,13 +35345,13 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-wasm-bindgen-shared 0.2.87
+wasm-bindgen-shared 0.2.88
 https://rustwasm.github.io/wasm-bindgen/
 by The wasm-bindgen Developers
 Shared support between wasm-bindgen and wasm-bindgen cli, an internal
 dependency.
 
-License: MIT/Apache-2.0
+License: MIT OR Apache-2.0
 ----------------------------------------------------
 LICENSE-APACHE:
 
@@ -35588,12 +35588,12 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-web-sys 0.3.64
+web-sys 0.3.65
 https://rustwasm.github.io/wasm-bindgen/web-sys/index.html
 by The wasm-bindgen Developers
 Bindings for all Web APIs, a procedurally generated crate from WebIDL
 
-License: MIT/Apache-2.0
+License: MIT OR Apache-2.0
 ----------------------------------------------------
 LICENSE-APACHE:
 
