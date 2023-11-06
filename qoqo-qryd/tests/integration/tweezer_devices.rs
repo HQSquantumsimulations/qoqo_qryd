@@ -924,6 +924,9 @@ fn test_two_qubit_edges() {
             .extract::<Vec<(usize, usize)>>()
             .unwrap();
         assert_eq!(new_edges_mut.len(), 3);
+        assert!(new_edges_mut.contains(&(0, 1)));
+        assert!(new_edges_mut.contains(&(1, 2)));
+        assert!(new_edges_mut.contains(&(0, 2)));
     });
 }
 
