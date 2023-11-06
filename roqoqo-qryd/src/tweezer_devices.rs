@@ -17,7 +17,7 @@
 //! QRyd devices can be physical hardware or simulators.
 
 use bincode::deserialize;
-use itertools::Itertools;
+use itertools::{iproduct, Itertools};
 use ndarray::Array2;
 use std::{collections::HashMap, env, str::FromStr};
 
@@ -1187,19 +1187,16 @@ impl Device for TweezerDevice {
             .tweezer_two_qubit_gate_times;
         if let Some(map) = &self.qubit_to_tweezer {
             let mut edges: Vec<(usize, usize)> = Vec::new();
-            for qbt0 in map.keys() {
-                for qbt1 in map.keys() {
-                    let mapped_qbt0 = self.get_tweezer_from_qubit(qbt0).ok();
-                    let mapped_qbt1 = self.get_tweezer_from_qubit(qbt1).ok();
-                    for gate in tw_two_qubit_gate_times.keys() {
-                        if mapped_qbt0.is_some()
-                            && mapped_qbt1.is_some()
-                            && tw_two_qubit_gate_times[gate]
-                                .get(&(mapped_qbt0.unwrap(), mapped_qbt1.unwrap()))
-                                .is_some()
-                        {
-                            edges.push((*qbt0, *qbt1));
-                        }
+            for (qbt0, qbt1) in iproduct!(map.keys(), map.keys()) {
+                if let (Some(mapped_qbt0), Some(mapped_qbt1)) = (
+                    self.get_tweezer_from_qubit(qbt0).ok(),
+                    self.get_tweezer_from_qubit(qbt1).ok(),
+                ) {
+                    if tw_two_qubit_gate_times
+                        .values()
+                        .any(|times| times.get(&(mapped_qbt0, mapped_qbt1)).is_some())
+                    {
+                        edges.push((*qbt0, *qbt1));
                     }
                 }
             }
