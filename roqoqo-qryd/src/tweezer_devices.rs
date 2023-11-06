@@ -1183,7 +1183,7 @@ impl Device for TweezerDevice {
     fn two_qubit_edges(&self) -> Vec<(usize, usize)> {
         let tw_two_qubit_gate_times = &self
             .get_current_layout_info()
-            .unwrap()
+            .expect("Tried to access current layout info but no current layout is set.")
             .tweezer_two_qubit_gate_times;
         if let Some(map) = &self.qubit_to_tweezer {
             let mut edges: Vec<(usize, usize)> = Vec::new();
