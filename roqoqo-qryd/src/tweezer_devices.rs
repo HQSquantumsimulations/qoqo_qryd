@@ -17,7 +17,7 @@
 //! QRyd devices can be physical hardware or simulators.
 
 use bincode::deserialize;
-use itertools::Itertools;
+use itertools::{iproduct, Itertools};
 use ndarray::Array2;
 use std::{collections::HashMap, env, str::FromStr};
 
@@ -1181,13 +1181,20 @@ impl Device for TweezerDevice {
     }
 
     fn two_qubit_edges(&self) -> Vec<(usize, usize)> {
+        let tw_two_qubit_gate_times = &self
+            .get_current_layout_info()
+            .expect("Tried to access current layout info but no current layout is set.")
+            .tweezer_two_qubit_gate_times;
         if let Some(map) = &self.qubit_to_tweezer {
             let mut edges: Vec<(usize, usize)> = Vec::new();
-            for qbt0 in map.keys() {
-                for qbt1 in map.keys() {
-                    if self
-                        .two_qubit_gate_time("PhaseShiftedControlledPhase", qbt0, qbt1)
-                        .is_some()
+            for (qbt0, qbt1) in iproduct!(map.keys(), map.keys()) {
+                if let (Some(mapped_qbt0), Some(mapped_qbt1)) = (
+                    self.get_tweezer_from_qubit(qbt0).ok(),
+                    self.get_tweezer_from_qubit(qbt1).ok(),
+                ) {
+                    if tw_two_qubit_gate_times
+                        .values()
+                        .any(|times| times.get(&(mapped_qbt0, mapped_qbt1)).is_some())
                     {
                         edges.push((*qbt0, *qbt1));
                     }

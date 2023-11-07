@@ -2,6 +2,10 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+# 0.11.7
+
+* Modified `TweezerDevice.two_qubit_edges()` to consider any two-qubit gate as valid for an edge
+
 # 0.11.6
 
 * Modified `TweezerDevice`'s current layout to be optional

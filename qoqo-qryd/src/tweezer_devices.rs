@@ -111,7 +111,7 @@ impl TweezerDeviceWrapper {
     /// This requires a valid QRYD_API_TOKEN. Visit `https://thequantumlaend.de/get-access/` to get one.
     ///
     /// Args
-    ///     device_name (Optional[str]): The name of the device to instantiate. Defaults to "test_device".
+    ///     device_name (Optional[str]): The name of the device to instantiate. Defaults to "qryd_emulator".
     ///     access_token (Optional[str]): An access_token is required to access QRYD hardware and emulators.
     ///                         The access_token can either be given as an argument here
     ///                             or set via the environmental variable `$QRYD_API_TOKEN`.
