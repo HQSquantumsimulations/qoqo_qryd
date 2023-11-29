@@ -2,6 +2,10 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+# 0.11.8-alpha.0
+
+* Updated to qoqo 1.8.0-alpha.2
+
 # 0.11.7
 
 * Modified `TweezerDevice.two_qubit_edges()` to consider any two-qubit gate as valid for an edge
