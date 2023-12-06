@@ -279,7 +279,7 @@ impl TweezerDevice {
             client
                 .get(format!(
                     "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
-                    api_version.unwrap_or_else(|| String::from("v1_0")),
+                    api_version.unwrap_or_else(|| String::from("v1_1")),
                     device_name_internal.clone()
                 ))
                 .header("X-API-KEY", access_token_internal)
@@ -292,7 +292,7 @@ impl TweezerDevice {
             client
                 .get(format!(
                     "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
-                    api_version.unwrap_or_else(|| String::from("v1_0")),
+                    api_version.unwrap_or_else(|| String::from("v1_1")),
                     device_name_internal.clone()
                 ))
                 .header("X-API-KEY", access_token_internal)
