@@ -2,7 +2,7 @@
 
 Tracks qoqo-qryd changes after 0.5
 
-# 0.11.8-alpha.0
+# 0.12.0-alpha.0
 
 * Updated to qoqo 1.8.0-alpha.2
 
