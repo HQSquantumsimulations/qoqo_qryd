@@ -18981,7 +18981,7 @@ LICENSE:
 
 
 ====================================================
-qoqo 1.8.0-alpha.2
+qoqo 1.7.1
 https://github.com/HQSquantumsimulations/qoqo
 by HQS Quantum Simulations <info@quantumsimulations.de>
 Quantum computing circuit toolkit. Python interface of roqoqo
@@ -19193,7 +19193,7 @@ LICENSE:
 
 
 ====================================================
-qoqo-macros 1.8.0-alpha.2
+qoqo-macros 1.7.1
 by HQS Quantum Simulations <info@quantumsimulations.de>
 Macros for the qoqo crate
 License: Apache-2.0
@@ -19404,7 +19404,7 @@ LICENSE:
 
 
 ====================================================
-qoqo-qryd 0.12.0-alpha.0
+qoqo-qryd 0.11.8
 https://github.com/HQSquantumsimulations/qoqo_qryd
 by HQS Quantum Simulations <info@quantumsimulations.de>
 QRyd backend for qoqo quantum computing toolkit
@@ -20040,7 +20040,7 @@ LICENSE:
 
 
 ====================================================
-quest-sys 0.11.3-alpha.1
+quest-sys 0.11.2
 https://github.com/HQSquantumsimulations/qoqo-quest
 by HQS Quantum Simulations <info@quantumsimulations.de>
 Bindings to the QuEST quantum computer simulator C library
@@ -22718,13 +22718,13 @@ THE SOFTWARE.
 
 
 ====================================================
-ring 0.17.6
+ring 0.17.7
 https://github.com/briansmith/ring
 by Brian Smith <brian@briansmith.org>
 Safe, fast, small crypto using Rust.
 
 ====================================================
-roqoqo 1.8.0-alpha.2
+roqoqo 1.7.1
 https://github.com/HQSquantumsimulations/qoqo
 by HQS Quantum Simulations <info@quantumsimulations.de>
 Rust Quantum Computing Toolkit by HQS
@@ -22936,7 +22936,7 @@ LICENSE:
 
 
 ====================================================
-roqoqo-derive 1.8.0-alpha.2
+roqoqo-derive 1.7.1
 by HQS Quantum Simulations <info@quantumsimulations.de>
 Macros for the roqoqo crate
 License: Apache-2.0
@@ -23147,7 +23147,7 @@ LICENSE:
 
 
 ====================================================
-roqoqo-qryd 0.12.0-alpha.0
+roqoqo-qryd 0.11.8
 https://github.com/HQSquantumsimulations/qoqo_qryd
 by HQS Quantum Simulations <info@quantumsimulations.de>
 QRyd interface for roqoqo rust quantum computing toolkit
@@ -23359,7 +23359,7 @@ LICENSE:
 
 
 ====================================================
-roqoqo-quest 0.11.3-alpha.1
+roqoqo-quest 0.11.2
 https://github.com/HQSquantumsimulations/qoqo-quest
 by HQS Quantum Simulations <info@quantumsimulations.de>
 QuEST simulator for the qoqo quantum computing toolkit
@@ -23571,7 +23571,7 @@ LICENSE:
 
 
 ====================================================
-roqoqo-test 1.8.0-alpha.2
+roqoqo-test 1.7.1
 https://github.com/HQSquantumsimulations/qoqo
 by HQS Quantum Simulations <info@quantumsimulations.de>
 Testing helper functions for roqoqo toolkit

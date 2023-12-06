@@ -2,9 +2,9 @@
 
 Tracks qoqo-qryd changes after 0.5
 
-# 0.12.0-alpha.0
+# 0.11.8
 
-* Updated to qoqo 1.8.0-alpha.2
+* Updated `TweezerDevice.from_api()` and `APIBackend.post_job()` endpoints
 
 # 0.11.7
 

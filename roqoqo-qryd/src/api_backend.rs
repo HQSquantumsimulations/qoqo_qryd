@@ -365,7 +365,7 @@ impl APIBackend {
                 timeout: timeout.unwrap_or(30),
                 mock_port,
                 dev: false,
-                api_version: api_version.unwrap_or("v3_0".to_string()),
+                api_version: api_version.unwrap_or("v5_1".to_string()),
             })
         } else {
             let access_token_internal: String = match access_token {
@@ -383,7 +383,7 @@ impl APIBackend {
                 timeout: timeout.unwrap_or(30),
                 mock_port,
                 dev: dev.unwrap_or(false),
-                api_version: api_version.unwrap_or("v3_0".to_string()),
+                api_version: api_version.unwrap_or("v5_1".to_string()),
             })
         }
     }
