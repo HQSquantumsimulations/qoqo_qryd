@@ -14,7 +14,7 @@ jobs:
       # Run tests also on windows runners
       windows: true
       # Run tests also on macos runners
-      macos: false
+      macos: true
       rust_package_name: "roqoqo-qryd"
       test_code_coverage: false
   
