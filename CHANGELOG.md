@@ -2,9 +2,10 @@
 
 Tracks qoqo-qryd changes after 0.5
 
-# 0.12.0-alpha.0
+# 0.12.0
 
-* Updated to qoqo 1.8.0-alpha.2
+* Updated to qoqo 1.8
+* Updated to Pyo3 0.20
 
 # 0.11.7
 
