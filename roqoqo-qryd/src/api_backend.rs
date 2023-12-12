@@ -348,7 +348,7 @@ impl APIBackend {
     ///               been queried `timeout` times.
     /// * `mock_port` - Server port to be used for testing purposes.
     /// * `dev` - The boolean to set the dev option to.
-    /// * `api_version` - The version of the QRyd WebAPI to use. Defaults to "v3_0".
+    /// * `api_version` - The version of the QRyd WebAPI to use. Defaults to "v5_1".
     ///
     pub fn new(
         device: QRydAPIDevice,
@@ -365,7 +365,7 @@ impl APIBackend {
                 timeout: timeout.unwrap_or(30),
                 mock_port,
                 dev: false,
-                api_version: api_version.unwrap_or("v3_0".to_string()),
+                api_version: api_version.unwrap_or("v5_1".to_string()),
             })
         } else {
             let access_token_internal: String = match access_token {
@@ -383,7 +383,7 @@ impl APIBackend {
                 timeout: timeout.unwrap_or(30),
                 mock_port,
                 dev: dev.unwrap_or(false),
-                api_version: api_version.unwrap_or("v3_0".to_string()),
+                api_version: api_version.unwrap_or("v5_1".to_string()),
             })
         }
     }
