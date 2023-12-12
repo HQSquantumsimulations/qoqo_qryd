@@ -217,7 +217,7 @@ impl TweezerDevice {
     /// * `mock_port` - The address of the Mock server, used for testing purposes.
     /// * `seed` - Optionally overwrite seed value from downloaded device instance.
     /// * `dev` - The boolean to set the dev header to.
-    /// * `api_version` - The version of the QRYD API to use. Defaults to "v1_0".
+    /// * `api_version` - The version of the QRYD API to use. Defaults to "v1_1".
     ///
     /// # Returns
     ///
@@ -279,7 +279,7 @@ impl TweezerDevice {
             client
                 .get(format!(
                     "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
-                    api_version.unwrap_or_else(|| String::from("v1_0")),
+                    api_version.unwrap_or_else(|| String::from("v1_1")),
                     device_name_internal.clone()
                 ))
                 .header("X-API-KEY", access_token_internal)
@@ -292,7 +292,7 @@ impl TweezerDevice {
             client
                 .get(format!(
                     "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
-                    api_version.unwrap_or_else(|| String::from("v1_0")),
+                    api_version.unwrap_or_else(|| String::from("v1_1")),
                     device_name_internal.clone()
                 ))
                 .header("X-API-KEY", access_token_internal)
