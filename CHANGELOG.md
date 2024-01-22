@@ -2,6 +2,11 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+# 0.12.1
+
+* Updated to qoqo 1.9
+* Fixed `TweezerDevice.number_qubits()` incorrect implementation
+
 # 0.12.0
 
 * Updated to qoqo 1.8
