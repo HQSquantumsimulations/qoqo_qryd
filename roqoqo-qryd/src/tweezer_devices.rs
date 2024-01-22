@@ -101,22 +101,22 @@ impl From<TweezerLayoutInfoSerialize> for TweezerLayoutInfo {
         let tweezer_single_qubit_gate_times: HashMap<String, HashMap<usize, f64>> = info
             .tweezer_single_qubit_gate_times
             .into_iter()
-            .map(|(k, v)| (k, v.into_iter().map(|(i_k, i_v)| (i_k, i_v)).collect()))
+            .map(|(k, v)| (k, v.into_iter().collect()))
             .collect();
         let tweezer_two_qubit_gate_times: HashMap<String, HashMap<(usize, usize), f64>> = info
             .tweezer_two_qubit_gate_times
             .into_iter()
-            .map(|(k, v)| (k, v.into_iter().map(|(i_k, i_v)| (i_k, i_v)).collect()))
+            .map(|(k, v)| (k, v.into_iter().collect()))
             .collect();
         let tweezer_three_qubit_gate_times: HashMap<String, HashMap<(usize, usize, usize), f64>> =
             info.tweezer_three_qubit_gate_times
                 .into_iter()
-                .map(|(k, v)| (k, v.into_iter().map(|(i_k, i_v)| (i_k, i_v)).collect()))
+                .map(|(k, v)| (k, v.into_iter().collect()))
                 .collect();
         let tweezer_multi_qubit_gate_times: HashMap<String, HashMap<Vec<usize>, f64>> = info
             .tweezer_multi_qubit_gate_times
             .into_iter()
-            .map(|(k, v)| (k, v.into_iter().map(|(i_k, i_v)| (i_k, i_v)).collect()))
+            .map(|(k, v)| (k, v.into_iter().collect()))
             .collect();
         let allowed_tweezer_shifts: HashMap<usize, Vec<Vec<usize>>> =
             info.allowed_tweezer_shifts.into_iter().collect();
@@ -136,22 +136,22 @@ impl From<TweezerLayoutInfo> for TweezerLayoutInfoSerialize {
         let tweezer_single_qubit_gate_times: Vec<(String, SingleTweezerTimes)> = info
             .tweezer_single_qubit_gate_times
             .into_iter()
-            .map(|(k, v)| (k, v.into_iter().map(|(i_k, i_v)| (i_k, i_v)).collect()))
+            .map(|(k, v)| (k, v.into_iter().collect()))
             .collect();
         let tweezer_two_qubit_gate_times: Vec<(String, TwoTweezersTimes)> = info
             .tweezer_two_qubit_gate_times
             .into_iter()
-            .map(|(k, v)| (k, v.into_iter().map(|(i_k, i_v)| (i_k, i_v)).collect()))
+            .map(|(k, v)| (k, v.into_iter().collect()))
             .collect();
         let tweezer_three_qubit_gate_times: Vec<(String, ThreeTweezersTimes)> = info
             .tweezer_three_qubit_gate_times
             .into_iter()
-            .map(|(k, v)| (k, v.into_iter().map(|(i_k, i_v)| (i_k, i_v)).collect()))
+            .map(|(k, v)| (k, v.into_iter().collect()))
             .collect();
         let tweezer_multi_qubit_gate_times: Vec<(String, MultiTweezersTimes)> = info
             .tweezer_multi_qubit_gate_times
             .into_iter()
-            .map(|(k, v)| (k, v.into_iter().map(|(i_k, i_v)| (i_k, i_v)).collect()))
+            .map(|(k, v)| (k, v.into_iter().collect()))
             .collect();
         let allowed_tweezer_shifts: Vec<(usize, Vec<Vec<usize>>)> =
             info.allowed_tweezer_shifts.into_iter().collect();
