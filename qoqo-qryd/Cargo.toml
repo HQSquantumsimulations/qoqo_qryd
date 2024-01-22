@@ -41,8 +41,8 @@ numpy = "0.20"
 
 qoqo_calculator = { version = "1.1" }
 qoqo_calculator_pyo3 = { version = "1.1", default-features = false }
-qoqo = { version="1.8", default-features = false }
-roqoqo = { version="1.8", features = ["serialize"] }
+qoqo = { version="1.9", default-features = false }
+roqoqo = { version="1.9", features = ["serialize"] }
 
 roqoqo-qryd = { version = "0.12", path = "../roqoqo-qryd", default-features = false, features = [
     "web-api",
