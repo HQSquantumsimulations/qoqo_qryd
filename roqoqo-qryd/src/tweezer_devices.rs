@@ -1174,9 +1174,6 @@ impl Device for TweezerDevice {
         if let Some(map) = &self.qubit_to_tweezer {
             return map.keys().len();
         }
-        if let Some(max) = self.max_tweezer().unwrap() {
-            return max + 1;
-        }
         0
     }
 

@@ -438,7 +438,7 @@ fn test_number_qubits() {
         .set_tweezer_single_qubit_gate_time("PauliX", 1, 0.0, None)
         .unwrap();
 
-    assert_eq!(device.number_qubits(), 2);
+    assert_eq!(device.number_qubits(), 0);
 
     device.add_qubit_tweezer_mapping(0, 0).unwrap();
     device.add_qubit_tweezer_mapping(1, 1).unwrap();

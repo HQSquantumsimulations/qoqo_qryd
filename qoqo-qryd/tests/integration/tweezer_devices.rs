@@ -527,7 +527,7 @@ fn test_number_qubits() {
     // Setup fake preconfigured device
     let mut exp = TweezerDevice::new(None, None, None);
     exp.add_layout("default").unwrap();
-    exp.current_layout = Some("default".to_string());
+    exp.switch_layout("default").unwrap();
     exp.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None)
         .unwrap();
     exp.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.23, None)
@@ -555,19 +555,20 @@ fn test_number_qubits() {
         );
 
         device_mut
-            .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 0, 0.23))
+            .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 0, 0.23, "default"))
             .unwrap();
         device_mut
-            .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 1, 0.23))
+            .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 1, 0.23, "default"))
             .unwrap();
 
+        // Setting tweezer times should not affect the number of qubits
         assert_eq!(
             device
                 .call_method0("number_qubits")
                 .unwrap()
                 .extract::<usize>()
                 .unwrap(),
-            2
+            0
         );
         assert_eq!(
             device_mut
@@ -575,7 +576,7 @@ fn test_number_qubits() {
                 .unwrap()
                 .extract::<usize>()
                 .unwrap(),
-            2
+            0
         );
 
         device
@@ -621,6 +622,7 @@ fn test_generic_device() {
         .unwrap();
     tw.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.23, None)
         .unwrap();
+    tw.switch_layout("default").unwrap();
     let fake_api_device = TweezerDeviceWrapper { internal: tw };
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
@@ -631,13 +633,19 @@ fn test_generic_device() {
 
         device_mut.call_method1("add_layout", ("default",)).unwrap();
         device_mut
+            .call_method1(
+                "set_tweezer_single_qubit_gate_time",
+                ("PauliX", 0, 0.23, "default"),
+            )
+            .unwrap();
+        device_mut
+            .call_method1(
+                "set_tweezer_single_qubit_gate_time",
+                ("PauliX", 1, 0.23, "default"),
+            )
+            .unwrap();
+        device_mut
             .call_method1("switch_layout", ("default",))
-            .unwrap();
-        device_mut
-            .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 0, 0.23))
-            .unwrap();
-        device_mut
-            .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 1, 0.23))
             .unwrap();
 
         let gen_dev = device.call_method0("generic_device");
