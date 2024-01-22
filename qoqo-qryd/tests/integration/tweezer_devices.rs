@@ -555,10 +555,16 @@ fn test_number_qubits() {
         );
 
         device_mut
-            .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 0, 0.23, "default"))
+            .call_method1(
+                "set_tweezer_single_qubit_gate_time",
+                ("PauliX", 0, 0.23, "default"),
+            )
             .unwrap();
         device_mut
-            .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 1, 0.23, "default"))
+            .call_method1(
+                "set_tweezer_single_qubit_gate_time",
+                ("PauliX", 1, 0.23, "default"),
+            )
             .unwrap();
 
         // Setting tweezer times should not affect the number of qubits
