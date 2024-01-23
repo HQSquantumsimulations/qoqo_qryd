@@ -617,6 +617,65 @@ fn test_number_qubits() {
     })
 }
 
+/// Test number_tweezer_positions function of TweezerDeviceWrapper and TweezerMutableDeviceWrapper
+#[test]
+fn test_number_tweezer_positions() {
+    // Setup fake preconfigured device
+    let mut exp = TweezerDevice::new(None, None, None);
+    exp.add_layout("default").unwrap();
+    exp.switch_layout("default").unwrap();
+    exp.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None)
+        .unwrap();
+    exp.set_tweezer_two_qubit_gate_time("CNOT", 1, 2, 0.23, None)
+        .unwrap();
+    let fake_api_device = TweezerDeviceWrapper { internal: exp };
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let fake_api_pypyany = fake_api_device.into_py(py);
+        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
+        let device = fake_api_pypyany.as_ref(py);
+        let device_mut = device_type_mut.call0().unwrap();
+
+        device_mut.call_method1("add_layout", ("default",)).unwrap();
+
+        assert!(device_mut.call_method0("number_tweezer_positions").is_err());
+
+        device_mut
+            .call_method1("switch_layout", ("default",))
+            .unwrap();
+        device_mut
+            .call_method1(
+                "set_tweezer_single_qubit_gate_time",
+                ("PauliX", 0, 0.23, "default"),
+            )
+            .unwrap();
+        device_mut
+            .call_method1(
+                "set_tweezer_two_qubit_gate_time",
+                ("PauliX", 1, 2, 0.23, "default"),
+            )
+            .unwrap();
+
+        // Setting tweezer times should not affect the number of qubits
+        assert_eq!(
+            device
+                .call_method0("number_tweezer_positions")
+                .unwrap()
+                .extract::<usize>()
+                .unwrap(),
+            3
+        );
+        assert_eq!(
+            device_mut
+                .call_method0("number_tweezer_positions")
+                .unwrap()
+                .extract::<usize>()
+                .unwrap(),
+            3
+        );
+    })
+}
+
 /// Test to_generic_device functions of TweezerDeviceWrapper and TweezerMutableDeviceWrapper
 #[test]
 fn test_generic_device() {
