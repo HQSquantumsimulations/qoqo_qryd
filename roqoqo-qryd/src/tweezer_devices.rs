@@ -19,7 +19,11 @@
 use bincode::deserialize;
 use itertools::{iproduct, Itertools};
 use ndarray::Array2;
-use std::{collections::HashMap, env, str::FromStr};
+use std::{
+    collections::{HashMap, HashSet},
+    env,
+    str::FromStr,
+};
 
 use roqoqo::{
     devices::{Device, GenericDevice},
@@ -882,6 +886,43 @@ impl TweezerDevice {
             }
         }
         edges
+    }
+
+    /// Returns the number of total tweezer positions in the device.
+    ///
+    /// # Returns
+    ///
+    /// * `usize` - The number of tweezer positions in the device.
+    pub fn number_tweezer_positions(&self) -> Result<usize, RoqoqoBackendError> {
+        let mut set_tweezer_indices: HashSet<usize> = HashSet::new();
+        let tweezer_info = self.get_current_layout_info()?;
+        for single_qubit_gate_struct in &tweezer_info.tweezer_single_qubit_gate_times {
+            for tw_id in single_qubit_gate_struct.1.keys() {
+                set_tweezer_indices.insert(*tw_id);
+            }
+        }
+        for two_qubit_gate_struct in &tweezer_info.tweezer_two_qubit_gate_times {
+            for tw_id in two_qubit_gate_struct.1.keys() {
+                set_tweezer_indices.insert(tw_id.0);
+                set_tweezer_indices.insert(tw_id.1);
+            }
+        }
+        for three_qubit_gate_struct in &tweezer_info.tweezer_three_qubit_gate_times {
+            for tw_id in three_qubit_gate_struct.1.keys() {
+                set_tweezer_indices.insert(tw_id.0);
+                set_tweezer_indices.insert(tw_id.1);
+                set_tweezer_indices.insert(tw_id.2);
+            }
+        }
+        for multi_qubit_gate_struct in &tweezer_info.tweezer_multi_qubit_gate_times {
+            for tw_ids in multi_qubit_gate_struct.1.keys() {
+                for id in tw_ids.iter() {
+                    set_tweezer_indices.insert(*id);
+                }
+            }
+        }
+
+        Ok(set_tweezer_indices.len())
     }
 
     #[inline]

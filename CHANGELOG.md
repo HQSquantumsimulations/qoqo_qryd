@@ -2,6 +2,10 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+# 0.12.2
+
+* Added `TweezerDevice.number_tweezer_positions()`
+
 # 0.12.1
 
 * Updated to qoqo 1.9

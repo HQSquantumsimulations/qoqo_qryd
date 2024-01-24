@@ -446,7 +446,32 @@ fn test_number_qubits() {
     assert_eq!(device.number_qubits(), 2)
 }
 
-/// Test TweezerDevice to_generic_device() method method
+/// Test TweezerDevice number_tweezer_positions() method
+#[test]
+fn test_number_tweezer_positions() {
+    let mut device = TweezerDevice::new(None, None, None);
+    device.add_layout("default").unwrap();
+
+    assert!(device.number_tweezer_positions().is_err());
+
+    device.current_layout = Some("default".to_string());
+    device
+        .set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None)
+        .unwrap();
+    device
+        .set_tweezer_two_qubit_gate_time("CNOT", 1, 7, 0.23, None)
+        .unwrap();
+    device
+        .set_tweezer_three_qubit_gate_time("Tottoli", 2, 9, 13, 0.34, None)
+        .unwrap();
+    device
+        .set_tweezer_multi_qubit_gate_time("MultiQubitZZ", &[1, 12, 5], 0.34, None)
+        .unwrap();
+
+    assert_eq!(device.number_tweezer_positions(), Ok(8));
+}
+
+/// Test TweezerDevice to_generic_device() method
 #[test]
 fn test_to_generic_device() {
     let mut device = TweezerDevice::new(None, None, None);

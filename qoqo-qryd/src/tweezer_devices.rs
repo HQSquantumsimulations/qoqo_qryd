@@ -495,6 +495,16 @@ impl TweezerDeviceWrapper {
         self.internal.number_qubits()
     }
 
+    /// Returns the number of total tweezer positions in the device.
+    ///
+    /// Returns:
+    ///     int: The number of tweezer positions in the device.
+    pub fn number_tweezer_positions(&self) -> PyResult<usize> {
+        self.internal
+            .number_tweezer_positions()
+            .map_err(|err| PyValueError::new_err(format!("{:}", err)))
+    }
+
     /// Return the list of pairs of qubits linked by a native two-qubit-gate in the device.
     ///
     /// A pair of qubits is considered linked by a native two-qubit-gate if the device
@@ -986,6 +996,16 @@ impl TweezerMutableDeviceWrapper {
     ///
     pub fn number_qubits(&self) -> usize {
         self.internal.number_qubits()
+    }
+
+    /// Returns the number of total tweezer positions in the device.
+    ///
+    /// Returns:
+    ///     int: The number of tweezer positions in the device.
+    pub fn number_tweezer_positions(&self) -> PyResult<usize> {
+        self.internal
+            .number_tweezer_positions()
+            .map_err(|err| PyValueError::new_err(format!("{:}", err)))
     }
 
     /// Return the list of pairs of qubits linked by a native two-qubit-gate in the device.
