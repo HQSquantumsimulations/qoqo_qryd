@@ -26,6 +26,7 @@ qoqo\_qryd.tweezer\_devices.TweezerMutableDevice
       ~TweezerMutableDevice.generic_device
       ~TweezerMutableDevice.multi_qubit_gate_time
       ~TweezerMutableDevice.number_qubits
+      ~TweezerMutableDevice.number_tweezer_positions
       ~TweezerMutableDevice.phase_shift_controlled_phase
       ~TweezerMutableDevice.phase_shift_controlled_z
       ~TweezerMutableDevice.qrydbackend
