@@ -158,13 +158,14 @@ impl TweezerDeviceWrapper {
     ///
     /// Args:
     ///     layout_number (str): The number index of the new layout
+    ///     with_trivial_map (bool): Whether the qubit -> tweezer mapping should be trivially populated. Defaults to true.
     ///
     /// Raises:
     ///     PyValueError
-    #[pyo3(text_signature = "(name, /)")]
-    pub fn switch_layout(&mut self, name: &str) -> PyResult<()> {
+    #[pyo3(text_signature = "(name, with_trivial_map, /)")]
+    pub fn switch_layout(&mut self, name: &str, with_trivial_map: Option<bool>) -> PyResult<()> {
         self.internal
-            .switch_layout(name)
+            .switch_layout(name, with_trivial_map)
             .map_err(|err| PyValueError::new_err(format!("{:}", err)))
     }
 
@@ -200,6 +201,20 @@ impl TweezerDeviceWrapper {
                 Ok(mapping) => Ok(mapping.into_py_dict(py).into()),
                 Err(err) => Err(PyValueError::new_err(format!("{:}", err))),
             }
+        })
+    }
+
+    /// Get the qubit -> tweezer mapping of the device.
+    ///
+    /// Returns:
+    ///     dict[int, int]: The qubit -> tweezer mapping.
+    ///     None: The mapping is empty.
+    pub fn get_qubit_to_tweezer_mapping(&self) -> Option<PyObject> {
+        Python::with_gil(|py| -> Option<PyObject> {
+            self.internal
+                .qubit_to_tweezer
+                .as_ref()
+                .map(|mapping| mapping.into_py_dict(py).into())
         })
     }
 
@@ -481,7 +496,7 @@ impl TweezerDeviceWrapper {
             .map_err(|_| PyValueError::new_err("Input cannot be deserialized to TweezerDevice"))?;
         if let Some(layout) = &internal.default_layout {
             let _ = internal
-                .switch_layout(&layout.to_string())
+                .switch_layout(&layout.to_string(), None)
                 .map_err(|err| PyValueError::new_err(format!("{:}", err)));
         }
         Ok(TweezerDeviceWrapper { internal })
@@ -661,13 +676,14 @@ impl TweezerMutableDeviceWrapper {
     ///
     /// Args:
     ///     layout_number (str): The number index of the new layout
+    ///     with_trivial_map (bool): Whether the qubit -> tweezer mapping should be trivially populated. Defaults to true.
     ///
     /// Raises:
     ///     PyValueError
-    #[pyo3(text_signature = "(name, /)")]
-    pub fn switch_layout(&mut self, name: &str) -> PyResult<()> {
+    #[pyo3(text_signature = "(name, with_trivial_map, /)")]
+    pub fn switch_layout(&mut self, name: &str, with_trivial_map: Option<bool>) -> PyResult<()> {
         self.internal
-            .switch_layout(name)
+            .switch_layout(name, with_trivial_map)
             .map_err(|err| PyValueError::new_err(format!("{:}", err)))
     }
 
@@ -703,6 +719,20 @@ impl TweezerMutableDeviceWrapper {
                 Ok(mapping) => Ok(mapping.into_py_dict(py).into()),
                 Err(err) => Err(PyValueError::new_err(format!("{:}", err))),
             }
+        })
+    }
+
+    /// Get the qubit -> tweezer mapping of the device.
+    ///
+    /// Returns:
+    ///     dict[int, int]: The qubit -> tweezer mapping.
+    ///     None: The mapping is empty.
+    pub fn get_qubit_to_tweezer_mapping(&self) -> Option<PyObject> {
+        Python::with_gil(|py| -> Option<PyObject> {
+            self.internal
+                .qubit_to_tweezer
+                .as_ref()
+                .map(|mapping| mapping.into_py_dict(py).into())
         })
     }
 

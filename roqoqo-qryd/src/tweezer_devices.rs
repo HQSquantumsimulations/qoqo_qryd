@@ -311,7 +311,7 @@ impl TweezerDevice {
         if status_code == reqwest::StatusCode::OK {
             let mut device = resp.json::<TweezerDevice>().unwrap();
             if let Some(default) = device.default_layout.clone() {
-                device.switch_layout(&default).unwrap();
+                device.switch_layout(&default, None).unwrap();
             }
             if let Some(new_seed) = seed {
                 device.seed = Some(new_seed);
@@ -350,12 +350,14 @@ impl TweezerDevice {
     /// Change the current Layout.
     ///
     /// It is updated only if the new Layout is present in the device's
-    /// Layout register.
+    /// Layout register. If the qubit -> tweezer mapping is empty, it is
+    /// trivially populated by default.
     ///
     /// # Arguments
     ///
     /// * `name` - The name of the new Layout.
-    pub fn switch_layout(&mut self, name: &str) -> Result<(), RoqoqoBackendError> {
+    /// * `with_trivial_map` - Whether the qubit -> tweezer mapping should be trivially populated. Defaults to true.
+    pub fn switch_layout(&mut self, name: &str, with_trivial_map: Option<bool>) -> Result<(), RoqoqoBackendError> {
         if !self.layout_register.keys().contains(&name.to_string()) {
             return Err(RoqoqoBackendError::GenericError {
                 msg: format!(
@@ -365,7 +367,7 @@ impl TweezerDevice {
             });
         }
         self.current_layout = Some(name.to_string());
-        if self.qubit_to_tweezer.is_none() {
+        if self.qubit_to_tweezer.is_none() && with_trivial_map.unwrap_or(true) {
             self.qubit_to_tweezer = Some(self.new_trivial_mapping());
         }
         Ok(())
@@ -723,7 +725,7 @@ impl TweezerDevice {
             });
         }
         self.default_layout = Some(layout.to_string());
-        self.switch_layout(layout)?;
+        self.switch_layout(layout, None)?;
         Ok(())
     }
 
@@ -1252,7 +1254,7 @@ impl Device for TweezerDevice {
                 let de_change_layout: Result<PragmaSwitchDeviceLayout, Box<bincode::ErrorKind>> =
                     deserialize(operation);
                 match de_change_layout {
-                    Ok(pragma) => self.switch_layout(pragma.new_layout()),
+                    Ok(pragma) => self.switch_layout(pragma.new_layout(), None),
                     Err(_) => Err(RoqoqoBackendError::GenericError {
                         msg: "Wrapped operation not supported in TweezerDevice".to_string(),
                     }),
