@@ -12,7 +12,11 @@
 
 //! Integration test for Tweezer Devices
 
-use pyo3::{exceptions::PyValueError, prelude::*, types::PyDict};
+use pyo3::{
+    exceptions::PyValueError,
+    prelude::*,
+    types::{IntoPyDict, PyDict},
+};
 #[cfg(feature = "web-api")]
 use serde_json::Value;
 
@@ -224,16 +228,28 @@ fn test_qubit_tweezer_mapping() {
         let device = fake_api_pypyany.as_ref(py);
         let device_mut = device_type_mut.call0().unwrap();
 
+        assert!(device_mut
+            .call_method0("get_qubit_to_tweezer_mapping")
+            .unwrap()
+            .is_none());
+
         device_mut.call_method1("add_layout", ("default",)).unwrap();
-        device_mut
-            .call_method1("switch_layout", ("default",))
-            .unwrap();
+
+        assert!(device_mut
+            .call_method1("switch_layout", ("default", true))
+            .is_ok());
+
         device_mut
             .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 1, 0.23))
             .unwrap();
         device_mut
             .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 2, 0.23))
             .unwrap();
+
+        assert!(device_mut
+            .call_method0("get_qubit_to_tweezer_mapping")
+            .unwrap()
+            .is_none());
 
         assert!(device
             .call_method1("add_qubit_tweezer_mapping", (0, 1))
@@ -247,6 +263,19 @@ fn test_qubit_tweezer_mapping() {
         assert!(device_mut
             .call_method1("add_qubit_tweezer_mapping", (1, 0))
             .is_err());
+
+        let ex_dict: &PyDict = [(0, 1)].into_py_dict(py);
+        assert!(device_mut
+            .call_method0("get_qubit_to_tweezer_mapping")
+            .unwrap()
+            .eq(ex_dict)
+            .unwrap());
+        assert!(device
+            .call_method0("get_qubit_to_tweezer_mapping")
+            .unwrap()
+            .eq(ex_dict)
+            .unwrap());
+
         assert_eq!(
             device
                 .call_method1("add_qubit_tweezer_mapping", (3, 2))
@@ -256,6 +285,48 @@ fn test_qubit_tweezer_mapping() {
                 .len(),
             2
         );
+
+        ex_dict.set_item(3, 2).unwrap();
+        assert!(device
+            .call_method0("get_qubit_to_tweezer_mapping")
+            .unwrap()
+            .eq(ex_dict)
+            .unwrap());
+
+        device_mut
+            .call_method1("add_layout", ("test_trivial_population",))
+            .unwrap();
+        device_mut
+            .call_method1(
+                "set_tweezer_single_qubit_gate_time",
+                ("PauliX", 1, 0.23, "test_trivial_population"),
+            )
+            .unwrap();
+        device_mut
+            .call_method1(
+                "set_tweezer_single_qubit_gate_time",
+                ("PauliX", 2, 0.23, "test_trivial_population"),
+            )
+            .unwrap();
+        device_mut
+            .call_method1("switch_layout", ("test_trivial_population", false))
+            .unwrap();
+
+        assert!(device_mut
+            .call_method0("get_qubit_to_tweezer_mapping")
+            .unwrap()
+            .is_none());
+
+        device_mut
+            .call_method1("switch_layout", ("test_trivial_population", true))
+            .unwrap();
+
+        let ex_dict: &PyDict = [(0, 0), (1, 1), (2, 2)].into_py_dict(py);
+        assert!(device_mut
+            .call_method0("get_qubit_to_tweezer_mapping")
+            .unwrap()
+            .eq(ex_dict)
+            .unwrap());
     })
 }
 
@@ -430,7 +501,7 @@ fn test_qubit_times() {
         Some("OtherLayout".to_string()),
     )
     .unwrap();
-    exp.switch_layout("OtherLayout").unwrap();
+    exp.switch_layout("OtherLayout", None).unwrap();
     exp.add_qubit_tweezer_mapping(0, 1).unwrap();
     exp.add_qubit_tweezer_mapping(1, 2).unwrap();
     exp.add_qubit_tweezer_mapping(2, 3).unwrap();
@@ -527,7 +598,7 @@ fn test_number_qubits() {
     // Setup fake preconfigured device
     let mut exp = TweezerDevice::new(None, None, None);
     exp.add_layout("default").unwrap();
-    exp.switch_layout("default").unwrap();
+    exp.switch_layout("default", None).unwrap();
     exp.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None)
         .unwrap();
     exp.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.23, None)
@@ -623,7 +694,7 @@ fn test_number_tweezer_positions() {
     // Setup fake preconfigured device
     let mut exp = TweezerDevice::new(None, None, None);
     exp.add_layout("default").unwrap();
-    exp.switch_layout("default").unwrap();
+    exp.switch_layout("default", None).unwrap();
     exp.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None)
         .unwrap();
     exp.set_tweezer_two_qubit_gate_time("CNOT", 1, 2, 0.23, None)
@@ -687,7 +758,7 @@ fn test_generic_device() {
         .unwrap();
     tw.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.23, None)
         .unwrap();
-    tw.switch_layout("default").unwrap();
+    tw.switch_layout("default", None).unwrap();
     let fake_api_device = TweezerDeviceWrapper { internal: tw };
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
@@ -1028,7 +1099,7 @@ fn test_from_api() {
             Some("triangle".to_string()),
         )
         .unwrap();
-    received_device.switch_layout("triangle").unwrap();
+    received_device.switch_layout("triangle", None).unwrap();
     received_device.set_default_layout("triangle").unwrap();
     let received_device_wrapper = TweezerDeviceWrapper {
         internal: received_device.clone(),

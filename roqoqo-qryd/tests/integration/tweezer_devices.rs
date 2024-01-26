@@ -192,14 +192,46 @@ fn test_layouts() {
     assert_eq!(device.current_layout, Some("default".to_string()));
     assert!(device.qubit_to_tweezer.is_none());
 
-    device.switch_layout("Test").unwrap();
+    device.switch_layout("Test", None).unwrap();
     assert_eq!(device.current_layout, Some("Test".to_string()));
     assert!(device.qubit_to_tweezer.is_some());
     assert_eq!(device.qubit_to_tweezer.clone().unwrap().len(), 4);
 
-    assert!(device.switch_layout("Error").is_err());
+    assert!(device.switch_layout("Error", None).is_err());
 
     assert!(device.available_layouts().contains(&"Test"));
+
+    device.add_layout("test_trivial_population").unwrap();
+    device
+        .set_tweezer_single_qubit_gate_time(
+            "RotateZ",
+            1,
+            0.23,
+            Some("test_trivial_population".to_string()),
+        )
+        .unwrap();
+    device
+        .set_tweezer_single_qubit_gate_time(
+            "RotateY",
+            2,
+            0.23,
+            Some("test_trivial_population".to_string()),
+        )
+        .unwrap();
+    device
+        .switch_layout("test_trivial_population", Some(false))
+        .unwrap();
+
+    assert!(device.qubit_to_tweezer.is_none());
+
+    device
+        .switch_layout("test_trivial_population", Some(true))
+        .unwrap();
+
+    assert_eq!(
+        device.qubit_to_tweezer.unwrap(),
+        HashMap::from([(0, 0), (1, 1), (2, 2)])
+    );
 }
 
 // Test TweezerDevice add_qubit_tweezer_mapping(), get_tweezer_from_qubit() methods
@@ -303,7 +335,7 @@ fn test_allowed_tweezer_shifts_row() {
     device
         .set_tweezer_single_qubit_gate_time("PauliX", 2, 0.0, Some("OtherLayout".to_string()))
         .unwrap();
-    device.switch_layout("OtherLayout").unwrap();
+    device.switch_layout("OtherLayout", None).unwrap();
 
     assert!(device
         .set_allowed_tweezer_shifts(&0, &[&[1], &[2]], Some("OtherLayout".to_string()))
