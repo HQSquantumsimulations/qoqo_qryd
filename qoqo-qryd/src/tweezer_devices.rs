@@ -154,10 +154,14 @@ impl TweezerDeviceWrapper {
             .as_str()
     }
 
-    /// Switch to a different pre-defined layout.
+    /// Switch to a different pre-defined Layout.
+    ///
+    /// It is updated only if the given Layout name is present in the device's
+    /// Layout register. If the qubit -> tweezer mapping is empty, it is
+    /// trivially populated by default.
     ///
     /// Args:
-    ///     layout_number (str): The number index of the new layout
+    ///     layout_number (str): The number index of the new Layout.
     ///     with_trivial_map (bool): Whether the qubit -> tweezer mapping should be trivially populated. Defaults to true.
     ///
     /// Raises:
@@ -672,10 +676,14 @@ impl TweezerMutableDeviceWrapper {
             .map_err(|err| PyValueError::new_err(format!("{:}", err)))
     }
 
-    /// Switch to a different pre-defined layout.
+    /// Switch to a different pre-defined Layout.
+    ///
+    /// It is updated only if the given Layout name is present in the device's
+    /// Layout register. If the qubit -> tweezer mapping is empty, it is
+    /// trivially populated by default.
     ///
     /// Args:
-    ///     layout_number (str): The number index of the new layout
+    ///     layout_number (str): The number index of the new Layout.
     ///     with_trivial_map (bool): Whether the qubit -> tweezer mapping should be trivially populated. Defaults to true.
     ///
     /// Raises:

@@ -347,9 +347,9 @@ impl TweezerDevice {
         Ok(())
     }
 
-    /// Change the current Layout.
+    /// Switch to a different pre-defined Layout.
     ///
-    /// It is updated only if the new Layout is present in the device's
+    /// It is updated only if the given Layout name is present in the device's
     /// Layout register. If the qubit -> tweezer mapping is empty, it is
     /// trivially populated by default.
     ///
