@@ -29,6 +29,27 @@ pub enum SimulatorDevice {
 }
 
 impl Device for SimulatorDevice {
+    fn multi_qubit_gate_names(&self) -> Vec<String> {
+        match self {
+            SimulatorDevice::QRydDevice(device) => device.multi_qubit_gate_names(),
+            SimulatorDevice::TweezerDevice(device) => device.multi_qubit_gate_names(),
+        }
+    }
+
+    fn single_qubit_gate_names(&self) -> Vec<String> {
+        match self {
+            SimulatorDevice::QRydDevice(device) => device.single_qubit_gate_names(),
+            SimulatorDevice::TweezerDevice(device) => device.single_qubit_gate_names(),
+        }
+    }
+
+    fn two_qubit_gate_names(&self) -> Vec<String> {
+        match self {
+            SimulatorDevice::QRydDevice(device) => device.two_qubit_gate_names(),
+            SimulatorDevice::TweezerDevice(device) => device.two_qubit_gate_names(),
+        }
+    }
+
     fn single_qubit_gate_time(&self, hqslang: &str, qubit: &usize) -> Option<f64> {
         match self {
             SimulatorDevice::QRydDevice(x) => x.single_qubit_gate_time(hqslang, qubit),
@@ -85,6 +106,17 @@ impl Device for SimulatorDevice {
         match self {
             SimulatorDevice::QRydDevice(x) => x.two_qubit_edges(),
             SimulatorDevice::TweezerDevice(x) => x.two_qubit_edges(),
+        }
+    }
+
+    fn change_device(
+        &mut self,
+        hqslang: &str,
+        operation: &[u8],
+    ) -> Result<(), roqoqo::prelude::RoqoqoBackendError> {
+        match self {
+            SimulatorDevice::QRydDevice(x) => x.change_device(hqslang, operation),
+            SimulatorDevice::TweezerDevice(x) => x.change_device(hqslang, operation),
         }
     }
 
