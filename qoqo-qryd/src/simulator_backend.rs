@@ -12,7 +12,8 @@
 
 //! Provides a QuEST based simulator for the QuEST quantum computer
 
-use crate::qryd_devices::convert_into_device;
+use crate::qryd_devices::convert_into_device as convert_into_qryd_device;
+use crate::tweezer_devices::convert_into_device as convert_into_tweezer_device;
 use bincode::{deserialize, serialize};
 use pyo3::exceptions::{PyRuntimeError, PyTypeError, PyValueError};
 use pyo3::prelude::*;
@@ -22,8 +23,7 @@ use qoqo::QoqoBackendError;
 use roqoqo::prelude::*;
 use roqoqo::registers::{BitOutputRegister, ComplexOutputRegister, FloatOutputRegister};
 use roqoqo::Circuit;
-use roqoqo_qryd::qryd_devices::QRydDevice;
-use roqoqo_qryd::SimulatorBackend;
+use roqoqo_qryd::{SimulatorBackend, SimulatorDevice};
 use std::collections::HashMap;
 
 /// Local simulator backend for Rydberg devices.
@@ -41,10 +41,10 @@ use std::collections::HashMap;
 /// and running QuantumPrograms on simulated QRyd devices.
 ///
 /// Args:
-///     device (Device): QRyd device providing information about the available operations.
+///     device (Union[QRydDevice,TweezerDevice]): The device providing information about the available operations.
 ///
 /// Raises:
-///     TypeError: Device Parameter is not QRydDevice
+///     TypeError: Device Parameter is not QRydDevice or TweezerDevice
 #[pyclass(name = "SimulatorBackend", module = "qoqo_qryd")]
 #[derive(Clone, Debug, PartialEq)]
 pub struct SimulatorBackendWrapper {
@@ -64,19 +64,33 @@ impl SimulatorBackendWrapper {
     /// Create a new QRyd SimulatorBackend.
     ///
     /// Args:
-    ///     device (Device): QRyd device providing information about the available operations.
+    ///     device (Union[QRydDevice,TweezerDevice]): The device providing information about the available operations.
+    ///     number_qubits (int, optional): The number of qubits the simulator should use. Defaults to `device.number_qubits()`.
     ///
     /// Raises:
-    ///     TypeError: Device Parameter is not QRydDevice
+    ///     TypeError: Device Parameter is not QrydDevice or TweezerDevice
     #[new]
-    #[pyo3(text_signature = "(device, /)")]
-    pub fn new(device: &PyAny) -> PyResult<Self> {
-        let device: QRydDevice = convert_into_device(device).map_err(|err| {
-            PyTypeError::new_err(format!("Device Parameter is not QRydDevice {:?}", err))
-        })?;
-        Ok(Self {
-            internal: SimulatorBackend::new(device),
-        })
+    #[pyo3(text_signature = "(device, number_qubits, /)")]
+    pub fn new(device: &PyAny, number_qubits: Option<usize>) -> PyResult<Self> {
+        if let Ok(qryd_dev) = convert_into_qryd_device(device) {
+            Ok(Self {
+                internal: SimulatorBackend::new(
+                    SimulatorDevice::QRydDevice(qryd_dev),
+                    number_qubits,
+                ),
+            })
+        } else if let Ok(tw_dev) = convert_into_tweezer_device(device) {
+            Ok(Self {
+                internal: SimulatorBackend::new(
+                    SimulatorDevice::TweezerDevice(tw_dev),
+                    number_qubits,
+                ),
+            })
+        } else {
+            return Err(PyTypeError::new_err(
+                "Device Parameter is not QRydDevice or TweezerDevice",
+            ));
+        }
     }
 
     /// Return a copy of the SimulatorBackend.
@@ -358,10 +372,10 @@ pub fn convert_into_backend(input: &PyAny) -> Result<SimulatorBackend, QoqoBacke
     if let Ok(try_downcast) = input.extract::<SimulatorBackendWrapper>() {
         Ok(try_downcast.internal)
     } else {
-        // Everything that follows tries to extract the circuit when two separately
+        // Everything that follows tries to extract the SimulatorBackend when two separately
         // compiled python packages are involved
         let get_bytes = input
-            .call_method0("_enum_to_bincode")
+            .call_method0("to_bincode")
             .map_err(|_| QoqoBackendError::CannotExtractObject)?;
         let bytes = get_bytes
             .extract::<Vec<u8>>()
