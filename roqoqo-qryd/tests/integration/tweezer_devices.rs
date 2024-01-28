@@ -483,8 +483,17 @@ fn test_number_qubits() {
 fn test_number_tweezer_positions() {
     let mut device = TweezerDevice::new(None, None, None);
     device.add_layout("default").unwrap();
+    device.add_layout("empty").unwrap();
 
-    assert!(device.number_tweezer_positions().is_err());
+    assert_eq!(
+        device.number_tweezer_positions(Some("empty".to_string())),
+        Ok(0)
+    );
+
+    assert!(device.number_tweezer_positions(None).is_err());
+    assert!(device
+        .number_tweezer_positions(Some("error".to_string()))
+        .is_err());
 
     device.current_layout = Some("default".to_string());
     device
@@ -494,13 +503,13 @@ fn test_number_tweezer_positions() {
         .set_tweezer_two_qubit_gate_time("CNOT", 1, 7, 0.23, None)
         .unwrap();
     device
-        .set_tweezer_three_qubit_gate_time("Tottoli", 2, 9, 13, 0.34, None)
+        .set_tweezer_three_qubit_gate_time("Toffoli", 2, 9, 13, 0.34, None)
         .unwrap();
     device
         .set_tweezer_multi_qubit_gate_time("MultiQubitZZ", &[1, 12, 5], 0.34, None)
         .unwrap();
 
-    assert_eq!(device.number_tweezer_positions(), Ok(8));
+    assert_eq!(device.number_tweezer_positions(None), Ok(8));
 }
 
 /// Test TweezerDevice to_generic_device() method

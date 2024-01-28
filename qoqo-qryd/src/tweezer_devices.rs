@@ -516,11 +516,15 @@ impl TweezerDeviceWrapper {
 
     /// Returns the number of total tweezer positions in the device.
     ///
+    /// Arguments:
+    ///     layout_name (Optional[str]): The name of the layout to reference. Defaults to the current layout.
+    ///
     /// Returns:
     ///     int: The number of tweezer positions in the device.
-    pub fn number_tweezer_positions(&self) -> PyResult<usize> {
+    #[pyo3(text_signature = "(layout_name, /)")]
+    pub fn number_tweezer_positions(&self, layout_name: Option<String>) -> PyResult<usize> {
         self.internal
-            .number_tweezer_positions()
+            .number_tweezer_positions(layout_name)
             .map_err(|err| PyValueError::new_err(format!("{:}", err)))
     }
 
@@ -1038,11 +1042,15 @@ impl TweezerMutableDeviceWrapper {
 
     /// Returns the number of total tweezer positions in the device.
     ///
+    /// Arguments:
+    ///     layout_name (Optional[str]): The name of the layout to reference. Defaults to the current layout.
+    ///
     /// Returns:
     ///     int: The number of tweezer positions in the device.
-    pub fn number_tweezer_positions(&self) -> PyResult<usize> {
+    #[pyo3(text_signature = "(layout_name, /)")]
+    pub fn number_tweezer_positions(&self, layout_name: Option<String>) -> PyResult<usize> {
         self.internal
-            .number_tweezer_positions()
+            .number_tweezer_positions(layout_name)
             .map_err(|err| PyValueError::new_err(format!("{:}", err)))
     }
 

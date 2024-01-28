@@ -708,8 +708,21 @@ fn test_number_tweezer_positions() {
         let device_mut = device_type_mut.call0().unwrap();
 
         device_mut.call_method1("add_layout", ("default",)).unwrap();
+        device_mut.call_method1("add_layout", ("empty",)).unwrap();
+
+        assert_eq!(
+            device_mut
+                .call_method1("number_tweezer_positions", ("empty",))
+                .unwrap()
+                .extract::<usize>()
+                .unwrap(),
+            0
+        );
 
         assert!(device_mut.call_method0("number_tweezer_positions").is_err());
+        assert!(device_mut
+            .call_method1("number_tweezer_positions", ("error",))
+            .is_err());
 
         device_mut
             .call_method1("switch_layout", ("default",))

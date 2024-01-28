@@ -899,9 +899,23 @@ impl TweezerDevice {
     /// # Returns
     ///
     /// * `usize` - The number of tweezer positions in the device.
-    pub fn number_tweezer_positions(&self) -> Result<usize, RoqoqoBackendError> {
+    /// * `layout_name` - The name of the layout to reference. Defaults to the current layout.
+    pub fn number_tweezer_positions(
+        &self,
+        layout_name: Option<String>,
+    ) -> Result<usize, RoqoqoBackendError> {
         let mut set_tweezer_indices: HashSet<usize> = HashSet::new();
-        let tweezer_info = self.get_current_layout_info()?;
+        let tweezer_info = if let Some(layout_name) = layout_name {
+            if let Some(tw) = self.layout_register.get(&layout_name) {
+                tw
+            } else {
+                return Err(RoqoqoBackendError::GenericError {
+                    msg: "The given layout name is not present in the layout register.".to_string(),
+                });
+            }
+        } else {
+            self.get_current_layout_info()?
+        };
         for single_qubit_gate_struct in &tweezer_info.tweezer_single_qubit_gate_times {
             for tw_id in single_qubit_gate_struct.1.keys() {
                 set_tweezer_indices.insert(*tw_id);
