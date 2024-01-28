@@ -20,10 +20,12 @@ use qoqo::measurements::{ClassicalRegisterWrapper, PauliZProductWrapper};
 use qoqo::CircuitWrapper;
 use qoqo_qryd::qryd_devices::FirstDeviceWrapper;
 use qoqo_qryd::simulator_backend::{convert_into_backend, SimulatorBackendWrapper};
+use qoqo_qryd::{TweezerDeviceWrapper, TweezerMutableDeviceWrapper};
 use roqoqo::measurements::{ClassicalRegister, PauliZProduct, PauliZProductInput};
 use roqoqo::operations;
 use roqoqo::Circuit;
-use roqoqo_qryd::{FirstDevice, QRydDevice, SimulatorBackend};
+use roqoqo_qryd::SimulatorDevice;
+use roqoqo_qryd::{FirstDevice, SimulatorBackend};
 
 #[test]
 fn test_creating_backend() {
@@ -69,7 +71,22 @@ fn test_creating_backend() {
             .unwrap()
             .downcast::<PyCell<SimulatorBackendWrapper>>()
             .unwrap();
-    })
+    });
+
+    Python::with_gil(|py| {
+        let device_type = py.get_type::<TweezerDeviceWrapper>();
+        let device = device_type
+            .call0()
+            .unwrap()
+            .downcast::<PyCell<TweezerDeviceWrapper>>()
+            .unwrap();
+        let backend_type = py.get_type::<SimulatorBackendWrapper>();
+        let _backend = backend_type
+            .call1((device,))
+            .unwrap()
+            .downcast::<PyCell<SimulatorBackendWrapper>>()
+            .unwrap();
+    });
 }
 
 #[test]
@@ -95,7 +112,7 @@ fn test_running_circuit() {
     let circuit_wrapper = CircuitWrapper { internal: circuit };
     Python::with_gil(|py| {
         let device_type = py.get_type::<FirstDeviceWrapper>();
-        let device = device_type
+        let device_fd = device_type
             .call1((
                 2,
                 2,
@@ -106,16 +123,45 @@ fn test_running_circuit() {
             .unwrap()
             .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
-        let _ = device.call_method1("switch_layout", (0,)).unwrap();
+        let _ = device_fd.call_method1("switch_layout", (0,)).unwrap();
+        let device_type = py.get_type::<TweezerMutableDeviceWrapper>();
+        let device_tw = device_type
+            .call0()
+            .unwrap()
+            .downcast::<PyCell<TweezerMutableDeviceWrapper>>()
+            .unwrap();
+        device_tw.call_method1("add_layout", ("test",)).unwrap();
+        device_tw
+            .call_method1(
+                "set_tweezer_single_qubit_gate_time",
+                ("RotateX", 0, 1.0, "test"),
+            )
+            .unwrap();
+        device_tw
+            .call_method1(
+                "set_tweezer_two_qubit_gate_time",
+                ("PhaseShiftedControlledZ", 0, 1, 1.0, "test"),
+            )
+            .unwrap();
+        device_tw.call_method1("switch_layout", ("test",)).unwrap();
+
         let backend_type = py.get_type::<SimulatorBackendWrapper>();
-        let backend = backend_type
-            .call1((device,))
+        let backend_fd = backend_type
+            .call1((device_fd,))
             .unwrap()
             .downcast::<PyCell<SimulatorBackendWrapper>>()
             .unwrap();
-        let _ = backend
-            .call_method1("run_circuit", (circuit_wrapper,))
+        let backend_tw = backend_type
+            .call1((device_tw,))
+            .unwrap()
+            .downcast::<PyCell<SimulatorBackendWrapper>>()
             .unwrap();
+        assert!(backend_fd
+            .call_method1("run_circuit", (circuit_wrapper.clone(),))
+            .is_ok());
+        assert!(backend_tw
+            .call_method1("run_circuit", (circuit_wrapper,))
+            .is_ok());
     })
 }
 
@@ -387,7 +433,7 @@ fn test_copy_deepcopy() {
     });
 }
 
-/// Test to_ and from_bincode functions of Circuit
+/// Test to_ and from_bincode() functions of SimulatorBackendWrapper
 #[test]
 fn test_to_from_bincode() {
     pyo3::prepare_freethreaded_python();
@@ -430,7 +476,7 @@ fn test_to_from_bincode() {
     });
 }
 
-/// Test to_ and from_bincode functions of Circuit
+/// Test to_ and from_json() functions of SimulatorBackendWrapper
 #[test]
 fn test_to_from_json() {
     pyo3::prepare_freethreaded_python();
@@ -474,7 +520,7 @@ fn test_to_from_json() {
     });
 }
 
-/// Test to_ and from_bincode functions of Circuit
+/// Test convert_to_device()
 #[test]
 fn test_convert_to_device() {
     pyo3::prepare_freethreaded_python();
@@ -499,7 +545,7 @@ fn test_convert_to_device() {
             .unwrap();
 
         let converted = convert_into_backend(backend).unwrap();
-        let rust_dev: QRydDevice = FirstDevice::new(
+        let rust_dev: SimulatorDevice = FirstDevice::new(
             2,
             2,
             &[1, 1],
@@ -512,15 +558,15 @@ fn test_convert_to_device() {
         )
         .unwrap()
         .into();
-        let rust_backend = SimulatorBackend::new(rust_dev);
+        let rust_backend = SimulatorBackend::new(rust_dev, None);
         assert_eq!(converted, rust_backend);
+        assert!(convert_into_backend(device).is_err());
     });
 }
 
 #[test]
 fn test_pyo3_new_change_layout() {
     pyo3::prepare_freethreaded_python();
-
     Python::with_gil(|py| {
         let layout = array![[0.0, 1.0], [0.0, 1.0]];
         let device_type = py.get_type::<FirstDeviceWrapper>();
@@ -570,7 +616,7 @@ fn test_pyo3_new_change_layout() {
         let check_2: &str = check_str.split("qubit_positions").collect::<Vec<&str>>()[1]
             .split(")}")
             .collect::<Vec<&str>>()[1];
-        let comp_str = format!("SimulatorBackendWrapper {{ internal: SimulatorBackend {{ device: FirstDevice(FirstDevice {{ number_rows: 2, number_columns: 2, qubit_positions: {{0: (0, 0), 1: (1, 0)}}, row_distance: 1.0, layout_register: {{0: {:?}}}, current_layout: 0, cutoff: 1.0, controlled_z_phase_relation: \"DefaultRelation\", controlled_phase_phase_relation: \"DefaultRelation\" }}) }} }}", layout);
+        let comp_str = format!("SimulatorBackendWrapper {{ internal: SimulatorBackend {{ device: QRydDevice(FirstDevice(FirstDevice {{ number_rows: 2, number_columns: 2, qubit_positions: {{0: (0, 0), 1: (1, 0)}}, row_distance: 1.0, layout_register: {{0: {:?}}}, current_layout: 0, cutoff: 1.0, controlled_z_phase_relation: \"DefaultRelation\", controlled_phase_phase_relation: \"DefaultRelation\", allow_ccz_gate: true, allow_ccp_gate: false }})), number_qubits: 2 }} }}", layout);
         let comp_1: &str = comp_str.split("qubit_positions").collect::<Vec<&str>>()[0];
         let comp_2: &str = comp_str.split("qubit_positions").collect::<Vec<&str>>()[1]
             .split(")}")
