@@ -357,7 +357,11 @@ impl TweezerDevice {
     ///
     /// * `name` - The name of the new Layout.
     /// * `with_trivial_map` - Whether the qubit -> tweezer mapping should be trivially populated. Defaults to true.
-    pub fn switch_layout(&mut self, name: &str, with_trivial_map: Option<bool>) -> Result<(), RoqoqoBackendError> {
+    pub fn switch_layout(
+        &mut self,
+        name: &str,
+        with_trivial_map: Option<bool>,
+    ) -> Result<(), RoqoqoBackendError> {
         if !self.layout_register.keys().contains(&name.to_string()) {
             return Err(RoqoqoBackendError::GenericError {
                 msg: format!(

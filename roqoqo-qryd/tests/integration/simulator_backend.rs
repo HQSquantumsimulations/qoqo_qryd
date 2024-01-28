@@ -153,7 +153,7 @@ fn test_simple_traits() {
     assert!(backend_tw != backend_1);
 }
 
-/// Test .run_circuit() with a simple circuit 
+/// Test .run_circuit() with a simple circuit
 #[test]
 fn test_simple_circuit() {
     let layout: Array2<f64> = array![[0.0, 1.0], [0.0, 1.0]];
