@@ -518,9 +518,9 @@ fn test_to_from_json() {
     });
 }
 
-/// Test convert_to_device()
+/// Test convert_to_backend()
 #[test]
-fn test_convert_to_device() {
+fn test_convert_to_backend() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let device_type = py.get_type::<TweezerMutableDeviceWrapper>();
