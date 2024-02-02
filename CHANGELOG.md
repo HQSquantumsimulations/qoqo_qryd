@@ -11,6 +11,8 @@ Tracks qoqo-qryd changes after 0.5
 * Added `number_qubits` parameter to `SimulatorBackend`
 * Modified `TweezerDevice.number_qubits()` back to index-based implementation
 * Dropped `FirstDevice` support for `SimulatorBackend`
+* Updated to `mockito` 1.2
+* Updated the MSRV to 1.68
 
 # 0.12.2
 
