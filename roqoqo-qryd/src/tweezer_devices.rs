@@ -1233,7 +1233,10 @@ impl Device for TweezerDevice {
 
     fn number_qubits(&self) -> usize {
         if let Some(map) = &self.qubit_to_tweezer {
-            return map.keys().len();
+            if map.is_empty() {
+                return 0;
+            }
+            return *map.keys().max().unwrap_or(&0) + 1;
         }
         0
     }
