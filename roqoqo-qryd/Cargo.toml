@@ -4,7 +4,7 @@ version = "0.13.0"
 authors = ["HQS Quantum Simulations <info@quantumsimulations.de>"]
 edition = "2021"
 license = "Apache-2.0"
-rust-version = "1.56"
+rust-version = "1.68"
 categories = ["science", "simulation"]
 readme = "../README.md"
 repository = "https://github.com/HQSquantumsimulations/qoqo_qryd"
@@ -47,7 +47,7 @@ qoqo_calculator = { version = "1.1" }
 test-case = "3.0"
 serde_test = { version = "1.0" }
 roqoqo-test = { version = "1.9" }
-mockito = { version = "1.1", default-features = false }
+mockito = { version = "1.2", default-features = false }
 
 [features]
 default = ["simulator", "web-api"]
