@@ -12,8 +12,7 @@
 
 //! Provides a QuEST based simulator for the QuEST quantum computer
 
-use crate::qryd_devices::convert_into_device as convert_into_qryd_device;
-use crate::tweezer_devices::convert_into_device as convert_into_tweezer_device;
+use crate::tweezer_devices::convert_into_device;
 use bincode::{deserialize, serialize};
 use pyo3::exceptions::{PyRuntimeError, PyTypeError, PyValueError};
 use pyo3::prelude::*;
@@ -23,7 +22,7 @@ use qoqo::QoqoBackendError;
 use roqoqo::prelude::*;
 use roqoqo::registers::{BitOutputRegister, ComplexOutputRegister, FloatOutputRegister};
 use roqoqo::Circuit;
-use roqoqo_qryd::{SimulatorBackend, SimulatorDevice};
+use roqoqo_qryd::SimulatorBackend;
 use std::collections::HashMap;
 
 /// Local simulator backend for Rydberg devices.
@@ -64,7 +63,7 @@ impl SimulatorBackendWrapper {
     /// Create a new QRyd SimulatorBackend.
     ///
     /// Args:
-    ///     device (Union[QRydDevice,TweezerDevice]): The device providing information about the available operations.
+    ///     device (TweezerDevice): The device providing information about the available operations.
     ///     number_qubits (int, optional): The number of qubits the simulator should use. Defaults to `device.number_qubits()`.
     ///
     /// Raises:
@@ -72,25 +71,12 @@ impl SimulatorBackendWrapper {
     #[new]
     #[pyo3(text_signature = "(device, number_qubits, /)")]
     pub fn new(device: &PyAny, number_qubits: Option<usize>) -> PyResult<Self> {
-        if let Ok(qryd_dev) = convert_into_qryd_device(device) {
-            Ok(Self {
-                internal: SimulatorBackend::new(
-                    SimulatorDevice::QRydDevice(qryd_dev),
-                    number_qubits,
-                ),
-            })
-        } else if let Ok(tw_dev) = convert_into_tweezer_device(device) {
-            Ok(Self {
-                internal: SimulatorBackend::new(
-                    SimulatorDevice::TweezerDevice(tw_dev),
-                    number_qubits,
-                ),
-            })
-        } else {
-            return Err(PyTypeError::new_err(
-                "Device Parameter is not QRydDevice or TweezerDevice",
-            ));
-        }
+        let device = convert_into_device(device).map_err(|err| {
+            PyTypeError::new_err(format!("Device Parameter is not TweezerDevice {:?}", err))
+        })?;
+        Ok(Self {
+            internal: SimulatorBackend::new(device, number_qubits),
+        })
     }
 
     /// Return a copy of the SimulatorBackend.
