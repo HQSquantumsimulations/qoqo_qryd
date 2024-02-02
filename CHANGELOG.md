@@ -9,6 +9,8 @@ Tracks qoqo-qryd changes after 0.5
 * Added `layout_name` parameter to `TweezerDevice.number_tweezer_positions()`
 * Added `TweezerDevice` support for `SimulatorBackend`
 * Added `number_qubits` parameter to `SimulatorBackend`
+* Modified `TweezerDevice.number_qubits()` back to index-based implementation
+* Dropped `FirstDevice` support for `FirstDevice`
 
 # 0.12.2
 
