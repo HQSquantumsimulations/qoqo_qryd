@@ -10,7 +10,7 @@ Tracks qoqo-qryd changes after 0.5
 * Added `TweezerDevice` support for `SimulatorBackend`
 * Added `number_qubits` parameter to `SimulatorBackend`
 * Modified `TweezerDevice.number_qubits()` back to index-based implementation
-* Dropped `FirstDevice` support for `FirstDevice`
+* Dropped `FirstDevice` support for `SimulatorBackend`
 
 # 0.12.2
 
