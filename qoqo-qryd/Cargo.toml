@@ -1,10 +1,10 @@
 [package]
 name = "qoqo-qryd"
-version = "0.12.2"
+version = "0.13.0"
 authors = ["HQS Quantum Simulations <info@quantumsimulations.de>"]
 edition = "2021"
 license = "Apache-2.0"
-rust-version = "1.56"
+rust-version = "1.68"
 categories = ["science", "simulation"]
 readme = "README.md"
 homepage = "https://github.com/HQSquantumsimulations/qoqo_qryd"
@@ -41,17 +41,17 @@ numpy = "0.20"
 
 qoqo_calculator = { version = "1.1" }
 qoqo_calculator_pyo3 = { version = "1.1", default-features = false }
-qoqo = { version="1.9", default-features = false }
-roqoqo = { version="1.9", features = ["serialize"] }
+qoqo = { version = "1.9", default-features = false }
+roqoqo = { version = "1.9", features = ["serialize"] }
 
-roqoqo-qryd = { version = "0.12", path = "../roqoqo-qryd", default-features = false, features = [
+roqoqo-qryd = { version = "0.13", path = "../roqoqo-qryd", default-features = false, features = [
     "web-api",
 ] }
 
 
 [dev-dependencies]
 test-case = "3.0"
-mockito = { version = "1.1", default-features = false }
+mockito = { version = "1.2", default-features = false }
 serde_json = "1.0"
 
 [build-dependencies]

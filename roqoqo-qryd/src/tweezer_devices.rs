@@ -311,7 +311,7 @@ impl TweezerDevice {
         if status_code == reqwest::StatusCode::OK {
             let mut device = resp.json::<TweezerDevice>().unwrap();
             if let Some(default) = device.default_layout.clone() {
-                device.switch_layout(&default).unwrap();
+                device.switch_layout(&default, None).unwrap();
             }
             if let Some(new_seed) = seed {
                 device.seed = Some(new_seed);
@@ -347,15 +347,21 @@ impl TweezerDevice {
         Ok(())
     }
 
-    /// Change the current Layout.
+    /// Switch to a different pre-defined Layout.
     ///
-    /// It is updated only if the new Layout is present in the device's
-    /// Layout register.
+    /// It is updated only if the given Layout name is present in the device's
+    /// Layout register. If the qubit -> tweezer mapping is empty, it is
+    /// trivially populated by default.
     ///
     /// # Arguments
     ///
     /// * `name` - The name of the new Layout.
-    pub fn switch_layout(&mut self, name: &str) -> Result<(), RoqoqoBackendError> {
+    /// * `with_trivial_map` - Whether the qubit -> tweezer mapping should be trivially populated. Defaults to true.
+    pub fn switch_layout(
+        &mut self,
+        name: &str,
+        with_trivial_map: Option<bool>,
+    ) -> Result<(), RoqoqoBackendError> {
         if !self.layout_register.keys().contains(&name.to_string()) {
             return Err(RoqoqoBackendError::GenericError {
                 msg: format!(
@@ -365,7 +371,7 @@ impl TweezerDevice {
             });
         }
         self.current_layout = Some(name.to_string());
-        if self.qubit_to_tweezer.is_none() {
+        if self.qubit_to_tweezer.is_none() && with_trivial_map.unwrap_or(true) {
             self.qubit_to_tweezer = Some(self.new_trivial_mapping());
         }
         Ok(())
@@ -723,7 +729,7 @@ impl TweezerDevice {
             });
         }
         self.default_layout = Some(layout.to_string());
-        self.switch_layout(layout)?;
+        self.switch_layout(layout, None)?;
         Ok(())
     }
 
@@ -893,9 +899,23 @@ impl TweezerDevice {
     /// # Returns
     ///
     /// * `usize` - The number of tweezer positions in the device.
-    pub fn number_tweezer_positions(&self) -> Result<usize, RoqoqoBackendError> {
+    /// * `layout_name` - The name of the layout to reference. Defaults to the current layout.
+    pub fn number_tweezer_positions(
+        &self,
+        layout_name: Option<String>,
+    ) -> Result<usize, RoqoqoBackendError> {
         let mut set_tweezer_indices: HashSet<usize> = HashSet::new();
-        let tweezer_info = self.get_current_layout_info()?;
+        let tweezer_info = if let Some(layout_name) = layout_name {
+            if let Some(tw) = self.layout_register.get(&layout_name) {
+                tw
+            } else {
+                return Err(RoqoqoBackendError::GenericError {
+                    msg: "The given layout name is not present in the layout register.".to_string(),
+                });
+            }
+        } else {
+            self.get_current_layout_info()?
+        };
         for single_qubit_gate_struct in &tweezer_info.tweezer_single_qubit_gate_times {
             for tw_id in single_qubit_gate_struct.1.keys() {
                 set_tweezer_indices.insert(*tw_id);
@@ -1213,7 +1233,10 @@ impl Device for TweezerDevice {
 
     fn number_qubits(&self) -> usize {
         if let Some(map) = &self.qubit_to_tweezer {
-            return map.keys().len();
+            if map.is_empty() {
+                return 0;
+            }
+            return *map.keys().max().unwrap_or(&0) + 1;
         }
         0
     }
@@ -1252,7 +1275,7 @@ impl Device for TweezerDevice {
                 let de_change_layout: Result<PragmaSwitchDeviceLayout, Box<bincode::ErrorKind>> =
                     deserialize(operation);
                 match de_change_layout {
-                    Ok(pragma) => self.switch_layout(pragma.new_layout()),
+                    Ok(pragma) => self.switch_layout(pragma.new_layout(), None),
                     Err(_) => Err(RoqoqoBackendError::GenericError {
                         msg: "Wrapped operation not supported in TweezerDevice".to_string(),
                     }),
