@@ -80,6 +80,9 @@ pub struct TweezerLayoutInfo {
     /// For a list 1,2,3 the qubit can be shifted into tweezer 1, into tweezer 2 if tweezer 1 is not occupied,
     /// and into tweezer 3 if tweezer 1 and 2 are not occupied.
     pub allowed_tweezer_shifts: HashMap<usize, Vec<Vec<usize>>>,
+    /// Specifies how many tweezers per row are present. Dynamic layout switching is only allowed between layouts
+    /// having the same number of tweezers per row.
+    pub tweezers_per_row: Option<usize>,
 }
 
 #[derive(Debug, Clone, PartialEq, serde::Deserialize, serde::Serialize)]
@@ -94,6 +97,8 @@ struct TweezerLayoutInfoSerialize {
     tweezer_multi_qubit_gate_times: Vec<(String, MultiTweezersTimes)>,
     /// Allowed shifts from one tweezer to others
     allowed_tweezer_shifts: Vec<(usize, Vec<Vec<usize>>)>,
+    /// Specifies how many tweezers per row are present.
+    tweezers_per_row: Option<usize>,
 }
 type SingleTweezerTimes = Vec<(usize, f64)>;
 type TwoTweezersTimes = Vec<((usize, usize), f64)>;
@@ -124,6 +129,7 @@ impl From<TweezerLayoutInfoSerialize> for TweezerLayoutInfo {
             .collect();
         let allowed_tweezer_shifts: HashMap<usize, Vec<Vec<usize>>> =
             info.allowed_tweezer_shifts.into_iter().collect();
+        let tweezers_per_row = info.tweezers_per_row;
 
         Self {
             tweezer_single_qubit_gate_times,
@@ -131,6 +137,7 @@ impl From<TweezerLayoutInfoSerialize> for TweezerLayoutInfo {
             tweezer_three_qubit_gate_times,
             tweezer_multi_qubit_gate_times,
             allowed_tweezer_shifts,
+            tweezers_per_row,
         }
     }
 }
@@ -159,6 +166,7 @@ impl From<TweezerLayoutInfo> for TweezerLayoutInfoSerialize {
             .collect();
         let allowed_tweezer_shifts: Vec<(usize, Vec<Vec<usize>>)> =
             info.allowed_tweezer_shifts.into_iter().collect();
+        let tweezers_per_row = info.tweezers_per_row;
 
         Self {
             tweezer_single_qubit_gate_times,
@@ -166,6 +174,7 @@ impl From<TweezerLayoutInfo> for TweezerLayoutInfoSerialize {
             tweezer_three_qubit_gate_times,
             tweezer_multi_qubit_gate_times,
             allowed_tweezer_shifts,
+            tweezers_per_row,
         }
     }
 }
@@ -189,7 +198,6 @@ impl TweezerDevice {
         controlled_phase_phase_relation: Option<String>,
     ) -> Self {
         let layout_register: HashMap<String, TweezerLayoutInfo> = HashMap::new();
-        // layout_register.insert(String::from("default"), TweezerLayoutInfo::default());
         let controlled_z_phase_relation =
             controlled_z_phase_relation.unwrap_or_else(|| "DefaultRelation".to_string());
         let controlled_phase_phase_relation =
@@ -699,6 +707,33 @@ impl TweezerDevice {
                 }
             }
         });
+
+        Ok(())
+    }
+
+    /// Set the tweezer per row value for a given Layout.
+    ///
+    /// This is needed for dynamically switching layouts during circuit execution.
+    /// Only switching between layouts having the same tweezer per row value is supported.
+    ///
+    /// # Arguments
+    ///
+    /// * `tweezers_per_row` - The number of tweezers per row to set.
+    /// *
+    pub fn set_tweezers_per_row(
+        &mut self,
+        tweezers_per_row: usize,
+        layout_name: Option<String>,
+    ) -> Result<(), RoqoqoBackendError> {
+        let layout_name = layout_name
+            .or_else(|| self.current_layout.as_ref().map(|s| s.to_string()))
+            .ok_or_else(|| RoqoqoBackendError::GenericError {
+                msg: "No layout name provided and no current layout set.".to_string(),
+            })?;
+
+        if let Some(info) = self.layout_register.get_mut(&layout_name) {
+            info.tweezers_per_row = Some(tweezers_per_row);
+        }
 
         Ok(())
     }
@@ -1275,7 +1310,11 @@ impl Device for TweezerDevice {
                 let de_change_layout: Result<PragmaSwitchDeviceLayout, Box<bincode::ErrorKind>> =
                     deserialize(operation);
                 match de_change_layout {
-                    Ok(pragma) => self.switch_layout(pragma.new_layout(), None),
+                    Ok(pragma) => {
+                        if 
+                        self.switch_layout(pragma.new_layout(), None)?;
+                        Ok(())
+                    },
                     Err(_) => Err(RoqoqoBackendError::GenericError {
                         msg: "Wrapped operation not supported in TweezerDevice".to_string(),
                     }),
