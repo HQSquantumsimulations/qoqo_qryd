@@ -1311,9 +1311,40 @@ impl Device for TweezerDevice {
                     deserialize(operation);
                 match de_change_layout {
                     Ok(pragma) => {
-                        if 
-                        self.switch_layout(pragma.new_layout(), None)?;
-                        Ok(())
+                        // Check layout existance
+                        match self.layout_register.get(pragma.new_layout()) {
+                            Some(new_layout_tweezer_info) => {
+                                // Check layout tweezers per row
+                                match (self.get_current_layout_info().unwrap().tweezers_per_row, new_layout_tweezer_info.tweezers_per_row) {
+                                    (Some(current_tweezers_per_row), Some(new_tweezers_per_row)) => {
+                                        // Switch if the number of tweezers per row is the same
+                                        if current_tweezers_per_row == new_tweezers_per_row {
+                                            self.current_layout = Some(pragma.new_layout().to_string());
+                                            Ok(())
+                                        } else {
+                                            Err(RoqoqoBackendError::GenericError {
+                                                msg: format!(
+                                                    "Error with dynamic layout switching of TweezerDevice. Current tweezers per row is {} but switching to a layout with {} tweezers per row.",
+                                                    current_tweezers_per_row,
+                                                    new_tweezers_per_row,
+                                                ),
+                                            })
+                                        }
+                                    },
+                                    _ => Err(RoqoqoBackendError::GenericError {
+                                        msg: "Error with dynamic layout switching of TweezerDevice. Tweezers per row info missing from current or new layout.".to_string()
+                                    })
+                                }
+                            },
+                            None => {
+                                Err(RoqoqoBackendError::GenericError {
+                                    msg: format!(
+                                        "Error with dynamic layout switching of TweezerDevice. Layout {} is not set.",
+                                        pragma.new_layout()
+                                    ),
+                                })
+                            },
+                        }
                     },
                     Err(_) => Err(RoqoqoBackendError::GenericError {
                         msg: "Wrapped operation not supported in TweezerDevice".to_string(),
