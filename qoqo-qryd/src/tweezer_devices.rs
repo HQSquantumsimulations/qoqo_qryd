@@ -1290,6 +1290,28 @@ impl TweezerMutableDeviceWrapper {
             .map_err(|err| PyValueError::new_err(format!("{:}", err)))
     }
 
+    /// Set the tweezer per row value for a given Layout.
+    ///
+    /// This is needed for dynamically switching layouts during circuit execution.
+    /// Only switching between layouts having the same tweezer per row value is supported.
+    ///
+    /// Args:
+    ///     tweezers_per_row` - Vector containing the number of tweezers per row to set.
+    ///     layout_name` - The name of the Layout to set the tweezer per row for. Defaults to the current Layout.
+    ///
+    /// Raises:
+    ///     ValueError: No layout name provided and no current layout set.
+    #[pyo3(text_signature = "(tweezers_per_row, layout_name, /)")]
+    pub fn set_tweezers_per_row(
+        &mut self,
+        tweezers_per_row: Vec<usize>,
+        layout_name: Option<String>,
+    ) -> PyResult<()> {
+        self.internal
+            .set_tweezers_per_row(tweezers_per_row, layout_name)
+            .map_err(|err| PyValueError::new_err(format!("{:}", err)))
+    }
+
     /// Set whether the device allows PragmaActiveReset operations or not.
     ///
     /// Args:

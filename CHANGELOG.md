@@ -5,11 +5,13 @@ Tracks qoqo-qryd changes after 0.5
 # 0.13.0
 
 * Added `TweezerDevice.get_qubit_to_tweezer_mapping()`
+* Added `TweezerDevice.set_tweezers_per_row()`
 * Added `with_trivial_map` parameter to `TweezerDevice.switch_layout()`
 * Added `layout_name` parameter to `TweezerDevice.number_tweezer_positions()`
 * Added `TweezerDevice` support for `SimulatorBackend`
 * Added `number_qubits` parameter to `SimulatorBackend`
 * Modified `TweezerDevice.number_qubits()` back to index-based implementation
+* Modified `TweezerDevice.change_device()` for `PragmaSwitchDeviceLayout` to better reflect device constraints.
 * Dropped `FirstDevice` support for `SimulatorBackend`
 * Updated to `mockito` 1.2
 * Updated the MSRV to 1.68

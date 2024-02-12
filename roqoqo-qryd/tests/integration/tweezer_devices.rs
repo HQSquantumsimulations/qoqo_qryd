@@ -604,8 +604,6 @@ fn test_change_device() {
     let hm: HashMap<usize, (usize, usize)> = [(0, (1, 2))].into_iter().collect();
     let pragma_old_s = PragmaShiftQRydQubit::new(hm);
 
-    let pragma_new_c = PragmaSwitchDeviceLayout::new("Test".to_string());
-
     assert!(device.change_device("Error", &Vec::<u8>::new()).is_err());
     assert!(device
         .change_device("PragmaChangeQRydLayout", &Vec::<u8>::new())
@@ -618,17 +616,155 @@ fn test_change_device() {
     assert!(device
         .change_device("PragmaShiftQRydQubit", &serialize(&pragma_old_s).unwrap())
         .is_err());
+}
+
+/// Test TweezerDevice change_device() method with PragmaSwitchDeviceLayout
+#[test]
+fn test_change_device_switch() {
+    let mut device = TweezerDevice::new(None, None, None);
+    device.add_layout("two_rows_two_twzrs_0").unwrap();
+    device
+        .set_tweezer_two_qubit_gate_time(
+            "CNOT",
+            0,
+            1,
+            0.23,
+            Some("two_rows_two_twzrs_0".to_string()),
+        )
+        .unwrap();
+    device
+        .set_tweezer_two_qubit_gate_time(
+            "CNOT",
+            2,
+            3,
+            0.23,
+            Some("two_rows_two_twzrs_0".to_string()),
+        )
+        .unwrap();
+    device
+        .set_tweezer_two_qubit_gate_time(
+            "CNOT",
+            0,
+            2,
+            0.34,
+            Some("two_rows_two_twzrs_0".to_string()),
+        )
+        .unwrap();
+    device
+        .set_tweezer_two_qubit_gate_time(
+            "CNOT",
+            1,
+            3,
+            0.34,
+            Some("two_rows_two_twzrs_0".to_string()),
+        )
+        .unwrap();
+    device.add_layout("two_rows_two_twzrs_1").unwrap();
+    device
+        .set_tweezer_two_qubit_gate_time(
+            "CNOT",
+            0,
+            1,
+            0.23,
+            Some("two_rows_two_twzrs_1".to_string()),
+        )
+        .unwrap();
+    device
+        .set_tweezer_two_qubit_gate_time(
+            "CNOT",
+            2,
+            3,
+            0.23,
+            Some("two_rows_two_twzrs_1".to_string()),
+        )
+        .unwrap();
+    device
+        .set_tweezer_two_qubit_gate_time(
+            "CNOT",
+            0,
+            3,
+            0.34,
+            Some("two_rows_two_twzrs_1".to_string()),
+        )
+        .unwrap();
+    device.add_layout("one_row_three_twzrs").unwrap();
+    device
+        .set_tweezer_three_qubit_gate_time(
+            "Toffoli",
+            0,
+            1,
+            2,
+            0.4,
+            Some("one_row_three_twzrs".to_string()),
+        )
+        .unwrap();
+    device.add_layout("no_twzrs_per_row_set").unwrap();
+
+    assert!(device.set_tweezers_per_row(vec![5, 2, 3], None).is_err());
+
+    device
+        .switch_layout("two_rows_two_twzrs_0", Some(true))
+        .unwrap();
+
+    device
+        .set_tweezers_per_row(vec![2, 2], Some("two_rows_two_twzrs_0".to_string()))
+        .unwrap();
+    device
+        .set_tweezers_per_row(vec![2, 2], Some("two_rows_two_twzrs_1".to_string()))
+        .unwrap();
+    device
+        .set_tweezers_per_row(vec![3], Some("one_row_three_twzrs".to_string()))
+        .unwrap();
+
+    let pragma_correct = PragmaSwitchDeviceLayout::new("two_rows_two_twzrs_1".to_string());
+    let pragma_incorrect_0 = PragmaSwitchDeviceLayout::new("one_row_three_twzrs".to_string());
+    let pragma_incorrect_1 = PragmaSwitchDeviceLayout::new("no_twzrs_per_row_set".to_string());
+    let pragma_incorrect_2 = PragmaSwitchDeviceLayout::new("non_existant_layout".to_string());
 
     assert!(device
         .change_device("PragmaSwitchDeviceLayout", &Vec::<u8>::new())
         .is_err());
+
     assert!(device
         .change_device(
             "PragmaSwitchDeviceLayout",
-            &serialize(&pragma_new_c).unwrap()
+            &serialize(&pragma_correct).unwrap()
         )
         .is_ok());
-    assert_eq!(device.current_layout, Some("Test".to_string()));
+    assert_eq!(
+        device.current_layout,
+        Some("two_rows_two_twzrs_1".to_string())
+    );
+
+    let wrong_switch = device.change_device(
+        "PragmaSwitchDeviceLayout",
+        &serialize(&pragma_incorrect_0).unwrap(),
+    );
+    assert!(wrong_switch.is_err());
+    assert_eq!(
+        wrong_switch.unwrap_err().to_string(),
+        "An error occured in the backend: Error with dynamic layout switching of TweezerDevice. Current tweezers per row is [2, 2] but switching to a layout with [3] tweezers per row. ".to_string(),
+    );
+
+    let wrong_switch = device.change_device(
+        "PragmaSwitchDeviceLayout",
+        &serialize(&pragma_incorrect_1).unwrap(),
+    );
+    assert!(wrong_switch.is_err());
+    assert_eq!(
+        wrong_switch.unwrap_err().to_string(),
+        "An error occured in the backend: Error with dynamic layout switching of TweezerDevice. Tweezers per row info missing from current or new layout. ".to_string(),
+    );
+
+    let wrong_switch = device.change_device(
+        "PragmaSwitchDeviceLayout",
+        &serialize(&pragma_incorrect_2).unwrap(),
+    );
+    assert!(wrong_switch.is_err());
+    assert_eq!(
+        wrong_switch.unwrap_err().to_string(),
+        "An error occured in the backend: Error with dynamic layout switching of TweezerDevice. Layout non_existant_layout is not set. ".to_string(),
+    );
 }
 
 /// Test TweezerDevice allow_reset field

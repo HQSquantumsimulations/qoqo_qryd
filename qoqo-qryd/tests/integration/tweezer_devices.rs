@@ -122,7 +122,7 @@ fn test_from_mutable() {
     })
 }
 
-/// Test available_ switch_ and add_layout methods of TweezerDeviceWrapper and TweezerMutableDeviceWrapper
+/// Test available_layout() switch_layout(), add_layout() and set_tweezers_per_row() methods of TweezerDeviceWrapper and TweezerMutableDeviceWrapper
 #[test]
 fn test_layouts() {
     // Setup fake preconfigured device
@@ -176,7 +176,19 @@ fn test_layouts() {
         assert_eq!(current_layout_mut, "default");
 
         assert!(device_mut
+            .call_method1("set_tweezers_per_row", ("error",))
+            .is_err());
+
+        assert!(device_mut
+            .call_method1("set_tweezers_per_row", (vec![0],))
+            .is_ok());
+
+        assert!(device_mut
             .call_method1("add_layout", ("OtherLayout",))
+            .is_ok());
+
+        assert!(device_mut
+            .call_method1("set_tweezers_per_row", (vec![1], "OtherLayout",))
             .is_ok());
 
         assert!(device
