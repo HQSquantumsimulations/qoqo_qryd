@@ -174,7 +174,7 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="qryddemo-webapi"><a class="header" href="#qryddemo-webapi">QRydDemo WebAPI</a></h1>
-<p>The QRydDemo project at the moment provides access to a Quantum Hardware Emulator via a REST-API. 
+<p>The QRydDemo project at the moment provides access to a Quantum Hardware Emulator via a REST-API.
 qoqo-qryd and roqoqo-qryd allow interfacing with the WebAPI.
 The WebAPI can be accessed on the level of direct API calls.
 It is also possible to use the WebAPI as an <code>EvaluatingBackend</code> for general (non-parameterized)
@@ -194,7 +194,7 @@ qoqo QuantumPrograms via the WebAPI as described in <a href="execution.html">Exe
     # Creating a new device.
     # All calculations on this device will use 1 as the random seed
     # and 0.23 as the phase shift in the PhaseShiftedControlledZ gate 
-    device = QrydEmuSquareDevice(seed=1, controlled_z_phase_relation=&quot;0.23&quot;)
+    device = QrydEmuSquareDevice(seed=1, controlled_z_phase_relation="0.23")
     # Create a new backend that will use the device.
     # Timeout controls how often the backend is queried 
     # for a result when backend is used as an evaluating backend.
@@ -223,7 +223,7 @@ qoqo QuantumPrograms via the WebAPI as described in <a href="execution.html">Exe
     # Creating a new device.
     # All calculations on this device will use 1 as the random seed
     # and 0.23 as the phase shift in the PhaseShiftedControlledZ gate 
-    device = QrydEmuSquareDevice(seed=1, controlled_z_phase_relation=&quot;0.23&quot;)
+    device = QrydEmuSquareDevice(seed=1, controlled_z_phase_relation="0.23")
     # Create a new backend that will use the device.
     # Timeout controls how often the backend is queried 
     # for a result when backend is used as an evaluating backend.
@@ -237,8 +237,8 @@ qoqo QuantumPrograms via the WebAPI as described in <a href="execution.html">Exe
     circuit += ops.RotateX(2, np.pi/2)
     circuit += ops.RotateX(4, np.pi/2)
 
-    circuit += ops.DefinitionBit(&quot;ro&quot;, 6, is_output=True)
-    circuit += ops.PragmaRepeatedMeasurement(&quot;ro&quot;, 1000, None)
+    circuit += ops.DefinitionBit("ro", 6, is_output=True)
+    circuit += ops.PragmaRepeatedMeasurement("ro", 1000, None)
     
     # The direct API calls only support ClassicalRegister measurements
     measurement = ClassicalRegister(constant_circuit=None, circuits=[circuit])
@@ -251,7 +251,7 @@ qoqo QuantumPrograms via the WebAPI as described in <a href="execution.html">Exe
         sleep(30)
         # Query the job status via an API call
         job_status = backend.get_job_status(job_location)
-        if job_status[&quot;status&quot;] == &quot;completed&quot;:
+        if job_status["status"] == "completed":
             # If the job is completed retrieve result via API call
             result = backend.get_job_result(job_location)
             print(result)
@@ -266,9 +266,9 @@ qoqo QuantumPrograms via the WebAPI as described in <a href="execution.html">Exe
 # Creating a new TweezerDevice instance.
 device = TweezerDevice.from_api(
     # The name of the device to use.
-    device_name=&quot;test_device&quot;,
+    device_name="test_device",
     # Optional token. This is not necessary if the token is already an environment variable.
-    access_token=&quot;YOUR_QRYD_API_TOKEN&quot;
+    access_token="YOUR_QRYD_API_TOKEN"
 )
 </code></pre>
 

@@ -184,11 +184,11 @@
 </ul>
 <p>The packages are based on the open source <a href="https://github.com/HQSquantumsimulations/qoqo">qoqo</a> quantum computing toolkit.</p>
 <h2 id="interface-to-the-current-qryddemo-webapi"><a class="header" href="#interface-to-the-current-qryddemo-webapi">Interface to the current QRydDemo WebAPI</a></h2>
-<p>At the moment QRydDemo WebAPI allows access to Quantum Hardware Emulators of different device topologies. 
+<p>At the moment QRydDemo WebAPI allows access to Quantum Hardware Emulators of different device topologies.
 qoqo-qryd/roqoqo-qryd support interfacing with the corresponding REST-API with low level calls, i.e. using <code>Circuit</code>,  as well as with high-level backend based functionalities, i.e. by using <code>QuantumPrograms</code> in qoqo. For more details see <a href="webapi.html">WebAPI</a>.</p>
 <h2 id="qryddemo-specific-hardware-operations-prototype"><a class="header" href="#qryddemo-specific-hardware-operations-prototype">QRydDemo specific hardware operations (prototype)</a></h2>
 <p>Rydberg atom based quantum devices support, in principle, operations not commonly found in other quantum hardware.
-Changes in device topology are one of these operations. 
+Changes in device topology are one of these operations.
 roqoqo-qryd/qoqo-qryd adds support for changes in device topology to qoqo. For more details see <a href="qrydspecifics.html">QRyd Specifics</a>.
 Note that this is a preview prototype and does not represent a finalized set of operations on the QRydDemo hardware.</p>
 <h2 id="local-simulator-supporting-specific-hardware-operations"><a class="header" href="#local-simulator-supporting-specific-hardware-operations">Local simulator supporting specific hardware operations</a></h2>
@@ -223,15 +223,15 @@ The definition of classical registers is similar to a variable declaration in no
 <pre><code class="language-python">   from qoqo import Circuit
    from qoqo import operations as ops
    circuit = Circuit()
-   # Defining a bit readout with name &quot;ro&quot; containing 2 bits
-   circuit += ops.DefinitionBit(&quot;ro&quot;, 2, is_output=True)
+   # Defining a bit readout with name "ro" containing 2 bits
+   circuit += ops.DefinitionBit("ro", 2, is_output=True)
    # Initializing first qubit in superposition of |0&gt; and |1&gt;
    circuit += ops.Hadamard(0)
    # Entangling qubits 0 and 1 with CNOT
    circuit += ops.CNOT(0,1)
    # Measuring all qubits and writing the results into register 'ro'
    # Repeating the circuit 100 times to create 100 projective measurements
-   circuit += ops.PragmaRepeatedMeasurement(&quot;ro&quot;, 100, None)
+   circuit += ops.PragmaRepeatedMeasurement("ro", 100, None)
 </code></pre>
 <h2 id="high-level-quantum-programs"><a class="header" href="#high-level-quantum-programs">High-level: quantum programs</a></h2>
 <p>On a more abstract level a quantum program can be defined as a program that can be executed on a quantum computer after receiving a list of classical parameters and returns a list of classical results.</p>
@@ -239,9 +239,9 @@ The definition of classical registers is similar to a variable declaration in no
 <p>For many applications the measurement results of several circuits need to be combined to extract the required information from a quantum state prepared by the quantum operations in a quantum circuit.
 The combination of the results of each quantum circuit happens in a post-processing of classical measurement.</p>
 <p>A qoqo measurement combines one <code>constant_circuit</code> that is always executed first, a list of <code>circuits</code> that are executed after the constant circuit, and a <code>measurement_input</code> that encodes the classical post-processing.</p>
-<p>As an example take the measurement of a Hamiltonian <code>H = 0.1 * X + 0.2 * Z</code> where <code>X</code> and <code>Z</code> are Pauli operators. We want to measure <code>H</code> with respect to a state <code>|psi&gt; = (|0&gt; + |1&gt;)/sqrt(2)</code>. 
+<p>As an example take the measurement of a Hamiltonian <code>H = 0.1 * X + 0.2 * Z</code> where <code>X</code> and <code>Z</code> are Pauli operators. We want to measure <code>H</code> with respect to a state <code>|psi&gt; = (|0&gt; + |1&gt;)/sqrt(2)</code>.
 We will use a Hadamard gate in the <code>constant_circuit</code> to prepare <code>|psi&gt;</code>. Since we cannot measure <code>X</code> and <code>Z</code> at the same time, the <code>circuits</code> list will include one quantum circuit that does not apply any additional gate and one circuit that rotates the qubit basis into the <code>X</code>-basis so that the expectation value <code>&lt;X&gt;</code> is equivalent to the measurement of <code>&lt;Z&gt;</code> in the new basis.
-This kind of measurement is referred to as a PauliZProduct measurement because each qubit is rotated in the correct basis for the readout. 
+This kind of measurement is referred to as a PauliZProduct measurement because each qubit is rotated in the correct basis for the readout.
 For the post-processing the PauliZProduct measurement needs two more details to be added to the input (<code>PauliZProductInput</code>): Which qubits to combine into expectation values (<code>add_pauliz_product()</code>) and which weight to use for each result (<code>add_linear_exp_val()</code>).</p>
 <p>In general one can measure the expectation values of the products of local Z operators, e.g. <code>&lt;Z0&gt;</code>, <code>&lt;Z1&gt;</code>, <code>&lt;Z0*Z1&gt;</code>, <code>&lt;Z0*Z3&gt;</code>, ...
 The PauliZProductInput needs to define all of these products that are measured. Here we will measure two products <code>&lt;Z0&gt;</code> after a rotation in the X basis and <code>&lt;Z0&gt;</code> without an additional rotation.
@@ -255,14 +255,14 @@ The PauliZProductInput also defines the weights of the products in the final res
    init_circuit += ops.Hadamard(0)
    # Z-basis measurement circuit with 1000 shots
    z_circuit = Circuit()
-   z_circuit += ops.DefinitionBit(&quot;ro_z&quot;, 1, is_output=True)
-   z_circuit += ops.PragmaRepeatedMeasurement(&quot;ro_z&quot;, 1000, None)
+   z_circuit += ops.DefinitionBit("ro_z", 1, is_output=True)
+   z_circuit += ops.PragmaRepeatedMeasurement("ro_z", 1000, None)
    # X-basis measurement circuit with 1000 shots   
    x_circuit = Circuit()
-   x_circuit += ops.DefinitionBit(&quot;ro_x&quot;, 1, is_output=True)
+   x_circuit += ops.DefinitionBit("ro_x", 1, is_output=True)
    # Changing to the X basis with a Hadamard gate
    x_circuit += ops.Hadamard(0)
-   x_circuit += ops.PragmaRepeatedMeasurement(&quot;ro_x&quot;, 1000, None)
+   x_circuit += ops.PragmaRepeatedMeasurement("ro_x", 1000, None)
 
    # Preparing the measurement input for one qubit
    # The PauliZProductInput starts with just the number of qubits
@@ -270,16 +270,16 @@ The PauliZProductInput also defines the weights of the products in the final res
    measurement_input = PauliZProductInput(1, False)
    # Next, pauli products are added to the PauliZProductInput
    # Read out product of Z on site 0 for register ro_z (no basis change)
-   z_basis_index = measurement_input.add_pauliz_product(&quot;ro_z&quot;, [0,])
+   z_basis_index = measurement_input.add_pauliz_product("ro_z", [0,])
    # Read out product of Z on site 0 for register ro_x
    # (after basis change effectively a &lt;X&gt; measurement)
-   x_basis_index = measurement_input.add_pauliz_product(&quot;ro_x&quot;, [0,])
+   x_basis_index = measurement_input.add_pauliz_product("ro_x", [0,])
    
    # Last, instructions on how to combine the single expectation values
    # into the total result are provided.
    # Add a result (the expectation value of H) that is a combination of
    # the PauliProduct expectation values.
-   measurement_input.add_linear_exp_val(&quot;&lt;H&gt;&quot;, {x_basis_index: 0.1, z_basis_index: 0.2})
+   measurement_input.add_linear_exp_val("&lt;H&gt;", {x_basis_index: 0.1, z_basis_index: 0.2})
 
    measurement = PauliZProduct(
       constant_circuit=init_circuit,
@@ -299,29 +299,29 @@ To demonstrate this we modify the example from above to use a state <code>|psi&g
    # Apply a RotateY gate with a symbolic angle
    # To execute the circuit this symbolic parameter needs to be replaced 
    # by a real number with the help of a QuantumProgram
-   init_circuit += ops.RotateX(0, &quot;angle&quot;)
+   init_circuit += ops.RotateX(0, "angle")
    # Z-basis measurement circuit with 1000 shots
    z_circuit = Circuit()
-   z_circuit += ops.DefinitionBit(&quot;ro_z&quot;, 1, is_output=True)
-   z_circuit += ops.PragmaRepeatedMeasurement(&quot;ro_z&quot;, 1000, None)
+   z_circuit += ops.DefinitionBit("ro_z", 1, is_output=True)
+   z_circuit += ops.PragmaRepeatedMeasurement("ro_z", 1000, None)
    # X-basis measurement circuit with 1000 shots   
    x_circuit = Circuit()
-   x_circuit += ops.DefinitionBit(&quot;ro_x&quot;, 1, is_output=True)
+   x_circuit += ops.DefinitionBit("ro_x", 1, is_output=True)
    # Changing to the X basis with a Hadamard gate
    x_circuit += ops.Hadamard(0)
-   x_circuit += ops.PragmaRepeatedMeasurement(&quot;ro_x&quot;, 1000, None)
+   x_circuit += ops.PragmaRepeatedMeasurement("ro_x", 1000, None)
 
    # Preparing the measurement input for one qubit
    measurement_input = PauliZProductInput(1, False)
    # Read out product of Z on site 0 for register ro_z (no basis change)
-   z_basis_index = measurement_input.add_pauliz_product(&quot;ro_z&quot;, [0,])
+   z_basis_index = measurement_input.add_pauliz_product("ro_z", [0,])
    # Read out product of Z on site 0 for register ro_x
    # (after basis change effectively a &lt;X&gt; measurement)
-   x_basis_index = measurement_input.add_pauliz_product(&quot;ro_x&quot;, [0,])
+   x_basis_index = measurement_input.add_pauliz_product("ro_x", [0,])
    
    # Add a result (the expectation value of H) that is a combination of
    # the PauliProduct expectation values
-   measurement_input.add_linear_exp_val(&quot;&lt;H&gt;&quot;, {x_basis_index: 0.1, z_basis_index: 0.2})
+   measurement_input.add_linear_exp_val("&lt;H&gt;", {x_basis_index: 0.1, z_basis_index: 0.2})
 
    measurement = PauliZProduct(
       constant_circuit=init_circuit,
@@ -329,14 +329,14 @@ To demonstrate this we modify the example from above to use a state <code>|psi&g
       input=measurement_input,
    )
 
-   # A quantum program is created from the measurement and &quot;angle&quot; is registered as
+   # A quantum program is created from the measurement and "angle" is registered as
    # a free input parameter.
    # The QuantumProgram now has one free parameter that needs to set when executing it.
    # The symbolic value angle in the circuits will be replaced by that free parameter
    # during execution.
    program = QuantumProgram(
       measurement=measurement,
-      input_parameter_names=[&quot;angle&quot;],
+      input_parameter_names=["angle"],
    )
 </code></pre>
 <p>For details on how to execute QuantumPrograms see <a href="execution.html">Execution</a>.</p>
@@ -354,24 +354,24 @@ Note that this measurement does not need a separate measurement input as no post
    # Apply a RotateY gate with a symbolic angle
    # To execute the circuit this symbolic parameter needs to be replaced 
    # with a real number with the help of a QuantumProgram
-   init_circuit += ops.RotateX(0, &quot;angle&quot;)
+   init_circuit += ops.RotateX(0, "angle")
    # Z-basis measurement circuit with 1000 shots
    z_circuit = Circuit()
-   z_circuit += ops.DefinitionBit(&quot;ro_z&quot;, 1, is_output=True)
-   z_circuit += ops.PragmaRepeatedMeasurement(&quot;ro_z&quot;, 1000, None)
+   z_circuit += ops.DefinitionBit("ro_z", 1, is_output=True)
+   z_circuit += ops.PragmaRepeatedMeasurement("ro_z", 1000, None)
    # X-basis measurement circuit with 1000 shots   
    x_circuit = Circuit()
-   x_circuit += ops.DefinitionBit(&quot;ro_x&quot;, 1, is_output=True)
+   x_circuit += ops.DefinitionBit("ro_x", 1, is_output=True)
    # Changing to the X basis with a Hadamard gate
    x_circuit += ops.Hadamard(0)
-   x_circuit += ops.PragmaRepeatedMeasurement(&quot;ro_x&quot;, 1000, None)
+   x_circuit += ops.PragmaRepeatedMeasurement("ro_x", 1000, None)
 
    measurement = ClassicalRegister(constant_circuit=init_circuit, circuits=[z_circuit, x_circuit])
 
-   # A quantum program is created from the measurement and &quot;angle&quot; is registered as a free input parameter
+   # A quantum program is created from the measurement and "angle" is registered as a free input parameter
    # The QuantumProgram now has one free parameter that needs to set when executing it.
    # The symbolic value angle in the circuits will be replaced by that free parameter during execution.
-   program = QuantumProgram(measurement=measurement, input_parameter_names=[&quot;angle&quot;])
+   program = QuantumProgram(measurement=measurement, input_parameter_names=["angle"])
 </code></pre>
 <p>For details on how to execute QuantumPrograms see <a href="execution.html">Execution</a>.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="executing-quantum-programs"><a class="header" href="#executing-quantum-programs">Executing Quantum Programs</a></h1>
@@ -399,29 +399,29 @@ Note that this measurement does not need a separate measurement input as no post
    # Apply a RotateY gate with a symbolic angle
    # To execute the circuit this symbolic parameter needs to be replaced 
    # with a real number with the help of a QuantumProgram
-   init_circuit += ops.RotateX(0, &quot;angle&quot;)
+   init_circuit += ops.RotateX(0, "angle")
    # Z-basis measurement circuit with 1000 shots
    z_circuit = Circuit()
-   z_circuit += ops.DefinitionBit(&quot;ro_z&quot;, 1, is_output=True)
-   z_circuit += ops.PragmaRepeatedMeasurement(&quot;ro_z&quot;, 1000, None)
+   z_circuit += ops.DefinitionBit("ro_z", 1, is_output=True)
+   z_circuit += ops.PragmaRepeatedMeasurement("ro_z", 1000, None)
    # X-basis measurement circuit with 1000 shots   
    x_circuit = Circuit()
-   x_circuit += ops.DefinitionBit(&quot;ro_x&quot;, 1, is_output=True)
+   x_circuit += ops.DefinitionBit("ro_x", 1, is_output=True)
    # Changing to the X basis with a Hadamard gate
    x_circuit += ops.Hadamard(0)
-   x_circuit += ops.PragmaRepeatedMeasurement(&quot;ro_x&quot;, 1000, None)
+   x_circuit += ops.PragmaRepeatedMeasurement("ro_x", 1000, None)
 
    # Preparing the measurement input for one qubit
    measurement_input = PauliZProductInput(1, False)
    # Read out product of Z on site 0 for register ro_z (no basis change)
-   z_basis_index = measurement_input.add_pauliz_product(&quot;ro_z&quot;, [0,])
+   z_basis_index = measurement_input.add_pauliz_product("ro_z", [0,])
    # Read out product of Z on site 0 for register ro_x
    # (after basis change effectively a &lt;X&gt; measurement)
-   x_basis_index = measurement_input.add_pauliz_product(&quot;ro_x&quot;, [0,])
+   x_basis_index = measurement_input.add_pauliz_product("ro_x", [0,])
    
    # Add a result (the expectation value of H) that is a combination of the PauliProduct
    # expectation values
-   measurement_input.add_linear_exp_val(&quot;&lt;H&gt;&quot;, {x_basis_index: 0.1, z_basis_index: 0.2})
+   measurement_input.add_linear_exp_val("&lt;H&gt;", {x_basis_index: 0.1, z_basis_index: 0.2})
 
    measurement = PauliZProduct(
       constant_circuit=init_circuit,
@@ -439,15 +439,15 @@ Note that this measurement does not need a separate measurement input as no post
    (bit_registers, float_registers, complex_registers) = backend.run_circuit(z_circuit)
 
    # b) To run a measurement we need to replace the free parameter by hand
-   executable_measurement = measurement.substitute_parameters({&quot;angle&quot;: 0.2})
+   executable_measurement = measurement.substitute_parameters({"angle": 0.2})
    expectation_values = backend.run_measurement(executable_measurement)
    print(expectation_values)
 
    # c) Run a quantum program
    # The QuantumProgram now has one free parameter that needs to bet set when executing it.
-   # The symbolic value &quot;angle&quot; in the circuits will be replaced by that free parameter
+   # The symbolic value "angle" in the circuits will be replaced by that free parameter
    # during execution.
-   program = QuantumProgram(measurement=measurement, input_parameter_names=[&quot;angle&quot;])
+   program = QuantumProgram(measurement=measurement, input_parameter_names=["angle"])
    # Run the program with  0.1 substituting `angle`
    expectation_values = program.run(backend, [0.1])
 </code></pre>
@@ -463,36 +463,36 @@ Note that this measurement does not need a separate measurement input as no post
    # Apply a RotateY gate with a symbolic angle
    # To execute the circuit this symbolic parameter needs to be replaced 
    # with a real number with the help of a QuantumProgram
-   init_circuit += ops.RotateY(0, &quot;angle&quot;)
+   init_circuit += ops.RotateY(0, "angle")
    # Z-basis measurement circuit with 1000 shots
    z_circuit = Circuit()
-   z_circuit += ops.DefinitionBit(&quot;ro_z&quot;, 1, is_output=True)
-   z_circuit += ops.PragmaRepeatedMeasurement(&quot;ro_z&quot;, 1000, None)
+   z_circuit += ops.DefinitionBit("ro_z", 1, is_output=True)
+   z_circuit += ops.PragmaRepeatedMeasurement("ro_z", 1000, None)
    # X-basis measurement circuit with 1000 shots   
    x_circuit = Circuit()
-   x_circuit += ops.DefinitionBit(&quot;ro_x&quot;, 1, is_output=True)
+   x_circuit += ops.DefinitionBit("ro_x", 1, is_output=True)
    # Changing to the X basis with a Hadamard gate
    x_circuit += ops.Hadamard(0)
-   x_circuit += ops.PragmaRepeatedMeasurement(&quot;ro_x&quot;, 1000, None)
+   x_circuit += ops.PragmaRepeatedMeasurement("ro_x", 1000, None)
 
    measurement = ClassicalRegister(constant_circuit=init_circuit, circuits=[z_circuit, x_circuit])
 
-   # A quantum program is created from the measurement and &quot;angle&quot; is registered as a free input
+   # A quantum program is created from the measurement and "angle" is registered as a free input
    # parameter. The QuantumProgram now has one free parameter that needs to be set when
    # executing it. The symbolic value angle in the circuits will be replaced by that free parameter
    # during execution.
-   program = QuantumProgram(measurement=measurement, input_parameter_names=[&quot;angle&quot;])
+   program = QuantumProgram(measurement=measurement, input_parameter_names=["angle"])
 
    backend = Backend(1)
    (bit_registers, float_registers, complex_registers) = program.run_registers(backend, [0.1])
    print(bit_registers)
 </code></pre>
 <h2 id="executing-quantumprograms-without-returning-expecation-values"><a class="header" href="#executing-quantumprograms-without-returning-expecation-values">Executing QuantumPrograms without returning expecation values</a></h2>
-<p>As described in <a href="introduction.html">Introduction</a> the <code>ClassicalRegister</code> measurement can be used to return the full measurement record. </p>
+<p>As described in <a href="introduction.html">Introduction</a> the <code>ClassicalRegister</code> measurement can be used to return the full measurement record.</p>
 <h2 id="non-executing-backends"><a class="header" href="#non-executing-backends">Non-executing backends</a></h2>
 <p>Qoqo also has backends that cannot be used to run or evaluate a quantum circuit. These backends typically are used to translate qoqo circuits to other quantum toolkits or languages. One example is <a href="https://github.com/HQSquantumsimulations/qoqo_qasm">qoqo_qasm</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="qryddemo-webapi"><a class="header" href="#qryddemo-webapi">QRydDemo WebAPI</a></h1>
-<p>The QRydDemo project at the moment provides access to a Quantum Hardware Emulator via a REST-API. 
+<p>The QRydDemo project at the moment provides access to a Quantum Hardware Emulator via a REST-API.
 qoqo-qryd and roqoqo-qryd allow interfacing with the WebAPI.
 The WebAPI can be accessed on the level of direct API calls.
 It is also possible to use the WebAPI as an <code>EvaluatingBackend</code> for general (non-parameterized)
@@ -512,7 +512,7 @@ qoqo QuantumPrograms via the WebAPI as described in <a href="execution.html">Exe
     # Creating a new device.
     # All calculations on this device will use 1 as the random seed
     # and 0.23 as the phase shift in the PhaseShiftedControlledZ gate 
-    device = QrydEmuSquareDevice(seed=1, controlled_z_phase_relation=&quot;0.23&quot;)
+    device = QrydEmuSquareDevice(seed=1, controlled_z_phase_relation="0.23")
     # Create a new backend that will use the device.
     # Timeout controls how often the backend is queried 
     # for a result when backend is used as an evaluating backend.
@@ -541,7 +541,7 @@ qoqo QuantumPrograms via the WebAPI as described in <a href="execution.html">Exe
     # Creating a new device.
     # All calculations on this device will use 1 as the random seed
     # and 0.23 as the phase shift in the PhaseShiftedControlledZ gate 
-    device = QrydEmuSquareDevice(seed=1, controlled_z_phase_relation=&quot;0.23&quot;)
+    device = QrydEmuSquareDevice(seed=1, controlled_z_phase_relation="0.23")
     # Create a new backend that will use the device.
     # Timeout controls how often the backend is queried 
     # for a result when backend is used as an evaluating backend.
@@ -555,8 +555,8 @@ qoqo QuantumPrograms via the WebAPI as described in <a href="execution.html">Exe
     circuit += ops.RotateX(2, np.pi/2)
     circuit += ops.RotateX(4, np.pi/2)
 
-    circuit += ops.DefinitionBit(&quot;ro&quot;, 6, is_output=True)
-    circuit += ops.PragmaRepeatedMeasurement(&quot;ro&quot;, 1000, None)
+    circuit += ops.DefinitionBit("ro", 6, is_output=True)
+    circuit += ops.PragmaRepeatedMeasurement("ro", 1000, None)
     
     # The direct API calls only support ClassicalRegister measurements
     measurement = ClassicalRegister(constant_circuit=None, circuits=[circuit])
@@ -569,7 +569,7 @@ qoqo QuantumPrograms via the WebAPI as described in <a href="execution.html">Exe
         sleep(30)
         # Query the job status via an API call
         job_status = backend.get_job_status(job_location)
-        if job_status[&quot;status&quot;] == &quot;completed&quot;:
+        if job_status["status"] == "completed":
             # If the job is completed retrieve result via API call
             result = backend.get_job_result(job_location)
             print(result)
@@ -584,9 +584,9 @@ qoqo QuantumPrograms via the WebAPI as described in <a href="execution.html">Exe
 # Creating a new TweezerDevice instance.
 device = TweezerDevice.from_api(
     # The name of the device to use.
-    device_name=&quot;test_device&quot;,
+    device_name="test_device",
     # Optional token. This is not necessary if the token is already an environment variable.
-    access_token=&quot;YOUR_QRYD_API_TOKEN&quot;
+    access_token="YOUR_QRYD_API_TOKEN"
 )
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="rydberg-devices-and-operations"><a class="header" href="#rydberg-devices-and-operations">Rydberg devices and operations</a></h1>
@@ -604,8 +604,8 @@ Note that all functionality described here is a preview and does not represent a
    circuit = Circuit()
    # Switch to predefined layout 1
    circuit += PragmaChangeQRydLayout(new_layout=1).to_pragma_change_device()
-   # Switch to predefined layout &quot;triangle&quot;
-   circuit += PragmaSwitchDeviceLayout(new_layout=&quot;triangle&quot;).to_pragma_change_device()
+   # Switch to predefined layout "triangle"
+   circuit += PragmaSwitchDeviceLayout(new_layout="triangle").to_pragma_change_device()
    # Shift qubit 0 to tweezer position: row 0, column 1 and qubit 1 to postion row 1, column 1
    circuit += PragmaShiftQRydQubit(new_positions={0: (0,1), 1: (1,1)}).to_pragma_change_device()
    # Shift the qubit state present in tweezer 0 to tweezer 1, and the qubit state present in tweezer 2 to tweezer 3
@@ -617,7 +617,7 @@ Note that all functionality described here is a preview and does not represent a
 The available hardware operations are defined in the devices. They save the 2D connectivity and can be queried for the availability of certain gate operations on the qubit.
 At the moment the most general example Device class is <code>FirstDevice</code>, that can be used for simulations. Other available devices include <code>TweezerMutableDevice</code>, which works by first defining the underlying tweezer structure and then populate it with qubits as needed. <code>TweezerDevice</code> works in a similar way. The main difference is it does not allow any setting of the Tweezer information. This should be obtained via the <code>.from_api()</code> call (see the <a href="webapi.html">WebAPI</a> section).</p>
 <p>The fundamental gates that are available on the QRydDemo devices are the following qoqo operations: <code>RotateX</code>, <code>RotateY</code>, <code>RotateZ</code>, <code>RotateXY</code>, <code>PauliX</code>,  <code>PauliY</code>,  <code>PauliZ</code>, <code>PhaseShiftState1</code> ,  <code>SqrtPauliX</code>,  <code>InvSqrtPauliX</code>, <code>PhaseShiftedControlledZ</code> and <code>PhaseShiftedControlledPhase</code>.
-The single-qubit gates are assumed to be available on all qubits. 
+The single-qubit gates are assumed to be available on all qubits.
 The <code>PhaseShiftedControlledZ</code> and <code>PhaseShiftedControlledPhase</code> are available between a subset of qubit pairs.
 The <code>PhaseShiftedControlledZ</code> is a ControlledPauliZ gate that also applies single qubit phases whereas the  <code>PhaseShiftedControlledPhase</code> is equivalent to <code>PhaseShiftedControlledZ</code> but with a variable phase rotation.
 The phase shifts can in principle be device dependent.</p>
@@ -644,9 +644,9 @@ The phase shifts can in principle be device dependent.</p>
          [0.0, 1.0, 2.0, 3.0]]),
       # The phase shift value related to the PhaseShiftedControlledZ gate
       # Using a string that defines a relation is also possible
-      controlled_z_phase_relation=&quot;0.23&quot;,
+      controlled_z_phase_relation="0.23",
       # The relation to use for the PhaseShiftedControlledPhase phase shift value
-      controlled_phase_phase_relation=&quot;DefaultRelation&quot;
+      controlled_phase_phase_relation="DefaultRelation"
    )
 
    # Print the two-qubit-operation connectivity graph of the device
@@ -656,20 +656,20 @@ The phase shifts can in principle be device dependent.</p>
    tweezer_device = TweezerMutableDevice(
       # The phase shift value related to the PhaseShiftedControlledZ gate
       # Using a string that defines a relation is also possible
-      controlled_z_phase_relation=&quot;0.23&quot;,
+      controlled_z_phase_relation="0.23",
       # The relation to use for the PhaseShiftedControlledPhase phase shift value
-      controlled_phase_phase_relation=&quot;DefaultRelation&quot;
+      controlled_phase_phase_relation="DefaultRelation"
    )
 
    # Add a tweezer layout to the device
-   tweezer_device.add_layout(name=&quot;triangle&quot;)
+   tweezer_device.add_layout(name="triangle")
 
    # Set single-qubit tweezer gate time information on the new layout
    tweezer_device.set_tweezer_single_qubit_gate_time(
-      hqslang=&quot;PhaseShiftState1&quot;,
+      hqslang="PhaseShiftState1",
       tweezer=0,
       gate_time=0.23,
-      layout=&quot;triangle&quot;,
+      layout="triangle",
    )
 
    # Populate the newly set tweezer with qubit indexed as 0
@@ -710,17 +710,17 @@ operations available in <code>FirstDevice</code> are used.</p>
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="qoqo-qryd-examples"><a class="header" href="#qoqo-qryd-examples">qoqo-qryd Examples</a></h1>
 <h2 id="using-qubit-shift-operations"><a class="header" href="#using-qubit-shift-operations">Using qubit shift operations</a></h2>
-<pre><code class="language-python">&quot;&quot;&quot;A simple example for shifting the qubit positions.&quot;&quot;&quot;
+<pre><code class="language-python">"""A simple example for shifting the qubit positions."""
 
 # Copyright © 2021-2022 HQS Quantum Simulations GmbH.
 #
-# Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not use this file except
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
 # in compliance with the License. You may obtain a copy of the License at
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software distributed under the License
-# is distributed on an &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+# is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
 # or implied. See the License for the specific language governing permissions and limitations under
 # the License.
 
@@ -792,34 +792,34 @@ circuit = Circuit()
 #   Qubit positions after shift:
 #   0 --- 1
 #         2 --- 3
-circuit += ops.DefinitionComplex(&quot;state_vector_before&quot;, 16, True)
-circuit += ops.DefinitionComplex(&quot;state_vector_after&quot;, 16, True)
+circuit += ops.DefinitionComplex("state_vector_before", 16, True)
+circuit += ops.DefinitionComplex("state_vector_after", 16, True)
 circuit += ops.RotateX(1, np.pi)
 circuit += ops.RotateX(2, np.pi / 2)
-circuit += ops.PragmaGetStateVector(&quot;state_vector_before&quot;, None)
+circuit += ops.PragmaGetStateVector("state_vector_before", None)
 circuit += qrydops.PragmaShiftQRydQubit(
     {0: (0, 0), 1: (0, 1), 2: (1, 1), 3: (1, 2)}).to_pragma_change_device()
 circuit += ops.PhaseShiftedControlledZ(control=1, target=2, phi=0.0)
-circuit += ops.PragmaGetStateVector(&quot;state_vector_before&quot;, None)
+circuit += ops.PragmaGetStateVector("state_vector_before", None)
 # This should pass
 result = backend.run_circuit(circuit)
-print(&quot;State vector before applying shift and two-qubit gate&quot;)
-print(result[2][&quot;state_vector_before&quot;])
-print(&quot;State vector after applying shift and two-qubit gate&quot;)
-print(result[2][&quot;state_vector_after&quot;])
+print("State vector before applying shift and two-qubit gate")
+print(result[2]["state_vector_before"])
+print("State vector after applying shift and two-qubit gate")
+print(result[2]["state_vector_after"])
 </code></pre>
 <h2 id="changing-the-device-layout"><a class="header" href="#changing-the-device-layout">Changing the device layout</a></h2>
-<pre><code class="language-python">&quot;&quot;&quot;A simple example for switching between a square lattice and a triangular lattice layout.&quot;&quot;&quot;
+<pre><code class="language-python">"""A simple example for switching between a square lattice and a triangular lattice layout."""
 
 # Copyright © 2021-2022 HQS Quantum Simulations GmbH.
 #
-# Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not use this file except
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
 # in compliance with the License. You may obtain a copy of the License at
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software distributed under the License
-# is distributed on an &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+# is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
 # or implied. See the License for the specific language governing permissions and limitations under
 # the License.
 
@@ -886,34 +886,34 @@ circuit += ops.PhaseShiftedControlledZ(control=0, target=2, phi=0.0)
 # ----------------- The set-up of the circuit with device change --------------- #
 
 circuit = Circuit()
-circuit += ops.DefinitionComplex(&quot;state_vector_before&quot;, 16, True)
-circuit += ops.DefinitionComplex(&quot;state_vector_after&quot;, 16, True)
+circuit += ops.DefinitionComplex("state_vector_before", 16, True)
+circuit += ops.DefinitionComplex("state_vector_after", 16, True)
 circuit += ops.RotateX(0, np.pi)
 circuit += ops.RotateX(2, np.pi / 2)
-circuit += ops.PragmaGetStateVector(&quot;state_vector_before&quot;, None)
+circuit += ops.PragmaGetStateVector("state_vector_before", None)
 # Qubits 0 and 2 are close enough for interaction in square lattice
 circuit += qrydops.PragmaChangeQRydLayout(0).to_pragma_change_device()
 circuit += ops.PhaseShiftedControlledZ(control=0, target=2, phi=0.0)
-circuit += ops.PragmaGetStateVector(&quot;state_vector_after&quot;, None)
+circuit += ops.PragmaGetStateVector("state_vector_after", None)
 # This should pass
 result = backend.run_circuit(circuit)
-print(&quot;State vector before applying shift and two-qubit gate&quot;)
-print(result[2][&quot;state_vector_before&quot;])
-print(&quot;State vector after applying shift and two-qubit gate&quot;)
-print(result[2][&quot;state_vector_after&quot;])
+print("State vector before applying shift and two-qubit gate")
+print(result[2]["state_vector_before"])
+print("State vector after applying shift and two-qubit gate")
+print(result[2]["state_vector_after"])
 </code></pre>
 <h2 id="using-multi-qubit-operations"><a class="header" href="#using-multi-qubit-operations">Using multi-qubit operations</a></h2>
-<pre><code class="language-python">&quot;&quot;&quot;A simple example demonstrating multi qubit operations.&quot;&quot;&quot;
+<pre><code class="language-python">"""A simple example demonstrating multi qubit operations."""
 
 # Copyright © 2021 - 2022 HQS Quantum Simulations GmbH.
 #
-# Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not use this file except
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
 # in compliance with the License. You may obtain a copy of the License at
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software distributed under the License
-# is distributed on an &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+# is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
 # or implied. See the License for the specific language governing permissions and limitations under
 # the License.
 import numpy as np
@@ -974,12 +974,12 @@ circuit += ops.MultiQubitZZ(qubits=[0, 4, 8], theta=1.0)
 # --------------------- Working Multi Qubit Circuit ------------------------- #
 
 circuit = Circuit()
-circuit += ops.DefinitionBit(&quot;ro&quot;, 12, True)
+circuit += ops.DefinitionBit("ro", 12, True)
 circuit += ops.MultiQubitZZ(qubits=[0, 1, 2, 3], theta=1.0)
-circuit += ops.PragmaRepeatedMeasurement(&quot;ro&quot;, 1, None)
+circuit += ops.PragmaRepeatedMeasurement("ro", 1, None)
 # This should pass
 result = backend.run_circuit(circuit)
-print(&quot;Result of ZZ on first four qubits&quot;)
+print("Result of ZZ on first four qubits")
 print(result)
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="qoqo-qryd-api-documentation"><a class="header" href="#qoqo-qryd-api-documentation">qoqo-qryd API documentation</a></h1>

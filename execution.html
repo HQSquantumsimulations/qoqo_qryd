@@ -198,29 +198,29 @@
    # Apply a RotateY gate with a symbolic angle
    # To execute the circuit this symbolic parameter needs to be replaced 
    # with a real number with the help of a QuantumProgram
-   init_circuit += ops.RotateX(0, &quot;angle&quot;)
+   init_circuit += ops.RotateX(0, "angle")
    # Z-basis measurement circuit with 1000 shots
    z_circuit = Circuit()
-   z_circuit += ops.DefinitionBit(&quot;ro_z&quot;, 1, is_output=True)
-   z_circuit += ops.PragmaRepeatedMeasurement(&quot;ro_z&quot;, 1000, None)
+   z_circuit += ops.DefinitionBit("ro_z", 1, is_output=True)
+   z_circuit += ops.PragmaRepeatedMeasurement("ro_z", 1000, None)
    # X-basis measurement circuit with 1000 shots   
    x_circuit = Circuit()
-   x_circuit += ops.DefinitionBit(&quot;ro_x&quot;, 1, is_output=True)
+   x_circuit += ops.DefinitionBit("ro_x", 1, is_output=True)
    # Changing to the X basis with a Hadamard gate
    x_circuit += ops.Hadamard(0)
-   x_circuit += ops.PragmaRepeatedMeasurement(&quot;ro_x&quot;, 1000, None)
+   x_circuit += ops.PragmaRepeatedMeasurement("ro_x", 1000, None)
 
    # Preparing the measurement input for one qubit
    measurement_input = PauliZProductInput(1, False)
    # Read out product of Z on site 0 for register ro_z (no basis change)
-   z_basis_index = measurement_input.add_pauliz_product(&quot;ro_z&quot;, [0,])
+   z_basis_index = measurement_input.add_pauliz_product("ro_z", [0,])
    # Read out product of Z on site 0 for register ro_x
    # (after basis change effectively a &lt;X&gt; measurement)
-   x_basis_index = measurement_input.add_pauliz_product(&quot;ro_x&quot;, [0,])
+   x_basis_index = measurement_input.add_pauliz_product("ro_x", [0,])
    
    # Add a result (the expectation value of H) that is a combination of the PauliProduct
    # expectation values
-   measurement_input.add_linear_exp_val(&quot;&lt;H&gt;&quot;, {x_basis_index: 0.1, z_basis_index: 0.2})
+   measurement_input.add_linear_exp_val("&lt;H&gt;", {x_basis_index: 0.1, z_basis_index: 0.2})
 
    measurement = PauliZProduct(
       constant_circuit=init_circuit,
@@ -238,15 +238,15 @@
    (bit_registers, float_registers, complex_registers) = backend.run_circuit(z_circuit)
 
    # b) To run a measurement we need to replace the free parameter by hand
-   executable_measurement = measurement.substitute_parameters({&quot;angle&quot;: 0.2})
+   executable_measurement = measurement.substitute_parameters({"angle": 0.2})
    expectation_values = backend.run_measurement(executable_measurement)
    print(expectation_values)
 
    # c) Run a quantum program
    # The QuantumProgram now has one free parameter that needs to bet set when executing it.
-   # The symbolic value &quot;angle&quot; in the circuits will be replaced by that free parameter
+   # The symbolic value "angle" in the circuits will be replaced by that free parameter
    # during execution.
-   program = QuantumProgram(measurement=measurement, input_parameter_names=[&quot;angle&quot;])
+   program = QuantumProgram(measurement=measurement, input_parameter_names=["angle"])
    # Run the program with  0.1 substituting `angle`
    expectation_values = program.run(backend, [0.1])
 </code></pre>
@@ -262,32 +262,32 @@
    # Apply a RotateY gate with a symbolic angle
    # To execute the circuit this symbolic parameter needs to be replaced 
    # with a real number with the help of a QuantumProgram
-   init_circuit += ops.RotateY(0, &quot;angle&quot;)
+   init_circuit += ops.RotateY(0, "angle")
    # Z-basis measurement circuit with 1000 shots
    z_circuit = Circuit()
-   z_circuit += ops.DefinitionBit(&quot;ro_z&quot;, 1, is_output=True)
-   z_circuit += ops.PragmaRepeatedMeasurement(&quot;ro_z&quot;, 1000, None)
+   z_circuit += ops.DefinitionBit("ro_z", 1, is_output=True)
+   z_circuit += ops.PragmaRepeatedMeasurement("ro_z", 1000, None)
    # X-basis measurement circuit with 1000 shots   
    x_circuit = Circuit()
-   x_circuit += ops.DefinitionBit(&quot;ro_x&quot;, 1, is_output=True)
+   x_circuit += ops.DefinitionBit("ro_x", 1, is_output=True)
    # Changing to the X basis with a Hadamard gate
    x_circuit += ops.Hadamard(0)
-   x_circuit += ops.PragmaRepeatedMeasurement(&quot;ro_x&quot;, 1000, None)
+   x_circuit += ops.PragmaRepeatedMeasurement("ro_x", 1000, None)
 
    measurement = ClassicalRegister(constant_circuit=init_circuit, circuits=[z_circuit, x_circuit])
 
-   # A quantum program is created from the measurement and &quot;angle&quot; is registered as a free input
+   # A quantum program is created from the measurement and "angle" is registered as a free input
    # parameter. The QuantumProgram now has one free parameter that needs to be set when
    # executing it. The symbolic value angle in the circuits will be replaced by that free parameter
    # during execution.
-   program = QuantumProgram(measurement=measurement, input_parameter_names=[&quot;angle&quot;])
+   program = QuantumProgram(measurement=measurement, input_parameter_names=["angle"])
 
    backend = Backend(1)
    (bit_registers, float_registers, complex_registers) = program.run_registers(backend, [0.1])
    print(bit_registers)
 </code></pre>
 <h2 id="executing-quantumprograms-without-returning-expecation-values"><a class="header" href="#executing-quantumprograms-without-returning-expecation-values">Executing QuantumPrograms without returning expecation values</a></h2>
-<p>As described in <a href="introduction.html">Introduction</a> the <code>ClassicalRegister</code> measurement can be used to return the full measurement record. </p>
+<p>As described in <a href="introduction.html">Introduction</a> the <code>ClassicalRegister</code> measurement can be used to return the full measurement record.</p>
 <h2 id="non-executing-backends"><a class="header" href="#non-executing-backends">Non-executing backends</a></h2>
 <p>Qoqo also has backends that cannot be used to run or evaluate a quantum circuit. These backends typically are used to translate qoqo circuits to other quantum toolkits or languages. One example is <a href="https://github.com/HQSquantumsimulations/qoqo_qasm">qoqo_qasm</a></p>
 

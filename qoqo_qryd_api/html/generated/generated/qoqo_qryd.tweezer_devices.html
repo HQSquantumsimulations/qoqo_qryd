@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>qoqo_qryd.tweezer_devices &mdash; qoqo_qryd 0.12.2 documentation</title>
+  <title>qoqo_qryd.tweezer_devices &mdash; qoqo_qryd 0.13.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
 
@@ -15,7 +15,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=4b40992f"></script>
+        <script src="../../_static/documentation_options.js?v=d2781cd5"></script>
         <script src="../../_static/doctools.js?v=888ff710"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -38,7 +38,7 @@
             qoqo_qryd
           </a>
               <div class="version">
-                0.12.2
+                0.13.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -369,6 +369,21 @@ The memory usage will be inefficient for devices with large qubit numbers.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.tweezer_devices.TweezerDevice.get_qubit_to_tweezer_mapping">
+<span class="sig-name descname"><span class="pre">get_qubit_to_tweezer_mapping</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.tweezer_devices.TweezerDevice.get_qubit_to_tweezer_mapping" title="Link to this definition"></a></dt>
+<dd><p>Get the qubit -&gt; tweezer mapping of the device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The qubit -&gt; tweezer mapping.
+None: The mapping is empty.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict[int, int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.tweezer_devices.TweezerDevice.multi_qubit_gate_time">
 <span class="sig-name descname"><span class="pre">multi_qubit_gate_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qubits</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.tweezer_devices.TweezerDevice.multi_qubit_gate_time" title="Link to this definition"></a></dt>
 <dd><p>Returns the gate time of a multi qubit operation on this device.</p>
@@ -404,11 +419,14 @@ The memory usage will be inefficient for devices with large qubit numbers.</p>
 <span class="sig-name descname"><span class="pre">number_tweezer_positions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.tweezer_devices.TweezerDevice.number_tweezer_positions" title="Link to this definition"></a></dt>
 <dd><p>Returns the number of total tweezer positions in the device.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The number of tweezer positions in the device.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>layout_name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) -- The name of the layout to reference. Defaults to the current layout.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>int</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The number of tweezer positions in the device.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
 </dd>
 </dl>
 </dd></dl>
@@ -478,11 +496,17 @@ The memory usage will be inefficient for devices with large qubit numbers.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.tweezer_devices.TweezerDevice.switch_layout">
-<span class="sig-name descname"><span class="pre">switch_layout</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.tweezer_devices.TweezerDevice.switch_layout" title="Link to this definition"></a></dt>
-<dd><p>Switch to a different pre-defined layout.</p>
+<span class="sig-name descname"><span class="pre">switch_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">with_trivial_map</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.tweezer_devices.TweezerDevice.switch_layout" title="Link to this definition"></a></dt>
+<dd><p>Switch to a different pre-defined Layout.</p>
+<p>It is updated only if the given Layout name is present in the device's
+Layout register. If the qubit -&gt; tweezer mapping is empty, it is
+trivially populated by default.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>layout_number</strong> (<em>str</em>) -- The number index of the new layout</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layout_number</strong> (<em>str</em>) -- The number index of the new Layout.</p></li>
+<li><p><strong>with_trivial_map</strong> (<em>bool</em>) -- Whether the qubit -&gt; tweezer mapping should be trivially populated. Defaults to true.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>PyValueError</strong> -- </p>
@@ -813,6 +837,21 @@ The memory usage will be inefficient for devices with large qubit numbers.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.tweezer_devices.TweezerMutableDevice.get_qubit_to_tweezer_mapping">
+<span class="sig-name descname"><span class="pre">get_qubit_to_tweezer_mapping</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.tweezer_devices.TweezerMutableDevice.get_qubit_to_tweezer_mapping" title="Link to this definition"></a></dt>
+<dd><p>Get the qubit -&gt; tweezer mapping of the device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The qubit -&gt; tweezer mapping.
+None: The mapping is empty.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict[int, int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.tweezer_devices.TweezerMutableDevice.multi_qubit_gate_time">
 <span class="sig-name descname"><span class="pre">multi_qubit_gate_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qubits</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.tweezer_devices.TweezerMutableDevice.multi_qubit_gate_time" title="Link to this definition"></a></dt>
 <dd><p>Returns the gate time of a multi qubit operation on this device.</p>
@@ -848,11 +887,14 @@ The memory usage will be inefficient for devices with large qubit numbers.</p>
 <span class="sig-name descname"><span class="pre">number_tweezer_positions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.tweezer_devices.TweezerMutableDevice.number_tweezer_positions" title="Link to this definition"></a></dt>
 <dd><p>Returns the number of total tweezer positions in the device.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The number of tweezer positions in the device.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>layout_name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) -- The name of the layout to reference. Defaults to the current layout.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>int</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The number of tweezer positions in the device.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1058,6 +1100,25 @@ Defaults to the current Layout.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.tweezer_devices.TweezerMutableDevice.set_tweezers_per_row">
+<span class="sig-name descname"><span class="pre">set_tweezers_per_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout_name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.tweezer_devices.TweezerMutableDevice.set_tweezers_per_row" title="Link to this definition"></a></dt>
+<dd><p>Set the tweezer per row value for a given Layout.</p>
+<p>This is needed for dynamically switching layouts during circuit execution.
+Only switching between layouts having the same tweezer per row value is supported.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>set.</strong> (<em>tweezers_per_row` - Vector containing the number</em><em> of </em><em>tweezers per row to</em>) -- </p></li>
+<li><p><strong>Layout.</strong> (<em>layout_name` - The name</em><em> of </em><em>the Layout to set the tweezer per row for. Defaults to the current</em>) -- </p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> -- No layout name provided and no current layout set.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.tweezer_devices.TweezerMutableDevice.single_qubit_gate_time">
 <span class="sig-name descname"><span class="pre">single_qubit_gate_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qubit</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.tweezer_devices.TweezerMutableDevice.single_qubit_gate_time" title="Link to this definition"></a></dt>
 <dd><p>Returns the gate time of a single qubit operation on this device.</p>
@@ -1076,11 +1137,17 @@ Defaults to the current Layout.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.tweezer_devices.TweezerMutableDevice.switch_layout">
-<span class="sig-name descname"><span class="pre">switch_layout</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.tweezer_devices.TweezerMutableDevice.switch_layout" title="Link to this definition"></a></dt>
-<dd><p>Switch to a different pre-defined layout.</p>
+<span class="sig-name descname"><span class="pre">switch_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">with_trivial_map</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.tweezer_devices.TweezerMutableDevice.switch_layout" title="Link to this definition"></a></dt>
+<dd><p>Switch to a different pre-defined Layout.</p>
+<p>It is updated only if the given Layout name is present in the device's
+Layout register. If the qubit -&gt; tweezer mapping is empty, it is
+trivially populated by default.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>layout_number</strong> (<em>str</em>) -- The number index of the new layout</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layout_number</strong> (<em>str</em>) -- The number index of the new Layout.</p></li>
+<li><p><strong>with_trivial_map</strong> (<em>bool</em>) -- Whether the qubit -&gt; tweezer mapping should be trivially populated. Defaults to true.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>PyValueError</strong> -- </p>

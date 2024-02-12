@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>qoqo_qryd.SimulatorBackend &mdash; qoqo_qryd 0.12.2 documentation</title>
+  <title>qoqo_qryd.SimulatorBackend &mdash; qoqo_qryd 0.13.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
 
@@ -15,7 +15,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=4b40992f"></script>
+        <script src="../../_static/documentation_options.js?v=d2781cd5"></script>
         <script src="../../_static/doctools.js?v=888ff710"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -38,7 +38,7 @@
             qoqo_qryd
           </a>
               <div class="version">
-                0.12.2
+                0.13.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -99,7 +99,7 @@
 <h1>qoqo_qryd.SimulatorBackend<a class="headerlink" href="#qoqo-qryd-simulatorbackend" title="Link to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="qoqo_qryd.SimulatorBackend">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.</span></span><span class="sig-name descname"><span class="pre">SimulatorBackend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.SimulatorBackend" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.</span></span><span class="sig-name descname"><span class="pre">SimulatorBackend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_qubits</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.SimulatorBackend" title="Link to this definition"></a></dt>
 <dd><p>Local simulator backend for Rydberg devices.</p>
 <p>The QRyd simulator backend applies each operation in a circuit to a quantum register.
 The underlying simulator uses the QuEST library.
@@ -112,10 +112,10 @@ and is compatible with running single circuits, running and evaluating measureme
 and running QuantumPrograms on simulated QRyd devices.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>device</strong> (<em>Device</em>) -- QRyd device providing information about the available operations.</p>
+<dd class="field-odd"><p><strong>device</strong> (<em>Union</em><em>[</em><em>QRydDevice</em><em>,</em><a class="reference internal" href="qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice" title="qoqo_qryd.TweezerDevice"><em>TweezerDevice</em></a><em>]</em>) -- The device providing information about the available operations.</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>TypeError</strong> -- Device Parameter is not QRydDevice</p>
+<dd class="field-even"><p><strong>TypeError</strong> -- Device Parameter is not QRydDevice or TweezerDevice</p>
 </dd>
 </dl>
 <dl class="py method">

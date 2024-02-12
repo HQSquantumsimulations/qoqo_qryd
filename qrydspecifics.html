@@ -188,8 +188,8 @@ Note that all functionality described here is a preview and does not represent a
    circuit = Circuit()
    # Switch to predefined layout 1
    circuit += PragmaChangeQRydLayout(new_layout=1).to_pragma_change_device()
-   # Switch to predefined layout &quot;triangle&quot;
-   circuit += PragmaSwitchDeviceLayout(new_layout=&quot;triangle&quot;).to_pragma_change_device()
+   # Switch to predefined layout "triangle"
+   circuit += PragmaSwitchDeviceLayout(new_layout="triangle").to_pragma_change_device()
    # Shift qubit 0 to tweezer position: row 0, column 1 and qubit 1 to postion row 1, column 1
    circuit += PragmaShiftQRydQubit(new_positions={0: (0,1), 1: (1,1)}).to_pragma_change_device()
    # Shift the qubit state present in tweezer 0 to tweezer 1, and the qubit state present in tweezer 2 to tweezer 3
@@ -201,7 +201,7 @@ Note that all functionality described here is a preview and does not represent a
 The available hardware operations are defined in the devices. They save the 2D connectivity and can be queried for the availability of certain gate operations on the qubit.
 At the moment the most general example Device class is <code>FirstDevice</code>, that can be used for simulations. Other available devices include <code>TweezerMutableDevice</code>, which works by first defining the underlying tweezer structure and then populate it with qubits as needed. <code>TweezerDevice</code> works in a similar way. The main difference is it does not allow any setting of the Tweezer information. This should be obtained via the <code>.from_api()</code> call (see the <a href="webapi.html">WebAPI</a> section).</p>
 <p>The fundamental gates that are available on the QRydDemo devices are the following qoqo operations: <code>RotateX</code>, <code>RotateY</code>, <code>RotateZ</code>, <code>RotateXY</code>, <code>PauliX</code>,  <code>PauliY</code>,  <code>PauliZ</code>, <code>PhaseShiftState1</code> ,  <code>SqrtPauliX</code>,  <code>InvSqrtPauliX</code>, <code>PhaseShiftedControlledZ</code> and <code>PhaseShiftedControlledPhase</code>.
-The single-qubit gates are assumed to be available on all qubits. 
+The single-qubit gates are assumed to be available on all qubits.
 The <code>PhaseShiftedControlledZ</code> and <code>PhaseShiftedControlledPhase</code> are available between a subset of qubit pairs.
 The <code>PhaseShiftedControlledZ</code> is a ControlledPauliZ gate that also applies single qubit phases whereas the  <code>PhaseShiftedControlledPhase</code> is equivalent to <code>PhaseShiftedControlledZ</code> but with a variable phase rotation.
 The phase shifts can in principle be device dependent.</p>
@@ -228,9 +228,9 @@ The phase shifts can in principle be device dependent.</p>
          [0.0, 1.0, 2.0, 3.0]]),
       # The phase shift value related to the PhaseShiftedControlledZ gate
       # Using a string that defines a relation is also possible
-      controlled_z_phase_relation=&quot;0.23&quot;,
+      controlled_z_phase_relation="0.23",
       # The relation to use for the PhaseShiftedControlledPhase phase shift value
-      controlled_phase_phase_relation=&quot;DefaultRelation&quot;
+      controlled_phase_phase_relation="DefaultRelation"
    )
 
    # Print the two-qubit-operation connectivity graph of the device
@@ -240,20 +240,20 @@ The phase shifts can in principle be device dependent.</p>
    tweezer_device = TweezerMutableDevice(
       # The phase shift value related to the PhaseShiftedControlledZ gate
       # Using a string that defines a relation is also possible
-      controlled_z_phase_relation=&quot;0.23&quot;,
+      controlled_z_phase_relation="0.23",
       # The relation to use for the PhaseShiftedControlledPhase phase shift value
-      controlled_phase_phase_relation=&quot;DefaultRelation&quot;
+      controlled_phase_phase_relation="DefaultRelation"
    )
 
    # Add a tweezer layout to the device
-   tweezer_device.add_layout(name=&quot;triangle&quot;)
+   tweezer_device.add_layout(name="triangle")
 
    # Set single-qubit tweezer gate time information on the new layout
    tweezer_device.set_tweezer_single_qubit_gate_time(
-      hqslang=&quot;PhaseShiftState1&quot;,
+      hqslang="PhaseShiftState1",
       tweezer=0,
       gate_time=0.23,
-      layout=&quot;triangle&quot;,
+      layout="triangle",
    )
 
    # Populate the newly set tweezer with qubit indexed as 0

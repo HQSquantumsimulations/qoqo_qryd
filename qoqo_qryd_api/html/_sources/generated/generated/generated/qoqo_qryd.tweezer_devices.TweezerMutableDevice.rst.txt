@@ -24,6 +24,7 @@ qoqo\_qryd.tweezer\_devices.TweezerMutableDevice
       ~TweezerMutableDevice.gate_time_controlled_phase
       ~TweezerMutableDevice.gate_time_controlled_z
       ~TweezerMutableDevice.generic_device
+      ~TweezerMutableDevice.get_qubit_to_tweezer_mapping
       ~TweezerMutableDevice.multi_qubit_gate_time
       ~TweezerMutableDevice.number_qubits
       ~TweezerMutableDevice.number_tweezer_positions
@@ -39,6 +40,7 @@ qoqo\_qryd.tweezer\_devices.TweezerMutableDevice
       ~TweezerMutableDevice.set_tweezer_single_qubit_gate_time
       ~TweezerMutableDevice.set_tweezer_three_qubit_gate_time
       ~TweezerMutableDevice.set_tweezer_two_qubit_gate_time
+      ~TweezerMutableDevice.set_tweezers_per_row
       ~TweezerMutableDevice.single_qubit_gate_time
       ~TweezerMutableDevice.switch_layout
       ~TweezerMutableDevice.three_qubit_gate_time
