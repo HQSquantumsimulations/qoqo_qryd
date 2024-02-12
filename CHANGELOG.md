@@ -5,6 +5,7 @@ Tracks qoqo-qryd changes after 0.5
 # 0.13.0
 
 * Added `TweezerDevice.get_qubit_to_tweezer_mapping()`
+* Added `TweezerDevice.set_tweezers_per_row()`
 * Added `with_trivial_map` parameter to `TweezerDevice.switch_layout()`
 * Added `layout_name` parameter to `TweezerDevice.number_tweezer_positions()`
 * Added `TweezerDevice` support for `SimulatorBackend`

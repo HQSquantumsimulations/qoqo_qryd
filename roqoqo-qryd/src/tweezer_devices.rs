@@ -82,7 +82,7 @@ pub struct TweezerLayoutInfo {
     pub allowed_tweezer_shifts: HashMap<usize, Vec<Vec<usize>>>,
     /// Specifies how many tweezers per row are present. Dynamic layout switching is only allowed between layouts
     /// having the same number of tweezers per row.
-    pub tweezers_per_row: Option<usize>,
+    pub tweezers_per_row: Option<Vec<usize>>,
 }
 
 #[derive(Debug, Clone, PartialEq, serde::Deserialize, serde::Serialize)]
@@ -98,7 +98,7 @@ struct TweezerLayoutInfoSerialize {
     /// Allowed shifts from one tweezer to others
     allowed_tweezer_shifts: Vec<(usize, Vec<Vec<usize>>)>,
     /// Specifies how many tweezers per row are present.
-    tweezers_per_row: Option<usize>,
+    tweezers_per_row: Option<Vec<usize>>,
 }
 type SingleTweezerTimes = Vec<(usize, f64)>;
 type TwoTweezersTimes = Vec<((usize, usize), f64)>;
@@ -718,11 +718,11 @@ impl TweezerDevice {
     ///
     /// # Arguments
     ///
-    /// * `tweezers_per_row` - The number of tweezers per row to set.
-    /// *
+    /// * `tweezers_per_row` - Vector containing the number of tweezers per row to set.
+    /// * `layout_name` - The name of the Layout to set the tweezer per row for. Defaults to the current Layout.
     pub fn set_tweezers_per_row(
         &mut self,
-        tweezers_per_row: usize,
+        tweezers_per_row: Vec<usize>,
         layout_name: Option<String>,
     ) -> Result<(), RoqoqoBackendError> {
         let layout_name = layout_name
@@ -1315,7 +1315,7 @@ impl Device for TweezerDevice {
                         match self.layout_register.get(pragma.new_layout()) {
                             Some(new_layout_tweezer_info) => {
                                 // Check layout tweezers per row
-                                match (self.get_current_layout_info().unwrap().tweezers_per_row, new_layout_tweezer_info.tweezers_per_row) {
+                                match (&self.get_current_layout_info()?.tweezers_per_row, &new_layout_tweezer_info.tweezers_per_row) {
                                     (Some(current_tweezers_per_row), Some(new_tweezers_per_row)) => {
                                         // Switch if the number of tweezers per row is the same
                                         if current_tweezers_per_row == new_tweezers_per_row {
@@ -1324,7 +1324,7 @@ impl Device for TweezerDevice {
                                         } else {
                                             Err(RoqoqoBackendError::GenericError {
                                                 msg: format!(
-                                                    "Error with dynamic layout switching of TweezerDevice. Current tweezers per row is {} but switching to a layout with {} tweezers per row.",
+                                                    "Error with dynamic layout switching of TweezerDevice. Current tweezers per row is {:?} but switching to a layout with {:?} tweezers per row.",
                                                     current_tweezers_per_row,
                                                     new_tweezers_per_row,
                                                 ),
