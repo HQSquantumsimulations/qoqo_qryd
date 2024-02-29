@@ -2,7 +2,7 @@
 
 Tracks qoqo-qryd changes after 0.5
 
-# 0.13.1
+# 0.14.0
 
 * Added gate set white list for `TweezerDevice` tweezer setters.
 
