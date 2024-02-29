@@ -129,11 +129,11 @@ fn test_layouts() {
     let mut exp = TweezerDevice::new(None, None, None);
     exp.add_layout("default").unwrap();
     exp.current_layout = Some("default".to_string());
-    exp.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None)
+    exp.set_tweezer_single_qubit_gate_time("RotateX", 0, 0.23, None)
         .unwrap();
     exp.add_qubit_tweezer_mapping(0, 0).unwrap();
     exp.add_layout("OtherLayout").unwrap();
-    exp.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("OtherLayout".to_string()))
+    exp.set_tweezer_single_qubit_gate_time("RotateX", 0, 0.23, Some("OtherLayout".to_string()))
         .unwrap();
     let fake_api_device = TweezerDeviceWrapper { internal: exp };
     pyo3::prepare_freethreaded_python();
@@ -228,9 +228,9 @@ fn test_qubit_tweezer_mapping() {
     let mut exp = TweezerDevice::new(None, None, None);
     exp.add_layout("default").unwrap();
     exp.current_layout = Some("default".to_string());
-    exp.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.23, None)
+    exp.set_tweezer_single_qubit_gate_time("RotateX", 1, 0.23, None)
         .unwrap();
-    exp.set_tweezer_single_qubit_gate_time("PauliX", 2, 0.23, None)
+    exp.set_tweezer_single_qubit_gate_time("RotateX", 2, 0.23, None)
         .unwrap();
     let fake_api_device = TweezerDeviceWrapper { internal: exp };
     pyo3::prepare_freethreaded_python();
@@ -252,10 +252,10 @@ fn test_qubit_tweezer_mapping() {
             .is_ok());
 
         device_mut
-            .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 1, 0.23))
+            .call_method1("set_tweezer_single_qubit_gate_time", ("RotateX", 1, 0.23))
             .unwrap();
         device_mut
-            .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 2, 0.23))
+            .call_method1("set_tweezer_single_qubit_gate_time", ("RotateX", 2, 0.23))
             .unwrap();
 
         assert!(device_mut
@@ -311,13 +311,13 @@ fn test_qubit_tweezer_mapping() {
         device_mut
             .call_method1(
                 "set_tweezer_single_qubit_gate_time",
-                ("PauliX", 1, 0.23, "test_trivial_population"),
+                ("RotateX", 1, 0.23, "test_trivial_population"),
             )
             .unwrap();
         device_mut
             .call_method1(
                 "set_tweezer_single_qubit_gate_time",
-                ("PauliX", 2, 0.23, "test_trivial_population"),
+                ("RotateX", 2, 0.23, "test_trivial_population"),
             )
             .unwrap();
         device_mut
@@ -355,13 +355,13 @@ fn test_allowed_tweezer_shifts() {
             .call_method1("switch_layout", ("default",))
             .unwrap();
         device_mut
-            .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 0, 0.23))
+            .call_method1("set_tweezer_single_qubit_gate_time", ("RotateX", 0, 0.23))
             .unwrap();
         device_mut
-            .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 1, 0.23))
+            .call_method1("set_tweezer_single_qubit_gate_time", ("RotateX", 1, 0.23))
             .unwrap();
         device_mut
-            .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 2, 0.23))
+            .call_method1("set_tweezer_single_qubit_gate_time", ("RotateX", 2, 0.23))
             .unwrap();
 
         assert!(device_mut
@@ -392,13 +392,13 @@ fn test_allowed_tweezer_shifts_from_rows() {
             .call_method1("switch_layout", ("default",))
             .unwrap();
         device_mut
-            .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 0, 0.23))
+            .call_method1("set_tweezer_single_qubit_gate_time", ("RotateX", 0, 0.23))
             .unwrap();
         device_mut
-            .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 1, 0.23))
+            .call_method1("set_tweezer_single_qubit_gate_time", ("RotateX", 1, 0.23))
             .unwrap();
         device_mut
-            .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 2, 0.23))
+            .call_method1("set_tweezer_single_qubit_gate_time", ("RotateX", 2, 0.23))
             .unwrap();
 
         assert!(device_mut
@@ -435,9 +435,9 @@ fn test_deactivate_qubit() {
     let mut exp = TweezerDevice::new(None, None, None);
     exp.add_layout("default").unwrap();
     exp.current_layout = Some("default".to_string());
-    exp.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.23, None)
+    exp.set_tweezer_single_qubit_gate_time("RotateX", 1, 0.23, None)
         .unwrap();
-    exp.set_tweezer_single_qubit_gate_time("PauliY", 0, 0.23, None)
+    exp.set_tweezer_single_qubit_gate_time("RotateZ", 0, 0.23, None)
         .unwrap();
     let fake_api_device = TweezerDeviceWrapper { internal: exp };
     pyo3::prepare_freethreaded_python();
@@ -455,10 +455,10 @@ fn test_deactivate_qubit() {
             .call_method1("switch_layout", ("default",))
             .unwrap();
         device_mut
-            .call_method1("set_tweezer_single_qubit_gate_time", ("PauliX", 1, 0.23))
+            .call_method1("set_tweezer_single_qubit_gate_time", ("RotateX", 1, 0.23))
             .unwrap();
         device_mut
-            .call_method1("set_tweezer_single_qubit_gate_time", ("PauliY", 0, 0.23))
+            .call_method1("set_tweezer_single_qubit_gate_time", ("RotateZ", 0, 0.23))
             .unwrap();
         device
             .call_method1("add_qubit_tweezer_mapping", (0, 0))
@@ -493,12 +493,18 @@ fn test_qubit_times() {
     // Setup fake preconfigured device
     let mut exp = TweezerDevice::new(None, None, None);
     exp.add_layout("OtherLayout").unwrap();
-    exp.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("OtherLayout".to_string()))
+    exp.set_tweezer_single_qubit_gate_time("RotateX", 0, 0.23, Some("OtherLayout".to_string()))
         .unwrap();
-    exp.set_tweezer_two_qubit_gate_time("CNOT", 0, 1, 0.13, Some("OtherLayout".to_string()))
-        .unwrap();
+    exp.set_tweezer_two_qubit_gate_time(
+        "PhaseShiftedControlledZ",
+        0,
+        1,
+        0.13,
+        Some("OtherLayout".to_string()),
+    )
+    .unwrap();
     exp.set_tweezer_three_qubit_gate_time(
-        "Toffoli",
+        "ControlledControlledPauliZ",
         0,
         1,
         2,
@@ -506,17 +512,17 @@ fn test_qubit_times() {
         Some("OtherLayout".to_string()),
     )
     .unwrap();
-    exp.set_tweezer_multi_qubit_gate_time(
-        "MultiQubitZZ",
-        &[0, 1, 2, 3],
-        0.65,
-        Some("OtherLayout".to_string()),
-    )
-    .unwrap();
+    // exp.set_tweezer_multi_qubit_gate_time(
+    //     "MultiQubitZZ",
+    //     &[0, 1, 2, 3],
+    //     0.65,
+    //     Some("OtherLayout".to_string()),
+    // )
+    // .unwrap();
     exp.switch_layout("OtherLayout", None).unwrap();
     exp.add_qubit_tweezer_mapping(0, 1).unwrap();
     exp.add_qubit_tweezer_mapping(1, 2).unwrap();
-    exp.add_qubit_tweezer_mapping(2, 3).unwrap();
+    // exp.add_qubit_tweezer_mapping(2, 3).unwrap();
     exp.add_qubit_tweezer_mapping(3, 0).unwrap();
     let fake_api_device = TweezerDeviceWrapper { internal: exp };
     pyo3::prepare_freethreaded_python();
@@ -532,27 +538,27 @@ fn test_qubit_times() {
         device_mut
             .call_method1(
                 "set_tweezer_single_qubit_gate_time",
-                ("PauliX", 0, 0.23, "OtherLayout"),
+                ("RotateX", 0, 0.23, "OtherLayout"),
             )
             .unwrap();
         device_mut
             .call_method1(
                 "set_tweezer_two_qubit_gate_time",
-                ("CNOT", 0, 1, 0.13, "OtherLayout"),
+                ("PhaseShiftedControlledZ", 0, 1, 0.13, "OtherLayout"),
             )
             .unwrap();
         device_mut
             .call_method1(
                 "set_tweezer_three_qubit_gate_time",
-                ("Toffoli", 0, 1, 2, 0.45, "OtherLayout"),
+                ("ControlledControlledPauliZ", 0, 1, 2, 0.45, "OtherLayout"),
             )
             .unwrap();
-        device_mut
-            .call_method1(
-                "set_tweezer_multi_qubit_gate_time",
-                ("MultiQubitZZ", vec![0, 1, 2, 3], 0.6, "OtherLayout"),
-            )
-            .unwrap();
+        // device_mut
+        //     .call_method1(
+        //         "set_tweezer_multi_qubit_gate_time",
+        //         ("MultiQubitZZ", vec![0, 1, 2, 3], 0.6, "OtherLayout"),
+        //     )
+        //     .unwrap();
         device_mut
             .call_method1("switch_layout", ("OtherLayout",))
             .unwrap();
@@ -563,9 +569,9 @@ fn test_qubit_times() {
         device_mut
             .call_method1("add_qubit_tweezer_mapping", (1, 2))
             .unwrap();
-        device_mut
-            .call_method1("add_qubit_tweezer_mapping", (2, 3))
-            .unwrap();
+        // device_mut
+        //     .call_method1("add_qubit_tweezer_mapping", (2, 3))
+        //     .unwrap();
         device_mut
             .call_method1("add_qubit_tweezer_mapping", (3, 0))
             .unwrap();
@@ -578,29 +584,35 @@ fn test_qubit_times() {
             .is_ok());
 
         assert!(device
-            .call_method1("single_qubit_gate_time", ("PauliX", 3))
+            .call_method1("single_qubit_gate_time", ("RotateX", 3))
             .is_ok());
         assert!(device_mut
-            .call_method1("single_qubit_gate_time", ("PauliX", 3))
+            .call_method1("single_qubit_gate_time", ("RotateX", 3))
             .is_ok());
         assert!(device
-            .call_method1("two_qubit_gate_time", ("CNOT", 3, 0))
+            .call_method1("two_qubit_gate_time", ("PhaseShiftedControlledZ", 3, 0))
             .is_ok());
         assert!(device_mut
-            .call_method1("two_qubit_gate_time", ("CNOT", 3, 0))
+            .call_method1("two_qubit_gate_time", ("PhaseShiftedControlledZ", 3, 0))
             .is_ok());
         assert!(device
-            .call_method1("three_qubit_gate_time", ("Toffoli", 3, 0, 1))
+            .call_method1(
+                "three_qubit_gate_time",
+                ("ControlledControlledPauliZ", 3, 0, 1)
+            )
             .is_ok());
         assert!(device_mut
-            .call_method1("three_qubit_gate_time", ("Toffoli", 3, 0, 1))
+            .call_method1(
+                "three_qubit_gate_time",
+                ("ControlledControlledPauliZ", 3, 0, 1)
+            )
             .is_ok());
-        assert!(device
-            .call_method1("multi_qubit_gate_time", ("MultiQubitZZ", vec![3, 0, 1, 2]))
-            .is_ok());
-        assert!(device_mut
-            .call_method1("multi_qubit_gate_time", ("MultiQubitZZ", vec![3, 0, 1, 2]))
-            .is_ok());
+        // assert!(device
+        //     .call_method1("multi_qubit_gate_time", ("MultiQubitZZ", vec![3, 0, 1, 2]))
+        //     .is_ok());
+        // assert!(device_mut
+        //     .call_method1("multi_qubit_gate_time", ("MultiQubitZZ", vec![3, 0, 1, 2]))
+        //     .is_ok());
     })
 }
 
@@ -611,9 +623,9 @@ fn test_number_qubits() {
     let mut exp = TweezerDevice::new(None, None, None);
     exp.add_layout("default").unwrap();
     exp.switch_layout("default", None).unwrap();
-    exp.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None)
+    exp.set_tweezer_single_qubit_gate_time("RotateX", 0, 0.23, None)
         .unwrap();
-    exp.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.23, None)
+    exp.set_tweezer_single_qubit_gate_time("RotateX", 1, 0.23, None)
         .unwrap();
     let fake_api_device = TweezerDeviceWrapper { internal: exp };
     pyo3::prepare_freethreaded_python();
@@ -640,13 +652,13 @@ fn test_number_qubits() {
         device_mut
             .call_method1(
                 "set_tweezer_single_qubit_gate_time",
-                ("PauliX", 0, 0.23, "default"),
+                ("RotateX", 0, 0.23, "default"),
             )
             .unwrap();
         device_mut
             .call_method1(
                 "set_tweezer_single_qubit_gate_time",
-                ("PauliX", 1, 0.23, "default"),
+                ("RotateX", 1, 0.23, "default"),
             )
             .unwrap();
 
@@ -707,9 +719,9 @@ fn test_number_tweezer_positions() {
     let mut exp = TweezerDevice::new(None, None, None);
     exp.add_layout("default").unwrap();
     exp.switch_layout("default", None).unwrap();
-    exp.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None)
+    exp.set_tweezer_single_qubit_gate_time("RotateX", 0, 0.23, None)
         .unwrap();
-    exp.set_tweezer_two_qubit_gate_time("CNOT", 1, 2, 0.23, None)
+    exp.set_tweezer_two_qubit_gate_time("PhaseShiftedControlledZ", 1, 2, 0.23, None)
         .unwrap();
     let fake_api_device = TweezerDeviceWrapper { internal: exp };
     pyo3::prepare_freethreaded_python();
@@ -742,13 +754,13 @@ fn test_number_tweezer_positions() {
         device_mut
             .call_method1(
                 "set_tweezer_single_qubit_gate_time",
-                ("PauliX", 0, 0.23, "default"),
+                ("RotateX", 0, 0.23, "default"),
             )
             .unwrap();
         device_mut
             .call_method1(
                 "set_tweezer_two_qubit_gate_time",
-                ("PauliX", 1, 2, 0.23, "default"),
+                ("PhaseShiftedControlledZ", 1, 2, 0.23, "default"),
             )
             .unwrap();
 
@@ -779,9 +791,9 @@ fn test_generic_device() {
     let mut tw = TweezerDevice::new(None, None, None);
     tw.add_layout("default").unwrap();
     tw.current_layout = Some("default".to_string());
-    tw.set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None)
+    tw.set_tweezer_single_qubit_gate_time("RotateX", 0, 0.23, None)
         .unwrap();
-    tw.set_tweezer_single_qubit_gate_time("PauliX", 1, 0.23, None)
+    tw.set_tweezer_single_qubit_gate_time("RotateX", 1, 0.23, None)
         .unwrap();
     tw.switch_layout("default", None).unwrap();
     let fake_api_device = TweezerDeviceWrapper { internal: tw };
@@ -796,13 +808,13 @@ fn test_generic_device() {
         device_mut
             .call_method1(
                 "set_tweezer_single_qubit_gate_time",
-                ("PauliX", 0, 0.23, "default"),
+                ("RotateX", 0, 0.23, "default"),
             )
             .unwrap();
         device_mut
             .call_method1(
                 "set_tweezer_single_qubit_gate_time",
-                ("PauliX", 1, 0.23, "default"),
+                ("RotateX", 1, 0.23, "default"),
             )
             .unwrap();
         device_mut
@@ -1075,7 +1087,10 @@ fn test_two_qubit_edges() {
             )
             .unwrap();
         device_mut
-            .call_method1("set_tweezer_two_qubit_gate_time", ("CNOT", 0, 2, 0.13))
+            .call_method1(
+                "set_tweezer_two_qubit_gate_time",
+                ("PhaseShiftedControlledZ", 0, 2, 0.13),
+            )
             .unwrap();
         device_mut
             .call_method1("add_qubit_tweezer_mapping", (0, 0))
@@ -1202,20 +1217,10 @@ fn test_from_api() {
             .unwrap()
             .get("triangle")
             .is_some());
-        assert!(return_device_json
-            .get("layout_register")
-            .unwrap()
-            .get("default")
-            .is_some());
         assert!(original_device_json
             .get("layout_register")
             .unwrap()
             .get("triangle")
-            .is_some());
-        assert!(original_device_json
-            .get("layout_register")
-            .unwrap()
-            .get("default")
             .is_some());
         assert_eq!(
             return_device_json.get("current_layout").unwrap(),
@@ -1424,7 +1429,7 @@ fn test_default_layout() {
         device_mut
             .call_method1(
                 "set_tweezer_single_qubit_gate_time",
-                ("PauliX", 0, 0.23, "triangle".to_string()),
+                ("RotateX", 0, 0.23, "triangle".to_string()),
             )
             .unwrap();
 

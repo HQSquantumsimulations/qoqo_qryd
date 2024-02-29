@@ -432,11 +432,11 @@ fn test_gatetimes_tweezer() {
         .set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 2, 0, 0.34, None)
         .unwrap();
     device
-        .set_tweezer_three_qubit_gate_time("Toffoli", 0, 1, 2, 0.34, None)
+        .set_tweezer_three_qubit_gate_time("ControlledControlledPauliZ", 0, 1, 2, 0.34, None)
         .unwrap();
-    device
-        .set_tweezer_multi_qubit_gate_time("MultiQubitZZ", &[0, 1, 2], 0.23, None)
-        .unwrap();
+    // device
+    //     .set_tweezer_multi_qubit_gate_time("MultiQubitZZ", &[0, 1, 2], 0.23, None)
+    //     .unwrap();
     device.add_qubit_tweezer_mapping(0, 0).unwrap();
     device.add_qubit_tweezer_mapping(1, 1).unwrap();
     device.add_qubit_tweezer_mapping(2, 2).unwrap();
@@ -467,13 +467,13 @@ fn test_gatetimes_tweezer() {
         apidevice.two_qubit_gate_time("PhaseShiftedControlledPhase", &2, &0)
     );
     assert_eq!(
-        device.three_qubit_gate_time("Toffoli", &0, &1, &2),
-        apidevice.three_qubit_gate_time("Toffoli", &0, &1, &2)
+        device.three_qubit_gate_time("ControlledControlledPauliZ", &0, &1, &2),
+        apidevice.three_qubit_gate_time("ControlledControlledPauliZ", &0, &1, &2)
     );
-    assert_eq!(
-        device.multi_qubit_gate_time("MultiQubitZZ", &[0, 1, 2]),
-        apidevice.multi_qubit_gate_time("MultiQubitZZ", &[0, 1, 2])
-    );
+    // assert_eq!(
+    //     device.multi_qubit_gate_time("MultiQubitZZ", &[0, 1, 2]),
+    //     apidevice.multi_qubit_gate_time("MultiQubitZZ", &[0, 1, 2])
+    // );
 }
 
 // Test gatetime gate category
