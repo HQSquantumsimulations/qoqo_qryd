@@ -2,6 +2,10 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+# 0.13.1
+
+* Added gate set white list for `TweezerDevice` tweezer setters.
+
 # 0.13.0
 
 * Added `TweezerDevice.get_qubit_to_tweezer_mapping()`
