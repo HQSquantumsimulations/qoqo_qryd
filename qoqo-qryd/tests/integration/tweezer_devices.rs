@@ -1458,5 +1458,48 @@ fn test_default_layout() {
 
 #[test]
 fn test_setters_native_set_error() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
+        let device_mut = device_type_mut.call0().unwrap();
+        device_mut
+            .call_method1("add_layout", ("triangle",))
+            .unwrap();
 
+        let single_setter = device_mut.call_method1(
+            "set_tweezer_single_qubit_gate_time",
+            ("wrong", 0, 0.23, "triangle".to_string()),
+        );
+        assert!(single_setter.is_err());
+        assert!(single_setter.unwrap_err().to_string().contains(
+            "Error setting the gate time of a single-qubit gate. Gate wrong is not supported."
+        ));
+
+        let two_setter = device_mut.call_method1(
+            "set_tweezer_two_qubit_gate_time",
+            ("wrong", 0, 1, 0.23, "triangle".to_string()),
+        );
+        assert!(two_setter.is_err());
+        assert!(two_setter.unwrap_err().to_string().contains(
+            "Error setting the gate time of a two-qubit gate. Gate wrong is not supported."
+        ));
+
+        let three_setter = device_mut.call_method1(
+            "set_tweezer_three_qubit_gate_time",
+            ("wrong", 0, 1, 2, 0.23, "triangle".to_string()),
+        );
+        assert!(three_setter.is_err());
+        assert!(three_setter.unwrap_err().to_string().contains(
+            "Error setting the gate time of a three-qubit gate. Gate wrong is not supported."
+        ));
+
+        let multi_setter = device_mut.call_method1(
+            "set_tweezer_multi_qubit_gate_time",
+            ("wrong", vec![0, 1, 2, 3], 0.23, "triangle".to_string()),
+        );
+        assert!(multi_setter.is_err());
+        assert!(multi_setter.unwrap_err().to_string().contains(
+            "Error setting the gate time of a multi-qubit gate. Gate wrong is not supported."
+        ));
+    })
 }
