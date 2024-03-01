@@ -512,6 +512,7 @@ fn test_qubit_times() {
         Some("OtherLayout".to_string()),
     )
     .unwrap();
+    // TODO: Add this back in when the backend supports multi-qubit gates
     // exp.set_tweezer_multi_qubit_gate_time(
     //     "MultiQubitZZ",
     //     &[0, 1, 2, 3],
@@ -553,6 +554,7 @@ fn test_qubit_times() {
                 ("ControlledControlledPauliZ", 0, 1, 2, 0.45, "OtherLayout"),
             )
             .unwrap();
+        // TODO: Add this back in when the backend supports multi-qubit gates
         // device_mut
         //     .call_method1(
         //         "set_tweezer_multi_qubit_gate_time",
@@ -569,6 +571,7 @@ fn test_qubit_times() {
         device_mut
             .call_method1("add_qubit_tweezer_mapping", (1, 2))
             .unwrap();
+        // TODO: Add this back in when the backend supports multi-qubit gates
         // device_mut
         //     .call_method1("add_qubit_tweezer_mapping", (2, 3))
         //     .unwrap();
@@ -607,6 +610,7 @@ fn test_qubit_times() {
                 ("ControlledControlledPauliZ", 3, 0, 1)
             )
             .is_ok());
+        // TODO: Add this back in when the backend supports multi-qubit gates
         // assert!(device
         //     .call_method1("multi_qubit_gate_time", ("MultiQubitZZ", vec![3, 0, 1, 2]))
         //     .is_ok());
@@ -1450,4 +1454,9 @@ fn test_default_layout() {
             "triangle"
         );
     })
+}
+
+#[test]
+fn test_setters_native_set_error() {
+
 }

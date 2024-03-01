@@ -93,6 +93,7 @@ fn test_layouts() {
             Some("Test".to_string()),
         )
         .unwrap();
+    // TODO: Add this back in when the backend supports multi-qubit gates
     // device
     //     .set_tweezer_multi_qubit_gate_time("MultiQubitZZ", &[0, 1, 2, 3], 0.13, None)
     //     .unwrap();
@@ -183,6 +184,7 @@ fn test_layouts() {
         0.34
     );
 
+    // TODO: Add this back in when the backend supports multi-qubit gates
     // assert_eq!(
     //     *default_layout
     //         .tweezer_multi_qubit_gate_times
@@ -445,12 +447,14 @@ fn test_qubit_times() {
     device
         .set_tweezer_three_qubit_gate_time("ControlledControlledPhaseShift", 0, 1, 2, 0.65, None)
         .unwrap();
+    // TODO: Add this back in when the backend supports multi-qubit gates
     // device
     //     .set_tweezer_multi_qubit_gate_time("MultiQubitZZ", &[0, 1, 2, 3], 0.34, None)
     //     .unwrap();
 
     device.add_qubit_tweezer_mapping(0, 1).unwrap();
     device.add_qubit_tweezer_mapping(1, 2).unwrap();
+    // TODO: Add this back in when the backend supports multi-qubit gates
     // device.add_qubit_tweezer_mapping(2, 3).unwrap();
     device.add_qubit_tweezer_mapping(3, 0).unwrap();
 
@@ -468,6 +472,7 @@ fn test_qubit_times() {
             .unwrap(),
         0.65
     );
+    // TODO: Add this back in when the backend supports multi-qubit gates
     // assert_eq!(
     //     device
     //         .multi_qubit_gate_time("MultiQubitZZ", &[3, 0, 1, 2])
@@ -527,6 +532,7 @@ fn test_number_tweezer_positions() {
     device
         .set_tweezer_three_qubit_gate_time("ControlledControlledPhaseShift", 2, 9, 13, 0.34, None)
         .unwrap();
+    // TODO: Add this back in when the backend supports multi-qubit gates
     // device
     //     .set_tweezer_multi_qubit_gate_time("MultiQubitZZ", &[1, 12, 5], 0.34, None)
     //     .unwrap();
@@ -1079,4 +1085,49 @@ fn test_default_layout() {
     assert!(device.set_default_layout("triangle").is_ok());
     assert_eq!(device.default_layout, Some("triangle".to_string()));
     assert_eq!(device.current_layout, Some("triangle".to_string()));
+}
+
+#[test]
+fn test_setters_native_set_error() {
+    let mut device = TweezerDevice::new(None, None, None);
+    device.add_layout("layout_name").unwrap();
+
+    let single_setter =
+        device.set_tweezer_single_qubit_gate_time("wrong", 0, 1.0, Some("layout_name".to_string()));
+    assert!(single_setter.is_err());
+    assert!(single_setter.unwrap_err().to_string().contains(
+        "Error setting the gate time of a single-qubit gate. Gate wrong is not supported."
+    ));
+
+    let two_setter =
+        device.set_tweezer_two_qubit_gate_time("wrong", 0, 1, 1.0, Some("layout_name".to_string()));
+    assert!(two_setter.is_err());
+    assert!(two_setter
+        .unwrap_err()
+        .to_string()
+        .contains("Error setting the gate time of a two-qubit gate. Gate wrong is not supported."));
+
+    let three_setter = device.set_tweezer_three_qubit_gate_time(
+        "wrong",
+        0,
+        1,
+        2,
+        1.0,
+        Some("layout_name".to_string()),
+    );
+    assert!(three_setter.is_err());
+    assert!(three_setter.unwrap_err().to_string().contains(
+        "Error setting the gate time of a three-qubit gate. Gate wrong is not supported."
+    ));
+
+    let multi_setter = device.set_tweezer_multi_qubit_gate_time(
+        "wrong",
+        &[0, 1, 2, 3],
+        1.0,
+        Some("layout_name".to_string()),
+    );
+    assert!(multi_setter.is_err());
+    assert!(multi_setter.unwrap_err().to_string().contains(
+        "Error setting the gate time of a multi-qubit gate. Gate wrong is not supported."
+    ));
 }
