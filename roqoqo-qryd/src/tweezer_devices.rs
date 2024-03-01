@@ -35,6 +35,21 @@ use crate::{
     PragmaSwitchDeviceLayout,
 };
 
+static ALLOWED_NATIVE_SINGLE_QUBIT_GATES: [&str; 5] = [
+    "RotateZ",
+    "RotateX",
+    "RotateXY",
+    "PhaseShiftState0",
+    "PhaseShiftState1",
+];
+static ALLOWED_NATIVE_TWO_QUBIT_GATES: [&str; 2] =
+    ["PhaseShiftedControlledZ", "PhaseShiftedControlledPhase"];
+static ALLOWED_NATIVE_THREE_QUBIT_GATES: [&str; 2] = [
+    "ControlledControlledPauliZ",
+    "ControlledControlledPhaseShift",
+];
+static ALLOWED_NATIVE_MULTI_QUBIT_GATES: [&str; 0] = [];
+
 /// Tweezer Device
 ///
 #[derive(Debug, PartialEq, Default, Clone, serde::Serialize, serde::Deserialize)]
@@ -453,12 +468,20 @@ impl TweezerDevice {
         gate_time: f64,
         layout_name: Option<String>,
     ) -> Result<(), RoqoqoBackendError> {
-        self.qubit_to_tweezer = None;
+        if !ALLOWED_NATIVE_SINGLE_QUBIT_GATES.contains(&hqslang) {
+            return Err(RoqoqoBackendError::GenericError {
+                msg: format!(
+                    "Error setting the gate time of a single-qubit gate. Gate {} is not supported.",
+                    hqslang
+                ),
+            });
+        }
         let layout_name = layout_name
             .or_else(|| self.current_layout.as_ref().map(|s| s.to_string()))
             .ok_or_else(|| RoqoqoBackendError::GenericError {
                 msg: "No layout name provided and no current layout set.".to_string(),
             })?;
+        self.qubit_to_tweezer = None;
 
         if let Some(info) = self.layout_register.get_mut(&layout_name) {
             let sqt = &mut info.tweezer_single_qubit_gate_times;
@@ -490,12 +513,20 @@ impl TweezerDevice {
         gate_time: f64,
         layout_name: Option<String>,
     ) -> Result<(), RoqoqoBackendError> {
-        self.qubit_to_tweezer = None;
+        if !ALLOWED_NATIVE_TWO_QUBIT_GATES.contains(&hqslang) {
+            return Err(RoqoqoBackendError::GenericError {
+                msg: format!(
+                    "Error setting the gate time of a two-qubit gate. Gate {} is not supported.",
+                    hqslang
+                ),
+            });
+        }
         let layout_name = layout_name
             .or_else(|| self.current_layout.as_ref().map(|s| s.to_string()))
             .ok_or_else(|| RoqoqoBackendError::GenericError {
                 msg: "No layout name provided and no current layout set.".to_string(),
             })?;
+        self.qubit_to_tweezer = None;
 
         if let Some(info) = self.layout_register.get_mut(&layout_name) {
             let sqt = &mut info.tweezer_two_qubit_gate_times;
@@ -529,12 +560,20 @@ impl TweezerDevice {
         gate_time: f64,
         layout_name: Option<String>,
     ) -> Result<(), RoqoqoBackendError> {
-        self.qubit_to_tweezer = None;
+        if !ALLOWED_NATIVE_THREE_QUBIT_GATES.contains(&hqslang) {
+            return Err(RoqoqoBackendError::GenericError {
+                msg: format!(
+                    "Error setting the gate time of a three-qubit gate. Gate {} is not supported.",
+                    hqslang
+                ),
+            });
+        }
         let layout_name = layout_name
             .or_else(|| self.current_layout.as_ref().map(|s| s.to_string()))
             .ok_or_else(|| RoqoqoBackendError::GenericError {
                 msg: "No layout name provided and no current layout set.".to_string(),
             })?;
+        self.qubit_to_tweezer = None;
 
         if let Some(info) = self.layout_register.get_mut(&layout_name) {
             let sqt = &mut info.tweezer_three_qubit_gate_times;
@@ -564,12 +603,20 @@ impl TweezerDevice {
         gate_time: f64,
         layout_name: Option<String>,
     ) -> Result<(), RoqoqoBackendError> {
-        self.qubit_to_tweezer = None;
+        if !ALLOWED_NATIVE_MULTI_QUBIT_GATES.contains(&hqslang) {
+            return Err(RoqoqoBackendError::GenericError {
+                msg: format!(
+                    "Error setting the gate time of a multi-qubit gate. Gate {} is not supported.",
+                    hqslang
+                ),
+            });
+        }
         let layout_name = layout_name
             .or_else(|| self.current_layout.as_ref().map(|s| s.to_string()))
             .ok_or_else(|| RoqoqoBackendError::GenericError {
                 msg: "No layout name provided and no current layout set.".to_string(),
             })?;
+        self.qubit_to_tweezer = None;
 
         if let Some(info) = self.layout_register.get_mut(&layout_name) {
             let sqt = &mut info.tweezer_multi_qubit_gate_times;

@@ -66,31 +66,45 @@ fn test_layouts() {
         .set_tweezer_single_qubit_gate_time("RotateZ", 1, 0.23, Some("Test".to_string()))
         .unwrap();
     device
-        .set_tweezer_single_qubit_gate_time("RotateY", 2, 0.23, Some("Test".to_string()))
+        .set_tweezer_single_qubit_gate_time("PhaseShiftState1", 2, 0.23, Some("Test".to_string()))
         .unwrap();
     device
-        .set_tweezer_two_qubit_gate_time("CNOT", 0, 1, 0.23, None)
+        .set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 0, 1, 0.23, None)
         .unwrap();
     device
-        .set_tweezer_two_qubit_gate_time("CNOT", 0, 1, 0.23, Some("Test".to_string()))
-        .unwrap();
-    device
-        .set_tweezer_three_qubit_gate_time("Toffoli", 0, 1, 2, 0.34, None)
-        .unwrap();
-    device
-        .set_tweezer_three_qubit_gate_time("Toffoli", 0, 1, 2, 0.34, Some("Test".to_string()))
-        .unwrap();
-    device
-        .set_tweezer_multi_qubit_gate_time("MultiQubitZZ", &[0, 1, 2, 3], 0.13, None)
-        .unwrap();
-    device
-        .set_tweezer_multi_qubit_gate_time(
-            "MultiQubitZZ",
-            &[0, 1, 2, 3],
-            0.13,
+        .set_tweezer_two_qubit_gate_time(
+            "PhaseShiftedControlledPhase",
+            0,
+            1,
+            0.23,
             Some("Test".to_string()),
         )
         .unwrap();
+    device
+        .set_tweezer_three_qubit_gate_time("ControlledControlledPauliZ", 0, 1, 2, 0.34, None)
+        .unwrap();
+    device
+        .set_tweezer_three_qubit_gate_time(
+            "ControlledControlledPauliZ",
+            0,
+            1,
+            2,
+            0.34,
+            Some("Test".to_string()),
+        )
+        .unwrap();
+    // TODO: Add this back in when the backend supports multi-qubit gates
+    // device
+    //     .set_tweezer_multi_qubit_gate_time("MultiQubitZZ", &[0, 1, 2, 3], 0.13, None)
+    //     .unwrap();
+    // device
+    //     .set_tweezer_multi_qubit_gate_time(
+    //         "MultiQubitZZ",
+    //         &[0, 1, 2, 3],
+    //         0.13,
+    //         Some("Test".to_string()),
+    //     )
+    //     .unwrap();
 
     let default_layout = device.layout_register.get("default").unwrap();
     let test_layout = device.layout_register.get("Test").unwrap();
@@ -125,7 +139,7 @@ fn test_layouts() {
     assert_eq!(
         *test_layout
             .tweezer_single_qubit_gate_times
-            .get("RotateY")
+            .get("PhaseShiftState1")
             .unwrap()
             .get(&2)
             .unwrap(),
@@ -135,7 +149,7 @@ fn test_layouts() {
     assert_eq!(
         *default_layout
             .tweezer_two_qubit_gate_times
-            .get("CNOT")
+            .get("PhaseShiftedControlledPhase")
             .unwrap()
             .get(&(0, 1))
             .unwrap(),
@@ -144,7 +158,7 @@ fn test_layouts() {
     assert_eq!(
         *test_layout
             .tweezer_two_qubit_gate_times
-            .get("CNOT")
+            .get("PhaseShiftedControlledPhase")
             .unwrap()
             .get(&(0, 1))
             .unwrap(),
@@ -154,7 +168,7 @@ fn test_layouts() {
     assert_eq!(
         *default_layout
             .tweezer_three_qubit_gate_times
-            .get("Toffoli")
+            .get("ControlledControlledPauliZ")
             .unwrap()
             .get(&(0, 1, 2))
             .unwrap(),
@@ -163,31 +177,32 @@ fn test_layouts() {
     assert_eq!(
         *test_layout
             .tweezer_three_qubit_gate_times
-            .get("Toffoli")
+            .get("ControlledControlledPauliZ")
             .unwrap()
             .get(&(0, 1, 2))
             .unwrap(),
         0.34
     );
 
-    assert_eq!(
-        *default_layout
-            .tweezer_multi_qubit_gate_times
-            .get("MultiQubitZZ")
-            .unwrap()
-            .get(&[0, 1, 2, 3].to_vec())
-            .unwrap(),
-        0.13
-    );
-    assert_eq!(
-        *test_layout
-            .tweezer_multi_qubit_gate_times
-            .get("MultiQubitZZ")
-            .unwrap()
-            .get(&[0, 1, 2, 3].to_vec())
-            .unwrap(),
-        0.13
-    );
+    // TODO: Add this back in when the backend supports multi-qubit gates
+    // assert_eq!(
+    //     *default_layout
+    //         .tweezer_multi_qubit_gate_times
+    //         .get("MultiQubitZZ")
+    //         .unwrap()
+    //         .get(&[0, 1, 2, 3].to_vec())
+    //         .unwrap(),
+    //     0.13
+    // );
+    // assert_eq!(
+    //     *test_layout
+    //         .tweezer_multi_qubit_gate_times
+    //         .get("MultiQubitZZ")
+    //         .unwrap()
+    //         .get(&[0, 1, 2, 3].to_vec())
+    //         .unwrap(),
+    //     0.13
+    // );
 
     assert_eq!(device.current_layout, Some("default".to_string()));
     assert!(device.qubit_to_tweezer.is_none());
@@ -195,7 +210,7 @@ fn test_layouts() {
     device.switch_layout("Test", None).unwrap();
     assert_eq!(device.current_layout, Some("Test".to_string()));
     assert!(device.qubit_to_tweezer.is_some());
-    assert_eq!(device.qubit_to_tweezer.clone().unwrap().len(), 4);
+    assert_eq!(device.qubit_to_tweezer.clone().unwrap().len(), 3);
 
     assert!(device.switch_layout("Error", None).is_err());
 
@@ -212,7 +227,7 @@ fn test_layouts() {
         .unwrap();
     device
         .set_tweezer_single_qubit_gate_time(
-            "RotateY",
+            "RotateX",
             2,
             0.23,
             Some("test_trivial_population".to_string()),
@@ -245,10 +260,10 @@ fn test_qubit_tweezer_mapping() {
     assert!(device.get_tweezer_from_qubit(&0).is_err());
 
     device
-        .set_tweezer_single_qubit_gate_time("PauliX", 0, 0.0, None)
+        .set_tweezer_single_qubit_gate_time("RotateX", 0, 0.0, None)
         .unwrap();
     device
-        .set_tweezer_multi_qubit_gate_time("MultiQubitZZ", &[1, 2, 3], 0.1, None)
+        .set_tweezer_three_qubit_gate_time("ControlledControlledPauliZ", 1, 2, 3, 0.1, None)
         .unwrap();
 
     assert!(device.add_qubit_tweezer_mapping(0, 0).is_ok());
@@ -269,22 +284,22 @@ fn test_allowed_tweezer_shifts_from_rows() {
     let mut device = TweezerDevice::new(None, None, None);
     device.add_layout("triangle").unwrap();
     device
-        .set_tweezer_single_qubit_gate_time("PauliX", 0, 0.0, Some("triangle".to_string()))
+        .set_tweezer_single_qubit_gate_time("RotateX", 0, 0.0, Some("triangle".to_string()))
         .unwrap();
     device
-        .set_tweezer_single_qubit_gate_time("PauliX", 1, 0.0, Some("triangle".to_string()))
+        .set_tweezer_single_qubit_gate_time("RotateX", 1, 0.0, Some("triangle".to_string()))
         .unwrap();
     device
-        .set_tweezer_single_qubit_gate_time("PauliX", 2, 0.0, Some("triangle".to_string()))
+        .set_tweezer_single_qubit_gate_time("RotateX", 2, 0.0, Some("triangle".to_string()))
         .unwrap();
     device
-        .set_tweezer_single_qubit_gate_time("PauliX", 3, 0.0, Some("triangle".to_string()))
+        .set_tweezer_single_qubit_gate_time("RotateX", 3, 0.0, Some("triangle".to_string()))
         .unwrap();
     device
-        .set_tweezer_single_qubit_gate_time("PauliX", 4, 0.0, Some("triangle".to_string()))
+        .set_tweezer_single_qubit_gate_time("RotateX", 4, 0.0, Some("triangle".to_string()))
         .unwrap();
     device
-        .set_tweezer_single_qubit_gate_time("PauliX", 5, 0.0, Some("triangle".to_string()))
+        .set_tweezer_single_qubit_gate_time("RotateX", 5, 0.0, Some("triangle".to_string()))
         .unwrap();
 
     assert!(device
@@ -327,13 +342,13 @@ fn test_allowed_tweezer_shifts_row() {
     let mut device = TweezerDevice::new(None, None, None);
     device.add_layout("OtherLayout").unwrap();
     device
-        .set_tweezer_single_qubit_gate_time("PauliX", 0, 0.0, Some("OtherLayout".to_string()))
+        .set_tweezer_single_qubit_gate_time("RotateX", 0, 0.0, Some("OtherLayout".to_string()))
         .unwrap();
     device
-        .set_tweezer_single_qubit_gate_time("PauliX", 1, 0.0, Some("OtherLayout".to_string()))
+        .set_tweezer_single_qubit_gate_time("RotateX", 1, 0.0, Some("OtherLayout".to_string()))
         .unwrap();
     device
-        .set_tweezer_single_qubit_gate_time("PauliX", 2, 0.0, Some("OtherLayout".to_string()))
+        .set_tweezer_single_qubit_gate_time("RotateX", 2, 0.0, Some("OtherLayout".to_string()))
         .unwrap();
     device.switch_layout("OtherLayout", None).unwrap();
 
@@ -394,7 +409,7 @@ fn test_deactivate_qubit() {
     assert!(device.deactivate_qubit(0).is_err());
 
     device
-        .set_tweezer_single_qubit_gate_time("PauliX", 1, 0.1, None)
+        .set_tweezer_single_qubit_gate_time("RotateX", 1, 0.1, None)
         .unwrap();
     device.add_qubit_tweezer_mapping(0, 1).unwrap();
 
@@ -409,49 +424,61 @@ fn test_qubit_times() {
     device.add_layout("default").unwrap();
     device.current_layout = Some("default".to_string());
 
-    assert!(device.single_qubit_gate_time("PauliX", &0).is_none());
+    assert!(device.single_qubit_gate_time("RotateX", &0).is_none());
 
     // Testing missing qubits
-    assert!(device.single_qubit_gate_time("PauliX", &5).is_none());
-    assert!(device.two_qubit_gate_time("CNOT", &0, &7).is_none());
+    assert!(device.single_qubit_gate_time("RotateX", &5).is_none());
     assert!(device
-        .three_qubit_gate_time("Toffoli", &12, &1, &3)
+        .two_qubit_gate_time("PhaseShiftedControlledPhase", &0, &7)
+        .is_none());
+    assert!(device
+        .three_qubit_gate_time("ControlledControlledPhaseShift", &12, &1, &3)
         .is_none());
     assert!(device
         .multi_qubit_gate_time("MultiQubitZZ", &[6, 2, 3, 4])
         .is_none());
 
     device
-        .set_tweezer_single_qubit_gate_time("PauliX", 1, 0.23, None)
+        .set_tweezer_single_qubit_gate_time("RotateX", 1, 0.23, None)
         .unwrap();
     device
-        .set_tweezer_two_qubit_gate_time("CNOT", 0, 1, 0.45, None)
+        .set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 0, 1, 0.45, None)
         .unwrap();
     device
-        .set_tweezer_three_qubit_gate_time("Toffoli", 0, 1, 2, 0.65, None)
+        .set_tweezer_three_qubit_gate_time("ControlledControlledPhaseShift", 0, 1, 2, 0.65, None)
         .unwrap();
-    device
-        .set_tweezer_multi_qubit_gate_time("MultiQubitZZ", &[0, 1, 2, 3], 0.34, None)
-        .unwrap();
+    // TODO: Add this back in when the backend supports multi-qubit gates
+    // device
+    //     .set_tweezer_multi_qubit_gate_time("MultiQubitZZ", &[0, 1, 2, 3], 0.34, None)
+    //     .unwrap();
 
     device.add_qubit_tweezer_mapping(0, 1).unwrap();
     device.add_qubit_tweezer_mapping(1, 2).unwrap();
-    device.add_qubit_tweezer_mapping(2, 3).unwrap();
+    // TODO: Add this back in when the backend supports multi-qubit gates
+    // device.add_qubit_tweezer_mapping(2, 3).unwrap();
     device.add_qubit_tweezer_mapping(3, 0).unwrap();
 
-    assert!(device.single_qubit_gate_time("PauliX", &0).is_some());
-    assert_eq!(device.single_qubit_gate_time("PauliX", &0).unwrap(), 0.23);
-    assert_eq!(device.two_qubit_gate_time("CNOT", &3, &0).unwrap(), 0.45);
+    assert!(device.single_qubit_gate_time("RotateX", &0).is_some());
+    assert_eq!(device.single_qubit_gate_time("RotateX", &0).unwrap(), 0.23);
     assert_eq!(
-        device.three_qubit_gate_time("Toffoli", &3, &0, &1).unwrap(),
-        0.65
+        device
+            .two_qubit_gate_time("PhaseShiftedControlledPhase", &3, &0)
+            .unwrap(),
+        0.45
     );
     assert_eq!(
         device
-            .multi_qubit_gate_time("MultiQubitZZ", &[3, 0, 1, 2])
+            .three_qubit_gate_time("ControlledControlledPhaseShift", &3, &0, &1)
             .unwrap(),
-        0.34
+        0.65
     );
+    // TODO: Add this back in when the backend supports multi-qubit gates
+    // assert_eq!(
+    //     device
+    //         .multi_qubit_gate_time("MultiQubitZZ", &[3, 0, 1, 2])
+    //         .unwrap(),
+    //     0.34
+    // );
 }
 
 /// Test TweezerDevice number_qubits() method
@@ -464,10 +491,10 @@ fn test_number_qubits() {
     assert_eq!(device.number_qubits(), 0);
 
     device
-        .set_tweezer_single_qubit_gate_time("PauliX", 0, 0.0, None)
+        .set_tweezer_single_qubit_gate_time("RotateX", 0, 0.0, None)
         .unwrap();
     device
-        .set_tweezer_single_qubit_gate_time("PauliX", 1, 0.0, None)
+        .set_tweezer_single_qubit_gate_time("RotateX", 1, 0.0, None)
         .unwrap();
 
     assert_eq!(device.number_qubits(), 0);
@@ -497,19 +524,20 @@ fn test_number_tweezer_positions() {
 
     device.current_layout = Some("default".to_string());
     device
-        .set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None)
+        .set_tweezer_single_qubit_gate_time("RotateX", 0, 0.23, None)
         .unwrap();
     device
-        .set_tweezer_two_qubit_gate_time("CNOT", 1, 7, 0.23, None)
+        .set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 1, 7, 0.23, None)
         .unwrap();
     device
-        .set_tweezer_three_qubit_gate_time("Toffoli", 2, 9, 13, 0.34, None)
+        .set_tweezer_three_qubit_gate_time("ControlledControlledPhaseShift", 2, 9, 13, 0.34, None)
         .unwrap();
-    device
-        .set_tweezer_multi_qubit_gate_time("MultiQubitZZ", &[1, 12, 5], 0.34, None)
-        .unwrap();
+    // TODO: Add this back in when the backend supports multi-qubit gates
+    // device
+    //     .set_tweezer_multi_qubit_gate_time("MultiQubitZZ", &[1, 12, 5], 0.34, None)
+    //     .unwrap();
 
-    assert_eq!(device.number_tweezer_positions(None), Ok(8));
+    assert_eq!(device.number_tweezer_positions(None), Ok(6));
 }
 
 /// Test TweezerDevice to_generic_device() method
@@ -519,16 +547,16 @@ fn test_to_generic_device() {
     device.add_layout("default").unwrap();
     device.current_layout = Some("default".to_string());
     device
-        .set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None)
+        .set_tweezer_single_qubit_gate_time("RotateX", 0, 0.23, None)
         .unwrap();
     device
-        .set_tweezer_single_qubit_gate_time("PauliY", 1, 0.23, None)
+        .set_tweezer_single_qubit_gate_time("RotateZ", 1, 0.23, None)
         .unwrap();
     device
-        .set_tweezer_two_qubit_gate_time("CNOT", 2, 3, 0.34, None)
+        .set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 2, 3, 0.34, None)
         .unwrap();
     device
-        .set_tweezer_two_qubit_gate_time("ControlledPauliZ", 1, 2, 0.34, None)
+        .set_tweezer_two_qubit_gate_time("PhaseShiftedControlledZ", 1, 2, 0.34, None)
         .unwrap();
     device.add_qubit_tweezer_mapping(0, 0).unwrap();
     device.add_qubit_tweezer_mapping(1, 1).unwrap();
@@ -540,7 +568,7 @@ fn test_to_generic_device() {
     assert_eq!(
         generic_device
             .single_qubit_gates
-            .get("PauliX")
+            .get("RotateX")
             .unwrap()
             .get(&0)
             .unwrap(),
@@ -549,7 +577,7 @@ fn test_to_generic_device() {
     assert_eq!(
         generic_device
             .single_qubit_gates
-            .get("PauliY")
+            .get("RotateZ")
             .unwrap()
             .get(&1)
             .unwrap(),
@@ -558,7 +586,7 @@ fn test_to_generic_device() {
     assert_eq!(
         generic_device
             .two_qubit_gates
-            .get("CNOT")
+            .get("PhaseShiftedControlledPhase")
             .unwrap()
             .get(&(2, 3))
             .unwrap(),
@@ -567,7 +595,7 @@ fn test_to_generic_device() {
     assert_eq!(
         generic_device
             .two_qubit_gates
-            .get("ControlledPauliZ")
+            .get("PhaseShiftedControlledZ")
             .unwrap()
             .get(&(1, 2))
             .unwrap(),
@@ -589,16 +617,28 @@ fn test_change_device() {
     let mut device = TweezerDevice::new(None, None, None);
     device.add_layout("Test").unwrap();
     device
-        .set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("Test".to_string()))
+        .set_tweezer_single_qubit_gate_time("RotateXY", 0, 0.23, Some("Test".to_string()))
         .unwrap();
     device
-        .set_tweezer_single_qubit_gate_time("PauliY", 1, 0.23, Some("Test".to_string()))
+        .set_tweezer_single_qubit_gate_time("RotateZ", 1, 0.23, Some("Test".to_string()))
         .unwrap();
     device
-        .set_tweezer_two_qubit_gate_time("CNOT", 2, 3, 0.34, Some("Test".to_string()))
+        .set_tweezer_two_qubit_gate_time(
+            "PhaseShiftedControlledZ",
+            2,
+            3,
+            0.34,
+            Some("Test".to_string()),
+        )
         .unwrap();
     device
-        .set_tweezer_two_qubit_gate_time("ControlledPauliZ", 1, 2, 0.34, Some("Test".to_string()))
+        .set_tweezer_two_qubit_gate_time(
+            "PhaseShiftedControlledPhase",
+            1,
+            2,
+            0.34,
+            Some("Test".to_string()),
+        )
         .unwrap();
     let pragma_old_c = PragmaChangeQRydLayout::new(0);
     let hm: HashMap<usize, (usize, usize)> = [(0, (1, 2))].into_iter().collect();
@@ -625,7 +665,7 @@ fn test_change_device_switch() {
     device.add_layout("two_rows_two_twzrs_0").unwrap();
     device
         .set_tweezer_two_qubit_gate_time(
-            "CNOT",
+            "PhaseShiftedControlledZ",
             0,
             1,
             0.23,
@@ -634,7 +674,7 @@ fn test_change_device_switch() {
         .unwrap();
     device
         .set_tweezer_two_qubit_gate_time(
-            "CNOT",
+            "PhaseShiftedControlledZ",
             2,
             3,
             0.23,
@@ -643,7 +683,7 @@ fn test_change_device_switch() {
         .unwrap();
     device
         .set_tweezer_two_qubit_gate_time(
-            "CNOT",
+            "PhaseShiftedControlledZ",
             0,
             2,
             0.34,
@@ -652,7 +692,7 @@ fn test_change_device_switch() {
         .unwrap();
     device
         .set_tweezer_two_qubit_gate_time(
-            "CNOT",
+            "PhaseShiftedControlledZ",
             1,
             3,
             0.34,
@@ -662,7 +702,7 @@ fn test_change_device_switch() {
     device.add_layout("two_rows_two_twzrs_1").unwrap();
     device
         .set_tweezer_two_qubit_gate_time(
-            "CNOT",
+            "PhaseShiftedControlledZ",
             0,
             1,
             0.23,
@@ -671,7 +711,7 @@ fn test_change_device_switch() {
         .unwrap();
     device
         .set_tweezer_two_qubit_gate_time(
-            "CNOT",
+            "PhaseShiftedControlledZ",
             2,
             3,
             0.23,
@@ -680,7 +720,7 @@ fn test_change_device_switch() {
         .unwrap();
     device
         .set_tweezer_two_qubit_gate_time(
-            "CNOT",
+            "PhaseShiftedControlledZ",
             0,
             3,
             0.34,
@@ -690,7 +730,7 @@ fn test_change_device_switch() {
     device.add_layout("one_row_three_twzrs").unwrap();
     device
         .set_tweezer_three_qubit_gate_time(
-            "Toffoli",
+            "ControlledControlledPauliZ",
             0,
             1,
             2,
@@ -782,17 +822,23 @@ fn test_change_device_shift() {
     let mut device = TweezerDevice::new(None, None, None);
     device.add_layout("triangle").unwrap();
     device
-        .set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("triangle".to_string()))
+        .set_tweezer_single_qubit_gate_time("RotateZ", 0, 0.23, Some("triangle".to_string()))
         .unwrap();
     device
-        .set_tweezer_single_qubit_gate_time("PauliY", 1, 0.23, Some("triangle".to_string()))
-        .unwrap();
-    device
-        .set_tweezer_two_qubit_gate_time("CNOT", 2, 3, 0.34, Some("triangle".to_string()))
+        .set_tweezer_single_qubit_gate_time("RotateX", 1, 0.23, Some("triangle".to_string()))
         .unwrap();
     device
         .set_tweezer_two_qubit_gate_time(
-            "ControlledPauliZ",
+            "PhaseShiftedControlledZ",
+            2,
+            3,
+            0.34,
+            Some("triangle".to_string()),
+        )
+        .unwrap();
+    device
+        .set_tweezer_two_qubit_gate_time(
+            "PhaseShiftedControlledPhase",
             1,
             2,
             0.34,
@@ -800,7 +846,13 @@ fn test_change_device_shift() {
         )
         .unwrap();
     device
-        .set_tweezer_two_qubit_gate_time("Toffoli", 4, 5, 0.34, Some("triangle".to_string()))
+        .set_tweezer_two_qubit_gate_time(
+            "PhaseShiftedControlledPhase",
+            4,
+            5,
+            0.34,
+            Some("triangle".to_string()),
+        )
         .unwrap();
     device
         .set_allowed_tweezer_shifts(&0, &[&[1, 2], &[3]], Some("triangle".to_string()))
@@ -874,7 +926,7 @@ fn test_from_api() {
     returned_device_default.add_layout("default").unwrap();
     returned_device_default.current_layout = Some("default".to_string());
     returned_device_default
-        .set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, None)
+        .set_tweezer_single_qubit_gate_time("RotateX", 0, 0.23, None)
         .unwrap();
     returned_device_default.device_name = "qryd_emulator".to_string();
     let mut server = Server::new();
@@ -1025,7 +1077,7 @@ fn test_default_layout() {
     let mut device = TweezerDevice::new(None, None, None);
     device.add_layout("triangle").unwrap();
     device
-        .set_tweezer_single_qubit_gate_time("PauliX", 0, 0.23, Some("triangle".to_string()))
+        .set_tweezer_single_qubit_gate_time("RotateZ", 0, 0.23, Some("triangle".to_string()))
         .unwrap();
 
     assert!(device.set_default_layout("square").is_err());
@@ -1033,4 +1085,49 @@ fn test_default_layout() {
     assert!(device.set_default_layout("triangle").is_ok());
     assert_eq!(device.default_layout, Some("triangle".to_string()));
     assert_eq!(device.current_layout, Some("triangle".to_string()));
+}
+
+#[test]
+fn test_setters_native_set_error() {
+    let mut device = TweezerDevice::new(None, None, None);
+    device.add_layout("layout_name").unwrap();
+
+    let single_setter =
+        device.set_tweezer_single_qubit_gate_time("wrong", 0, 1.0, Some("layout_name".to_string()));
+    assert!(single_setter.is_err());
+    assert!(single_setter.unwrap_err().to_string().contains(
+        "Error setting the gate time of a single-qubit gate. Gate wrong is not supported."
+    ));
+
+    let two_setter =
+        device.set_tweezer_two_qubit_gate_time("wrong", 0, 1, 1.0, Some("layout_name".to_string()));
+    assert!(two_setter.is_err());
+    assert!(two_setter
+        .unwrap_err()
+        .to_string()
+        .contains("Error setting the gate time of a two-qubit gate. Gate wrong is not supported."));
+
+    let three_setter = device.set_tweezer_three_qubit_gate_time(
+        "wrong",
+        0,
+        1,
+        2,
+        1.0,
+        Some("layout_name".to_string()),
+    );
+    assert!(three_setter.is_err());
+    assert!(three_setter.unwrap_err().to_string().contains(
+        "Error setting the gate time of a three-qubit gate. Gate wrong is not supported."
+    ));
+
+    let multi_setter = device.set_tweezer_multi_qubit_gate_time(
+        "wrong",
+        &[0, 1, 2, 3],
+        1.0,
+        Some("layout_name".to_string()),
+    );
+    assert!(multi_setter.is_err());
+    assert!(multi_setter.unwrap_err().to_string().contains(
+        "Error setting the gate time of a multi-qubit gate. Gate wrong is not supported."
+    ));
 }

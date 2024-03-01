@@ -21,16 +21,40 @@ fn test_init_backend_tw() {
     let mut device = TweezerDevice::new(None, None, None);
     device.add_layout("square").unwrap();
     device
-        .set_tweezer_two_qubit_gate_time("CNOT", 0, 1, 1.0, Some("square".to_string()))
+        .set_tweezer_two_qubit_gate_time(
+            "PhaseShiftedControlledZ",
+            0,
+            1,
+            1.0,
+            Some("square".to_string()),
+        )
         .unwrap();
     device
-        .set_tweezer_two_qubit_gate_time("CNOT", 0, 2, 1.0, Some("square".to_string()))
+        .set_tweezer_two_qubit_gate_time(
+            "PhaseShiftedControlledZ",
+            0,
+            2,
+            1.0,
+            Some("square".to_string()),
+        )
         .unwrap();
     device
-        .set_tweezer_two_qubit_gate_time("CNOT", 1, 3, 1.0, Some("square".to_string()))
+        .set_tweezer_two_qubit_gate_time(
+            "PhaseShiftedControlledZ",
+            1,
+            3,
+            1.0,
+            Some("square".to_string()),
+        )
         .unwrap();
     device
-        .set_tweezer_two_qubit_gate_time("CNOT", 2, 3, 1.0, Some("square".to_string()))
+        .set_tweezer_two_qubit_gate_time(
+            "PhaseShiftedControlledZ",
+            2,
+            3,
+            1.0,
+            Some("square".to_string()),
+        )
         .unwrap();
     device.switch_layout("square", None).unwrap();
 
@@ -113,8 +137,12 @@ fn test_measurement() {
     let gate: GateOperation = PhaseShiftState1::new(0, std::f64::consts::FRAC_PI_2.into()).into();
     let preparation_gates: Vec<SingleQubitGateOperation> =
         vec![RotateX::new(0, std::f64::consts::FRAC_PI_2.into()).into()];
-    let basis_rotation_gates: Vec<SingleQubitGateOperation> =
-        vec![RotateY::new(0, std::f64::consts::FRAC_PI_2.into()).into()];
+    let basis_rotation_gates: Vec<SingleQubitGateOperation> = vec![RotateXY::new(
+        0,
+        std::f64::consts::FRAC_PI_2.into(),
+        std::f64::consts::FRAC_PI_2.into(),
+    )
+    .into()];
     let (measurement, exp_vals) =
         prepare_monte_carlo_gate_test(gate, preparation_gates, basis_rotation_gates, None, 1, 200);
     let mut device = TweezerDevice::new(None, None, None);
@@ -123,7 +151,7 @@ fn test_measurement() {
         .set_tweezer_single_qubit_gate_time("RotateX", 0, 1.0, Some("test".to_string()))
         .unwrap();
     device
-        .set_tweezer_single_qubit_gate_time("RotateY", 0, 1.0, Some("test".to_string()))
+        .set_tweezer_single_qubit_gate_time("RotateXY", 0, 1.0, Some("test".to_string()))
         .unwrap();
     device
         .set_tweezer_single_qubit_gate_time("PhaseShiftState1", 0, 1.0, Some("test".to_string()))
@@ -143,7 +171,12 @@ fn test_full_simple_gate() {
     let gate: GateOperation = RotateX::new(0, std::f64::consts::FRAC_PI_2.into()).into();
     let preparation_gates: Vec<SingleQubitGateOperation> = vec![
         RotateX::new(0, std::f64::consts::FRAC_PI_2.into()).into(),
-        RotateY::new(0, std::f64::consts::FRAC_PI_2.into()).into(),
+        RotateXY::new(
+            0,
+            std::f64::consts::FRAC_PI_2.into(),
+            std::f64::consts::FRAC_PI_2.into(),
+        )
+        .into(),
         PhaseShiftState1::new(0, std::f64::consts::FRAC_PI_2.into()).into(),
     ];
     let basis_rotation_gates: Vec<SingleQubitGateOperation> = vec![
@@ -160,13 +193,10 @@ fn test_full_simple_gate() {
         .set_tweezer_single_qubit_gate_time("RotateX", 0, 1.0, Some("test".to_string()))
         .unwrap();
     device
-        .set_tweezer_single_qubit_gate_time("RotateY", 0, 1.0, Some("test".to_string()))
+        .set_tweezer_single_qubit_gate_time("RotateXY", 0, 1.0, Some("test".to_string()))
         .unwrap();
     device
         .set_tweezer_single_qubit_gate_time("PhaseShiftState1", 0, 1.0, Some("test".to_string()))
-        .unwrap();
-    device
-        .set_tweezer_single_qubit_gate_time("PauliZ", 0, 1.0, Some("test".to_string()))
         .unwrap();
     device.switch_layout("test", None).unwrap();
     let backend = SimulatorBackend::new(device, None);
