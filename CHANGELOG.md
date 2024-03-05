@@ -2,6 +2,10 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+# 0.14.1
+
+* Added `TweezerDevice.get_supported_gate_names()`
+
 # 0.14.0
 
 * Added gate set whitelist for `TweezerDevice` tweezer setters.
