@@ -222,6 +222,23 @@ impl TweezerDeviceWrapper {
         })
     }
 
+    /// Get the names of the available gates in the given layout.
+    ///
+    /// Args:
+    ///     layout_name (Optional[str]): The name of the layout. Defaults to the current Layout.
+    ///
+    /// Returns:
+    ///     list[str]: List of the names of the available gates in the given layout.
+    ///
+    /// Raises:
+    ///     ValueError: No layout name provided and no current layout set.
+    #[pyo3(text_signature = "(layout_name, /)")]
+    pub fn get_available_gates_names(&self, layout_name: Option<String>) -> PyResult<Vec<&str>> {
+        self.internal
+            .get_available_gates_names(layout_name)
+            .map_err(|err| PyValueError::new_err(format!("{:}", err)))
+    }
+
     /// Deactivate the given qubit in the device.
     ///
     /// Args:
@@ -746,6 +763,23 @@ impl TweezerMutableDeviceWrapper {
                 .as_ref()
                 .map(|mapping| mapping.into_py_dict(py).into())
         })
+    }
+
+    /// Get the names of the available gates in the given layout.
+    ///
+    /// Args:
+    ///     layout_name (Optional[str]): The name of the layout. Defaults to the current Layout.
+    ///
+    /// Returns:
+    ///     list[str]: List of the names of the available gates in the given layout.
+    ///
+    /// Raises:
+    ///     ValueError: No layout name provided and no current layout set.
+    #[pyo3(text_signature = "(layout_name, /)")]
+    pub fn get_available_gates_names(&self, layout_name: Option<String>) -> PyResult<Vec<&str>> {
+        self.internal
+            .get_available_gates_names(layout_name)
+            .map_err(|err| PyValueError::new_err(format!("{:}", err)))
     }
 
     /// Deactivate the given qubit in the device.

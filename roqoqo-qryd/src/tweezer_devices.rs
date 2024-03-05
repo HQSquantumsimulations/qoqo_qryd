@@ -404,7 +404,7 @@ impl TweezerDevice {
     ///
     /// # Returns:
     ///
-    /// * `Vec<&String>` - The vector of all available Layout names.
+    /// * `Vec<&str>` - The vector of all available Layout names.
     pub fn available_layouts(&self) -> Vec<&str> {
         self.layout_register
             .keys()
@@ -837,6 +837,51 @@ impl TweezerDevice {
                 msg: "The device qubit -> tweezer mapping is empty.".to_string(),
             })
         }
+    }
+
+    /// Get the names of the available gates in the given layout.
+    ///
+    /// # Arguments
+    ///
+    /// * `layout` - The name of the layout. Defaults to the current Layout.
+    ///
+    /// # Returns
+    ///
+    /// * `Vec<&str>` - Vector of the names of the available gates in the given layout.
+    /// * `Err(RoqoqoBackendError)` - The given layout name is not present in the layout register.
+    pub fn get_available_gates_names(
+        &self,
+        layout_name: Option<String>,
+    ) -> Result<Vec<&str>, RoqoqoBackendError> {
+        let layout_name = layout_name
+            .or_else(|| self.current_layout.as_ref().map(|s| s.to_string()))
+            .ok_or_else(|| RoqoqoBackendError::GenericError {
+                msg: "No layout name provided and no current layout set.".to_string(),
+            })?;
+
+        let mut names: HashSet<&str> = HashSet::new();
+        if let Some(info) = self.layout_register.get(&layout_name) {
+            let sqg = &info.tweezer_single_qubit_gate_times;
+            for name in sqg.keys().by_ref() {
+                names.insert(name);
+            }
+
+            let dqg = &info.tweezer_two_qubit_gate_times;
+            for name in dqg.keys().by_ref() {
+                names.insert(name);
+            }
+
+            let tqg = &info.tweezer_three_qubit_gate_times;
+            for name in tqg.keys().by_ref() {
+                names.insert(name);
+            }
+
+            let mqg = &info.tweezer_multi_qubit_gate_times;
+            for name in mqg.keys().by_ref() {
+                names.insert(name);
+            }
+        }
+        Ok(names.into_iter().collect())
     }
 
     /// Deactivate the given qubit in the device.

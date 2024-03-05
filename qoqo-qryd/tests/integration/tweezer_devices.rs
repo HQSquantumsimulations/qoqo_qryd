@@ -1503,3 +1503,66 @@ fn test_setters_native_set_error() {
         ));
     })
 }
+
+#[test]
+fn test_available_gate_names() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
+        let device_mut = device_type_mut.call0().unwrap();
+        device_mut
+            .call_method1("add_layout", ("layout_name",))
+            .unwrap();
+
+        let res = device_mut.call_method1("get_available_gates_names", ());
+        assert!(res
+            .unwrap_err()
+            .to_string()
+            .contains("No layout name provided and no current layout set."));
+
+        device_mut
+            .call_method1(
+                "set_tweezer_single_qubit_gate_time",
+                ("PhaseShiftState1", 0, 1.0, "layout_name"),
+            )
+            .unwrap();
+
+        device_mut
+            .call_method1(
+                "set_tweezer_two_qubit_gate_time",
+                ("PhaseShiftedControlledPhase", 0, 1, 1.0, "layout_name"),
+            )
+            .unwrap();
+
+        device_mut
+            .call_method1(
+                "set_tweezer_three_qubit_gate_time",
+                (
+                    "ControlledControlledPhaseShift",
+                    0,
+                    1,
+                    3,
+                    1.0,
+                    "layout_name",
+                ),
+            )
+            .unwrap();
+
+        let res = device_mut
+            .call_method1("get_available_gates_names", ("layout_name",))
+            .unwrap();
+        let expected_result = Vec::<&str>::from(&[
+            "PhaseShiftState1",
+            "PhaseShiftedControlledPhase",
+            "ControlledControlledPhaseShift",
+        ]);
+        assert_eq!(
+            res.extract::<Vec<&str>>()
+                .unwrap()
+                .iter()
+                .filter(|extracted| expected_result.contains(extracted))
+                .count(),
+            3
+        );
+    })
+}

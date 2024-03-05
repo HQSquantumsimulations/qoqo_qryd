@@ -1131,3 +1131,87 @@ fn test_setters_native_set_error() {
         "Error setting the gate time of a multi-qubit gate. Gate wrong is not supported."
     ));
 }
+
+#[test]
+fn test_available_gate_names() {
+    let mut device = TweezerDevice::new(None, None, None);
+    device.add_layout("layout_name").unwrap();
+
+    let res = device.get_available_gates_names(None);
+    assert!(res
+        .unwrap_err()
+        .to_string()
+        .contains("No layout name provided and no current layout set."));
+
+    let res = device.get_available_gates_names(Some("".to_string()));
+    assert_eq!(res.unwrap(), Vec::<&str>::new());
+
+    device
+        .set_tweezer_single_qubit_gate_time(
+            "PhaseShiftState1",
+            0,
+            1.0,
+            Some("layout_name".to_string()),
+        )
+        .unwrap();
+
+    assert_eq!(
+        device
+            .get_available_gates_names(Some("layout_name".to_string()))
+            .unwrap(),
+        Vec::<&str>::from(&["PhaseShiftState1"])
+    );
+
+    let res = device.get_available_gates_names(None);
+    assert!(res
+        .unwrap_err()
+        .to_string()
+        .contains("No layout name provided and no current layout set."));
+
+    device
+        .set_tweezer_two_qubit_gate_time(
+            "PhaseShiftedControlledPhase",
+            0,
+            1,
+            1.0,
+            Some("layout_name".to_string()),
+        )
+        .unwrap();
+    device
+        .set_tweezer_three_qubit_gate_time(
+            "ControlledControlledPauliZ",
+            0,
+            1,
+            2,
+            1.0,
+            Some("layout_name".to_string()),
+        )
+        .unwrap();
+
+    let expected_result = Vec::<&str>::from(&[
+        "PhaseShiftState1",
+        "PhaseShiftedControlledPhase",
+        "ControlledControlledPauliZ",
+    ]);
+    assert_eq!(
+        device
+            .get_available_gates_names(Some("layout_name".to_string()))
+            .unwrap()
+            .into_iter()
+            .filter(|extracted| expected_result.contains(extracted))
+            .count(),
+        expected_result.len()
+    );
+
+    device.switch_layout("layout_name", None).unwrap();
+
+    assert_eq!(
+        device
+            .get_available_gates_names(None)
+            .unwrap()
+            .into_iter()
+            .filter(|extracted| expected_result.contains(extracted))
+            .count(),
+        expected_result.len()
+    );
+}
