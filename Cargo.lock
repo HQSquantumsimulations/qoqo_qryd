@@ -119,9 +119,9 @@ checksum = "a2bd12c1caf447e69cd4528f47f94d203fd2582878ecb9e9465484c4148a8223"
 
 [[package]]
 name = "cc"
-version = "1.0.89"
+version = "1.0.90"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a0ba8f7aaa012f30d5b2861462f6708eccd49c3c39863fe083a308035f63d723"
+checksum = "8cd6604a82acf3039f1144f54b8eb34e91ffba622051189e71b781822d5ee1f5"
 
 [[package]]
 name = "cfg-if"
@@ -1362,9 +1362,9 @@ checksum = "6980e8d7511241f8acf4aebddbb1ff938df5eebe98691418c4468d0b72a96a67"
 
 [[package]]
 name = "struqture"
-version = "1.6.0"
+version = "1.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "be0c8e01ccb1eb5704756651126b09a0eb276fe3d018e87f6490773cefb38359"
+checksum = "b5e6a6fae203fb8098042ab51364cf5ff79020312e68b63038371d627029ab08"
 dependencies = [
  "itertools 0.12.1",
  "ndarray",
@@ -1379,9 +1379,9 @@ dependencies = [
 
 [[package]]
 name = "struqture-py"
-version = "1.6.0"
+version = "1.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "09b138454a27864ea7ca9a22eaf0351270c78cb329961e5d46395cc9bcac31b3"
+checksum = "bd549b80a7e8a929b9125c37c8ec8f74916df3ed2fbc427462ee93812c1f450e"
 dependencies = [
  "bincode",
  "num-complex",
@@ -1403,9 +1403,9 @@ dependencies = [
 
 [[package]]
 name = "struqture-py-macros"
-version = "1.6.0"
+version = "1.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9274be85d19e94e55fba30b59ef862d2b11778b099a61449cb381c8965644c79"
+checksum = "3215f75379ad75b4847b3166e5fd39de65ae2723a9cdd382ad92966925a8f48e"
 dependencies = [
  "num-complex",
  "proc-macro2",

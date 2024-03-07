@@ -2196,7 +2196,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-cc 1.0.89
+cc 1.0.90
 https://github.com/rust-lang/cc-rs
 by Alex Crichton <alex@alexcrichton.com>
 A build-time dependency for Cargo build scripts to assist in invoking the native
@@ -27453,7 +27453,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 ====================================================
-struqture 1.6.0
+struqture 1.6.1
 by HQS Quantum Simulations <info@quantumsimulations.de>
 HQS tool for representing operators, Hamiltonians and open systems.
 License: Apache-2.0
@@ -27664,13 +27664,13 @@ LICENSE:
 
 
 ====================================================
-struqture-py 1.6.0
+struqture-py 1.6.1
 by HQS Quantum Simulations <info@quantumsimulations.de>
 Python interface of struqture, the HQS tool for representing operators, Hamiltonians and open systems.
 License: Apache-2.0
 
 ====================================================
-struqture-py-macros 1.6.0
+struqture-py-macros 1.6.1
 by HQS Quantum Simulations <info@quantumsimulations.de>
 Macros for struqture-py crate.
 License: Apache-2.0
