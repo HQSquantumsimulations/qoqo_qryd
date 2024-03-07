@@ -977,8 +977,11 @@ fn test_to_from_json() {
         assert_eq!(
             serialised_empty.unwrap_err().to_string(),
             PyValueError::new_err(
-                "The device does not have valid QRyd gates available. ".to_owned() +
-                "The valid gates are RotateXY, PhaseShiftState1 and PhaseShiftedControlledPhase.",
+                "The device does not support valid gates in a layout. ".to_owned() +
+                "The valid gates are: RotateZ, RotateX, RotateXY, PhaseShiftState0, " +
+                "PhaseShiftState1, ControlledPhaseShift, ControlledPauliZ, " +
+                "PhaseShiftedControlledZ, PhaseShiftedControlledPhase, ControlledControlledPauliZ, " +
+                "ControlledControlledPhaseShift."
             ).to_string()
         );
     });
