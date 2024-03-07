@@ -2,7 +2,7 @@
 
 Tracks qoqo-qryd changes after 0.5
 
-# 0.14.1
+# 0.15.0
 
 * Added `TweezerDevice.get_available_gates_names()`
 * Added ControlledPhaseShift and ControlledPauliZ to the native gate set whitelist
