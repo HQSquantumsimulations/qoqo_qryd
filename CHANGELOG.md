@@ -9,6 +9,7 @@ Tracks qoqo-qryd changes after 0.5
 * Modified the native gate set whitelist to be public
 * Fixed `TweezerDevice.to_json()` to support the whole whitelist
 * Updated dependencies addressing security advisory
+* Update to Qoqo 1.10
 
 # 0.14.0
 
