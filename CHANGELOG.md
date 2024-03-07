@@ -5,10 +5,12 @@ Tracks qoqo-qryd changes after 0.5
 # 0.14.1
 
 * Added `TweezerDevice.get_available_gates_names()`
+* Modified the native gate set whitelist to be public
+* Fixed `TweezerDevice.to_json()` to support the whole whitelist
 
 # 0.14.0
 
-* Added gate set whitelist for `TweezerDevice` tweezer setters.
+* Added native gate set whitelist for `TweezerDevice` tweezer setters.
 
 # 0.13.0
 

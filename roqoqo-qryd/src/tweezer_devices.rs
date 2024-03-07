@@ -35,20 +35,31 @@ use crate::{
     PragmaSwitchDeviceLayout,
 };
 
-static ALLOWED_NATIVE_SINGLE_QUBIT_GATES: [&str; 5] = [
+/// Native single-qubit gates allowed by the QRyd backend.
+pub static ALLOWED_NATIVE_SINGLE_QUBIT_GATES: [&str; 5] = [
     "RotateZ",
     "RotateX",
     "RotateXY",
     "PhaseShiftState0",
     "PhaseShiftState1",
 ];
-static ALLOWED_NATIVE_TWO_QUBIT_GATES: [&str; 2] =
-    ["PhaseShiftedControlledZ", "PhaseShiftedControlledPhase"];
-static ALLOWED_NATIVE_THREE_QUBIT_GATES: [&str; 2] = [
+
+/// Native two-qubit gates allowed by the QRyd backend.
+pub static ALLOWED_NATIVE_TWO_QUBIT_GATES: [&str; 4] = [
+    "ControlledPhaseShift",
+    "ControlledPauliZ",
+    "PhaseShiftedControlledZ",
+    "PhaseShiftedControlledPhase",
+];
+
+/// Native three-qubit gates allowed by the QRyd backend.
+pub static ALLOWED_NATIVE_THREE_QUBIT_GATES: [&str; 2] = [
     "ControlledControlledPauliZ",
     "ControlledControlledPhaseShift",
 ];
-static ALLOWED_NATIVE_MULTI_QUBIT_GATES: [&str; 0] = [];
+
+/// Native multi-qubit gates allowed by the QRyd backend.
+pub static ALLOWED_NATIVE_MULTI_QUBIT_GATES: [&str; 0] = [];
 
 /// Tweezer Device
 ///
