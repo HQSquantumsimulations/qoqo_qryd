@@ -6,8 +6,9 @@ Tracks qoqo-qryd changes after 0.5
 
 * Added `TweezerDevice.get_available_gates_names()`
 * Added ControlledPhaseShift and ControlledPauliZ to the native gate set whitelist
+* Added `TweezerDevice.from_json()` gate set validity check
 * Modified the native gate set whitelist to be public
-* Fixed `TweezerDevice.to_json()` to support the whole whitelist
+* Fixed `TweezerDevice.to_json()` gate set validity check
 * Updated dependencies addressing security advisory
 * Update to Qoqo 1.10
 

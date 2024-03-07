@@ -984,6 +984,26 @@ fn test_to_from_json() {
                 "ControlledControlledPhaseShift."
             ).to_string()
         );
+
+        let serialized_mut = device_mut.call_method0("to_json").unwrap();
+        let str_serialized_device_with_wrong_gate = serialized_mut
+            .extract::<String>()
+            .unwrap()
+            .replace("PhaseShiftedControlledPhase", "CNOT");
+        let device = device_type_mut.call0().unwrap();
+        let deserialized_with_wrong_gate =
+            device.call_method1("from_json", (str_serialized_device_with_wrong_gate,));
+        assert!(deserialized_with_wrong_gate.is_err());
+        assert_eq!(
+            deserialized_with_wrong_gate.unwrap_err().to_string(),
+            PyValueError::new_err(
+                "The device does not support valid gates in a layout. ".to_owned() +
+                "The valid gates are: RotateZ, RotateX, RotateXY, PhaseShiftState0, " +
+                "PhaseShiftState1, ControlledPhaseShift, ControlledPauliZ, " +
+                "PhaseShiftedControlledZ, PhaseShiftedControlledPhase, ControlledControlledPauliZ, " +
+                "ControlledControlledPhaseShift."
+            ).to_string()
+        );
     });
 }
 
