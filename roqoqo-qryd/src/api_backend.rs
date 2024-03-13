@@ -1422,10 +1422,6 @@ mod test {
             reverse_traversal_iterations: 3,
         };
 
-        // let mock = server
-        //     .mock("POST", mockito::Matcher::Any)
-        //     .match_body(mockito::Matcher::Json(json!(data)))
-        //     .create();
         let _mock = Mock::given(method("POST"))
             .and(body_json(json!(data)))
             .respond_with(ResponseTemplate::new("200"))
