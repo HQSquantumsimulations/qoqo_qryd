@@ -1016,10 +1016,11 @@ impl EvaluatingBackend for APIBackend {
 mod test {
     use super::*;
     use crate::api_devices::QrydEmuSquareDevice;
-    use mockito::Server;
     use roqoqo::operations;
     use roqoqo::{Circuit, QuantumProgram};
     use serde_json::json;
+    use wiremock::matchers::{body_json, method, path};
+    use wiremock::{Mock, MockServer, ResponseTemplate};
 
     /// Test Debug, Clone and PartialEq of ApiBackend
     #[test]
@@ -1112,8 +1113,8 @@ mod test {
     }
 
     /// Test error cases. Case 1: UnprocessableEntity
-    #[test]
-    fn api_backend_errorcase1() {
+    #[tokio::test]
+    async fn async_api_backend_errorcase1() {
         let detail = ValidationErrorDetail {
             loc: vec!["DummyLoc".to_string()],
             msg: "DummyMsg".to_string(),
@@ -1122,42 +1123,49 @@ mod test {
         let error = ValidationError {
             detail: vec![detail],
         };
-        let mut server = Server::new();
-        let port = server
-            .url()
-            .chars()
-            .rev()
-            .take(5)
-            .collect::<String>()
-            .chars()
-            .rev()
-            .collect::<String>();
-        let mock_status = server
-            .mock("GET", "/DummyLocation/status")
-            .with_status(422)
-            .with_body(serde_json::to_string(&error).unwrap().into_bytes())
-            .create();
-        let mock_result = server
-            .mock("GET", "/DummyLocation/result")
-            .with_status(422)
-            .with_body(serde_json::to_string(&error).unwrap().into_bytes())
-            .create();
-        let mock_delete = server
-            .mock("DELETE", mockito::Matcher::Any)
-            .with_status(422)
-            .with_body(serde_json::to_string(&error).unwrap().into_bytes())
-            .create();
-        let mock_post = server
-            .mock("POST", mockito::Matcher::Any)
-            .with_status(422)
-            .with_header("Location", &format!("{}/DummyLocation", server.url()))
-            .with_body(serde_json::to_string(&error).unwrap().into_bytes())
-            .create();
+        let server_wiremock = MockServer::start().await;
+        let uri = server_wiremock.uri();
+        let _mock_status = Mock::given(method("GET"))
+            .and(path("/DummyLocation/status"))
+            .respond_with(ResponseTemplate::new(422).set_body_json(&error))
+            .expect(1)
+            .mount(&server_wiremock)
+            .await;
+        let _mock_result = Mock::given(method("GET"))
+            .and(path("/DummyLocation/result"))
+            .respond_with(ResponseTemplate::new(422).set_body_json(&error))
+            .expect(1)
+            .mount(&server_wiremock)
+            .await;
+        let _mock_delete = Mock::given(method("DELETE"))
+            .respond_with(ResponseTemplate::new(422).set_body_json(&error))
+            .expect(1)
+            .mount(&server_wiremock)
+            .await;
+        let _mock_post = Mock::given(method("POST"))
+            .respond_with(
+                ResponseTemplate::new(422)
+                    .insert_header(
+                        "Location",
+                        &format!("{}/DummyLocation", server_wiremock.uri()),
+                    )
+                    .set_body_json(&error),
+            )
+            .expect(1)
+            .mount(&server_wiremock)
+            .await;
         let number_qubits = 6;
         let device = QrydEmuSquareDevice::new(Some(2), None, None);
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-        let api_backend_new =
-            APIBackend::new(qryd_device, None, None, Some(port), None, None).unwrap();
+        let api_backend_new = APIBackend::new(
+            qryd_device,
+            None,
+            None,
+            Some(server_wiremock.address().port().to_string()),
+            None,
+            None,
+        )
+        .unwrap();
         let mut circuit = Circuit::new();
         circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
         circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
@@ -1172,78 +1180,101 @@ mod test {
             measurement,
             input_parameter_names: vec![],
         };
-        let job_loc = api_backend_new.post_job(program);
 
-        mock_post.assert();
+        let api_backend_new_cloned = api_backend_new.clone();
+        let job_loc = tokio::task::spawn_blocking(move || api_backend_new_cloned.post_job(program))
+            .await
+            .unwrap();
         assert!(job_loc.is_err());
         assert!(matches!(
             job_loc.unwrap_err(),
             RoqoqoBackendError::GenericError { .. }
         ));
 
-        let job_status = api_backend_new.get_job_status(format!("{}/DummyLocation", server.url()));
-
-        mock_status.assert();
+        let api_backend_new_cloned = api_backend_new.clone();
+        let uri_cloned = uri.clone();
+        let job_status = tokio::task::spawn_blocking(move || {
+            api_backend_new_cloned.get_job_status(format!("{}/DummyLocation", uri_cloned))
+        })
+        .await
+        .unwrap();
         assert!(job_status.is_err());
         assert!(matches!(
             job_status.unwrap_err(),
             RoqoqoBackendError::GenericError { .. }
         ));
 
-        let job_result = api_backend_new.get_job_result(format!("{}/DummyLocation", server.url()));
-
-        mock_result.assert();
+        let api_backend_new_cloned = api_backend_new.clone();
+        let uri_cloned = uri.clone();
+        let job_result = tokio::task::spawn_blocking(move || {
+            api_backend_new_cloned.get_job_result(format!("{}/DummyLocation", uri_cloned))
+        })
+        .await
+        .unwrap();
         assert!(job_result.is_err());
         assert!(matches!(
             job_result.unwrap_err(),
             RoqoqoBackendError::GenericError { .. }
         ));
 
-        let job_delete = api_backend_new.delete_job(format!("{}/DummyLocation", server.url()));
-
-        mock_delete.assert();
+        let api_backend_new_cloned = api_backend_new.clone();
+        let uri_cloned = uri.clone();
+        let job_delete = tokio::task::spawn_blocking(move || {
+            api_backend_new_cloned.delete_job(format!("{}/DummyLocation", uri_cloned))
+        })
+        .await
+        .unwrap();
         assert!(job_delete.is_err());
         assert!(matches!(
             job_delete.unwrap_err(),
             RoqoqoBackendError::GenericError { .. }
         ));
+
+        server_wiremock.verify().await;
     }
 
     /// Test error cases. Case 2: ValidationError parsing error
-    #[test]
-    fn api_backend_errorcase2() {
-        let mut server = Server::new();
-        let port = server
-            .url()
-            .chars()
-            .rev()
-            .take(5)
-            .collect::<String>()
-            .chars()
-            .rev()
-            .collect::<String>();
-        let mock_post = server
-            .mock("POST", mockito::Matcher::Any)
-            .with_status(422)
-            .with_header("Location", &format!("{}/DummyLocation", server.url()))
-            .create();
-        let mock_status = server
-            .mock("GET", "/DummyLocation/status")
-            .with_status(422)
-            .create();
-        let mock_result = server
-            .mock("GET", "/DummyLocation/result")
-            .with_status(422)
-            .create();
-        let mock_delete = server
-            .mock("DELETE", mockito::Matcher::Any)
-            .with_status(422)
-            .create();
+    #[tokio::test]
+    async fn async_api_backend_errorcase2() {
+        let server_wiremock = MockServer::start().await;
+        let uri = server_wiremock.uri();
+        let _mock_status = Mock::given(method("GET"))
+            .and(path("/DummyLocation/status"))
+            .respond_with(ResponseTemplate::new(422))
+            .expect(1)
+            .mount(&server_wiremock)
+            .await;
+        let _mock_result = Mock::given(method("GET"))
+            .and(path("/DummyLocation/result"))
+            .respond_with(ResponseTemplate::new(422))
+            .expect(1)
+            .mount(&server_wiremock)
+            .await;
+        let _mock_delete = Mock::given(method("DELETE"))
+            .respond_with(ResponseTemplate::new(422))
+            .expect(1)
+            .mount(&server_wiremock)
+            .await;
+        let _mock_post = Mock::given(method("POST"))
+            .respond_with(ResponseTemplate::new(422).insert_header(
+                "Location",
+                &format!("{}/DummyLocation", server_wiremock.uri()),
+            ))
+            .expect(1)
+            .mount(&server_wiremock)
+            .await;
         let number_qubits = 6;
         let device = QrydEmuSquareDevice::new(Some(2), None, None);
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-        let api_backend_new =
-            APIBackend::new(qryd_device, None, None, Some(port), None, None).unwrap();
+        let api_backend_new = APIBackend::new(
+            qryd_device,
+            None,
+            None,
+            Some(server_wiremock.address().port().to_string()),
+            None,
+            None,
+        )
+        .unwrap();
         let mut circuit = Circuit::new();
         circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
         circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
@@ -1258,60 +1289,74 @@ mod test {
             measurement,
             input_parameter_names: vec![],
         };
-        let job_loc = api_backend_new.post_job(program);
 
-        mock_post.assert();
+        let api_backend_new_cloned = api_backend_new.clone();
+        let job_loc = tokio::task::spawn_blocking(move || api_backend_new_cloned.post_job(program))
+            .await
+            .unwrap();
         assert!(job_loc.is_err());
         assert!(matches!(
             job_loc.unwrap_err(),
             RoqoqoBackendError::NetworkError { .. }
         ));
 
-        let job_status = api_backend_new.get_job_status(format!("{}/DummyLocation", server.url()));
-
-        mock_status.assert();
+        let api_backend_new_cloned = api_backend_new.clone();
+        let uri_cloned = uri.clone();
+        let job_status = tokio::task::spawn_blocking(move || {
+            api_backend_new_cloned.get_job_status(format!("{}/DummyLocation", uri_cloned))
+        })
+        .await
+        .unwrap();
         assert!(job_status.is_err());
         assert!(matches!(
             job_status.unwrap_err(),
             RoqoqoBackendError::NetworkError { .. }
         ));
 
-        let job_result = api_backend_new.get_job_result(format!("{}/DummyLocation", server.url()));
-
-        mock_result.assert();
+        let api_backend_new_cloned = api_backend_new.clone();
+        let uri_cloned = uri.clone();
+        let job_result = tokio::task::spawn_blocking(move || {
+            api_backend_new_cloned.get_job_result(format!("{}/DummyLocation", uri_cloned))
+        })
+        .await
+        .unwrap();
         assert!(job_result.is_err());
         assert!(matches!(
             job_result.unwrap_err(),
             RoqoqoBackendError::NetworkError { .. }
         ));
 
-        let job_delete = api_backend_new.delete_job(format!("{}/DummyLocation", server.url()));
-
-        mock_delete.assert();
+        let api_backend_new_cloned = api_backend_new.clone();
+        let uri_cloned = uri.clone();
+        let job_delete = tokio::task::spawn_blocking(move || {
+            api_backend_new_cloned.delete_job(format!("{}/DummyLocation", uri_cloned))
+        })
+        .await
+        .unwrap();
         assert!(job_delete.is_err());
         assert!(matches!(
             job_delete.unwrap_err(),
             RoqoqoBackendError::NetworkError { .. }
         ));
+
+        server_wiremock.verify().await;
     }
 
     // Test PragmaRepeatedMeasurement `.post_job()` transformation
-    #[test]
-    fn api_backend_repeated_measurement() {
-        let mut server = Server::new();
-        let port = server
-            .url()
-            .chars()
-            .rev()
-            .take(5)
-            .collect::<String>()
-            .chars()
-            .rev()
-            .collect::<String>();
+    #[tokio::test]
+    async fn async_api_backend_repeated_measurement() {
+        let server_wiremock = MockServer::start().await;
         let device = QrydEmuSquareDevice::new(Some(1), None, None);
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-        let api_backend_new =
-            APIBackend::new(qryd_device, None, None, Some(port), None, None).unwrap();
+        let api_backend_new = APIBackend::new(
+            qryd_device,
+            None,
+            None,
+            Some(server_wiremock.address().port().to_string()),
+            None,
+            None,
+        )
+        .unwrap();
 
         let mut input_circuit = Circuit::new();
         input_circuit += operations::DefinitionBit::new("ro".to_string(), 3, true);
@@ -1377,13 +1422,21 @@ mod test {
             reverse_traversal_iterations: 3,
         };
 
-        let mock = server
-            .mock("POST", mockito::Matcher::Any)
-            .match_body(mockito::Matcher::Json(json!(data)))
-            .create();
+        // let mock = server
+        //     .mock("POST", mockito::Matcher::Any)
+        //     .match_body(mockito::Matcher::Json(json!(data)))
+        //     .create();
+        let _mock = Mock::given(method("POST"))
+            .and(body_json(json!(data)))
+            .respond_with(ResponseTemplate::new("200"))
+            .expect(1)
+            .mount(&server_wiremock)
+            .await;
 
-        let _ = api_backend_new.post_job(input_program);
+        let _ = tokio::task::spawn_blocking(move || api_backend_new.post_job(input_program))
+            .await
+            .unwrap();
 
-        mock.assert();
+        server_wiremock.verify().await;
     }
 }

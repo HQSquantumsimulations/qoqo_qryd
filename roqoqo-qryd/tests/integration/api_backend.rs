@@ -19,7 +19,6 @@ use roqoqo::Circuit;
 use roqoqo::QuantumProgram;
 use roqoqo::RoqoqoBackendError;
 use roqoqo_qryd::api_devices::{QRydAPIDevice, QrydEmuSquareDevice, QrydEmuTriangularDevice};
-// use roqoqo_qryd::downconvert_roqoqo_version;
 use roqoqo_qryd::{APIBackend, QRydJobResult, QRydJobStatus, ResultCounts, TweezerDevice};
 
 use qoqo_calculator::CalculatorFloat;
