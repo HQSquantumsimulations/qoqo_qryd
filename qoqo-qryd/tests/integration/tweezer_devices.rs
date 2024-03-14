@@ -26,7 +26,9 @@ use qoqo_qryd::{
 use roqoqo_qryd::{phi_theta_relation, TweezerDevice};
 
 #[cfg(feature = "web-api")]
-use mockito::Server;
+use wiremock::matchers::method;
+#[cfg(feature = "web-api")]
+use wiremock::{Mock, MockServer, ResponseTemplate};
 
 /// Test new instantiation of TweezerDeviceWrapper and TweezerMutableDeviceWrapper
 #[test]
@@ -1119,9 +1121,9 @@ fn test_two_qubit_edges() {
 }
 
 /// Test from_api of TweezerDeviceWrapper
-#[test]
+#[tokio::test]
 #[cfg(feature = "web-api")]
-fn test_from_api() {
+async fn test_from_api() {
     let mut sent_device = TweezerDevice::new(None, None, None);
     sent_device.add_layout("triangle").unwrap();
     sent_device
@@ -1148,21 +1150,12 @@ fn test_from_api() {
     let received_device_wrapper = TweezerDeviceWrapper {
         internal: received_device.clone(),
     };
-    let mut server = Server::new();
-    let port = server
-        .url()
-        .chars()
-        .rev()
-        .take(5)
-        .collect::<String>()
-        .chars()
-        .rev()
-        .collect::<String>();
-    let mock = server
-        .mock("GET", mockito::Matcher::Any)
-        .with_status(200)
-        .with_body(serde_json::to_string(&sent_device).unwrap().as_bytes())
-        .create();
+    let wiremock_server = MockServer::start().await;
+    let _mock = Mock::given(method("GET"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(&sent_device))
+        .expect(1)
+        .mount(&wiremock_server)
+        .await;
 
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
@@ -1176,11 +1169,14 @@ fn test_from_api() {
         let device = device_type
             .call_method1(
                 "from_api",
-                (Option::<String>::None, Option::<String>::None, port, 42),
+                (
+                    Option::<String>::None,
+                    Option::<String>::None,
+                    wiremock_server.address().port().to_string(),
+                    42,
+                ),
             )
             .unwrap();
-
-        mock.assert();
 
         assert_eq!(
             device
@@ -1251,6 +1247,7 @@ fn test_from_api() {
             original_device_json.get("default_layout").unwrap()
         );
     });
+    wiremock_server.verify().await;
 }
 
 /// Test convert_into_device function
