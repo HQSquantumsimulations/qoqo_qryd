@@ -24,6 +24,7 @@ qoqo\_qryd.tweezer\_devices.TweezerMutableDevice
       ~TweezerMutableDevice.gate_time_controlled_phase
       ~TweezerMutableDevice.gate_time_controlled_z
       ~TweezerMutableDevice.generic_device
+      ~TweezerMutableDevice.get_available_gates_names
       ~TweezerMutableDevice.get_qubit_to_tweezer_mapping
       ~TweezerMutableDevice.multi_qubit_gate_time
       ~TweezerMutableDevice.number_qubits
