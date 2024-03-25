@@ -977,8 +977,31 @@ fn test_to_from_json() {
         assert_eq!(
             serialised_empty.unwrap_err().to_string(),
             PyValueError::new_err(
-                "The device does not have valid QRyd gates available. ".to_owned() +
-                "The valid gates are RotateXY, PhaseShiftState1 and PhaseShiftedControlledPhase.",
+                "The device does not support valid gates in a layout. ".to_owned() +
+                "The valid gates are: RotateZ, RotateX, RotateXY, PhaseShiftState0, " +
+                "PhaseShiftState1, ControlledPhaseShift, ControlledPauliZ, " +
+                "PhaseShiftedControlledZ, PhaseShiftedControlledPhase, ControlledControlledPauliZ, " +
+                "ControlledControlledPhaseShift."
+            ).to_string()
+        );
+
+        let serialized_mut = device_mut.call_method0("to_json").unwrap();
+        let str_serialized_device_with_wrong_gate = serialized_mut
+            .extract::<String>()
+            .unwrap()
+            .replace("PhaseShiftedControlledPhase", "CNOT");
+        let device = device_type_mut.call0().unwrap();
+        let deserialized_with_wrong_gate =
+            device.call_method1("from_json", (str_serialized_device_with_wrong_gate,));
+        assert!(deserialized_with_wrong_gate.is_err());
+        assert_eq!(
+            deserialized_with_wrong_gate.unwrap_err().to_string(),
+            PyValueError::new_err(
+                "The device does not support valid gates in a layout. ".to_owned() +
+                "The valid gates are: RotateZ, RotateX, RotateXY, PhaseShiftState0, " +
+                "PhaseShiftState1, ControlledPhaseShift, ControlledPauliZ, " +
+                "PhaseShiftedControlledZ, PhaseShiftedControlledPhase, ControlledControlledPauliZ, " +
+                "ControlledControlledPhaseShift."
             ).to_string()
         );
     });
@@ -1501,5 +1524,68 @@ fn test_setters_native_set_error() {
         assert!(multi_setter.unwrap_err().to_string().contains(
             "Error setting the gate time of a multi-qubit gate. Gate wrong is not supported."
         ));
+    })
+}
+
+#[test]
+fn test_available_gate_names() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
+        let device_mut = device_type_mut.call0().unwrap();
+        device_mut
+            .call_method1("add_layout", ("layout_name",))
+            .unwrap();
+
+        let res = device_mut.call_method1("get_available_gates_names", ());
+        assert!(res
+            .unwrap_err()
+            .to_string()
+            .contains("No layout name provided and no current layout set."));
+
+        device_mut
+            .call_method1(
+                "set_tweezer_single_qubit_gate_time",
+                ("PhaseShiftState1", 0, 1.0, "layout_name"),
+            )
+            .unwrap();
+
+        device_mut
+            .call_method1(
+                "set_tweezer_two_qubit_gate_time",
+                ("PhaseShiftedControlledPhase", 0, 1, 1.0, "layout_name"),
+            )
+            .unwrap();
+
+        device_mut
+            .call_method1(
+                "set_tweezer_three_qubit_gate_time",
+                (
+                    "ControlledControlledPhaseShift",
+                    0,
+                    1,
+                    3,
+                    1.0,
+                    "layout_name",
+                ),
+            )
+            .unwrap();
+
+        let res = device_mut
+            .call_method1("get_available_gates_names", ("layout_name",))
+            .unwrap();
+        let expected_result = Vec::<&str>::from(&[
+            "PhaseShiftState1",
+            "PhaseShiftedControlledPhase",
+            "ControlledControlledPhaseShift",
+        ]);
+        assert_eq!(
+            res.extract::<Vec<&str>>()
+                .unwrap()
+                .iter()
+                .filter(|extracted| expected_result.contains(extracted))
+                .count(),
+            3
+        );
     })
 }

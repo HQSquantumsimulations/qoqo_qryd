@@ -10,6 +10,8 @@
 // express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::collections::HashSet;
+
 use bincode::{deserialize, serialize};
 use pyo3::{
     exceptions::{PyTypeError, PyValueError},
@@ -21,6 +23,10 @@ use qoqo::{devices::GenericDeviceWrapper, QoqoBackendError};
 use qoqo_calculator_pyo3::convert_into_calculator_float;
 use roqoqo::devices::Device;
 
+use roqoqo_qryd::tweezer_devices::{
+    ALLOWED_NATIVE_SINGLE_QUBIT_GATES, ALLOWED_NATIVE_THREE_QUBIT_GATES,
+    ALLOWED_NATIVE_TWO_QUBIT_GATES,
+};
 use roqoqo_qryd::{QRydAPIDevice, TweezerDevice};
 
 /// Tweezer Device
@@ -220,6 +226,23 @@ impl TweezerDeviceWrapper {
                 .as_ref()
                 .map(|mapping| mapping.into_py_dict(py).into())
         })
+    }
+
+    /// Get the names of the available gates in the given layout.
+    ///
+    /// Args:
+    ///     layout_name (Optional[str]): The name of the layout. Defaults to the current Layout.
+    ///
+    /// Returns:
+    ///     list[str]: List of the names of the available gates in the given layout.
+    ///
+    /// Raises:
+    ///     ValueError: No layout name provided and no current layout set.
+    #[pyo3(text_signature = "(layout_name, /)")]
+    pub fn get_available_gates_names(&self, layout_name: Option<String>) -> PyResult<Vec<&str>> {
+        self.internal
+            .get_available_gates_names(layout_name)
+            .map_err(|err| PyValueError::new_err(format!("{:}", err)))
     }
 
     /// Deactivate the given qubit in the device.
@@ -457,6 +480,8 @@ impl TweezerDeviceWrapper {
 
     /// Return the json representation of the TweezerDevice.
     ///
+    /// Additionally, a gate set check is performed.
+    ///
     /// Returns:
     ///     str: The serialized form of TweezerDevice.
     ///
@@ -464,26 +489,41 @@ impl TweezerDeviceWrapper {
     ///     ValueError: Cannot serialize TweezerDevice to json or
     ///         the device does not have valid QRyd gates available.
     fn to_json(&self) -> PyResult<String> {
-        const SINGLE_GATES: [&str; 2] = ["PhaseShiftState1", "RotateXY"];
-        const DOUBLE_GATES: &str = "PhaseShiftedControlledPhase";
-        if self.internal.layout_register.values().any(|info| {
-            SINGLE_GATES
-                .iter()
-                .any(|&g| info.tweezer_single_qubit_gate_times.contains_key(g))
-                || info.tweezer_two_qubit_gate_times.contains_key(DOUBLE_GATES)
-        }) {
-            let serialized = serde_json::to_string(&self.internal)
-                .map_err(|_| PyValueError::new_err("Cannot serialize TweezerDevice to json"))?;
-            Ok(serialized)
-        } else {
-            Err(PyValueError::new_err(
-                "The device does not have valid QRyd gates available. ".to_owned() +
-                "The valid gates are RotateXY, PhaseShiftState1 and PhaseShiftedControlledPhase.",
-            ))
+        let mut all_gates_names: HashSet<&str> = HashSet::new();
+        for layout in self.internal.available_layouts() {
+            all_gates_names.extend(
+                &self
+                    .internal
+                    .get_available_gates_names(Some(layout.to_string()))
+                    .unwrap(),
+            );
         }
+        if all_gates_names.iter().any(|name| {
+            !ALLOWED_NATIVE_SINGLE_QUBIT_GATES.contains(name)
+                && !ALLOWED_NATIVE_TWO_QUBIT_GATES.contains(name)
+                && !ALLOWED_NATIVE_THREE_QUBIT_GATES.contains(name)
+        }) || all_gates_names.is_empty()
+        {
+            return Err(PyValueError::new_err(
+                "The device does not support valid gates in a layout. ".to_owned()
+                    + "The valid gates are: "
+                    + &ALLOWED_NATIVE_SINGLE_QUBIT_GATES.join(", ")
+                    + ", "
+                    + &ALLOWED_NATIVE_TWO_QUBIT_GATES.join(", ")
+                    + ", "
+                    + &ALLOWED_NATIVE_THREE_QUBIT_GATES.join(", ")
+                    + ".",
+            ));
+        }
+        let serialized = serde_json::to_string(&self.internal)
+            .map_err(|_| PyValueError::new_err("Cannot serialize TweezerMutableDevice to json"))?;
+        Ok(serialized)
     }
 
     /// Convert the json representation of a TweezerDevice to a TweezerDevice.
+    ///
+    /// If a default_layout is found in the input, a layout switch is executed.
+    /// Additionally, a gate set check is performed.
     ///
     /// Args:
     ///     input (str): The serialized TweezerDevice in json form.
@@ -492,12 +532,38 @@ impl TweezerDeviceWrapper {
     ///     TweezerDevice: The deserialized TweezerDevice.
     ///
     /// Raises:
-    ///     ValueError: Input cannot be deserialized to TweezerDevice.
+    ///     ValueError: Input cannot be deserialized to TweezerDevice  or
+    ///         the device does not have valid QRyd gates available.
     #[staticmethod]
     #[pyo3(text_signature = "(input, /)")]
     fn from_json(input: &str) -> PyResult<TweezerDeviceWrapper> {
         let mut internal: TweezerDevice = serde_json::from_str(input)
             .map_err(|_| PyValueError::new_err("Input cannot be deserialized to TweezerDevice"))?;
+        let mut all_gates_names: HashSet<&str> = HashSet::new();
+        for layout in internal.available_layouts() {
+            all_gates_names.extend(
+                &internal
+                    .get_available_gates_names(Some(layout.to_string()))
+                    .unwrap(),
+            );
+        }
+        if all_gates_names.iter().any(|name| {
+            !ALLOWED_NATIVE_SINGLE_QUBIT_GATES.contains(name)
+                && !ALLOWED_NATIVE_TWO_QUBIT_GATES.contains(name)
+                && !ALLOWED_NATIVE_THREE_QUBIT_GATES.contains(name)
+        }) || all_gates_names.is_empty()
+        {
+            return Err(PyValueError::new_err(
+                "The device does not support valid gates in a layout. ".to_owned()
+                    + "The valid gates are: "
+                    + &ALLOWED_NATIVE_SINGLE_QUBIT_GATES.join(", ")
+                    + ", "
+                    + &ALLOWED_NATIVE_TWO_QUBIT_GATES.join(", ")
+                    + ", "
+                    + &ALLOWED_NATIVE_THREE_QUBIT_GATES.join(", ")
+                    + ".",
+            ));
+        }
         if let Some(layout) = &internal.default_layout {
             let _ = internal
                 .switch_layout(&layout.to_string(), None)
@@ -748,6 +814,23 @@ impl TweezerMutableDeviceWrapper {
         })
     }
 
+    /// Get the names of the available gates in the given layout.
+    ///
+    /// Args:
+    ///     layout_name (Optional[str]): The name of the layout. Defaults to the current Layout.
+    ///
+    /// Returns:
+    ///     list[str]: List of the names of the available gates in the given layout.
+    ///
+    /// Raises:
+    ///     ValueError: No layout name provided and no current layout set.
+    #[pyo3(text_signature = "(layout_name, /)")]
+    pub fn get_available_gates_names(&self, layout_name: Option<String>) -> PyResult<Vec<&str>> {
+        self.internal
+            .get_available_gates_names(layout_name)
+            .map_err(|err| PyValueError::new_err(format!("{:}", err)))
+    }
+
     /// Deactivate the given qubit in the device.
     ///
     /// Args:
@@ -984,6 +1067,8 @@ impl TweezerMutableDeviceWrapper {
 
     /// Return the json representation of the TweezerMutableDevice.
     ///
+    /// Additionally, a gate set check is performed.
+    ///
     /// Returns:
     ///     str: The serialized form of TweezerMutableDevice.
     ///
@@ -991,27 +1076,40 @@ impl TweezerMutableDeviceWrapper {
     ///     ValueError: Cannot serialize TweezerMutableDevice to json or
     ///         the device does not have valid QRyd gates available.
     fn to_json(&self) -> PyResult<String> {
-        const SINGLE_GATES: [&str; 2] = ["PhaseShiftState1", "RotateXY"];
-        const DOUBLE_GATES: &str = "PhaseShiftedControlledPhase";
-        if self.internal.layout_register.values().any(|info| {
-            SINGLE_GATES
-                .iter()
-                .any(|&g| info.tweezer_single_qubit_gate_times.contains_key(g))
-                || info.tweezer_two_qubit_gate_times.contains_key(DOUBLE_GATES)
-        }) {
-            let serialized = serde_json::to_string(&self.internal).map_err(|_| {
-                PyValueError::new_err("Cannot serialize TweezerMutableDevice to json")
-            })?;
-            Ok(serialized)
-        } else {
-            Err(PyValueError::new_err(
-                "The device does not allow any valid gate in any layout. ".to_owned() +
-                "The valid gates are RotateXY, PhaseShiftState1 and PhaseShiftedControlledPhase.",
-            ))
+        let mut all_gates_names: HashSet<&str> = HashSet::new();
+        for layout in self.internal.available_layouts() {
+            all_gates_names.extend(
+                &self
+                    .internal
+                    .get_available_gates_names(Some(layout.to_string()))
+                    .unwrap(),
+            );
         }
+        if all_gates_names.iter().any(|name| {
+            !ALLOWED_NATIVE_SINGLE_QUBIT_GATES.contains(name)
+                && !ALLOWED_NATIVE_TWO_QUBIT_GATES.contains(name)
+                && !ALLOWED_NATIVE_THREE_QUBIT_GATES.contains(name)
+        }) || all_gates_names.is_empty()
+        {
+            return Err(PyValueError::new_err(
+                "The device does not support valid gates in a layout. ".to_owned()
+                    + "The valid gates are: "
+                    + &ALLOWED_NATIVE_SINGLE_QUBIT_GATES.join(", ")
+                    + ", "
+                    + &ALLOWED_NATIVE_TWO_QUBIT_GATES.join(", ")
+                    + ", "
+                    + &ALLOWED_NATIVE_THREE_QUBIT_GATES.join(", ")
+                    + ".",
+            ));
+        }
+        let serialized = serde_json::to_string(&self.internal)
+            .map_err(|_| PyValueError::new_err("Cannot serialize TweezerMutableDevice to json"))?;
+        Ok(serialized)
     }
 
     /// Convert the json representation of a TweezerMutableDevice to an TweezerMutableDevice.
+    ///
+    /// Additionally, a gate set check is performed.
     ///
     /// Args:
     ///     input (str): The serialized TweezerMutableDevice in json form.
@@ -1020,15 +1118,40 @@ impl TweezerMutableDeviceWrapper {
     ///     TweezerMutableDevice: The deserialized TweezerMutableDevice.
     ///
     /// Raises:
-    ///     ValueError: Input cannot be deserialized to TweezerMutableDevice.
+    ///     ValueError: Input cannot be deserialized to TweezerMutableDevice or
+    ///         the device does not have valid QRyd gates available.
     #[staticmethod]
     #[pyo3(text_signature = "(input, /)")]
     fn from_json(input: &str) -> PyResult<TweezerMutableDeviceWrapper> {
-        Ok(TweezerMutableDeviceWrapper {
-            internal: serde_json::from_str(input).map_err(|_| {
-                PyValueError::new_err("Input cannot be deserialized to TweezerMutableDevice")
-            })?,
-        })
+        let internal: TweezerDevice = serde_json::from_str(input).map_err(|_| {
+            PyValueError::new_err("Input cannot be deserialized to TweezerMutableDevice")
+        })?;
+        let mut all_gates_names: HashSet<&str> = HashSet::new();
+        for layout in internal.available_layouts() {
+            all_gates_names.extend(
+                &internal
+                    .get_available_gates_names(Some(layout.to_string()))
+                    .unwrap(),
+            );
+        }
+        if all_gates_names.iter().any(|name| {
+            !ALLOWED_NATIVE_SINGLE_QUBIT_GATES.contains(name)
+                && !ALLOWED_NATIVE_TWO_QUBIT_GATES.contains(name)
+                && !ALLOWED_NATIVE_THREE_QUBIT_GATES.contains(name)
+        }) || all_gates_names.is_empty()
+        {
+            return Err(PyValueError::new_err(
+                "The device does not support valid gates in a layout. ".to_owned()
+                    + "The valid gates are: "
+                    + &ALLOWED_NATIVE_SINGLE_QUBIT_GATES.join(", ")
+                    + ", "
+                    + &ALLOWED_NATIVE_TWO_QUBIT_GATES.join(", ")
+                    + ", "
+                    + &ALLOWED_NATIVE_THREE_QUBIT_GATES.join(", ")
+                    + ".",
+            ));
+        }
+        Ok(TweezerMutableDeviceWrapper { internal })
     }
 
     /// Return number of qubits in device.

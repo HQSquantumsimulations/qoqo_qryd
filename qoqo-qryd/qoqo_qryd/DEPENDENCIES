@@ -2196,7 +2196,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-cc 1.0.88
+cc 1.0.90
 https://github.com/rust-lang/cc-rs
 by Alex Crichton <alex@alexcrichton.com>
 A build-time dependency for Cargo build scripts to assist in invoking the native
@@ -7831,7 +7831,7 @@ SOFTWARE.
 
 
 ====================================================
-http 0.2.11
+http 0.2.12
 https://github.com/hyperium/http
 by Alex Crichton <alex@alexcrichton.com>, Carl Lerche <me@carllerche.com>, Sean McArthur <sean@seanmonstar.com>
 A set of types for representing HTTP requests and responses.
@@ -9126,7 +9126,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-indexmap 2.2.4
+indexmap 2.2.5
 https://github.com/indexmap-rs/indexmap
 by 
 A hash table with consistent order and fast iteration.
@@ -10714,7 +10714,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-js-sys 0.3.68
+js-sys 0.3.69
 https://rustwasm.github.io/wasm-bindgen/
 by The wasm-bindgen Developers
 Bindings for all JS global objects and functions in all JS environments like
@@ -12730,7 +12730,7 @@ SOFTWARE.
 
 
 ====================================================
-mio 0.8.10
+mio 0.8.11
 https://github.com/tokio-rs/mio
 by Carl Lerche <me@carllerche.com>, Thomas de Zeeuw <thomasdezeeuw@gmail.com>, Tokio Contributors <team@tokio.rs>
 Lightweight non-blocking I/O.
@@ -18845,7 +18845,7 @@ LICENSE:
 
 
 ====================================================
-qoqo-qryd 0.14.0
+qoqo-qryd 0.15.0
 https://github.com/HQSquantumsimulations/qoqo_qryd
 by HQS Quantum Simulations <info@quantumsimulations.de>
 QRyd backend for qoqo quantum computing toolkit
@@ -21441,7 +21441,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-regex-automata 0.4.5
+regex-automata 0.4.6
 https://github.com/rust-lang/regex/tree/master/regex-automata
 by The Rust Project Developers, Andrew Gallant <jamslam@gmail.com>
 Automata construction and matching using regular expressions.
@@ -22588,7 +22588,7 @@ LICENSE:
 
 
 ====================================================
-roqoqo-qryd 0.14.0
+roqoqo-qryd 0.15.0
 https://github.com/HQSquantumsimulations/qoqo_qryd
 by HQS Quantum Simulations <info@quantumsimulations.de>
 QRyd interface for roqoqo rust quantum computing toolkit
@@ -27453,7 +27453,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 ====================================================
-struqture 1.6.0
+struqture 1.6.1
 by HQS Quantum Simulations <info@quantumsimulations.de>
 HQS tool for representing operators, Hamiltonians and open systems.
 License: Apache-2.0
@@ -27664,13 +27664,13 @@ LICENSE:
 
 
 ====================================================
-struqture-py 1.6.0
+struqture-py 1.6.1
 by HQS Quantum Simulations <info@quantumsimulations.de>
 Python interface of struqture, the HQS tool for representing operators, Hamiltonians and open systems.
 License: Apache-2.0
 
 ====================================================
-struqture-py-macros 1.6.0
+struqture-py-macros 1.6.1
 by HQS Quantum Simulations <info@quantumsimulations.de>
 Macros for struqture-py crate.
 License: Apache-2.0
@@ -32247,7 +32247,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-wasm-bindgen 0.2.91
+wasm-bindgen 0.2.92
 https://rustwasm.github.io/
 by The wasm-bindgen Developers
 Easy support for interacting between JS and Rust.
@@ -32489,7 +32489,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-wasm-bindgen-backend 0.2.91
+wasm-bindgen-backend 0.2.92
 https://rustwasm.github.io/wasm-bindgen/
 by The wasm-bindgen Developers
 Backend code generation of the wasm-bindgen tool
@@ -32731,7 +32731,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-wasm-bindgen-futures 0.4.41
+wasm-bindgen-futures 0.4.42
 https://rustwasm.github.io/wasm-bindgen/
 by The wasm-bindgen Developers
 Bridging the gap between Rust Futures and JavaScript Promises
@@ -32972,7 +32972,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-wasm-bindgen-macro 0.2.91
+wasm-bindgen-macro 0.2.92
 https://rustwasm.github.io/wasm-bindgen/
 by The wasm-bindgen Developers
 Definition of the `#[wasm_bindgen]` attribute, an internal dependency
@@ -33214,7 +33214,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-wasm-bindgen-macro-support 0.2.91
+wasm-bindgen-macro-support 0.2.92
 https://rustwasm.github.io/wasm-bindgen/
 by The wasm-bindgen Developers
 The part of the implementation of the `#[wasm_bindgen]` attribute that is not in the shared backend crate
@@ -33456,7 +33456,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-wasm-bindgen-shared 0.2.91
+wasm-bindgen-shared 0.2.92
 https://rustwasm.github.io/wasm-bindgen/
 by The wasm-bindgen Developers
 Shared support between wasm-bindgen and wasm-bindgen cli, an internal
@@ -33699,7 +33699,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-web-sys 0.3.68
+web-sys 0.3.69
 https://rustwasm.github.io/wasm-bindgen/web-sys/index.html
 by The wasm-bindgen Developers
 Bindings for all Web APIs, a procedurally generated crate from WebIDL
