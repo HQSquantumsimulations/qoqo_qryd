@@ -31,6 +31,8 @@ use roqoqo_qryd::api_devices::{QRydAPIDevice, QrydEmuSquareDevice};
 use roqoqo_qryd::{APIBackend, QRydJobResult, QRydJobStatus, ResultCounts};
 
 use mockito::Server;
+use wiremock::matchers::{method, path};
+use wiremock::{Mock, MockServer, ResponseTemplate};
 
 // Helper function to create a python object of square device
 fn create_backend_with_square_device(
@@ -301,8 +303,8 @@ fn test_query_job_status_fail() {
     });
 }
 
-#[test]
-fn test_run_job() {
+#[tokio::test]
+async fn async_test_run_job() {
     if env::var("QRYD_API_TOKEN").is_ok() {
         pyo3::prepare_freethreaded_python();
         Python::with_gil(|py| {
@@ -331,16 +333,9 @@ fn test_run_job() {
             }
         });
     } else {
-        let mut server = Server::new();
-        let port = server
-            .url()
-            .chars()
-            .rev()
-            .take(5)
-            .collect::<String>()
-            .chars()
-            .rev()
-            .collect::<String>();
+        let wiremock_server = MockServer::start().await;
+        let port = wiremock_server.address().port().to_string();
+        let uri = wiremock_server.uri();
         let qryd_job_status_in_progress = QRydJobStatus {
             status: "in progress".to_string(),
             msg: "the job is still in progress".to_string(),
@@ -367,34 +362,38 @@ fn test_run_job() {
             executed_single_qubit_gates: 50,
             executed_two_qubit_gates: 50,
         };
-        let mock_post = server
-            .mock("POST", mockito::Matcher::Any)
-            .with_status(201)
-            .with_header("Location", &format!("{}/DummyLocation", server.url()))
-            .create();
-        let mock_status0 = server
-            .mock("GET", "/DummyLocation/status")
-            .with_status(200)
-            .with_body(
-                serde_json::to_string(&qryd_job_status_in_progress)
-                    .unwrap()
-                    .into_bytes(),
+        let _mock_post = Mock::given(method("POST"))
+            .respond_with(
+                ResponseTemplate::new(201)
+                    .insert_header("Location", &format!("{}/DummyLocation", uri)),
             )
+            .expect(1)
+            .mount(&wiremock_server)
+            .await;
+        // let mock_status0 = server
+        //     .mock("GET", "/DummyLocation/status")
+        //     .with_status(200)
+        //     .with_body(
+        //         serde_json::to_string(&qryd_job_status_in_progress)
+        //             .unwrap()
+        //             .into_bytes(),
+        //     )
+        //     .expect(20)
+        //     .create();
+        let _mock_status = Mock::given(method("GET"))
+            .and(path("/DummyLocation/status"))
+            .respond_with(ResponseTemplate::new(200).set_body_json(&qryd_job_status_in_progress))
             .expect(20)
-            .create();
-        let mock_result = server
-            .mock("GET", "/DummyLocation/result")
-            .with_status(200)
-            .with_body(
-                serde_json::to_string(&qryd_job_result_completed)
-                    .unwrap()
-                    .into_bytes(),
-            )
-            .create();
+            .mount(&wiremock_server)
+            .await;
 
         pyo3::prepare_freethreaded_python();
-        Python::with_gil(|py| {
-            let backend = create_valid_backend_with_square_device_mocked(py, Some(11), port);
+        let backend = Python::with_gil(|py| {
+            create_valid_backend_with_square_device_mocked(py, Some(11), port).into_py(py)
+        });
+        Python::with_gil(|py| async {
+            // let backend = create_valid_backend_with_square_device_mocked(py, Some(11), port);
+            let backend = backend.as_ref(py);
             let program = create_quantum_program(true);
             let job_loc = backend.call_method1("post_job", (program,)).unwrap();
             let fifteen = time::Duration::from_millis(50);
@@ -413,17 +412,25 @@ fn test_run_job() {
                 assert_eq!(job_status, "in progress");
                 thread::sleep(fifteen);
             }
-            mock_status0.remove();
 
-            let mock_status1 = server
-                .mock("GET", "/DummyLocation/status")
-                .with_status(200)
-                .with_body(
-                    serde_json::to_string(&qryd_job_status_completed)
-                        .unwrap()
-                        .as_bytes(),
-                )
-                .create();
+            wiremock_server.verify().await;
+            wiremock_server.reset().await;
+
+            // let mock_status1 = server
+            //     .mock("GET", "/DummyLocation/status")
+            //     .with_status(200)
+            //     .with_body(
+            //         serde_json::to_string(&qryd_job_status_completed)
+            //             .unwrap()
+            //             .as_bytes(),
+            //     )
+            //     .create();
+            let _mock_status1 = Mock::given(method("GET"))
+                .and(path("/DummyLocation/status"))
+                .respond_with(ResponseTemplate::new(200).set_body_json(&qryd_job_status_completed))
+                .expect(1)
+                .mount(&wiremock_server)
+                .await;
 
             let status_report: HashMap<String, String> = backend
                 .call_method1("get_job_status", (job_loc,))
@@ -434,27 +441,33 @@ fn test_run_job() {
 
             assert_eq!(job_status, "completed");
 
-            let _job_result = backend.call_method1("get_job_result", (job_loc,)).unwrap();
+            // let mock_result = server
+            //     .mock("GET", "/DummyLocation/result")
+            //     .with_status(200)
+            //     .with_body(
+            //         serde_json::to_string(&qryd_job_result_completed)
+            //             .unwrap()
+            //             .into_bytes(),
+            //     )
+            //     .create();
+            let _mock_result = Mock::given(method("GET"))
+                .and(path("/DummyLocation/result"))
+                .respond_with(ResponseTemplate::new(200).set_body_json(&qryd_job_result_completed))
+                .expect(1)
+                .mount(&wiremock_server)
+                .await;
 
-            mock_post.assert();
-            mock_status1.assert();
-            mock_result.assert();
+            let _job_result = backend.call_method1("get_job_result", (job_loc,)).unwrap();
         });
+        wiremock_server.verify().await;
     }
 }
 
-#[test]
-fn test_run_circuit() {
-    let mut server = Server::new();
-    let port = server
-        .url()
-        .chars()
-        .rev()
-        .take(5)
-        .collect::<String>()
-        .chars()
-        .rev()
-        .collect::<String>();
+#[tokio::test]
+async fn test_run_circuit() {
+    let wiremock_server = MockServer::start().await;
+    let port = wiremock_server.address().port().to_string();
+    let uri = wiremock_server.uri();
     let qryd_job_status_completed = QRydJobStatus {
         status: "completed".to_string(),
         msg: "the job has been completed".to_string(),
@@ -478,29 +491,25 @@ fn test_run_circuit() {
         executed_two_qubit_gates: 0,
     };
 
-    let mock_post = server
-        .mock("POST", mockito::Matcher::Any)
-        .with_status(201)
-        .with_header("Location", &format!("{}/DummyLocation", server.url()))
-        .create();
-    let mock_status1 = server
-        .mock("GET", "/DummyLocation/status")
-        .with_status(200)
-        .with_body(
-            serde_json::to_string(&qryd_job_status_completed)
-                .unwrap()
-                .as_bytes(),
+    let _mock_post = Mock::given(method("POST"))
+        .respond_with(
+            ResponseTemplate::new(201).insert_header("Location", &format!("{}/DummyLocation", uri)),
         )
-        .create();
-    let mock_result = server
-        .mock("GET", "/DummyLocation/result")
-        .with_status(200)
-        .with_body(
-            serde_json::to_string(&qryd_job_result_completed)
-                .unwrap()
-                .as_bytes(),
-        )
-        .create();
+        .expect(1)
+        .mount(&wiremock_server)
+        .await;
+    let _mock_status = Mock::given(method("GET"))
+        .and(path("/DummyLocation/status"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(&qryd_job_status_completed))
+        .expect(1)
+        .mount(&wiremock_server)
+        .await;
+    let _mock_result = Mock::given(method("GET"))
+        .and(path("/DummyLocation/result"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(qryd_job_status_completed))
+        .expect(1)
+        .mount(&wiremock_server)
+        .await;
 
     let mut circuit = Circuit::new();
     circuit += operations::DefinitionBit::new("ro".to_string(), 2, true);
@@ -510,7 +519,7 @@ fn test_run_circuit() {
     let circuit_py = CircuitWrapper { internal: circuit };
 
     pyo3::prepare_freethreaded_python();
-    Python::with_gil(|py| {
+    Python::with_gil(|py| async {
         let backend: &PyCell<APIBackendWrapper> = if env::var("QRYD_API_TOKEN").is_ok() {
             create_valid_backend_with_square_device(py, Some(11))
         } else {
@@ -523,9 +532,7 @@ fn test_run_circuit() {
         backend.call_method1("run_circuit", (circuit_py,)).unwrap();
 
         if env::var("QRYD_API_TOKEN").is_err() {
-            mock_post.assert();
-            mock_status1.assert();
-            mock_result.assert();
+            wiremock_server.verify().await;
         }
     });
 }

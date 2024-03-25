@@ -2,9 +2,13 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+# Unreleased
+
+* Substituted `mockito` with `wiremock-rs`
+
 # 0.14.0
 
-* Added gate set whitelist for `TweezerDevice` tweezer setters.
+* Added gate set whitelist for `TweezerDevice` tweezer setters
 
 # 0.13.0
 
@@ -15,7 +19,7 @@ Tracks qoqo-qryd changes after 0.5
 * Added `TweezerDevice` support for `SimulatorBackend`
 * Added `number_qubits` parameter to `SimulatorBackend`
 * Modified `TweezerDevice.number_qubits()` back to index-based implementation
-* Modified `TweezerDevice.change_device()` for `PragmaSwitchDeviceLayout` to better reflect device constraints.
+* Modified `TweezerDevice.change_device()` for `PragmaSwitchDeviceLayout` to better reflect device constraints
 * Dropped `FirstDevice` support for `SimulatorBackend`
 * Updated to `mockito` 1.2
 * Updated the MSRV to 1.68
