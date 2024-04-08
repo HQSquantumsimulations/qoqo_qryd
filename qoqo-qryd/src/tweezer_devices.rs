@@ -245,6 +245,14 @@ impl TweezerDeviceWrapper {
             .map_err(|err| PyValueError::new_err(format!("{:}", err)))
     }
 
+    /// Get whether the device allows PragmaActiveReset operations or not.
+    ///
+    /// Returns:
+    ///     bool: Whether the device allows PragmaActiveReset operations or not.
+    pub fn get_allow_reset(&self) -> bool {
+        self.internal.allow_reset
+    }
+
     /// Deactivate the given qubit in the device.
     ///
     /// Args:
@@ -829,6 +837,14 @@ impl TweezerMutableDeviceWrapper {
         self.internal
             .get_available_gates_names(layout_name)
             .map_err(|err| PyValueError::new_err(format!("{:}", err)))
+    }
+
+    /// Get whether the device allows PragmaActiveReset operations or not.
+    ///
+    /// Returns:
+    ///     bool: Whether the device allows PragmaActiveReset operations or not.
+    pub fn get_allow_reset(&self) -> bool {
+        self.internal.allow_reset
     }
 
     /// Deactivate the given qubit in the device.

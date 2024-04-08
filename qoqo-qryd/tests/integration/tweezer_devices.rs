@@ -423,8 +423,27 @@ fn test_allow_reset() {
     Python::with_gil(|py| {
         let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
         let device_mut = device_type_mut.call0().unwrap();
+        let device_type = py.get_type::<TweezerDeviceWrapper>();
+        let device = device_type.call0().unwrap();
+
+        assert!(!device_mut
+            .call_method0("get_allow_reset")
+            .unwrap()
+            .extract::<bool>()
+            .unwrap());
+        assert!(!device
+            .call_method0("get_allow_reset")
+            .unwrap()
+            .extract::<bool>()
+            .unwrap());
 
         assert!(device_mut.call_method1("set_allow_reset", (true,)).is_ok());
+
+        assert!(device_mut
+            .call_method0("get_allow_reset")
+            .unwrap()
+            .extract::<bool>()
+            .unwrap());
     })
 }
 
