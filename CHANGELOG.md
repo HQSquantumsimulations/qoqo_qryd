@@ -2,6 +2,10 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+# 0.16.0
+
+* Added `TweezerDevice.get_allow_reset()`
+
 # 0.15.1
 
 * Updated dependencies addressing security advisory
