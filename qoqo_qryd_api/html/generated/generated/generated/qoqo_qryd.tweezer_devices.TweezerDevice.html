@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>qoqo_qryd.tweezer_devices.TweezerDevice &mdash; qoqo_qryd 0.15.1 documentation</title>
+  <title>qoqo_qryd.tweezer_devices.TweezerDevice &mdash; qoqo_qryd 0.16.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
 
@@ -15,7 +15,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=9ce0712c"></script>
+        <script src="../../../_static/documentation_options.js?v=86f71a27"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -38,7 +38,7 @@
             qoqo_qryd
           </a>
               <div class="version">
-                0.15.1
+                0.16.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -160,55 +160,58 @@ It can be hardcoded to a specific value if a float is passed in as String.</p></
 <tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.generic_device" title="qoqo_qryd.tweezer_devices.TweezerDevice.generic_device"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generic_device</span></code></a>()</p></td>
 <td><p>Turns Device into GenericDevice</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.get_available_gates_names" title="qoqo_qryd.tweezer_devices.TweezerDevice.get_available_gates_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_available_gates_names</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.get_allow_reset" title="qoqo_qryd.tweezer_devices.TweezerDevice.get_allow_reset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_allow_reset</span></code></a>()</p></td>
+<td><p>Get whether the device allows PragmaActiveReset operations or not.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.get_available_gates_names" title="qoqo_qryd.tweezer_devices.TweezerDevice.get_available_gates_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_available_gates_names</span></code></a>()</p></td>
 <td><p>Get the names of the available gates in the given layout.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.get_qubit_to_tweezer_mapping" title="qoqo_qryd.tweezer_devices.TweezerDevice.get_qubit_to_tweezer_mapping"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_qubit_to_tweezer_mapping</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.get_qubit_to_tweezer_mapping" title="qoqo_qryd.tweezer_devices.TweezerDevice.get_qubit_to_tweezer_mapping"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_qubit_to_tweezer_mapping</span></code></a>()</p></td>
 <td><p>Get the qubit -&gt; tweezer mapping of the device.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.multi_qubit_gate_time" title="qoqo_qryd.tweezer_devices.TweezerDevice.multi_qubit_gate_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multi_qubit_gate_time</span></code></a>(qubits, /)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.multi_qubit_gate_time" title="qoqo_qryd.tweezer_devices.TweezerDevice.multi_qubit_gate_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multi_qubit_gate_time</span></code></a>(qubits, /)</p></td>
 <td><p>Returns the gate time of a multi qubit operation on this device.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.number_qubits" title="qoqo_qryd.tweezer_devices.TweezerDevice.number_qubits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">number_qubits</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.number_qubits" title="qoqo_qryd.tweezer_devices.TweezerDevice.number_qubits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">number_qubits</span></code></a>()</p></td>
 <td><p>Return number of qubits in device.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.number_tweezer_positions" title="qoqo_qryd.tweezer_devices.TweezerDevice.number_tweezer_positions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">number_tweezer_positions</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.number_tweezer_positions" title="qoqo_qryd.tweezer_devices.TweezerDevice.number_tweezer_positions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">number_tweezer_positions</span></code></a>()</p></td>
 <td><p>Returns the number of total tweezer positions in the device.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.phase_shift_controlled_phase" title="qoqo_qryd.tweezer_devices.TweezerDevice.phase_shift_controlled_phase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">phase_shift_controlled_phase</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.phase_shift_controlled_phase" title="qoqo_qryd.tweezer_devices.TweezerDevice.phase_shift_controlled_phase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">phase_shift_controlled_phase</span></code></a>()</p></td>
 <td><p>Returns the PhaseShiftedControlledPhase phase shift according to the device's relation.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.phase_shift_controlled_z" title="qoqo_qryd.tweezer_devices.TweezerDevice.phase_shift_controlled_z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">phase_shift_controlled_z</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.phase_shift_controlled_z" title="qoqo_qryd.tweezer_devices.TweezerDevice.phase_shift_controlled_z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">phase_shift_controlled_z</span></code></a>()</p></td>
 <td><p>Returns the PhaseShiftedControlledZ phase shift according to the device's relation.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.qrydbackend" title="qoqo_qryd.tweezer_devices.TweezerDevice.qrydbackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">qrydbackend</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.qrydbackend" title="qoqo_qryd.tweezer_devices.TweezerDevice.qrydbackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">qrydbackend</span></code></a>()</p></td>
 <td><p>Returns the backend associated with the device.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.seed" title="qoqo_qryd.tweezer_devices.TweezerDevice.seed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seed</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.seed" title="qoqo_qryd.tweezer_devices.TweezerDevice.seed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seed</span></code></a>()</p></td>
 <td><p>Returns the seed usized for the API.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.single_qubit_gate_time" title="qoqo_qryd.tweezer_devices.TweezerDevice.single_qubit_gate_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">single_qubit_gate_time</span></code></a>(qubit, /)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.single_qubit_gate_time" title="qoqo_qryd.tweezer_devices.TweezerDevice.single_qubit_gate_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">single_qubit_gate_time</span></code></a>(qubit, /)</p></td>
 <td><p>Returns the gate time of a single qubit operation on this device.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.switch_layout" title="qoqo_qryd.tweezer_devices.TweezerDevice.switch_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">switch_layout</span></code></a>(with_trivial_map, /)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.switch_layout" title="qoqo_qryd.tweezer_devices.TweezerDevice.switch_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">switch_layout</span></code></a>(with_trivial_map, /)</p></td>
 <td><p>Switch to a different pre-defined Layout.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.three_qubit_gate_time" title="qoqo_qryd.tweezer_devices.TweezerDevice.three_qubit_gate_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">three_qubit_gate_time</span></code></a>(control_0, control_1, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.three_qubit_gate_time" title="qoqo_qryd.tweezer_devices.TweezerDevice.three_qubit_gate_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">three_qubit_gate_time</span></code></a>(control_0, control_1, ...)</p></td>
 <td><p>Returns the gate time of a three qubit operation on this device.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.to_bincode" title="qoqo_qryd.tweezer_devices.TweezerDevice.to_bincode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_bincode</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.to_bincode" title="qoqo_qryd.tweezer_devices.TweezerDevice.to_bincode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_bincode</span></code></a>()</p></td>
 <td><p>Return the bincode representation of the TweezerDevice using the bincode crate.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.to_json" title="qoqo_qryd.tweezer_devices.TweezerDevice.to_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_json</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.to_json" title="qoqo_qryd.tweezer_devices.TweezerDevice.to_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_json</span></code></a>()</p></td>
 <td><p>Return the json representation of the TweezerDevice.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.two_qubit_edges" title="qoqo_qryd.tweezer_devices.TweezerDevice.two_qubit_edges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">two_qubit_edges</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.two_qubit_edges" title="qoqo_qryd.tweezer_devices.TweezerDevice.two_qubit_edges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">two_qubit_edges</span></code></a>()</p></td>
 <td><p>Return the list of pairs of qubits linked by a native two-qubit-gate in the device.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.two_qubit_gate_time" title="qoqo_qryd.tweezer_devices.TweezerDevice.two_qubit_gate_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">two_qubit_gate_time</span></code></a>(control, target, /)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.two_qubit_gate_time" title="qoqo_qryd.tweezer_devices.TweezerDevice.two_qubit_gate_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">two_qubit_gate_time</span></code></a>(control, target, /)</p></td>
 <td><p>Returns the gate time of a two qubit operation on this device.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.two_tweezer_edges" title="qoqo_qryd.tweezer_devices.TweezerDevice.two_tweezer_edges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">two_tweezer_edges</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerDevice.two_tweezer_edges" title="qoqo_qryd.tweezer_devices.TweezerDevice.two_tweezer_edges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">two_tweezer_edges</span></code></a>()</p></td>
 <td><p>Returns the two tweezer edges of the device.</p></td>
 </tr>
 </tbody>
@@ -445,6 +448,20 @@ Additionally, a gate set check is performed.</p>
 <p>GenericDevice uses nested HashMaps to represent the most general device connectivity.
 The memory usage will be inefficient for devices with large qubit numbers.</p>
 </div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.tweezer_devices.TweezerDevice.get_allow_reset">
+<span class="sig-name descname"><span class="pre">get_allow_reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.tweezer_devices.TweezerDevice.get_allow_reset" title="Link to this definition"></a></dt>
+<dd><p>Get whether the device allows PragmaActiveReset operations or not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Whether the device allows PragmaActiveReset operations or not.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">

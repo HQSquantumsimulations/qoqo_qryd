@@ -25,6 +25,7 @@ qoqo\_qryd.tweezer\_devices.TweezerDevice
       ~TweezerDevice.gate_time_controlled_phase
       ~TweezerDevice.gate_time_controlled_z
       ~TweezerDevice.generic_device
+      ~TweezerDevice.get_allow_reset
       ~TweezerDevice.get_available_gates_names
       ~TweezerDevice.get_qubit_to_tweezer_mapping
       ~TweezerDevice.multi_qubit_gate_time
