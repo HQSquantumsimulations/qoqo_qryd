@@ -2,6 +2,10 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+# 0.15.1
+
+* Updated dependencies addressing security advisory
+
 # 0.15.0
 
 * Added `TweezerDevice.get_available_gates_names()`
