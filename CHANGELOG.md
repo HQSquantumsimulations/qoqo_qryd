@@ -2,6 +2,10 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+# Unreleased
+
+* Substituted server mocking package `mockito` with `wiremock`
+
 # 0.16.0
 
 * Added `TweezerDevice.get_allow_reset()`
@@ -33,7 +37,7 @@ Tracks qoqo-qryd changes after 0.5
 * Added `TweezerDevice` support for `SimulatorBackend`
 * Added `number_qubits` parameter to `SimulatorBackend`
 * Modified `TweezerDevice.number_qubits()` back to index-based implementation
-* Modified `TweezerDevice.change_device()` for `PragmaSwitchDeviceLayout` to better reflect device constraints.
+* Modified `TweezerDevice.change_device()` for `PragmaSwitchDeviceLayout` to better reflect device constraints
 * Dropped `FirstDevice` support for `SimulatorBackend`
 * Updated to `mockito` 1.2
 * Updated the MSRV to 1.68

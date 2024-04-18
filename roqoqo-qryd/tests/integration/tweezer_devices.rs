@@ -20,7 +20,10 @@ use roqoqo_qryd::{
     PragmaSwitchDeviceLayout, TweezerDevice,
 };
 
-use mockito::Server;
+#[cfg(feature = "web-api")]
+use wiremock::matchers::method;
+#[cfg(feature = "web-api")]
+use wiremock::{Mock, MockServer, ResponseTemplate};
 
 /// Test TweezerDevice new()
 #[test]
@@ -919,9 +922,9 @@ fn test_change_device_shift() {
 }
 
 /// Test TweezerDevice from_api() method
-#[test]
+#[tokio::test]
 #[cfg(feature = "web-api")]
-fn test_from_api() {
+async fn test_from_api() {
     let mut returned_device_default = TweezerDevice::new(None, None, None);
     returned_device_default.add_layout("default").unwrap();
     returned_device_default.current_layout = Some("default".to_string());
@@ -929,48 +932,50 @@ fn test_from_api() {
         .set_tweezer_single_qubit_gate_time("RotateX", 0, 0.23, None)
         .unwrap();
     returned_device_default.device_name = "qryd_emulator".to_string();
-    let mut server = Server::new();
-    let port = server
-        .url()
-        .chars()
-        .rev()
-        .take(5)
-        .collect::<String>()
-        .chars()
-        .rev()
-        .collect::<String>();
-    let mut mock = server
-        .mock("GET", mockito::Matcher::Any)
-        .with_status(200)
-        .with_body(
-            serde_json::to_string(&returned_device_default)
-                .unwrap()
-                .into_bytes(),
-        )
+    let wiremock_server = MockServer::start().await;
+    let port = wiremock_server.address().port().to_string();
+    let _mock = Mock::given(method("GET"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(&returned_device_default))
         .expect(2)
-        .create();
+        .mount(&wiremock_server)
+        .await;
 
-    let response = TweezerDevice::from_api(None, None, Some(port.clone()), None, None, None);
+    let port_cloned = port.clone();
+    let response = tokio::task::spawn_blocking(move || {
+        TweezerDevice::from_api(None, None, Some(port_cloned), None, None, None)
+    })
+    .await
+    .unwrap();
     assert!(response.is_ok());
     let device = response.unwrap();
     assert_eq!(device, returned_device_default);
     assert_eq!(device.qrydbackend(), "qryd_emulator".to_string());
 
-    let response_new_seed =
-        TweezerDevice::from_api(None, None, Some(port.clone()), Some(42), None, None);
-    mock.assert();
+    let port_cloned = port.clone();
+    let response_new_seed = tokio::task::spawn_blocking(move || {
+        TweezerDevice::from_api(None, None, Some(port_cloned), Some(42), None, None)
+    })
+    .await
+    .unwrap();
     assert!(response_new_seed.is_ok());
     let device_new_seed = response_new_seed.unwrap();
     assert_eq!(device_new_seed.seed(), Some(42));
 
-    mock.remove();
-    mock = server
-        .mock("GET", mockito::Matcher::Any)
-        .with_status(500)
-        .create();
+    wiremock_server.verify().await;
+    wiremock_server.reset().await;
 
-    let response = TweezerDevice::from_api(None, None, Some(port), None, None, None);
-    mock.assert();
+    let _mock = Mock::given(method("GET"))
+        .respond_with(ResponseTemplate::new(500))
+        .expect(1)
+        .mount(&wiremock_server)
+        .await;
+
+    let port_cloned = port.clone();
+    let response = tokio::task::spawn_blocking(move || {
+        TweezerDevice::from_api(None, None, Some(port_cloned), None, None, None)
+    })
+    .await
+    .unwrap();
     assert!(response.is_err());
     assert_eq!(
         response.unwrap_err(),
@@ -978,6 +983,8 @@ fn test_from_api() {
             msg: format!("Request to server failed with HTTP status code {:?}.", 500),
         }
     );
+
+    wiremock_server.verify().await;
 }
 
 /// Test TweezerDevice phase_shift_controlled_...() and gate_time_controlled_...()  methods
