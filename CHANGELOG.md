@@ -4,7 +4,7 @@ Tracks qoqo-qryd changes after 0.5
 
 # Unreleased
 
-* Substituted `mockito` with `wiremock-rs`
+* Substituted server mocking package `mockito` with `wiremock-rs`
 
 # 0.16.0
 
