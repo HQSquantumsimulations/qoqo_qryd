@@ -30,7 +30,6 @@ use qoqo_qryd::api_devices::{QrydEmuSquareDeviceWrapper, QrydEmuTriangularDevice
 use roqoqo_qryd::api_devices::{QRydAPIDevice, QrydEmuSquareDevice};
 use roqoqo_qryd::{APIBackend, QRydJobResult, QRydJobStatus, ResultCounts};
 
-use mockito::Server;
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
@@ -370,16 +369,6 @@ async fn async_test_run_job() {
             .expect(1)
             .mount(&wiremock_server)
             .await;
-        // let mock_status0 = server
-        //     .mock("GET", "/DummyLocation/status")
-        //     .with_status(200)
-        //     .with_body(
-        //         serde_json::to_string(&qryd_job_status_in_progress)
-        //             .unwrap()
-        //             .into_bytes(),
-        //     )
-        //     .expect(20)
-        //     .create();
         let _mock_status = Mock::given(method("GET"))
             .and(path("/DummyLocation/status"))
             .respond_with(ResponseTemplate::new(200).set_body_json(&qryd_job_status_in_progress))
@@ -391,74 +380,84 @@ async fn async_test_run_job() {
         let backend = Python::with_gil(|py| {
             create_valid_backend_with_square_device_mocked(py, Some(11), port).into_py(py)
         });
-        Python::with_gil(|py| async {
-            // let backend = create_valid_backend_with_square_device_mocked(py, Some(11), port);
-            let backend = backend.as_ref(py);
-            let program = create_quantum_program(true);
-            let job_loc = backend.call_method1("post_job", (program,)).unwrap();
-            let fifteen = time::Duration::from_millis(50);
+        let cloned_backend = backend.clone();
+        let job_loc = tokio::task::spawn_blocking(move || {
+            Python::with_gil(|py| {
+                let program = create_quantum_program(true);
+                cloned_backend.call_method1(py, "post_job", (program,))
+            })
+        })
+        .await
+        .unwrap()
+        .unwrap();
+        let fifteen = time::Duration::from_millis(50);
 
-            let mut test_counter = 0;
-            let mut status = "".to_string();
-            while test_counter < 20 && status != "completed" {
-                test_counter += 1;
-                let status_report: HashMap<String, String> = backend
-                    .call_method1("get_job_status", (job_loc,))
+        let mut test_counter = 0;
+        let mut status = "".to_string();
+        while test_counter < 20 && status != "completed" {
+            test_counter += 1;
+            let cloned_backend = backend.clone();
+            let cloned_job_loc = job_loc.clone();
+            let job_status = tokio::task::spawn_blocking(move || {
+                Python::with_gil(|py| {
+                    let status_report = cloned_backend
+                        .call_method1(py, "get_job_status", (cloned_job_loc,))
+                        .unwrap();
+                    let extracted: HashMap<String, String> = status_report.extract(py).unwrap();
+                    extracted.get("status").cloned().unwrap()
+                })
+            })
+            .await
+            .unwrap();
+            status = job_status.clone();
+            assert_eq!(job_status, "in progress");
+            thread::sleep(fifteen);
+        }
+
+        wiremock_server.verify().await;
+        wiremock_server.reset().await;
+
+        let _mock_status1 = Mock::given(method("GET"))
+            .and(path("/DummyLocation/status"))
+            .respond_with(ResponseTemplate::new(200).set_body_json(&qryd_job_status_completed))
+            .expect(1)
+            .mount(&wiremock_server)
+            .await;
+
+        let cloned_backend = backend.clone();
+        let cloned_job_loc = job_loc.clone();
+        tokio::task::spawn_blocking(move || {
+            Python::with_gil(|py| {
+                let status_report: HashMap<String, String> = cloned_backend
+                    .call_method1(py, "get_job_status", (cloned_job_loc,))
                     .unwrap()
-                    .extract()
+                    .extract(py)
                     .unwrap();
                 let job_status = status_report.get("status").unwrap();
-                status = job_status.clone();
-                assert_eq!(job_status, "in progress");
-                thread::sleep(fifteen);
-            }
 
-            wiremock_server.verify().await;
-            wiremock_server.reset().await;
+                assert_eq!(job_status, "completed");
+            });
+        })
+        .await
+        .unwrap();
 
-            // let mock_status1 = server
-            //     .mock("GET", "/DummyLocation/status")
-            //     .with_status(200)
-            //     .with_body(
-            //         serde_json::to_string(&qryd_job_status_completed)
-            //             .unwrap()
-            //             .as_bytes(),
-            //     )
-            //     .create();
-            let _mock_status1 = Mock::given(method("GET"))
-                .and(path("/DummyLocation/status"))
-                .respond_with(ResponseTemplate::new(200).set_body_json(&qryd_job_status_completed))
-                .expect(1)
-                .mount(&wiremock_server)
-                .await;
+        let _mock_result = Mock::given(method("GET"))
+            .and(path("/DummyLocation/result"))
+            .respond_with(ResponseTemplate::new(200).set_body_json(&qryd_job_result_completed))
+            .expect(1)
+            .mount(&wiremock_server)
+            .await;
 
-            let status_report: HashMap<String, String> = backend
-                .call_method1("get_job_status", (job_loc,))
-                .unwrap()
-                .extract()
-                .unwrap();
-            let job_status = status_report.get("status").unwrap();
+        tokio::task::spawn_blocking(move || {
+            Python::with_gil(|py| {
+                let _job_result = backend
+                    .call_method1(py, "get_job_result", (job_loc,))
+                    .unwrap();
+            });
+        })
+        .await
+        .unwrap();
 
-            assert_eq!(job_status, "completed");
-
-            // let mock_result = server
-            //     .mock("GET", "/DummyLocation/result")
-            //     .with_status(200)
-            //     .with_body(
-            //         serde_json::to_string(&qryd_job_result_completed)
-            //             .unwrap()
-            //             .into_bytes(),
-            //     )
-            //     .create();
-            let _mock_result = Mock::given(method("GET"))
-                .and(path("/DummyLocation/result"))
-                .respond_with(ResponseTemplate::new(200).set_body_json(&qryd_job_result_completed))
-                .expect(1)
-                .mount(&wiremock_server)
-                .await;
-
-            let _job_result = backend.call_method1("get_job_result", (job_loc,)).unwrap();
-        });
         wiremock_server.verify().await;
     }
 }
@@ -506,7 +505,7 @@ async fn test_run_circuit() {
         .await;
     let _mock_result = Mock::given(method("GET"))
         .and(path("/DummyLocation/result"))
-        .respond_with(ResponseTemplate::new(200).set_body_json(qryd_job_status_completed))
+        .respond_with(ResponseTemplate::new(200).set_body_json(qryd_job_result_completed))
         .expect(1)
         .mount(&wiremock_server)
         .await;
@@ -519,36 +518,33 @@ async fn test_run_circuit() {
     let circuit_py = CircuitWrapper { internal: circuit };
 
     pyo3::prepare_freethreaded_python();
-    Python::with_gil(|py| async {
-        let backend: &PyCell<APIBackendWrapper> = if env::var("QRYD_API_TOKEN").is_ok() {
-            create_valid_backend_with_square_device(py, Some(11))
-        } else {
-            create_valid_backend_with_square_device_mocked(py, Some(11), port)
-        };
+    tokio::task::spawn_blocking(move || {
+        Python::with_gil(|py| {
+            let backend: &PyCell<APIBackendWrapper> = if env::var("QRYD_API_TOKEN").is_ok() {
+                create_valid_backend_with_square_device(py, Some(11))
+            } else {
+                create_valid_backend_with_square_device_mocked(py, Some(11), port)
+            };
 
-        let result = backend.call_method1("run_circuit", (3usize,));
-        assert!(result.is_err());
+            let result = backend.call_method1("run_circuit", (3usize,));
+            assert!(result.is_err());
 
-        backend.call_method1("run_circuit", (circuit_py,)).unwrap();
+            backend.call_method1("run_circuit", (circuit_py,)).unwrap();
+        });
+    })
+    .await
+    .unwrap();
 
-        if env::var("QRYD_API_TOKEN").is_err() {
-            wiremock_server.verify().await;
-        }
-    });
+    if env::var("QRYD_API_TOKEN").is_err() {
+        wiremock_server.verify().await;
+    }
 }
 
-#[test]
-fn test_run_measurement_registers() {
-    let mut server = Server::new();
-    let port = server
-        .url()
-        .chars()
-        .rev()
-        .take(5)
-        .collect::<String>()
-        .chars()
-        .rev()
-        .collect::<String>();
+#[tokio::test]
+async fn test_run_measurement_registers() {
+    let wiremock_server = MockServer::start().await;
+    let port = wiremock_server.address().port().to_string();
+    let uri = wiremock_server.uri();
     let qryd_job_status_completed = QRydJobStatus {
         status: "completed".to_string(),
         msg: "the job has been completed".to_string(),
@@ -572,78 +568,70 @@ fn test_run_measurement_registers() {
         executed_two_qubit_gates: 0,
     };
 
-    let mock_post = server
-        .mock("POST", mockito::Matcher::Any)
-        .with_status(201)
-        .with_header("Location", &format!("{}/DummyLocation", server.url()))
-        .create();
-    let mock_status1 = server
-        .mock("GET", "/DummyLocation/status")
-        .with_status(200)
-        .with_body(
-            serde_json::to_string(&qryd_job_status_completed)
-                .unwrap()
-                .as_bytes(),
+    let _mock_post = Mock::given(method("POST"))
+        .respond_with(
+            ResponseTemplate::new(201).insert_header("Location", &format!("{}/DummyLocation", uri)),
         )
-        .create();
-    let mock_result = server
-        .mock("GET", "/DummyLocation/result")
-        .with_status(200)
-        .with_body(
-            serde_json::to_string(&qryd_job_result_completed)
-                .unwrap()
-                .as_bytes(),
-        )
-        .create();
+        .expect(1)
+        .mount(&wiremock_server)
+        .await;
+    let _mock_status = Mock::given(method("GET"))
+        .and(path("/DummyLocation/status"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(&qryd_job_status_completed))
+        .expect(1)
+        .mount(&wiremock_server)
+        .await;
+    let _mock_result = Mock::given(method("GET"))
+        .and(path("/DummyLocation/result"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(qryd_job_result_completed))
+        .expect(1)
+        .mount(&wiremock_server)
+        .await;
 
     pyo3::prepare_freethreaded_python();
-    Python::with_gil(|py| {
-        let backend: &PyCell<APIBackendWrapper> = if env::var("QRYD_API_TOKEN").is_ok() {
-            create_valid_backend_with_square_device(py, Some(11))
-        } else {
-            create_valid_backend_with_square_device_mocked(py, Some(11), port)
-        };
+    tokio::task::spawn_blocking(move || {
+        Python::with_gil(|py| {
+            let backend: &PyCell<APIBackendWrapper> = if env::var("QRYD_API_TOKEN").is_ok() {
+                create_valid_backend_with_square_device(py, Some(11))
+            } else {
+                create_valid_backend_with_square_device_mocked(py, Some(11), port)
+            };
 
-        let failed_result = backend.call_method1("run_measurement_registers", (3_u32,));
-        assert!(failed_result.is_err());
+            let failed_result = backend.call_method1("run_measurement_registers", (3_u32,));
+            assert!(failed_result.is_err());
 
-        let failed_program = create_quantum_program(false);
-        let measurement = failed_program.measurement();
-        let failed_result = backend.call_method1("run_measurement_registers", (measurement,));
-        assert!(failed_result.is_err());
+            let failed_program = create_quantum_program(false);
+            let measurement = failed_program.measurement();
+            let failed_result = backend.call_method1("run_measurement_registers", (measurement,));
+            assert!(failed_result.is_err());
 
-        let program = create_quantum_program(true);
-        let measurement = program.measurement();
-        let (bits, floats, complex): Registers = backend
-            .call_method1("run_measurement_registers", (measurement,))
-            .unwrap()
-            .extract()
-            .unwrap();
-        assert!(floats.is_empty());
-        assert!(complex.is_empty());
-        assert!(bits.contains_key("ro"));
-        let bit = bits.get("ro").unwrap();
-        assert_eq!(bit.len(), 10);
-        if env::var("QRYD_API_TOKEN").is_err() {
-            mock_post.assert();
-            mock_status1.assert();
-            mock_result.assert();
-        }
-    });
+            let program = create_quantum_program(true);
+            let measurement = program.measurement();
+            let (bits, floats, complex): Registers = backend
+                .call_method1("run_measurement_registers", (measurement,))
+                .unwrap()
+                .extract()
+                .unwrap();
+            assert!(floats.is_empty());
+            assert!(complex.is_empty());
+            assert!(bits.contains_key("ro"));
+            let bit = bits.get("ro").unwrap();
+            assert_eq!(bit.len(), 10);
+        });
+    })
+    .await
+    .unwrap();
+
+    if env::var("QRYD_API_TOKEN").is_err() {
+        wiremock_server.verify().await;
+    }
 }
 
-#[test]
-fn test_run_measurement() {
-    let mut server = Server::new();
-    let port = server
-        .url()
-        .chars()
-        .rev()
-        .take(5)
-        .collect::<String>()
-        .chars()
-        .rev()
-        .collect::<String>();
+#[tokio::test]
+async fn test_run_measurement() {
+    let wiremock_server = MockServer::start().await;
+    let port = wiremock_server.address().port().to_string();
+    let uri = wiremock_server.uri();
     let qryd_job_status_completed = QRydJobStatus {
         status: "completed".to_string(),
         msg: "the job has been completed".to_string(),
@@ -667,55 +655,54 @@ fn test_run_measurement() {
         executed_two_qubit_gates: 0,
     };
 
-    let mock_post = server
-        .mock("POST", mockito::Matcher::Any)
-        .with_status(201)
-        .with_header("Location", &format!("{}/DummyLocation", server.url()))
-        .create();
-    let mock_status1 = server
-        .mock("GET", "/DummyLocation/status")
-        .with_status(200)
-        .with_body(
-            serde_json::to_string(&qryd_job_status_completed)
-                .unwrap()
-                .as_bytes(),
+    let _mock_post = Mock::given(method("POST"))
+        .respond_with(
+            ResponseTemplate::new(201).insert_header("Location", &format!("{}/DummyLocation", uri)),
         )
-        .create();
-    let mock_result = server
-        .mock("GET", "/DummyLocation/result")
-        .with_status(200)
-        .with_body(
-            serde_json::to_string(&qryd_job_result_completed)
-                .unwrap()
-                .as_bytes(),
-        )
-        .create();
+        .expect(1)
+        .mount(&wiremock_server)
+        .await;
+    let _mock_status = Mock::given(method("GET"))
+        .and(path("/DummyLocation/status"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(&qryd_job_status_completed))
+        .expect(1)
+        .mount(&wiremock_server)
+        .await;
+    let _mock_result = Mock::given(method("GET"))
+        .and(path("/DummyLocation/result"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(qryd_job_result_completed))
+        .expect(1)
+        .mount(&wiremock_server)
+        .await;
 
     pyo3::prepare_freethreaded_python();
-    Python::with_gil(|py| {
-        let backend: &PyCell<APIBackendWrapper> = if env::var("QRYD_API_TOKEN").is_ok() {
-            create_valid_backend_with_square_device(py, Some(11))
-        } else {
-            create_valid_backend_with_square_device_mocked(py, Some(11), port)
-        };
-        let cheated = create_cheated_measurement();
+    tokio::task::spawn_blocking(|| {
+        Python::with_gil(|py| {
+            let backend: &PyCell<APIBackendWrapper> = if env::var("QRYD_API_TOKEN").is_ok() {
+                create_valid_backend_with_square_device(py, Some(11))
+            } else {
+                create_valid_backend_with_square_device_mocked(py, Some(11), port)
+            };
+            let cheated = create_cheated_measurement();
 
-        let failed_result = backend.call_method1("run_measurement", (3_u32,));
-        assert!(failed_result.is_err());
+            let failed_result = backend.call_method1("run_measurement", (3_u32,));
+            assert!(failed_result.is_err());
 
-        let result: Option<HashMap<String, f64>> = backend
-            .call_method1("run_measurement", (cheated,))
-            .unwrap()
-            .extract()
-            .unwrap();
+            let result: Option<HashMap<String, f64>> = backend
+                .call_method1("run_measurement", (cheated,))
+                .unwrap()
+                .extract()
+                .unwrap();
 
-        assert!(result.is_some());
-        if env::var("QRYD_API_TOKEN").is_err() {
-            mock_post.assert();
-            mock_status1.assert();
-            mock_result.assert();
-        }
-    });
+            assert!(result.is_some());
+        });
+    })
+    .await
+    .unwrap();
+
+    if env::var("QRYD_API_TOKEN").is_err() {
+        wiremock_server.verify().await;
+    }
 }
 
 #[test]
@@ -729,21 +716,13 @@ fn test_query_result_fail() {
     });
 }
 
-#[test]
-fn test_convert_into_backend() {
+#[tokio::test]
+async fn test_convert_into_backend() {
+    let wiremock_server = MockServer::start().await;
+    let port = wiremock_server.address().port().to_string();
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let none_string: Option<String> = None;
-        let server = Server::new();
-        let port = server
-            .url()
-            .chars()
-            .rev()
-            .take(5)
-            .collect::<String>()
-            .chars()
-            .rev()
-            .collect::<String>();
         let initial: &PyCell<APIBackendWrapper> = if env::var("QRYD_API_TOKEN").is_ok() {
             create_valid_backend_with_square_device(py, Some(11))
         } else {
@@ -806,20 +785,12 @@ fn test_bincode_square() {
     });
 }
 
-#[test]
-fn test_dev() {
+#[tokio::test]
+async fn test_dev() {
+    let wiremock_server = MockServer::start().await;
+    let port = wiremock_server.address().port().to_string();
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let server = Server::new();
-        let port = server
-            .url()
-            .chars()
-            .rev()
-            .take(5)
-            .collect::<String>()
-            .chars()
-            .rev()
-            .collect::<String>();
         let device_type = py.get_type::<QrydEmuSquareDeviceWrapper>();
         let device: &PyCell<QrydEmuSquareDeviceWrapper> = device_type
             .call1((11,))
