@@ -60,8 +60,16 @@ fn create_valid_backend_with_tweezer_device(
     seed: Option<usize>,
 ) -> &PyCell<APIBackendWrapper> {
     let device_type = py.get_type::<TweezerDeviceWrapper>();
-    let device: &PyCell<TweezerDeviceWrapper> = device_type
-        .call1((seed,))
+    let device = device_type
+        .call_method1(
+            "from_api",
+            (
+                Option::<String>::None,
+                Option::<String>::None,
+                Option::<String>::None,
+                seed,
+            ),
+        )
         .unwrap()
         .downcast::<PyCell<TweezerDeviceWrapper>>()
         .unwrap();
