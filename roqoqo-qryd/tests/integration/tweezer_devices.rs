@@ -34,7 +34,7 @@ fn test_new() {
     assert!(device.qubit_to_tweezer.is_none());
     assert_eq!(device.layout_register.len(), 0);
     assert_eq!(device.seed(), Some(2));
-    assert_eq!(device.qrydbackend(), "qryd_emulator");
+    assert_eq!(device.qrydbackend(), "qryd_tweezer_device");
 
     let device_emp = TweezerDevice::new(None, None, None);
 
