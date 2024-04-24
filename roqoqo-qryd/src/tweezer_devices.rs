@@ -238,7 +238,7 @@ impl TweezerDevice {
             default_layout: None,
             seed,
             allow_reset: false,
-            device_name: String::from("qryd_tweezer_device"),
+            device_name: String::from("qryd_emulator"),
         }
     }
 

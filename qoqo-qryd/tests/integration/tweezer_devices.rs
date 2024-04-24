@@ -50,7 +50,7 @@ fn test_new() {
                 .unwrap()
                 .extract::<String>()
                 .unwrap(),
-            "qryd_tweezer_device"
+            "qryd_emulator"
         );
         assert_eq!(
             res_mut
@@ -58,7 +58,7 @@ fn test_new() {
                 .unwrap()
                 .extract::<String>()
                 .unwrap(),
-            "qryd_tweezer_device"
+            "qryd_emulator"
         );
         assert_eq!(
             res.call_method0("seed")
