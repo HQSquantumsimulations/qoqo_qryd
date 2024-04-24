@@ -2410,7 +2410,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-cc 1.0.94
+cc 1.0.95
 https://github.com/rust-lang/cc-rs
 by Alex Crichton <alex@alexcrichton.com>
 A build-time dependency for Cargo build scripts to assist in invoking the native
@@ -20359,7 +20359,7 @@ LICENSE:
 
 
 ====================================================
-qoqo-qryd 0.16.0
+qoqo-qryd 0.16.1
 https://github.com/HQSquantumsimulations/qoqo_qryd
 by HQS Quantum Simulations <info@quantumsimulations.de>
 QRyd backend for qoqo quantum computing toolkit
@@ -24102,7 +24102,7 @@ LICENSE:
 
 
 ====================================================
-roqoqo-qryd 0.16.0
+roqoqo-qryd 0.16.1
 https://github.com/HQSquantumsimulations/qoqo_qryd
 by HQS Quantum Simulations <info@quantumsimulations.de>
 QRyd interface for roqoqo rust quantum computing toolkit
@@ -25219,7 +25219,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-rustls 0.21.10
+rustls 0.21.11
 https://github.com/rustls/rustls
 by 
 Rustls is a modern TLS library written in Rust.
@@ -30197,7 +30197,7 @@ SOFTWARE.
 
 
 ====================================================
-thiserror 1.0.58
+thiserror 1.0.59
 https://github.com/dtolnay/thiserror
 by David Tolnay <dtolnay@gmail.com>
 derive(Error)
@@ -30411,7 +30411,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-thiserror-impl 1.0.58
+thiserror-impl 1.0.59
 https://github.com/dtolnay/thiserror
 by David Tolnay <dtolnay@gmail.com>
 Implementation detail of the `thiserror` crate
