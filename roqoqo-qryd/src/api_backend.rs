@@ -56,7 +56,7 @@ pub struct APIBackend {
 }
 
 /// Local struct representing the body of the request message
-#[derive(Debug, serde::Serialize)]
+#[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]
 struct QRydRunData {
     /// Format of the quantum program: qoqo
     format: String,
@@ -92,14 +92,29 @@ struct QRydRunData {
 /// Local struct representing the body of a validation error message
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 struct ValidationError {
-    detail: Vec<ValidationErrorDetail>,
+    detail: ValidationTypes,
+    body: Option<QRydRunData>,
+}
+
+#[derive(Debug, serde::Serialize, serde::Deserialize)]
+#[serde(untagged)]
+enum LocTypes {
+    LocStr(String),
+    LocInt(i32),
+}
+
+#[derive(Debug, serde::Serialize, serde::Deserialize)]
+#[serde(untagged)]
+enum ValidationTypes {
+    Simple(String),
+    Detailed(Vec<ValidationErrorDetail>),
 }
 
 /// Local struct representing the body of a validation error message
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 struct ValidationErrorDetail {
     #[serde(default)]
-    loc: Vec<String>,
+    loc: Vec<LocTypes>,
     #[serde(default)]
     msg: String,
     #[serde(alias = "type")]
@@ -587,9 +602,7 @@ impl APIBackend {
                             msg: format!("Error parsing ValidationError message {:?}", e),
                         }
                     })?;
-                return Err(RoqoqoBackendError::GenericError{msg:
-                    format!( "QuantumProgram or metadata could not be parsed by QRyd Web-API Backend. msg: {} type: {}, loc: {:?}",querry_response.detail[0].msg, querry_response.detail[0].internal_type, querry_response.detail[0].loc,  )
-                });
+                return Err(self._handle_validation_error(querry_response));
             }
             // dbg!(&resp);
             Err(RoqoqoBackendError::NetworkError {
@@ -679,9 +692,7 @@ impl APIBackend {
                             msg: format!("Error parsing ValidationError message {:?}", e),
                         }
                     })?;
-                return Err(RoqoqoBackendError::GenericError{msg:
-                    format!( "QuantumProgram or metadata could not be parsed by QRyd Web-API Backend. msg: {} type: {}, loc: {:?}",querry_response.detail[0].msg, querry_response.detail[0].internal_type, querry_response.detail[0].loc,  )
-            });
+                return Err(self._handle_validation_error(querry_response));
             }
             Err(RoqoqoBackendError::NetworkError {
                 msg: format!(
@@ -764,9 +775,7 @@ impl APIBackend {
                             msg: format!("Error parsing ValidationError message {:?}", e),
                         }
                     })?;
-                return Err(RoqoqoBackendError::GenericError{msg:
-                    format!( "QuantumProgram or metadata could not be parsed by QRyd Web-API Backend. msg: {} type: {}, loc: {:?}",querry_response.detail[0].msg, querry_response.detail[0].internal_type, querry_response.detail[0].loc,  )
-            });
+                return Err(self._handle_validation_error(querry_response));
             }
             Err(RoqoqoBackendError::NetworkError {
                 msg: format!(
@@ -839,9 +848,7 @@ impl APIBackend {
                             msg: format!("Error parsing ValidationError message {:?}", e),
                         }
                     })?;
-                return Err(RoqoqoBackendError::GenericError{msg:
-                    format!( "QuantumProgram or metadata could not be parsed by QRyd Web-API Backend. msg: {} type: {}, loc: {:?}",querry_response.detail[0].msg, querry_response.detail[0].internal_type, querry_response.detail[0].loc,  )
-            });
+                return Err(self._handle_validation_error(querry_response));
             }
             Err(RoqoqoBackendError::NetworkError {
                 msg: format!(
@@ -939,6 +946,19 @@ impl APIBackend {
             operation.readout().to_string(),
         );
         equivalent_circuit
+    }
+
+    fn _handle_validation_error(&self, val_error: ValidationError) -> RoqoqoBackendError {
+        let types = val_error.detail;
+        match types {
+            ValidationTypes::Simple(x) => RoqoqoBackendError::GenericError { msg: format!("QuantumProgram or metadata could not be parsed by QRyd Web-API Backend. msg: {}", x) },
+            ValidationTypes::Detailed(x) => {
+                let mut msg = "QuantumProgram or metadata could not be parsed by QRyd Web-API Backend. ".to_owned();
+                msg.extend(x.iter().map(|detail| format!("[loc: {:?}, msg: {}, type: {:?}]", detail.loc, detail.msg, detail.internal_type)));
+                msg.push('.');
+                RoqoqoBackendError::GenericError { msg }
+            },
+        }
     }
 }
 
@@ -1116,12 +1136,13 @@ mod test {
     #[tokio::test]
     async fn async_api_backend_errorcase1() {
         let detail = ValidationErrorDetail {
-            loc: vec!["DummyLoc".to_string()],
+            loc: vec![LocTypes::LocStr("DummyLoc".to_string())],
             msg: "DummyMsg".to_string(),
             internal_type: "DummyType".to_string(),
         };
         let error = ValidationError {
-            detail: vec![detail],
+            detail: ValidationTypes::Detailed(vec![detail]),
+            body: None,
         };
         let server_wiremock = MockServer::start().await;
         let uri = server_wiremock.uri();
