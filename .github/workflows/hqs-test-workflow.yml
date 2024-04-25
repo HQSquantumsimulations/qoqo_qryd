@@ -8,11 +8,11 @@ on:
 jobs:
   test-allowed-to-fail:
     runs-on: ubuntu-latest
-    continue-on-error: true
     env:
       QRYD_API_DEV: 0
     steps:
     - name: TEST FAILURE
+      continue-on-error: true
       run: |
         echo "$QRYD_API_DEV"
         exit 1
