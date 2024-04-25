@@ -16,6 +16,8 @@ jobs:
       run: |
         echo "$QRYD_API_DEV"
         exit 1
+    - name: CONTINUING
+      run: echo "$QRYD_API_DEV"
 
   test-not-allowed-to-fail:
     runs-on: ubuntu-latest
