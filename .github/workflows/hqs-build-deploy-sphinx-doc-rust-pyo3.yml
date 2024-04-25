@@ -24,7 +24,7 @@ jobs:
         pip install ./qoqo-qryd[docs]
     - uses: peaceiris/actions-mdbook@v1
       with:
-        version: latest
+        mdbook-version: latest
     - name: build
       run: |
         # qoqo-qryd
