@@ -8,6 +8,8 @@ on:
 jobs:
   api_integration:
     runs-on: ubuntu-latest
+    env:
+      QRYD_API_DEV: 0
     steps:
       - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1

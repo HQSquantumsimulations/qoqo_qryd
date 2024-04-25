@@ -61,6 +61,14 @@ pub static ALLOWED_NATIVE_THREE_QUBIT_GATES: [&str; 2] = [
 /// Native multi-qubit gates allowed by the QRyd backend.
 pub static ALLOWED_NATIVE_MULTI_QUBIT_GATES: [&str; 0] = [];
 
+/// Bool and usize data type for dev parameter.
+#[derive(Debug)]
+pub enum BoolOrUsize {
+    /// Bool data type.
+    Bool(bool),
+    /// Usize data type.
+    Usize(usize),
+}
 /// Tweezer Device
 ///
 #[derive(Debug, PartialEq, Default, Clone, serde::Serialize, serde::Deserialize)]
@@ -270,7 +278,7 @@ impl TweezerDevice {
         access_token: Option<String>,
         mock_port: Option<String>,
         seed: Option<usize>,
-        dev: Option<bool>,
+        dev: Option<BoolOrUsize>,
         api_version: Option<String>,
     ) -> Result<Self, RoqoqoBackendError> {
         // Preparing variables
@@ -286,6 +294,11 @@ impl TweezerDevice {
                     }
                 })?,
             }
+        };
+        let dev: String = match dev {
+            Some(BoolOrUsize::Bool(b)) => b.to_string(),
+            Some(BoolOrUsize::Usize(u)) => u.to_string(),
+            None => "0".to_string(),
         };
 
         // Client setup
@@ -313,31 +326,45 @@ impl TweezerDevice {
                 .map_err(|e| RoqoqoBackendError::NetworkError {
                     msg: format!("{:?}", e),
                 })?
-        } else if dev.unwrap_or(false) {
-            client
-                .get(format!(
-                    "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
-                    api_version.unwrap_or_else(|| String::from("v1_1")),
-                    device_name_internal.clone()
-                ))
-                .header("X-API-KEY", access_token_internal)
-                .header("X-DEV", "?1")
-                .send()
-                .map_err(|e| RoqoqoBackendError::NetworkError {
-                    msg: format!("{:?}", e),
-                })?
         } else {
-            client
-                .get(format!(
-                    "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
-                    api_version.unwrap_or_else(|| String::from("v1_1")),
-                    device_name_internal.clone()
-                ))
-                .header("X-API-KEY", access_token_internal)
-                .send()
-                .map_err(|e| RoqoqoBackendError::NetworkError {
-                    msg: format!("{:?}", e),
-                })?
+            match dev.as_str() {
+                "0" => client
+                    .get(format!(
+                        "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
+                        api_version.unwrap_or_else(|| String::from("v1_1")),
+                        device_name_internal.clone()
+                    ))
+                    .header("X-API-KEY", access_token_internal)
+                    .send()
+                    .map_err(|e| RoqoqoBackendError::NetworkError {
+                        msg: format!("{:?}", e),
+                    })?,
+                "1" => client
+                    .get(format!(
+                        "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
+                        api_version.unwrap_or_else(|| String::from("v1_1")),
+                        device_name_internal.clone()
+                    ))
+                    .header("X-API-KEY", access_token_internal)
+                    .header("X-DEV", "1")
+                    .send()
+                    .map_err(|e| RoqoqoBackendError::NetworkError {
+                        msg: format!("{:?}", e),
+                    })?,
+                "2" => client
+                    .get(format!(
+                        "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
+                        api_version.unwrap_or_else(|| String::from("v1_1")),
+                        device_name_internal.clone()
+                    ))
+                    .header("X-API-KEY", access_token_internal)
+                    .header("X-DEV", "2")
+                    .send()
+                    .map_err(|e| RoqoqoBackendError::NetworkError {
+                        msg: format!("{:?}", e),
+                    })?,
+                _ => panic!(),
+            }
         };
 
         // Response handling
