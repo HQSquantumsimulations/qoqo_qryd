@@ -7,13 +7,3 @@ lto = "thin"
 
 [profile.bench]
 lto = "thin"
-
-[patch.crates-io]
-qoqo_calculator = { path = "../qoqo_calculator/qoqo_calculator" }
-qoqo_calculator_pyo3 = { path = "../qoqo_calculator/qoqo_calculator_pyo3" }
-qoqo = { path = "../qoqo/qoqo" }
-roqoqo = { path = "../qoqo/roqoqo" }
-roqoqo-derive = { path = "../qoqo/roqoqo-derive" }
-roqoqo-quest = { path = "../qoqo-quest/roqoqo-quest" }
-struqture = { path = "../struqture/struqture" }
-struqture-py = { path = "../struqture/struqture-py" }

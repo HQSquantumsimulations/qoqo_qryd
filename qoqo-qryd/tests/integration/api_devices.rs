@@ -23,25 +23,27 @@ fn create_square_device(
     py: Python,
     rel1: Option<String>,
     rel2: Option<String>,
-) -> &Bound<QrydEmuSquareDeviceWrapper> {
+) -> Bound<QrydEmuSquareDeviceWrapper> {
     let seed: Option<usize> = Some(11);
     let device_type = py.get_type_bound::<QrydEmuSquareDeviceWrapper>();
-    let device: &Bound<QrydEmuSquareDeviceWrapper> = device_type
+    let device: Bound<QrydEmuSquareDeviceWrapper> = device_type
         .call1((seed, rel1, rel2))
         .unwrap()
         .downcast::<QrydEmuSquareDeviceWrapper>()
-        .unwrap();
+        .unwrap()
+        .to_owned();
     device
 }
 
-fn create_square_device_f(py: Python, rel1: f64, rel2: f64) -> &Bound<QrydEmuSquareDeviceWrapper> {
+fn create_square_device_f(py: Python, rel1: f64, rel2: f64) -> Bound<QrydEmuSquareDeviceWrapper> {
     let seed: Option<usize> = Some(11);
     let device_type = py.get_type_bound::<QrydEmuSquareDeviceWrapper>();
-    let device: &Bound<QrydEmuSquareDeviceWrapper> = device_type
+    let device: Bound<QrydEmuSquareDeviceWrapper> = device_type
         .call1((seed, rel1, rel2))
         .unwrap()
         .downcast::<QrydEmuSquareDeviceWrapper>()
-        .unwrap();
+        .unwrap()
+        .to_owned();
     device
 }
 
@@ -53,8 +55,10 @@ fn test_new_square() {
         let device_type = py.get_type_bound::<QrydEmuSquareDeviceWrapper>();
         let result = device_type.call1((Some(10),));
         assert!(result.is_ok());
-        let device = result.unwrap().downcast::<QrydEmuSquareDeviceWrapper>();
-        assert!(device.is_ok());
+        assert!(result
+            .unwrap()
+            .downcast::<QrydEmuSquareDeviceWrapper>()
+            .is_ok());
     });
 }
 
@@ -100,7 +104,7 @@ fn test_to_from_bincode_square() {
         let device = create_square_device(py, None, None);
 
         let serialised = device.call_method0("to_bincode").unwrap();
-        let deserialised = device.call_method1("from_bincode", (serialised,)).unwrap();
+        let deserialised = device.call_method1("from_bincode", (&serialised,)).unwrap();
 
         let not_correct: HashSet<usize> = HashSet::new();
         let extract_error = device.call_method1("from_bincode", (not_correct,));
@@ -132,7 +136,7 @@ fn test_to_from_json_square() {
         let device = create_square_device(py, None, None);
 
         let serialised = device.call_method0("to_json").unwrap();
-        let deserialised = device.call_method1("from_json", (serialised,)).unwrap();
+        let deserialised = device.call_method1("from_json", (&serialised,)).unwrap();
 
         let vec: Vec<u8> = Vec::new();
         let deserialised_error = device.call_method1("from_json", (vec,));
@@ -261,14 +265,15 @@ fn create_triangular_device(
     rel2: Option<String>,
     ccz: Option<bool>,
     ccp: Option<bool>,
-) -> &Bound<QrydEmuTriangularDeviceWrapper> {
+) -> Bound<QrydEmuTriangularDeviceWrapper> {
     let seed: Option<usize> = Some(11);
     let device_type = py.get_type_bound::<QrydEmuTriangularDeviceWrapper>();
-    let device: &Bound<QrydEmuTriangularDeviceWrapper> = device_type
+    let device: Bound<QrydEmuTriangularDeviceWrapper> = device_type
         .call1((seed, rel1, rel2, ccz, ccp))
         .unwrap()
         .downcast::<QrydEmuTriangularDeviceWrapper>()
-        .unwrap();
+        .unwrap()
+        .to_owned();
     device
 }
 
@@ -276,14 +281,15 @@ fn create_triangular_device_f(
     py: Python,
     rel1: f64,
     rel2: f64,
-) -> &Bound<QrydEmuTriangularDeviceWrapper> {
+) -> Bound<QrydEmuTriangularDeviceWrapper> {
     let seed: Option<usize> = Some(11);
     let device_type = py.get_type_bound::<QrydEmuTriangularDeviceWrapper>();
-    let device: &Bound<QrydEmuTriangularDeviceWrapper> = device_type
+    let device: Bound<QrydEmuTriangularDeviceWrapper> = device_type
         .call1((seed, rel1, rel2))
         .unwrap()
         .downcast::<QrydEmuTriangularDeviceWrapper>()
-        .unwrap();
+        .unwrap()
+        .to_owned();
     device
 }
 
@@ -295,8 +301,10 @@ fn test_new_triangular() {
         let device_type = py.get_type_bound::<QrydEmuTriangularDeviceWrapper>();
         let result = device_type.call1((Some(10),));
         assert!(result.is_ok());
-        let device = result.unwrap().downcast::<QrydEmuTriangularDeviceWrapper>();
-        assert!(device.is_ok());
+        assert!(result
+            .unwrap()
+            .downcast::<QrydEmuTriangularDeviceWrapper>()
+            .is_ok());
     });
 }
 
@@ -344,7 +352,7 @@ fn test_to_from_bincode_triangular() {
         let device = create_triangular_device(py, None, None, None, None);
 
         let serialised = device.call_method0("to_bincode").unwrap();
-        let deserialised = device.call_method1("from_bincode", (serialised,)).unwrap();
+        let deserialised = device.call_method1("from_bincode", (&serialised,)).unwrap();
 
         let not_correct: HashSet<usize> = HashSet::new();
         let extract_error = device.call_method1("from_bincode", (not_correct,));
@@ -376,7 +384,7 @@ fn test_to_from_json_triangular() {
         let device = create_triangular_device(py, None, None, None, None);
 
         let serialised = device.call_method0("to_json").unwrap();
-        let deserialised = device.call_method1("from_json", (serialised,)).unwrap();
+        let deserialised = device.call_method1("from_json", (&serialised,)).unwrap();
 
         let vec: Vec<u8> = Vec::new();
         let deserialised_error = device.call_method1("from_json", (vec,));

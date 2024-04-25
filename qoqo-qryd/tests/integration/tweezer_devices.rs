@@ -35,8 +35,8 @@ use wiremock::{Mock, MockServer, ResponseTemplate};
 fn test_new() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type = py.get_type::<TweezerDeviceWrapper>();
-        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
+        let device_type = py.get_type_bound::<TweezerDeviceWrapper>();
+        let device_type_mut = py.get_type_bound::<TweezerMutableDeviceWrapper>();
         let res = device_type.call1((2,));
         let res_mut = device_type_mut.call1((2,));
 
@@ -103,8 +103,8 @@ fn test_new() {
 fn test_from_mutable() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type = py.get_type::<TweezerDeviceWrapper>();
-        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
+        let device_type = py.get_type_bound::<TweezerDeviceWrapper>();
+        let device_type_mut = py.get_type_bound::<TweezerMutableDeviceWrapper>();
         let device_mut = device_type_mut.call0().unwrap();
 
         device_mut
@@ -141,8 +141,8 @@ fn test_layouts() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let fake_api_pypyany = fake_api_device.into_py(py);
-        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
-        let device = fake_api_pypyany.as_ref(py);
+        let device_type_mut = py.get_type_bound::<TweezerMutableDeviceWrapper>();
+        let device = fake_api_pypyany.bind(py);
         let device_mut = device_type_mut.call0().unwrap();
         device_mut.call_method1("add_layout", ("default",)).unwrap();
         device_mut
@@ -238,8 +238,8 @@ fn test_qubit_tweezer_mapping() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let fake_api_pypyany = fake_api_device.into_py(py);
-        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
-        let device = fake_api_pypyany.as_ref(py);
+        let device_type_mut = py.get_type_bound::<TweezerMutableDeviceWrapper>();
+        let device = fake_api_pypyany.bind(py);
         let device_mut = device_type_mut.call0().unwrap();
 
         assert!(device_mut
@@ -278,7 +278,7 @@ fn test_qubit_tweezer_mapping() {
             .call_method1("add_qubit_tweezer_mapping", (1, 0))
             .is_err());
 
-        let ex_dict: &PyDict = [(0, 1)].into_py_dict(py);
+        let ex_dict: &Bound<PyDict> = &[(0, 1)].into_py_dict_bound(py);
         assert!(device_mut
             .call_method0("get_qubit_to_tweezer_mapping")
             .unwrap()
@@ -335,7 +335,7 @@ fn test_qubit_tweezer_mapping() {
             .call_method1("switch_layout", ("test_trivial_population", true))
             .unwrap();
 
-        let ex_dict: &PyDict = [(0, 0), (1, 1), (2, 2)].into_py_dict(py);
+        let ex_dict: &Bound<PyDict> = &[(0, 0), (1, 1), (2, 2)].into_py_dict_bound(py);
         assert!(device_mut
             .call_method0("get_qubit_to_tweezer_mapping")
             .unwrap()
@@ -349,7 +349,7 @@ fn test_qubit_tweezer_mapping() {
 fn test_allowed_tweezer_shifts() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
+        let device_type_mut = py.get_type_bound::<TweezerMutableDeviceWrapper>();
         let device_mut = device_type_mut.call0().unwrap();
 
         device_mut.call_method1("add_layout", ("default",)).unwrap();
@@ -386,7 +386,7 @@ fn test_allowed_tweezer_shifts() {
 fn test_allowed_tweezer_shifts_from_rows() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
+        let device_type_mut = py.get_type_bound::<TweezerMutableDeviceWrapper>();
         let device_mut = device_type_mut.call0().unwrap();
 
         device_mut.call_method1("add_layout", ("default",)).unwrap();
@@ -423,9 +423,9 @@ fn test_allowed_tweezer_shifts_from_rows() {
 fn test_allow_reset() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
+        let device_type_mut = py.get_type_bound::<TweezerMutableDeviceWrapper>();
         let device_mut = device_type_mut.call0().unwrap();
-        let device_type = py.get_type::<TweezerDeviceWrapper>();
+        let device_type = py.get_type_bound::<TweezerDeviceWrapper>();
         let device = device_type.call0().unwrap();
 
         assert!(!device_mut
@@ -464,8 +464,8 @@ fn test_deactivate_qubit() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let fake_api_pypyany = fake_api_device.into_py(py);
-        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
-        let device = fake_api_pypyany.as_ref(py);
+        let device_type_mut = py.get_type_bound::<TweezerMutableDeviceWrapper>();
+        let device = fake_api_pypyany.bind(py);
         let device_mut = device_type_mut.call0().unwrap();
 
         assert!(device.call_method1("deactivate_qubit", (0,)).is_err());
@@ -550,8 +550,8 @@ fn test_qubit_times() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let fake_api_pypyany = fake_api_device.into_py(py);
-        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
-        let device = fake_api_pypyany.as_ref(py);
+        let device_type_mut = py.get_type_bound::<TweezerMutableDeviceWrapper>();
+        let device = fake_api_pypyany.bind(py);
         let device_mut = device_type_mut.call0().unwrap();
 
         device_mut
@@ -656,8 +656,8 @@ fn test_number_qubits() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let fake_api_pypyany = fake_api_device.into_py(py);
-        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
-        let device = fake_api_pypyany.as_ref(py);
+        let device_type_mut = py.get_type_bound::<TweezerMutableDeviceWrapper>();
+        let device = fake_api_pypyany.bind(py);
         let device_mut = device_type_mut.call0().unwrap();
 
         device_mut.call_method1("add_layout", ("default",)).unwrap();
@@ -752,8 +752,8 @@ fn test_number_tweezer_positions() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let fake_api_pypyany = fake_api_device.into_py(py);
-        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
-        let device = fake_api_pypyany.as_ref(py);
+        let device_type_mut = py.get_type_bound::<TweezerMutableDeviceWrapper>();
+        let device = fake_api_pypyany.bind(py);
         let device_mut = device_type_mut.call0().unwrap();
 
         device_mut.call_method1("add_layout", ("default",)).unwrap();
@@ -825,8 +825,8 @@ fn test_generic_device() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let fake_api_pypyany = fake_api_device.into_py(py);
-        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
-        let device = fake_api_pypyany.as_ref(py);
+        let device_type_mut = py.get_type_bound::<TweezerMutableDeviceWrapper>();
+        let device = fake_api_pypyany.bind(py);
         let device_mut = device_type_mut.call0().unwrap();
 
         device_mut.call_method1("add_layout", ("default",)).unwrap();
@@ -874,8 +874,8 @@ fn test_generic_device() {
 fn test_copy_deepcopy() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type = py.get_type::<TweezerDeviceWrapper>();
-        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
+        let device_type = py.get_type_bound::<TweezerDeviceWrapper>();
+        let device_type_mut = py.get_type_bound::<TweezerMutableDeviceWrapper>();
         let device = device_type.call0().unwrap();
         let device_mut = device_type_mut.call0().unwrap();
 
@@ -916,9 +916,9 @@ fn test_to_from_json() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let fake_api_pypyany = fake_api_device.into_py(py);
-        let device_type = py.get_type::<TweezerDeviceWrapper>();
-        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
-        let device = fake_api_pypyany.as_ref(py);
+        let device_type = py.get_type_bound::<TweezerDeviceWrapper>();
+        let device_type_mut = py.get_type_bound::<TweezerMutableDeviceWrapper>();
+        let device = fake_api_pypyany.bind(py);
         let device_empty = device_type.call0().unwrap();
         let device_mut = device_type_mut.call0().unwrap();
 
@@ -954,9 +954,9 @@ fn test_to_from_json() {
 
         let serialised = device.call_method0("to_json").unwrap();
         let serialised_mut = device_mut.call_method0("to_json").unwrap();
-        let deserialised = device.call_method1("from_json", (serialised,)).unwrap();
+        let deserialised = device.call_method1("from_json", (&serialised,)).unwrap();
         let deserialised_mut = device_mut
-            .call_method1("from_json", (serialised_mut,))
+            .call_method1("from_json", (&serialised_mut,))
             .unwrap();
 
         let vec: Vec<u8> = Vec::new();
@@ -1033,8 +1033,8 @@ fn test_to_from_json() {
 fn test_to_from_bincode() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type = py.get_type::<TweezerDeviceWrapper>();
-        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
+        let device_type = py.get_type_bound::<TweezerDeviceWrapper>();
+        let device_type_mut = py.get_type_bound::<TweezerMutableDeviceWrapper>();
         let device = device_type.call0().unwrap();
         let device_mut = device_type_mut.call0().unwrap();
 
@@ -1063,9 +1063,9 @@ fn test_to_from_bincode() {
 
         let serialised = device.call_method0("to_bincode").unwrap();
         let serialised_mut = device_mut.call_method0("to_bincode").unwrap();
-        let deserialised = device.call_method1("from_bincode", (serialised,)).unwrap();
+        let deserialised = device.call_method1("from_bincode", (&serialised,)).unwrap();
         let deserialised_mut = device_mut
-            .call_method1("from_bincode", (serialised_mut,))
+            .call_method1("from_bincode", (&serialised_mut,))
             .unwrap();
 
         let vec: Vec<u8> = Vec::new();
@@ -1106,8 +1106,8 @@ fn test_two_qubit_edges() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let fake_api_pypyany = fake_api_device.into_py(py);
-        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
-        let device = fake_api_pypyany.as_ref(py);
+        let device_type_mut = py.get_type_bound::<TweezerMutableDeviceWrapper>();
+        let device = fake_api_pypyany.bind(py);
         let device_mut = device_type_mut.call0().unwrap();
 
         device_mut.call_method1("add_layout", ("default",)).unwrap();
@@ -1204,11 +1204,11 @@ async fn test_from_api() {
     tokio::task::spawn_blocking(move || {
         Python::with_gil(|py| {
             // let sent_device_type = sent_device_wrapper.into_py(py);
-            // let sent_device_py = sent_device_type.as_ref(py);
+            // let sent_device_py = sent_device_type.bind(py);
             let received_device_type = received_device_wrapper.into_py(py);
-            let received_device_py = received_device_type.as_ref(py);
+            let received_device_py = received_device_type.bind(py);
 
-            let device_type = py.get_type::<TweezerDeviceWrapper>();
+            let device_type = py.get_type_bound::<TweezerDeviceWrapper>();
 
             let device = device_type
                 .call_method1(
@@ -1299,10 +1299,10 @@ async fn test_from_api() {
 fn test_convert_to_device() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type = py.get_type::<TweezerDeviceWrapper>();
+        let device_type = py.get_type_bound::<TweezerDeviceWrapper>();
         let device = device_type.call0().unwrap();
 
-        let converted = convert_into_device(device).unwrap();
+        let converted = convert_into_device(&device).unwrap();
         let rust_dev: TweezerDevice = TweezerDevice::new(None, None, None);
 
         assert_eq!(converted, rust_dev);
@@ -1314,8 +1314,8 @@ fn test_convert_to_device() {
 fn test_phi_theta_relations() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
-        let device_type = py.get_type::<TweezerDeviceWrapper>();
+        let device_type_mut = py.get_type_bound::<TweezerMutableDeviceWrapper>();
+        let device_type = py.get_type_bound::<TweezerDeviceWrapper>();
         let device_f = device_type_mut
             .call1((Option::<usize>::None, "2.15", "2.13"))
             .unwrap();
@@ -1420,8 +1420,8 @@ fn test_two_tweezer_edges() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let fake_api_pypyany = fake_api_device.into_py(py);
-        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
-        let device = fake_api_pypyany.as_ref(py);
+        let device_type_mut = py.get_type_bound::<TweezerMutableDeviceWrapper>();
+        let device = fake_api_pypyany.bind(py);
         let device_mut = device_type_mut.call0().unwrap();
 
         device_mut.call_method1("add_layout", ("default",)).unwrap();
@@ -1466,7 +1466,7 @@ fn test_two_tweezer_edges() {
 fn test_default_layout() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
+        let device_type_mut = py.get_type_bound::<TweezerMutableDeviceWrapper>();
         let device_mut = device_type_mut.call0().unwrap();
         device_mut
             .call_method1("add_layout", ("triangle",))
@@ -1501,7 +1501,7 @@ fn test_default_layout() {
 fn test_setters_native_set_error() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
+        let device_type_mut = py.get_type_bound::<TweezerMutableDeviceWrapper>();
         let device_mut = device_type_mut.call0().unwrap();
         device_mut
             .call_method1("add_layout", ("triangle",))
@@ -1549,7 +1549,7 @@ fn test_setters_native_set_error() {
 fn test_available_gate_names() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
+        let device_type_mut = py.get_type_bound::<TweezerMutableDeviceWrapper>();
         let device_mut = device_type_mut.call0().unwrap();
         device_mut
             .call_method1("add_layout", ("layout_name",))
@@ -1598,10 +1598,10 @@ fn test_available_gate_names() {
             "ControlledControlledPhaseShift",
         ]);
         assert_eq!(
-            res.extract::<Vec<&str>>()
+            res.extract::<Vec<String>>()
                 .unwrap()
                 .iter()
-                .filter(|extracted| expected_result.contains(extracted))
+                .filter(|extracted| expected_result.contains(&extracted.as_str()))
                 .count(),
             3
         );
