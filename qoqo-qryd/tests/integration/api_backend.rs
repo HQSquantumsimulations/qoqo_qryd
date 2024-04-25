@@ -45,7 +45,7 @@ fn create_backend_with_square_device(
         .downcast::<PyCell<QrydEmuSquareDeviceWrapper>>()
         .unwrap();
 
-    let backend_type: &PyType = py.get_type::<APIBackendWrapper>();
+    let backend_type: &Bound<PyType> = py.get_type::<APIBackendWrapper>();
     let backend: &PyCell<APIBackendWrapper> = backend_type
         .call1((device, ""))
         .unwrap()
@@ -65,7 +65,7 @@ fn create_valid_backend_with_square_device(
         .downcast::<PyCell<QrydEmuSquareDeviceWrapper>>()
         .unwrap();
 
-    let backend_type: &PyType = py.get_type::<APIBackendWrapper>();
+    let backend_type: &Bound<PyType> = py.get_type::<APIBackendWrapper>();
     let none_string: Option<String> = None;
     let backend: &PyCell<APIBackendWrapper> = backend_type
         .call1((device, none_string))
@@ -87,7 +87,7 @@ fn create_valid_backend_with_square_device_mocked(
         .downcast::<PyCell<QrydEmuSquareDeviceWrapper>>()
         .unwrap();
 
-    let backend_type: &PyType = py.get_type::<APIBackendWrapper>();
+    let backend_type: &Bound<PyType> = py.get_type::<APIBackendWrapper>();
     let none_string: Option<String> = None;
     let backend: &PyCell<APIBackendWrapper> = backend_type
         .call1((device, none_string, 30, mock_port))
@@ -152,7 +152,7 @@ fn test_new_square() {
             .downcast::<PyCell<QrydEmuSquareDeviceWrapper>>()
             .unwrap();
 
-        let backend_type: &PyType = py.get_type::<APIBackendWrapper>();
+        let backend_type: &Bound<PyType> = py.get_type::<APIBackendWrapper>();
         let backend = backend_type
             .call1((device, ""))
             .unwrap()
@@ -174,7 +174,7 @@ fn test_fail_new_square() {
             .downcast::<PyCell<QrydEmuSquareDeviceWrapper>>()
             .unwrap();
 
-        let backend_type: &PyType = py.get_type::<APIBackendWrapper>();
+        let backend_type: &Bound<PyType> = py.get_type::<APIBackendWrapper>();
         let backend = backend_type.call1((3_u32, ""));
         assert!(backend.is_err());
         if let Ok(old_token) = env::var("QRYD_API_TOKEN") {
@@ -202,7 +202,7 @@ fn test_new_triangle() {
             .downcast::<PyCell<QrydEmuTriangularDeviceWrapper>>()
             .unwrap();
 
-        let backend_type: &PyType = py.get_type::<APIBackendWrapper>();
+        let backend_type: &Bound<PyType> = py.get_type::<APIBackendWrapper>();
         let backend = backend_type
             .call1((device, ""))
             .unwrap()
@@ -749,7 +749,7 @@ async fn test_convert_into_backend() {
 
         assert_eq!(converted, rust_backend);
 
-        let wrong_param: &PyAny = PyList::empty(py);
+        let wrong_param: &Bound<PyAny> = PyList::empty(py);
         let wrong_convert = convert_into_backend(wrong_param);
         assert!(wrong_convert.is_err());
     });
@@ -798,7 +798,7 @@ async fn test_dev() {
             .downcast::<PyCell<QrydEmuSquareDeviceWrapper>>()
             .unwrap();
 
-        let backend_type: &PyType = py.get_type::<APIBackendWrapper>();
+        let backend_type: &Bound<PyType> = py.get_type::<APIBackendWrapper>();
         let backend: &PyCell<APIBackendWrapper> = backend_type
             .call1((
                 device,

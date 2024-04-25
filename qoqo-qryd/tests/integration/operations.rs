@@ -562,7 +562,7 @@ fn test_pragmas_substitute_parameters() {
             new_pragma_switch_layout(py, "Square".to_string()),
         ];
         for operation in ops {
-            let mut substitution_dict: HashMap<&str, f64> = HashMap::new();
+            let mut substitution_dict: HashMap<String, f64> = HashMap::new();
             substitution_dict.insert("test", 1.0);
             let substitute_op = operation
                 .call_method1("substitute_parameters", (substitution_dict,))

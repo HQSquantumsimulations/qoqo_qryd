@@ -55,8 +55,8 @@ impl QrydEmuSquareDeviceWrapper {
     )]
     pub fn new(
         seed: Option<usize>,
-        controlled_z_phase_relation: Option<&PyAny>,
-        controlled_phase_phase_relation: Option<&PyAny>,
+        controlled_z_phase_relation: Option<&Bound<PyAny>>,
+        controlled_phase_phase_relation: Option<&Bound<PyAny>>,
     ) -> Self {
         let czpr = if let Some(value) = controlled_z_phase_relation {
             if convert_into_calculator_float(value).is_ok() {
@@ -135,7 +135,7 @@ impl QrydEmuSquareDeviceWrapper {
         let serialized = bincode::serialize(&self.internal)
             .map_err(|_| PyValueError::new_err("Cannot serialize QrydEmuSquareDevice to bytes"))?;
         let b: Py<PyByteArray> = Python::with_gil(|py| -> Py<PyByteArray> {
-            PyByteArray::new(py, &serialized[..]).into()
+            PyByteArray::new_bound(py, &serialized[..]).into()
         });
         Ok(b)
     }
@@ -153,7 +153,7 @@ impl QrydEmuSquareDeviceWrapper {
     ///     ValueError: Input cannot be deserialized to QrydEmuSquareDevice.
     #[staticmethod]
     #[pyo3(text_signature = "(input, /)")]
-    pub fn from_bincode(input: &PyAny) -> PyResult<QrydEmuSquareDeviceWrapper> {
+    pub fn from_bincode(input: &Bound<PyAny>) -> PyResult<QrydEmuSquareDeviceWrapper> {
         let bytes = input
             .extract::<Vec<u8>>()
             .map_err(|_| PyTypeError::new_err("Input cannot be converted to byte array"))?;
@@ -220,7 +220,7 @@ impl QrydEmuSquareDeviceWrapper {
         let serialized = bincode::serialize(&qryd_enum)
             .map_err(|_| PyValueError::new_err("Cannot serialize QrydEmuSquareDevice to bytes"))?;
         let b: Py<PyByteArray> = Python::with_gil(|py| -> Py<PyByteArray> {
-            PyByteArray::new(py, &serialized[..]).into()
+            PyByteArray::new_bound(py, &serialized[..]).into()
         });
         Ok(b)
     }
@@ -407,8 +407,8 @@ impl QrydEmuTriangularDeviceWrapper {
     )]
     pub fn new(
         seed: Option<usize>,
-        controlled_z_phase_relation: Option<&PyAny>,
-        controlled_phase_phase_relation: Option<&PyAny>,
+        controlled_z_phase_relation: Option<&Bound<PyAny>>,
+        controlled_phase_phase_relation: Option<&Bound<PyAny>>,
         allow_ccz_gate: Option<bool>,
         allow_ccp_gate: Option<bool>,
     ) -> Self {
@@ -479,7 +479,7 @@ impl QrydEmuTriangularDeviceWrapper {
             PyValueError::new_err("Cannot serialize QrydEmuTriangularDevice to bytes")
         })?;
         let b: Py<PyByteArray> = Python::with_gil(|py| -> Py<PyByteArray> {
-            PyByteArray::new(py, &serialized[..]).into()
+            PyByteArray::new_bound(py, &serialized[..]).into()
         });
         Ok(b)
     }
@@ -514,7 +514,7 @@ impl QrydEmuTriangularDeviceWrapper {
     ///     ValueError: Input cannot be deserialized to QrydEmuTriangularDevice.
     #[staticmethod]
     #[pyo3(text_signature = "(input, /)")]
-    pub fn from_bincode(input: &PyAny) -> PyResult<QrydEmuTriangularDeviceWrapper> {
+    pub fn from_bincode(input: &Bound<PyAny>) -> PyResult<QrydEmuTriangularDeviceWrapper> {
         let bytes = input
             .extract::<Vec<u8>>()
             .map_err(|_| PyTypeError::new_err("Input cannot be converted to byte array"))?;
@@ -584,7 +584,7 @@ impl QrydEmuTriangularDeviceWrapper {
             PyValueError::new_err("Cannot serialize QrydEmuTriangularDevice to bytes")
         })?;
         let b: Py<PyByteArray> = Python::with_gil(|py| -> Py<PyByteArray> {
-            PyByteArray::new(py, &serialized[..]).into()
+            PyByteArray::new_bound(py, &serialized[..]).into()
         });
         Ok(b)
     }
@@ -733,7 +733,7 @@ impl QrydEmuTriangularDeviceWrapper {
 /// Convert generic python object to [roqoqo_qryd::QRydAPIDevice].
 ///
 /// Fallible conversion of generic python object to [roqoqo_qryd::QRydAPIDevice].
-pub fn convert_into_device(input: &PyAny) -> Result<QRydAPIDevice, QoqoBackendError> {
+pub fn convert_into_device(input: &Bound<PyAny>) -> Result<QRydAPIDevice, QoqoBackendError> {
     // Everything that follows tries to extract the circuit when two separately
     // compiled python packages are involved
     let get_bytes = input
@@ -754,7 +754,7 @@ pub fn convert_into_device(input: &PyAny) -> Result<QRydAPIDevice, QoqoBackendEr
 ///    QrydEmuTriangularDevice
 ///
 #[pymodule]
-pub fn api_devices(_py: Python, m: &PyModule) -> PyResult<()> {
+pub fn api_devices(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     m.add_class::<QrydEmuSquareDeviceWrapper>()?;
     m.add_class::<QrydEmuTriangularDeviceWrapper>()?;
     Ok(())

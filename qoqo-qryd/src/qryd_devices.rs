@@ -82,8 +82,8 @@ impl FirstDeviceWrapper {
         qubits_per_row: Vec<usize>,
         row_distance: f64,
         initial_layout: PyReadonlyArray2<f64>,
-        controlled_z_phase_relation: Option<&PyAny>,
-        controlled_phase_phase_relation: Option<&PyAny>,
+        controlled_z_phase_relation: Option<&Bound<PyAny>>,
+        controlled_phase_phase_relation: Option<&Bound<PyAny>>,
         allow_ccz_gate: Option<bool>,
         allow_ccp_gate: Option<bool>,
     ) -> PyResult<Self> {
@@ -272,7 +272,7 @@ impl FirstDeviceWrapper {
         let serialized = serialize(&self.internal)
             .map_err(|_| PyValueError::new_err("Cannot serialize FirstDevice to bytes"))?;
         let b: Py<PyByteArray> = Python::with_gil(|py| -> Py<PyByteArray> {
-            PyByteArray::new(py, &serialized[..]).into()
+            PyByteArray::new_bound(py, &serialized[..]).into()
         });
         Ok(b)
     }
@@ -290,7 +290,7 @@ impl FirstDeviceWrapper {
     ///     ValueError: Input cannot be deserialized to FirstDevice.
     #[staticmethod]
     #[pyo3(text_signature = "(input, /)")]
-    pub fn from_bincode(input: &PyAny) -> PyResult<FirstDeviceWrapper> {
+    pub fn from_bincode(input: &Bound<PyAny>) -> PyResult<FirstDeviceWrapper> {
         let bytes = input
             .extract::<Vec<u8>>()
             .map_err(|_| PyTypeError::new_err("Input cannot be converted to byte array"))?;
@@ -460,7 +460,7 @@ impl FirstDeviceWrapper {
         let serialized = serialize(&qryd_enum)
             .map_err(|_| PyValueError::new_err("Cannot serialize FirstDevice to bytes"))?;
         let b: Py<PyByteArray> = Python::with_gil(|py| -> Py<PyByteArray> {
-            PyByteArray::new(py, &serialized[..]).into()
+            PyByteArray::new_bound(py, &serialized[..]).into()
         });
         Ok(b)
     }
@@ -502,7 +502,7 @@ impl FirstDeviceWrapper {
 /// Convert generic python object to [roqoqo_qryd::QrydDevice].
 ///
 /// Fallible conversion of generic python object to [roqoqo::FirstDevice].
-pub fn convert_into_device(input: &PyAny) -> Result<QRydDevice, QoqoBackendError> {
+pub fn convert_into_device(input: &Bound<PyAny>) -> Result<QRydDevice, QoqoBackendError> {
     // Everything that follows tries to extract the circuit when two separately
     // compiled python packages are involved
     let get_bytes = input
@@ -522,7 +522,7 @@ pub fn convert_into_device(input: &PyAny) -> Result<QRydDevice, QoqoBackendError
 ///    FirstDevice
 ///
 #[pymodule]
-pub fn qryd_devices(_py: Python, m: &PyModule) -> PyResult<()> {
+pub fn qryd_devices(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     m.add_class::<FirstDeviceWrapper>()?;
     Ok(())
 }

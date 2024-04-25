@@ -23,24 +23,24 @@ fn create_square_device(
     py: Python,
     rel1: Option<String>,
     rel2: Option<String>,
-) -> &PyCell<QrydEmuSquareDeviceWrapper> {
+) -> &Bound<QrydEmuSquareDeviceWrapper> {
     let seed: Option<usize> = Some(11);
-    let device_type = py.get_type::<QrydEmuSquareDeviceWrapper>();
-    let device: &PyCell<QrydEmuSquareDeviceWrapper> = device_type
+    let device_type = py.get_type_bound::<QrydEmuSquareDeviceWrapper>();
+    let device: &Bound<QrydEmuSquareDeviceWrapper> = device_type
         .call1((seed, rel1, rel2))
         .unwrap()
-        .downcast::<PyCell<QrydEmuSquareDeviceWrapper>>()
+        .downcast::<QrydEmuSquareDeviceWrapper>()
         .unwrap();
     device
 }
 
-fn create_square_device_f(py: Python, rel1: f64, rel2: f64) -> &PyCell<QrydEmuSquareDeviceWrapper> {
+fn create_square_device_f(py: Python, rel1: f64, rel2: f64) -> &Bound<QrydEmuSquareDeviceWrapper> {
     let seed: Option<usize> = Some(11);
-    let device_type = py.get_type::<QrydEmuSquareDeviceWrapper>();
-    let device: &PyCell<QrydEmuSquareDeviceWrapper> = device_type
+    let device_type = py.get_type_bound::<QrydEmuSquareDeviceWrapper>();
+    let device: &Bound<QrydEmuSquareDeviceWrapper> = device_type
         .call1((seed, rel1, rel2))
         .unwrap()
-        .downcast::<PyCell<QrydEmuSquareDeviceWrapper>>()
+        .downcast::<QrydEmuSquareDeviceWrapper>()
         .unwrap();
     device
 }
@@ -50,12 +50,10 @@ fn create_square_device_f(py: Python, rel1: f64, rel2: f64) -> &PyCell<QrydEmuSq
 fn test_new_square() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type = py.get_type::<QrydEmuSquareDeviceWrapper>();
+        let device_type = py.get_type_bound::<QrydEmuSquareDeviceWrapper>();
         let result = device_type.call1((Some(10),));
         assert!(result.is_ok());
-        let device = result
-            .unwrap()
-            .downcast::<PyCell<QrydEmuSquareDeviceWrapper>>();
+        let device = result.unwrap().downcast::<QrydEmuSquareDeviceWrapper>();
         assert!(device.is_ok());
     });
 }
@@ -263,13 +261,13 @@ fn create_triangular_device(
     rel2: Option<String>,
     ccz: Option<bool>,
     ccp: Option<bool>,
-) -> &PyCell<QrydEmuTriangularDeviceWrapper> {
+) -> &Bound<QrydEmuTriangularDeviceWrapper> {
     let seed: Option<usize> = Some(11);
-    let device_type = py.get_type::<QrydEmuTriangularDeviceWrapper>();
-    let device: &PyCell<QrydEmuTriangularDeviceWrapper> = device_type
+    let device_type = py.get_type_bound::<QrydEmuTriangularDeviceWrapper>();
+    let device: &Bound<QrydEmuTriangularDeviceWrapper> = device_type
         .call1((seed, rel1, rel2, ccz, ccp))
         .unwrap()
-        .downcast::<PyCell<QrydEmuTriangularDeviceWrapper>>()
+        .downcast::<QrydEmuTriangularDeviceWrapper>()
         .unwrap();
     device
 }
@@ -278,13 +276,13 @@ fn create_triangular_device_f(
     py: Python,
     rel1: f64,
     rel2: f64,
-) -> &PyCell<QrydEmuTriangularDeviceWrapper> {
+) -> &Bound<QrydEmuTriangularDeviceWrapper> {
     let seed: Option<usize> = Some(11);
-    let device_type = py.get_type::<QrydEmuTriangularDeviceWrapper>();
-    let device: &PyCell<QrydEmuTriangularDeviceWrapper> = device_type
+    let device_type = py.get_type_bound::<QrydEmuTriangularDeviceWrapper>();
+    let device: &Bound<QrydEmuTriangularDeviceWrapper> = device_type
         .call1((seed, rel1, rel2))
         .unwrap()
-        .downcast::<PyCell<QrydEmuTriangularDeviceWrapper>>()
+        .downcast::<QrydEmuTriangularDeviceWrapper>()
         .unwrap();
     device
 }
@@ -294,12 +292,10 @@ fn create_triangular_device_f(
 fn test_new_triangular() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type = py.get_type::<QrydEmuTriangularDeviceWrapper>();
+        let device_type = py.get_type_bound::<QrydEmuTriangularDeviceWrapper>();
         let result = device_type.call1((Some(10),));
         assert!(result.is_ok());
-        let device = result
-            .unwrap()
-            .downcast::<PyCell<QrydEmuTriangularDeviceWrapper>>();
+        let device = result.unwrap().downcast::<QrydEmuTriangularDeviceWrapper>();
         assert!(device.is_ok());
     });
 }
