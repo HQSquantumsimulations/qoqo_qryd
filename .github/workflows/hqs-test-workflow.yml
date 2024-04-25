@@ -5,13 +5,22 @@ on:
   pull_request:
     branches: [main]
 
-env:
-  API_DEV: 0
-
 jobs:
-  test:
+  test-allowed-to-fail:
     runs-on: ubuntu-latest
+    continue-on-error: true
+    env:
+      QRYD_API_DEV: 0
     steps:
-    - name: TEST
-      run: echo "$API_DEV"
+    - name: TEST FAILURE
+      run: |
+        echo "$QRYD_API_DEV"
+        exit 1
 
+  test-not-allowed-to-fail:
+    runs-on: ubuntu-latest
+    env:
+      QRYD_API_DEV: 1
+    steps:
+    - name: TEST SUCCESS
+      run: echo "$QRYD_API_DEV"
