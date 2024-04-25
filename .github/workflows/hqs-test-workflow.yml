@@ -1,0 +1,17 @@
+name: test workflow
+
+on:
+  workflow_dispatch:
+  release:
+    types: [released]
+
+env:
+  API_DEV: 0
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: TEST
+      run: echo "$API_DEV"
+
