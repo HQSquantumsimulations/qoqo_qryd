@@ -2,8 +2,8 @@ name: test workflow
 
 on:
   workflow_dispatch:
-  release:
-    types: [released]
+  pull_request:
+    branches: [main]
 
 env:
   API_DEV: 0
