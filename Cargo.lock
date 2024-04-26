@@ -968,6 +968,7 @@ dependencies = [
 [[package]]
 name = "qoqo"
 version = "1.12.0"
+source = "git+https://github.com/dberthault/qoqo.git?branch=Pyo3_0.12_update#00e75171b228706ed326a3de32b40d036ac1dce4"
 dependencies = [
  "bincode",
  "ndarray",
@@ -993,6 +994,7 @@ dependencies = [
 [[package]]
 name = "qoqo-macros"
 version = "1.12.0"
+source = "git+https://github.com/dberthault/qoqo.git?branch=Pyo3_0.12_update#00e75171b228706ed326a3de32b40d036ac1dce4"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1024,6 +1026,7 @@ dependencies = [
 [[package]]
 name = "qoqo_calculator"
 version = "1.2.0"
+source = "git+https://github.com/dberthault/qoqo_calculator.git#b8b770bf9c8391e8e5a9217d92481564415fad18"
 dependencies = [
  "num-complex",
  "schemars",
@@ -1034,6 +1037,7 @@ dependencies = [
 [[package]]
 name = "qoqo_calculator_pyo3"
 version = "1.2.0"
+source = "git+https://github.com/dberthault/qoqo_calculator.git#b8b770bf9c8391e8e5a9217d92481564415fad18"
 dependencies = [
  "num-complex",
  "pyo3",
@@ -1046,6 +1050,7 @@ dependencies = [
 [[package]]
 name = "quest-sys"
 version = "0.14.0"
+source = "git+https://github.com/dberthault/qoqo-quest.git#7dce19b59cd6780bf5b0c4ad98420dee49629a06"
 dependencies = [
  "cc",
 ]
@@ -1208,6 +1213,7 @@ dependencies = [
 [[package]]
 name = "roqoqo"
 version = "1.12.0"
+source = "git+https://github.com/dberthault/qoqo.git?branch=Pyo3_0.12_update#00e75171b228706ed326a3de32b40d036ac1dce4"
 dependencies = [
  "bincode",
  "nalgebra",
@@ -1229,6 +1235,7 @@ dependencies = [
 [[package]]
 name = "roqoqo-derive"
 version = "1.12.0"
+source = "git+https://github.com/dberthault/qoqo.git?branch=Pyo3_0.12_update#00e75171b228706ed326a3de32b40d036ac1dce4"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1262,6 +1269,7 @@ dependencies = [
 [[package]]
 name = "roqoqo-quest"
 version = "0.14.0"
+source = "git+https://github.com/dberthault/qoqo-quest.git#7dce19b59cd6780bf5b0c4ad98420dee49629a06"
 dependencies = [
  "ndarray",
  "num-complex",
@@ -1496,6 +1504,7 @@ checksum = "6980e8d7511241f8acf4aebddbb1ff938df5eebe98691418c4468d0b72a96a67"
 [[package]]
 name = "struqture"
 version = "1.7.0"
+source = "git+https://github.com/dberthault/struqture.git#d7c01f269fdcc17affb614959be3840bc9843086"
 dependencies = [
  "itertools 0.12.1",
  "ndarray",
@@ -1511,6 +1520,7 @@ dependencies = [
 [[package]]
 name = "struqture-py"
 version = "1.7.0"
+source = "git+https://github.com/dberthault/struqture.git#d7c01f269fdcc17affb614959be3840bc9843086"
 dependencies = [
  "bincode",
  "num-complex",
@@ -1533,6 +1543,7 @@ dependencies = [
 [[package]]
 name = "struqture-py-macros"
 version = "1.7.0"
+source = "git+https://github.com/dberthault/struqture.git#d7c01f269fdcc17affb614959be3840bc9843086"
 dependencies = [
  "num-complex",
  "proc-macro2",
@@ -2090,3 +2101,8 @@ checksum = "05f360fc0b24296329c78fda852a1e9ae82de9cf7b27dae4b7f62f118f77b9ed"
 dependencies = [
  "tap",
 ]
+
+[[patch.unused]]
+name = "qoqo-quest"
+version = "0.14.0"
+source = "git+https://github.com/dberthault/qoqo-quest.git#7dce19b59cd6780bf5b0c4ad98420dee49629a06"
