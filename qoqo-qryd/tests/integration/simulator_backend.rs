@@ -27,17 +27,13 @@ use roqoqo_qryd::TweezerDevice;
 #[test]
 fn test_creating_backend() {
     Python::with_gil(|py| {
-        let device_type = py.get_type::<TweezerDeviceWrapper>();
-        let device = device_type
-            .call0()
-            .unwrap()
-            .downcast::<PyCell<TweezerDeviceWrapper>>()
-            .unwrap();
-        let backend_type = py.get_type::<SimulatorBackendWrapper>();
+        let device_type = py.get_type_bound::<TweezerDeviceWrapper>();
+        let device = device_type.call0().unwrap();
+        let backend_type = py.get_type_bound::<SimulatorBackendWrapper>();
         let _backend = backend_type
-            .call1((device,))
+            .call1((device.downcast::<TweezerDeviceWrapper>().unwrap(),))
             .unwrap()
-            .downcast::<PyCell<SimulatorBackendWrapper>>()
+            .downcast::<SimulatorBackendWrapper>()
             .unwrap();
     });
 }
@@ -46,7 +42,7 @@ fn test_creating_backend() {
 fn test_creating_backend_error() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let backend_type = py.get_type::<SimulatorBackendWrapper>();
+        let backend_type = py.get_type_bound::<SimulatorBackendWrapper>();
         let backend = backend_type.call1((vec!["fails"],));
         assert!(backend.is_err());
     });
@@ -64,12 +60,9 @@ fn test_running_circuit() {
     circuit += operations::PragmaRepeatedMeasurement::new("readout".to_string(), 100, None);
     let circuit_wrapper = CircuitWrapper { internal: circuit };
     Python::with_gil(|py| {
-        let device_type = py.get_type::<TweezerMutableDeviceWrapper>();
-        let device_tw = device_type
-            .call0()
-            .unwrap()
-            .downcast::<PyCell<TweezerMutableDeviceWrapper>>()
-            .unwrap();
+        let device_type = py.get_type_bound::<TweezerMutableDeviceWrapper>();
+        let binding = device_type.call0().unwrap();
+        let device_tw = binding.downcast::<TweezerMutableDeviceWrapper>().unwrap();
         device_tw.call_method1("add_layout", ("test",)).unwrap();
         device_tw
             .call_method1(
@@ -85,13 +78,11 @@ fn test_running_circuit() {
             .unwrap();
         device_tw.call_method1("switch_layout", ("test",)).unwrap();
 
-        let backend_type = py.get_type::<SimulatorBackendWrapper>();
-        let backend_tw = backend_type
-            .call1((device_tw,))
-            .unwrap()
-            .downcast::<PyCell<SimulatorBackendWrapper>>()
-            .unwrap();
+        let backend_type = py.get_type_bound::<SimulatorBackendWrapper>();
+        let backend_tw = backend_type.call1((device_tw,)).unwrap();
         assert!(backend_tw
+            .downcast::<SimulatorBackendWrapper>()
+            .unwrap()
             .call_method1("run_circuit", (circuit_wrapper,))
             .is_ok());
     })
@@ -101,12 +92,9 @@ fn test_running_circuit() {
 fn test_running_circuit_error() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type = py.get_type::<TweezerMutableDeviceWrapper>();
-        let device = device_type
-            .call0()
-            .unwrap()
-            .downcast::<PyCell<TweezerMutableDeviceWrapper>>()
-            .unwrap();
+        let device_type = py.get_type_bound::<TweezerMutableDeviceWrapper>();
+        let binding = device_type.call0().unwrap();
+        let device = binding.downcast::<TweezerMutableDeviceWrapper>().unwrap();
         device.call_method1("add_layout", ("test",)).unwrap();
         device
             .call_method1(
@@ -121,13 +109,12 @@ fn test_running_circuit_error() {
             )
             .unwrap();
         device.call_method1("switch_layout", ("test",)).unwrap();
-        let backend_type = py.get_type::<SimulatorBackendWrapper>();
-        let backend = backend_type
-            .call1((device,))
+        let backend_type = py.get_type_bound::<SimulatorBackendWrapper>();
+        let backend = backend_type.call1((device,)).unwrap();
+        let error = backend
+            .downcast::<SimulatorBackendWrapper>()
             .unwrap()
-            .downcast::<PyCell<SimulatorBackendWrapper>>()
-            .unwrap();
-        let error = backend.call_method1("run_circuit", (vec!["error"],));
+            .call_method1("run_circuit", (vec!["error"],));
         assert!(error.is_err());
     })
 }
@@ -150,12 +137,9 @@ fn test_running_measurement_registers() {
         internal: cr_measurement,
     };
     Python::with_gil(|py| {
-        let device_type = py.get_type::<TweezerMutableDeviceWrapper>();
-        let device = device_type
-            .call0()
-            .unwrap()
-            .downcast::<PyCell<TweezerMutableDeviceWrapper>>()
-            .unwrap();
+        let device_type = py.get_type_bound::<TweezerMutableDeviceWrapper>();
+        let binding = device_type.call0().unwrap();
+        let device = binding.downcast::<TweezerMutableDeviceWrapper>().unwrap();
         device.call_method1("add_layout", ("test",)).unwrap();
         device
             .call_method1(
@@ -170,13 +154,11 @@ fn test_running_measurement_registers() {
             )
             .unwrap();
         device.call_method1("switch_layout", ("test",)).unwrap();
-        let backend_type = py.get_type::<SimulatorBackendWrapper>();
-        let backend = backend_type
-            .call1((device,))
-            .unwrap()
-            .downcast::<PyCell<SimulatorBackendWrapper>>()
-            .unwrap();
+        let backend_type = py.get_type_bound::<SimulatorBackendWrapper>();
+        let backend = backend_type.call1((device,)).unwrap();
         let _ = backend
+            .downcast::<SimulatorBackendWrapper>()
+            .unwrap()
             .call_method1("run_measurement_registers", (crm_wrapper,))
             .unwrap();
     })
@@ -186,12 +168,9 @@ fn test_running_measurement_registers() {
 fn test_running_measurement_registers_error_1() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type = py.get_type::<TweezerMutableDeviceWrapper>();
-        let device = device_type
-            .call0()
-            .unwrap()
-            .downcast::<PyCell<TweezerMutableDeviceWrapper>>()
-            .unwrap();
+        let device_type = py.get_type_bound::<TweezerMutableDeviceWrapper>();
+        let binding = device_type.call0().unwrap();
+        let device = binding.downcast::<TweezerMutableDeviceWrapper>().unwrap();
         device.call_method1("add_layout", ("test",)).unwrap();
         device
             .call_method1(
@@ -206,13 +185,12 @@ fn test_running_measurement_registers_error_1() {
             )
             .unwrap();
         device.call_method1("switch_layout", ("test",)).unwrap();
-        let backend_type = py.get_type::<SimulatorBackendWrapper>();
-        let backend = backend_type
-            .call1((device,))
+        let backend_type = py.get_type_bound::<SimulatorBackendWrapper>();
+        let backend = backend_type.call1((device,)).unwrap();
+        let error = backend
+            .downcast::<SimulatorBackendWrapper>()
             .unwrap()
-            .downcast::<PyCell<SimulatorBackendWrapper>>()
-            .unwrap();
-        let error = backend.call_method1("run_measurement_registers", (vec!["error"],));
+            .call_method1("run_measurement_registers", (vec!["error"],));
         assert!(error.is_err());
     })
 }
@@ -228,12 +206,9 @@ fn test_running_measurement_registers_some() {
         internal: cr_measurement,
     };
     Python::with_gil(|py| {
-        let device_type = py.get_type::<TweezerMutableDeviceWrapper>();
-        let device = device_type
-            .call0()
-            .unwrap()
-            .downcast::<PyCell<TweezerMutableDeviceWrapper>>()
-            .unwrap();
+        let device_type = py.get_type_bound::<TweezerMutableDeviceWrapper>();
+        let binding = device_type.call0().unwrap();
+        let device = binding.downcast::<TweezerMutableDeviceWrapper>().unwrap();
         device.call_method1("add_layout", ("test",)).unwrap();
         device
             .call_method1(
@@ -248,13 +223,11 @@ fn test_running_measurement_registers_some() {
             )
             .unwrap();
         device.call_method1("switch_layout", ("test",)).unwrap();
-        let backend_type = py.get_type::<SimulatorBackendWrapper>();
-        let backend = backend_type
-            .call1((device,))
-            .unwrap()
-            .downcast::<PyCell<SimulatorBackendWrapper>>()
-            .unwrap();
+        let backend_type = py.get_type_bound::<SimulatorBackendWrapper>();
+        let backend = backend_type.call1((device,)).unwrap();
         let _ = backend
+            .downcast::<SimulatorBackendWrapper>()
+            .unwrap()
             .call_method1("run_measurement_registers", (crm_wrapper,))
             .unwrap();
     })
@@ -283,12 +256,9 @@ fn test_running_measurement_registers_all_registers() {
         internal: cr_measurement,
     };
     Python::with_gil(|py| {
-        let device_type = py.get_type::<TweezerMutableDeviceWrapper>();
-        let device = device_type
-            .call0()
-            .unwrap()
-            .downcast::<PyCell<TweezerMutableDeviceWrapper>>()
-            .unwrap();
+        let device_type = py.get_type_bound::<TweezerMutableDeviceWrapper>();
+        let binding = device_type.call0().unwrap();
+        let device = binding.downcast::<TweezerMutableDeviceWrapper>().unwrap();
         device.call_method1("add_layout", ("test",)).unwrap();
         device
             .call_method1(
@@ -303,13 +273,11 @@ fn test_running_measurement_registers_all_registers() {
             )
             .unwrap();
         device.call_method1("switch_layout", ("test",)).unwrap();
-        let backend_type = py.get_type::<SimulatorBackendWrapper>();
-        let backend = backend_type
-            .call1((device,))
-            .unwrap()
-            .downcast::<PyCell<SimulatorBackendWrapper>>()
-            .unwrap();
+        let backend_type = py.get_type_bound::<SimulatorBackendWrapper>();
+        let backend = backend_type.call1((device,)).unwrap();
         let _ = backend
+            .downcast::<SimulatorBackendWrapper>()
+            .unwrap()
             .call_method1("run_measurement_registers", (crm_wrapper,))
             .unwrap();
     })
@@ -340,12 +308,9 @@ fn test_running_measurement() {
         internal: cr_measurement,
     };
     Python::with_gil(|py| {
-        let device_type = py.get_type::<TweezerMutableDeviceWrapper>();
-        let device = device_type
-            .call0()
-            .unwrap()
-            .downcast::<PyCell<TweezerMutableDeviceWrapper>>()
-            .unwrap();
+        let device_type = py.get_type_bound::<TweezerMutableDeviceWrapper>();
+        let binding = device_type.call0().unwrap();
+        let device = binding.downcast::<TweezerMutableDeviceWrapper>().unwrap();
         device.call_method1("add_layout", ("test",)).unwrap();
         device
             .call_method1(
@@ -360,13 +325,11 @@ fn test_running_measurement() {
             )
             .unwrap();
         device.call_method1("switch_layout", ("test",)).unwrap();
-        let backend_type = py.get_type::<SimulatorBackendWrapper>();
-        let backend = backend_type
-            .call1((device,))
-            .unwrap()
-            .downcast::<PyCell<SimulatorBackendWrapper>>()
-            .unwrap();
+        let backend_type = py.get_type_bound::<SimulatorBackendWrapper>();
+        let backend = backend_type.call1((device,)).unwrap();
         let _ = backend
+            .downcast::<SimulatorBackendWrapper>()
+            .unwrap()
             .call_method1("run_measurement", (crm_wrapper,))
             .unwrap();
     })
@@ -377,12 +340,9 @@ fn test_running_measurement() {
 fn test_copy_deepcopy() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type = py.get_type::<TweezerMutableDeviceWrapper>();
-        let device = device_type
-            .call0()
-            .unwrap()
-            .downcast::<PyCell<TweezerMutableDeviceWrapper>>()
-            .unwrap();
+        let device_type = py.get_type_bound::<TweezerMutableDeviceWrapper>();
+        let binding = device_type.call0().unwrap();
+        let device = binding.downcast::<TweezerMutableDeviceWrapper>().unwrap();
         device.call_method1("add_layout", ("test",)).unwrap();
         device
             .call_method1(
@@ -397,12 +357,9 @@ fn test_copy_deepcopy() {
             )
             .unwrap();
         device.call_method1("switch_layout", ("test",)).unwrap();
-        let backend_type = py.get_type::<SimulatorBackendWrapper>();
-        let backend = backend_type
-            .call1((device,))
-            .unwrap()
-            .downcast::<PyCell<SimulatorBackendWrapper>>()
-            .unwrap();
+        let backend_type = py.get_type_bound::<SimulatorBackendWrapper>();
+        let binding = backend_type.call1((device,)).unwrap();
+        let backend = binding.downcast::<SimulatorBackendWrapper>().unwrap();
 
         let copy_op = backend.call_method0("__copy__").unwrap();
         let copy_wrapper = copy_op.extract::<SimulatorBackendWrapper>().unwrap();
@@ -420,12 +377,9 @@ fn test_copy_deepcopy() {
 fn test_to_from_bincode() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type = py.get_type::<TweezerMutableDeviceWrapper>();
-        let device = device_type
-            .call0()
-            .unwrap()
-            .downcast::<PyCell<TweezerMutableDeviceWrapper>>()
-            .unwrap();
+        let device_type = py.get_type_bound::<TweezerMutableDeviceWrapper>();
+        let binding = device_type.call0().unwrap();
+        let device = binding.downcast::<TweezerMutableDeviceWrapper>().unwrap();
         device.call_method1("add_layout", ("test",)).unwrap();
         device
             .call_method1(
@@ -440,15 +394,14 @@ fn test_to_from_bincode() {
             )
             .unwrap();
         device.call_method1("switch_layout", ("test",)).unwrap();
-        let backend_type = py.get_type::<SimulatorBackendWrapper>();
-        let backend = backend_type
-            .call1((device,))
-            .unwrap()
-            .downcast::<PyCell<SimulatorBackendWrapper>>()
-            .unwrap();
+        let backend_type = py.get_type_bound::<SimulatorBackendWrapper>();
+        let binding = backend_type.call1((device,)).unwrap();
+        let backend = binding.downcast::<SimulatorBackendWrapper>().unwrap();
 
         let serialised = backend.call_method0("to_bincode").unwrap();
-        let deserialised = backend.call_method1("from_bincode", (serialised,)).unwrap();
+        let deserialised = backend
+            .call_method1("from_bincode", (&serialised,))
+            .unwrap();
 
         let vec: Vec<u8> = Vec::new();
         let deserialised_error = backend.call_method1("from_bincode", (vec,));
@@ -471,12 +424,9 @@ fn test_to_from_bincode() {
 fn test_to_from_json() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type = py.get_type::<TweezerMutableDeviceWrapper>();
-        let device = device_type
-            .call0()
-            .unwrap()
-            .downcast::<PyCell<TweezerMutableDeviceWrapper>>()
-            .unwrap();
+        let device_type = py.get_type_bound::<TweezerMutableDeviceWrapper>();
+        let binding = device_type.call0().unwrap();
+        let device = binding.downcast::<TweezerMutableDeviceWrapper>().unwrap();
         device.call_method1("add_layout", ("test",)).unwrap();
         device
             .call_method1(
@@ -491,16 +441,13 @@ fn test_to_from_json() {
             )
             .unwrap();
         device.call_method1("switch_layout", ("test",)).unwrap();
-        let backend_type = py.get_type::<SimulatorBackendWrapper>();
-        let backend = backend_type
-            .call1((device,))
-            .unwrap()
-            .downcast::<PyCell<SimulatorBackendWrapper>>()
-            .unwrap();
+        let backend_type = py.get_type_bound::<SimulatorBackendWrapper>();
+        let binding = backend_type.call1((device,)).unwrap();
+        let backend = binding.downcast::<SimulatorBackendWrapper>().unwrap();
 
         let serialised = backend.call_method0("to_json").unwrap();
         // let new = backend.clone();
-        let deserialised = backend.call_method1("from_json", (serialised,)).unwrap();
+        let deserialised = backend.call_method1("from_json", (&serialised,)).unwrap();
 
         let vec: Vec<u8> = Vec::new();
         let deserialised_error = backend.call_method1("from_json", (vec,));
@@ -523,12 +470,9 @@ fn test_to_from_json() {
 fn test_convert_to_backend() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type = py.get_type::<TweezerMutableDeviceWrapper>();
-        let device = device_type
-            .call0()
-            .unwrap()
-            .downcast::<PyCell<TweezerMutableDeviceWrapper>>()
-            .unwrap();
+        let device_type = py.get_type_bound::<TweezerMutableDeviceWrapper>();
+        let binding = device_type.call0().unwrap();
+        let device = binding.downcast::<TweezerMutableDeviceWrapper>().unwrap();
         device.call_method1("add_layout", ("test",)).unwrap();
         device
             .call_method1(
@@ -543,14 +487,11 @@ fn test_convert_to_backend() {
             )
             .unwrap();
         device.call_method1("switch_layout", ("test",)).unwrap();
-        let backend_type = py.get_type::<SimulatorBackendWrapper>();
-        let backend = backend_type
-            .call1((device,))
-            .unwrap()
-            .downcast::<PyCell<SimulatorBackendWrapper>>()
-            .unwrap();
+        let backend_type = py.get_type_bound::<SimulatorBackendWrapper>();
+        let backend = backend_type.call1((device,)).unwrap();
 
-        let converted = convert_into_backend(backend).unwrap();
+        let converted =
+            convert_into_backend(backend.downcast::<SimulatorBackendWrapper>().unwrap()).unwrap();
         let mut rust_dev = TweezerDevice::new(None, None, None);
         rust_dev.add_layout("test").unwrap();
         rust_dev
@@ -576,12 +517,9 @@ fn test_convert_to_backend() {
 fn test_pyo3_new_change_layout() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type = py.get_type::<TweezerMutableDeviceWrapper>();
-        let device = device_type
-            .call0()
-            .unwrap()
-            .downcast::<PyCell<TweezerMutableDeviceWrapper>>()
-            .unwrap();
+        let device_type = py.get_type_bound::<TweezerMutableDeviceWrapper>();
+        let binding = device_type.call0().unwrap();
+        let device = binding.downcast::<TweezerMutableDeviceWrapper>().unwrap();
         device.call_method1("add_layout", ("test",)).unwrap();
         device
             .call_method1(
@@ -596,25 +534,25 @@ fn test_pyo3_new_change_layout() {
             )
             .unwrap();
         device.call_method1("switch_layout", ("test",)).unwrap();
-        let backend_type = py.get_type::<SimulatorBackendWrapper>();
-        let backend = backend_type
-            .call1((device,))
-            .unwrap()
-            .downcast::<PyCell<SimulatorBackendWrapper>>()
-            .unwrap();
+        let backend_type = py.get_type_bound::<SimulatorBackendWrapper>();
+        let backend = backend_type.call1((device,)).unwrap();
 
-        let pragma_wrapper = backend.extract::<SimulatorBackendWrapper>().unwrap();
-        let device_diff = device_type
-            .call0()
+        let pragma_wrapper = backend
+            .downcast::<SimulatorBackendWrapper>()
             .unwrap()
-            .downcast::<PyCell<TweezerMutableDeviceWrapper>>()
+            .extract::<SimulatorBackendWrapper>()
             .unwrap();
+        let device_diff = device_type.call0().unwrap();
         let new_op_diff = backend_type
-            .call1((device_diff,))
-            .unwrap()
-            .downcast::<PyCell<SimulatorBackendWrapper>>()
+            .call1((device_diff
+                .downcast::<TweezerMutableDeviceWrapper>()
+                .unwrap(),))
             .unwrap();
-        let pragma_wrapper_diff = new_op_diff.extract::<SimulatorBackendWrapper>().unwrap();
+        let pragma_wrapper_diff = new_op_diff
+            .downcast::<SimulatorBackendWrapper>()
+            .unwrap()
+            .extract::<SimulatorBackendWrapper>()
+            .unwrap();
         let helper_ne: bool = pragma_wrapper_diff != pragma_wrapper;
         assert!(helper_ne);
         let helper_eq: bool = pragma_wrapper == pragma_wrapper.clone();

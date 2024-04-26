@@ -6,6 +6,10 @@ Tracks qoqo-qryd changes after 0.5
 
 * Substituted server mocking package `mockito` with `wiremock`
 
+# 0.17.0
+
+* Updated to pyo3 0.21 and qoqo 1.12
+
 # 0.16.0
 
 * Added `TweezerDevice.get_allow_reset()`

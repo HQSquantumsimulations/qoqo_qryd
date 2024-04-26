@@ -93,7 +93,7 @@ pub use api_devices::*;
 ///
 ///
 #[pymodule]
-fn qoqo_qryd(_py: Python, module: &PyModule) -> PyResult<()> {
+fn qoqo_qryd(_py: Python, module: &Bound<PyModule>) -> PyResult<()> {
     #[cfg(feature = "simulator")]
     module.add_class::<SimulatorBackendWrapper>()?;
     #[cfg(feature = "web-api")]
@@ -108,8 +108,9 @@ fn qoqo_qryd(_py: Python, module: &PyModule) -> PyResult<()> {
     let wrapper = wrap_pymodule!(pragma_operations::pragma_operations);
     module.add_wrapped(wrapper)?;
     // Adding nice imports corresponding to maturin example
-    let system = PyModule::import(_py, "sys")?;
-    let system_modules: &PyDict = system.getattr("modules")?.downcast()?;
+    let system = PyModule::import_bound(_py, "sys")?;
+    let binding = system.getattr("modules")?;
+    let system_modules: &Bound<PyDict> = binding.downcast()?;
     system_modules.set_item(
         "qoqo_qryd.pragma_operations",
         module.getattr("pragma_operations")?,

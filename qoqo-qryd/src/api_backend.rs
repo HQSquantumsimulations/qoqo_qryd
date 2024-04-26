@@ -69,7 +69,7 @@ impl APIBackendWrapper {
     #[new]
     #[pyo3(text_signature = "(device, access_token, timeout, mock_port, dev, api_version, /)")]
     pub fn new(
-        device: &PyAny,
+        device: &Bound<PyAny>,
         access_token: Option<String>,
         timeout: Option<usize>,
         mock_port: Option<String>,
@@ -102,7 +102,7 @@ impl APIBackendWrapper {
     /// Returns:
     ///     str: URL of the location of the job.
     #[pyo3(text_signature = "($self, quantumprogram, /)")]
-    pub fn post_job(&self, quantumprogram: &PyAny) -> PyResult<String> {
+    pub fn post_job(&self, quantumprogram: &Bound<PyAny>) -> PyResult<String> {
         let program = convert_into_quantum_program(quantumprogram).map_err(|err| {
             PyTypeError::new_err(format!(
                 "quantumprogram is not of type qoqo.QuantumProgram {}",
@@ -149,8 +149,8 @@ impl APIBackendWrapper {
             PyRuntimeError::new_err(format!("Error retrieving job result: {}", err))
         })?;
         Python::with_gil(|py| -> PyResult<PyObject> {
-            let result = PyDict::new(py);
-            let data = PyDict::new(py);
+            let result = PyDict::new_bound(py);
+            let data = PyDict::new_bound(py);
             data.set_item("counts", job_result.data.counts)?;
             result.set_item("data", data)?;
             result.set_item("time_taken", job_result.time_taken)?;
@@ -218,7 +218,7 @@ impl APIBackendWrapper {
         let serialized = serialize(&self.internal)
             .map_err(|_| PyValueError::new_err("Cannot serialize APIBackend to bytes"))?;
         let b: Py<PyByteArray> = Python::with_gil(|py| -> Py<PyByteArray> {
-            PyByteArray::new(py, &serialized[..]).into()
+            PyByteArray::new_bound(py, &serialized[..]).into()
         });
         Ok(b)
     }
@@ -236,7 +236,7 @@ impl APIBackendWrapper {
     ///     ValueError: Input cannot be deserialized to APIBackend.
     #[staticmethod]
     #[pyo3(text_signature = "(input, /)")]
-    pub fn from_bincode(input: &PyAny) -> PyResult<APIBackendWrapper> {
+    pub fn from_bincode(input: &Bound<PyAny>) -> PyResult<APIBackendWrapper> {
         let bytes = input
             .extract::<Vec<u8>>()
             .map_err(|_| PyTypeError::new_err("Input cannot be converted to byte array"))?;
@@ -300,7 +300,7 @@ impl APIBackendWrapper {
     ///     TypeError: Circuit argument cannot be converted to qoqo Circuit
     ///     RuntimeError: Running Circuit failed
     #[pyo3(text_signature = "($self, circuit, /)")]
-    pub fn run_circuit(&self, circuit: &PyAny) -> PyResult<Registers> {
+    pub fn run_circuit(&self, circuit: &Bound<PyAny>) -> PyResult<Registers> {
         let circuit = convert_into_circuit(circuit).map_err(|err| {
             PyTypeError::new_err(format!(
                 "Circuit argument cannot be converted to qoqo Circuit {:?}",
@@ -334,7 +334,7 @@ impl APIBackendWrapper {
     ///     TypeError: Circuit argument cannot be converted to qoqo Circuit
     ///     RuntimeError: Running Circuit failed
     #[pyo3(text_signature = "($self, measurement, /)")]
-    pub fn run_measurement_registers(&self, measurement: &PyAny) -> PyResult<Registers> {
+    pub fn run_measurement_registers(&self, measurement: &Bound<PyAny>) -> PyResult<Registers> {
         let mut run_circuits: Vec<Circuit> = Vec::new();
 
         let get_constant_circuit = measurement
@@ -355,7 +355,7 @@ impl APIBackendWrapper {
             })?;
 
         let constant_circuit = match const_circuit {
-            Some(x) => convert_into_circuit(x).map_err(|err| {
+            Some(x) => convert_into_circuit(&x.as_borrowed()).map_err(|err| {
                 PyTypeError::new_err(format!(
                     "Cannot extract constant circuit from measurement {:?}",
                     err
@@ -380,7 +380,7 @@ impl APIBackendWrapper {
         for c in circuit_list {
             run_circuits.push(
                 constant_circuit.clone()
-                    + convert_into_circuit(c).map_err(|err| {
+                    + convert_into_circuit(&c.as_borrowed()).map_err(|err| {
                         PyTypeError::new_err(format!(
                             "Cannot extract circuit of circuit list from measurement {:?}",
                             err
@@ -436,7 +436,10 @@ impl APIBackendWrapper {
     ///     TypeError: Measurement evaluate function could not be used
     ///     RuntimeError: Internal error measurement.evaluation returned unknown type
     #[pyo3(text_signature = "($self, measurement, /)")]
-    pub fn run_measurement(&self, measurement: &PyAny) -> PyResult<Option<HashMap<String, f64>>> {
+    pub fn run_measurement(
+        &self,
+        measurement: &Bound<PyAny>,
+    ) -> PyResult<Option<HashMap<String, f64>>> {
         let (bit_registers, float_registers, complex_registers) =
             self.run_measurement_registers(measurement)?;
         let get_expectation_values = measurement
@@ -473,7 +476,7 @@ impl APIBackendWrapper {
 /// Convert generic python object to [roqoqo_qryd::APIBackend].
 ///
 /// Fallible conversion of generic python object to [roqoqo_qryd::APIBackend].
-pub fn convert_into_backend(input: &PyAny) -> Result<APIBackend, QoqoBackendError> {
+pub fn convert_into_backend(input: &Bound<PyAny>) -> Result<APIBackend, QoqoBackendError> {
     if let Ok(try_downcast) = input.extract::<APIBackendWrapper>() {
         Ok(try_downcast.internal)
     } else {
