@@ -31,7 +31,7 @@ use roqoqo::{
 };
 
 use crate::{
-    phi_theta_relation, PragmaDeactivateQRydQubit, PragmaShiftQubitsTweezers,
+    phi_theta_relation, BoolOrUsize, PragmaDeactivateQRydQubit, PragmaShiftQubitsTweezers,
     PragmaSwitchDeviceLayout,
 };
 
@@ -61,14 +61,6 @@ pub static ALLOWED_NATIVE_THREE_QUBIT_GATES: [&str; 2] = [
 /// Native multi-qubit gates allowed by the QRyd backend.
 pub static ALLOWED_NATIVE_MULTI_QUBIT_GATES: [&str; 0] = [];
 
-/// Bool and usize data type for dev parameter.
-#[derive(Debug)]
-pub enum BoolOrUsize {
-    /// Bool data type.
-    Bool(bool),
-    /// Usize data type.
-    Usize(usize),
-}
 /// Tweezer Device
 ///
 #[derive(Debug, PartialEq, Default, Clone, serde::Serialize, serde::Deserialize)]
@@ -346,7 +338,7 @@ impl TweezerDevice {
                         device_name_internal.clone()
                     ))
                     .header("X-API-KEY", access_token_internal)
-                    .header("X-DEV", "1")
+                    .header("X-DEV", "?1")
                     .send()
                     .map_err(|e| RoqoqoBackendError::NetworkError {
                         msg: format!("{:?}", e),
@@ -358,7 +350,7 @@ impl TweezerDevice {
                         device_name_internal.clone()
                     ))
                     .header("X-API-KEY", access_token_internal)
-                    .header("X-DEV", "2")
+                    .header("X-HQS", "?1")
                     .send()
                     .map_err(|e| RoqoqoBackendError::NetworkError {
                         msg: format!("{:?}", e),

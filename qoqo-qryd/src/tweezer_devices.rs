@@ -123,8 +123,8 @@ impl TweezerDeviceWrapper {
     ///                             or set via the environmental variable `$QRYD_API_TOKEN`.
     ///     mock_port (Optional[str]): Server port to be used for testing purposes.
     ///     seed (Optional[int]): Optionally overwrite seed value from downloaded device instance.
-    ///     dev (Optional[bool]): The boolean to set the dev header to.
-    ///     api_version (Optional[str]): The version of the QRYD API to use. Defaults to "v1_0".
+    ///     dev (Optional[Union[bool, usize]]): The value to set the dev header to.
+    ///     api_version (Optional[str]): The version of the QRYD API to use. Defaults to "v1_1".
     ///
     /// Returns
     ///     TweezerDevice: The new TweezerDevice instance with populated tweezer data.
@@ -139,12 +139,47 @@ impl TweezerDeviceWrapper {
         access_token: Option<String>,
         mock_port: Option<String>,
         seed: Option<usize>,
-        dev: Option<bool>,
+        dev: Option<&PyAny>,
         api_version: Option<String>,
     ) -> PyResult<Self> {
-        let internal =
-            TweezerDevice::from_api(device_name, access_token, mock_port, seed, dev, api_version)
-                .map_err(|err| PyValueError::new_err(format!("{:}", err)))?;
+        let internal = match dev {
+            Some(x) => {
+                if let Ok(y) = x.extract::<bool>() {
+                    TweezerDevice::from_api(
+                        device_name,
+                        access_token,
+                        mock_port,
+                        seed,
+                        Some(roqoqo_qryd::BoolOrUsize::Bool(y)),
+                        api_version,
+                    )
+                    .map_err(|err| PyValueError::new_err(format!("{:}", err)))?
+                } else if let Ok(us) = x.extract::<usize>() {
+                    TweezerDevice::from_api(
+                        device_name,
+                        access_token,
+                        mock_port,
+                        seed,
+                        Some(roqoqo_qryd::BoolOrUsize::Usize(us)),
+                        api_version,
+                    )
+                    .map_err(|err| PyValueError::new_err(format!("{:}", err)))?
+                } else {
+                    return Err(PyValueError::new_err(
+                        "dev parameter was not of type bool or usize.",
+                    ));
+                }
+            }
+            None => TweezerDevice::from_api(
+                device_name,
+                access_token,
+                mock_port,
+                seed,
+                None,
+                api_version,
+            )
+            .map_err(|err| PyValueError::new_err(format!("{:}", err)))?,
+        };
         Ok(TweezerDeviceWrapper { internal })
     }
 

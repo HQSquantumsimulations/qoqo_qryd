@@ -98,3 +98,12 @@ pub fn phi_theta_relation(relation_name: &str, mut theta: f64) -> Option<f64> {
         _ => None,
     }
 }
+
+/// Bool and usize data type to handle X-DEV / X-HQS headers.
+#[derive(Debug)]
+pub enum BoolOrUsize {
+    /// Bool data type.
+    Bool(bool),
+    /// Usize data type.
+    Usize(usize),
+}
