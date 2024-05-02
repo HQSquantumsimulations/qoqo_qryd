@@ -110,7 +110,7 @@ fn api_backend() {
         while test_counter < 20 && status != "completed" {
             test_counter += 1;
             let job_status = api_backend_new.get_job_status(job_loc.clone()).unwrap();
-            status = job_status.status.clone();
+            status.clone_from(&job_status.status);
             thread::sleep(fifteen);
 
             if status == *"completed" {
@@ -246,7 +246,7 @@ async fn async_api_backend() {
         .await
         .unwrap()
         .unwrap();
-        status = job_status.status.clone();
+        status.clone_from(&job_status.status);
         assert_eq!(job_status.status, "in progress");
         thread::sleep(fifteen);
     }
@@ -406,7 +406,7 @@ fn api_backend_with_constant_circuit() {
         while test_counter < 20 && status != "completed" {
             test_counter += 1;
             let job_status = api_backend_new.get_job_status(job_loc.clone()).unwrap();
-            status = job_status.status.clone();
+            status.clone_from(&job_status.status);
             thread::sleep(fifteen);
 
             if status == *"completed" {
