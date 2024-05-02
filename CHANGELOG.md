@@ -2,9 +2,10 @@
 
 Tracks qoqo-qryd changes after 0.5
 
-# Unreleased
+# 0.16.1
 
 * Substituted server mocking package `mockito` with `wiremock`
+* Fixed API deserialization errors
 
 # 0.16.0
 
