@@ -123,7 +123,7 @@ impl TweezerDeviceWrapper {
     ///                             or set via the environmental variable `$QRYD_API_TOKEN`.
     ///     mock_port (Optional[str]): Server port to be used for testing purposes.
     ///     seed (Optional[int]): Optionally overwrite seed value from downloaded device instance.
-    ///     dev (Optional[Union[bool, usize]]): The value to set the dev header to.
+    ///     dev (Optional[Union[bool, int]]): The value to set the dev header to.
     ///     api_version (Optional[str]): The version of the QRYD API to use. Defaults to "v1_1".
     ///
     /// Returns
