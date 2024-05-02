@@ -9,7 +9,7 @@ jobs:
   api_integration:
     runs-on: ubuntu-latest
     env:
-      QRYD_API_DEV: 1
+      QRYD_API_HQS: 1
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
@@ -24,7 +24,7 @@ jobs:
           python-version: 3.11
       - run: |
           python -m pip install numpy
-          cargo test --workspace --no-default-features --locked --features api-integration
+          cargo test --workspace --no-default-features --locked
 
   deploy_cratesio:
     runs-on: ubuntu-latest

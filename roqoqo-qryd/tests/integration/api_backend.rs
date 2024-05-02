@@ -35,7 +35,15 @@ fn api_backend() {
         let number_qubits = 6;
         let device = TweezerDevice::from_api(None, None, None, None, None, None).unwrap();
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-        let api_backend_new = APIBackend::new(qryd_device, None, None, None, None, None).unwrap();
+        let api_backend_new = APIBackend::new(
+            qryd_device,
+            None,
+            None,
+            None,
+            Some(env::var("QRYD_API_HQS").is_ok()),
+            None,
+        )
+        .unwrap();
         let mut circuit = Circuit::new();
         circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
         circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
@@ -281,7 +289,15 @@ fn api_backend_failing() {
         let number_qubits = 6;
         let device = QrydEmuSquareDevice::new(Some(2), None, None);
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-        let api_backend_new = APIBackend::new(qryd_device, None, None, None, None, None).unwrap();
+        let api_backend_new = APIBackend::new(
+            qryd_device,
+            None,
+            None,
+            None,
+            Some(env::var("QRYD_API_HQS").is_ok()),
+            None,
+        )
+        .unwrap();
         // // CAUTION: environment variable QRYD_API_TOKEN needs to be set on the terminal to pass this test!
         let mut circuit = Circuit::new();
         circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
@@ -307,13 +323,20 @@ fn api_backend_failing() {
 }
 
 #[test]
-#[cfg(feature = "web-api")]
 fn api_backend_with_constant_circuit() {
     if env::var("QRYD_API_TOKEN").is_ok() {
         let number_qubits = 6;
         let device = TweezerDevice::from_api(None, None, None, None, None, None).unwrap();
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-        let api_backend_new = APIBackend::new(qryd_device, None, None, None, None, None).unwrap();
+        let api_backend_new = APIBackend::new(
+            qryd_device,
+            None,
+            None,
+            None,
+            Some(env::var("QRYD_API_HQS").is_ok()),
+            None,
+        )
+        .unwrap();
         let mut circuit = Circuit::new();
         circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
         circuit += operations::RotateX::new(0, std::f64::consts::PI.into());
@@ -518,7 +541,6 @@ async fn async_api_triangular() {
 }
 
 #[test]
-#[cfg(feature = "web-api")]
 fn evaluating_backend() {
     if env::var("QRYD_API_TOKEN").is_ok() {
         let number_qubits = 6;
@@ -553,8 +575,15 @@ fn evaluating_backend() {
             input_parameter_names: vec![],
         };
 
-        let api_backend_new =
-            APIBackend::new(qryd_device, None, Some(20), None, None, None).unwrap();
+        let api_backend_new = APIBackend::new(
+            qryd_device,
+            None,
+            Some(20),
+            None,
+            Some(env::var("QRYD_API_HQS").is_ok()),
+            None,
+        )
+        .unwrap();
 
         let program_result = program.run(api_backend_new, &[]).unwrap().unwrap();
         assert_eq!(program_result.get("test"), Some(&-3.0));
@@ -774,7 +803,6 @@ async fn async_evaluating_backend() {
 
 /// Test api_delete successful functionality (token)
 #[test]
-#[cfg(feature = "web-api")]
 fn api_delete() {
     if env::var("QRYD_API_TOKEN").is_ok() {
         let device = TweezerDevice::from_api(None, None, None, None, None, None).unwrap();
@@ -816,7 +844,15 @@ fn api_delete() {
             input_parameter_names: vec![],
         };
 
-        let api_backend_new = APIBackend::new(qryd_device, None, None, None, None, None).unwrap();
+        let api_backend_new = APIBackend::new(
+            qryd_device,
+            None,
+            None,
+            None,
+            Some(env::var("QRYD_API_HQS").is_ok()),
+            None,
+        )
+        .unwrap();
 
         let job_loc = api_backend_new
             .post_job(
@@ -1026,7 +1062,15 @@ fn api_backend_errorcase4() {
     if env::var("QRYD_API_TOKEN").is_ok() {
         let device = QrydEmuSquareDevice::new(Some(2), None, None);
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-        let api_backend_new = APIBackend::new(qryd_device, None, None, None, None, None).unwrap();
+        let api_backend_new = APIBackend::new(
+            qryd_device,
+            None,
+            None,
+            None,
+            Some(env::var("QRYD_API_HQS").is_ok()),
+            None,
+        )
+        .unwrap();
 
         let job_loc = "DummyString".to_string();
         let job_status = api_backend_new.get_job_status(job_loc.clone());
@@ -1043,52 +1087,48 @@ fn api_backend_errorcase4() {
 /// Test error cases. Case 4: invalid job_id (mocked)
 #[tokio::test]
 async fn async_api_backend_errorcase4() {
-    if env::var("QRYD_API_TOKEN").is_err() {
-        let device = QrydEmuSquareDevice::new(Some(2), None, None);
-        let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-        let wiremock_server = MockServer::start().await;
-        let uri = wiremock_server.uri();
+    let device = QrydEmuSquareDevice::new(Some(2), None, None);
+    let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
+    let wiremock_server = MockServer::start().await;
+    let uri = wiremock_server.uri();
 
-        let api_backend_new: APIBackend = APIBackend::new(
-            qryd_device,
-            None,
-            None,
-            Some(wiremock_server.address().port().to_string()),
-            None,
-            None,
-        )
-        .unwrap();
+    let api_backend_new: APIBackend = APIBackend::new(
+        qryd_device,
+        None,
+        None,
+        Some(wiremock_server.address().port().to_string()),
+        None,
+        None,
+    )
+    .unwrap();
 
-        let job_loc: String = format!("{}/DummyString", uri);
+    let job_loc: String = format!("{}/DummyString", uri);
 
-        let api_backend_new_cloned = api_backend_new.clone();
-        let job_loc_clone = job_loc.clone();
-        let job_status = tokio::task::spawn_blocking(move || {
-            api_backend_new_cloned.get_job_status(job_loc_clone)
-        })
-        .await
-        .unwrap();
-        assert!(job_status.is_err());
+    let api_backend_new_cloned = api_backend_new.clone();
+    let job_loc_clone = job_loc.clone();
+    let job_status =
+        tokio::task::spawn_blocking(move || api_backend_new_cloned.get_job_status(job_loc_clone))
+            .await
+            .unwrap();
+    assert!(job_status.is_err());
 
-        let api_backend_new_cloned = api_backend_new.clone();
-        let job_loc_clone = job_loc.clone();
-        let job_result = tokio::task::spawn_blocking(move || {
-            api_backend_new_cloned.get_job_result(job_loc_clone)
-        })
-        .await
-        .unwrap();
-        assert!(job_result.is_err());
+    let api_backend_new_cloned = api_backend_new.clone();
+    let job_loc_clone = job_loc.clone();
+    let job_result =
+        tokio::task::spawn_blocking(move || api_backend_new_cloned.get_job_result(job_loc_clone))
+            .await
+            .unwrap();
+    assert!(job_result.is_err());
 
-        let api_backend_new_cloned = api_backend_new.clone();
-        let job_loc_clone = job_loc.clone();
-        let job_delete =
-            tokio::task::spawn_blocking(move || api_backend_new_cloned.delete_job(job_loc_clone))
-                .await
-                .unwrap();
-        assert!(job_delete.is_err());
+    let api_backend_new_cloned = api_backend_new.clone();
+    let job_loc_clone = job_loc.clone();
+    let job_delete =
+        tokio::task::spawn_blocking(move || api_backend_new_cloned.delete_job(job_loc_clone))
+            .await
+            .unwrap();
+    assert!(job_delete.is_err());
 
-        wiremock_server.verify().await;
-    }
+    wiremock_server.verify().await;
 }
 
 /// Test error cases. Case 5: invalid QuantumProgram (token)
@@ -1129,7 +1169,15 @@ fn api_backend_errorcase5() {
             input_parameter_names: vec![],
         };
 
-        let api_backend_new = APIBackend::new(qryd_device, None, None, None, None, None).unwrap();
+        let api_backend_new = APIBackend::new(
+            qryd_device,
+            None,
+            None,
+            None,
+            Some(env::var("QRYD_API_HQS").is_ok()),
+            None,
+        )
+        .unwrap();
 
         let job_loc0 = api_backend_new.post_job(empty_program);
         assert!(job_loc0.is_err());
@@ -1339,7 +1387,7 @@ fn api_backend_errorcase7() {
         None,
         None,
         Some("12345".to_string()),
-        None,
+        Some(env::var("QRYD_API_HQS").is_ok()),
         None,
     )
     .unwrap();
@@ -1616,7 +1664,15 @@ fn test_unknown_device_error() {
         let number_qubits = 6;
         let device = QrydEmuSquareDevice::new(Some(1), None, None);
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
-        let api_backend_new = APIBackend::new(qryd_device, None, None, None, None, None).unwrap();
+        let api_backend_new = APIBackend::new(
+            qryd_device,
+            None,
+            None,
+            None,
+            Some(env::var("QRYD_API_HQS").is_ok()),
+            None,
+        )
+        .unwrap();
         let mut circuit = Circuit::new();
         circuit += operations::DefinitionBit::new("ro".to_string(), number_qubits, true);
         circuit += operations::RotateX::new(0, std::f64::consts::PI.into());

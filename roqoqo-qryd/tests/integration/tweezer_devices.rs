@@ -13,6 +13,7 @@
 use bincode::serialize;
 use ndarray::Array2;
 use std::collections::HashMap;
+use std::env;
 
 use roqoqo::{devices::Device, RoqoqoBackendError};
 use roqoqo_qryd::{
@@ -924,7 +925,7 @@ fn test_change_device_shift() {
 /// Test TweezerDevice from_api() method
 #[tokio::test]
 #[cfg(feature = "web-api")]
-async fn test_from_api() {
+async fn asnyc_test_from_api() {
     let mut returned_device_default = TweezerDevice::new(None, None, None);
     returned_device_default.add_layout("default").unwrap();
     returned_device_default.current_layout = Some("default".to_string());
@@ -985,6 +986,36 @@ async fn test_from_api() {
     );
 
     wiremock_server.verify().await;
+}
+
+#[test]
+#[cfg(feature = "web-api")]
+fn test_from_api() {
+    if env::var("QRYD_API_TOKEN").is_ok() {
+        let response = TweezerDevice::from_api(
+            None,
+            None,
+            None,
+            None,
+            Some(env::var("QRYD_API_HQS").is_ok()),
+            None,
+        );
+        assert!(response.is_ok());
+        let device = response.unwrap();
+        assert_eq!(device.qrydbackend(), "qryd_emulator".to_string());
+
+        let response_new_seed = TweezerDevice::from_api(
+            None,
+            None,
+            None,
+            Some(42),
+            Some(env::var("QRYD_API_HQS").is_ok()),
+            None,
+        );
+        assert!(response_new_seed.is_ok());
+        let device_new_seed = response_new_seed.unwrap();
+        assert_eq!(device_new_seed.seed(), Some(42));
+    }
 }
 
 /// Test TweezerDevice phase_shift_controlled_...() and gate_time_controlled_...()  methods
