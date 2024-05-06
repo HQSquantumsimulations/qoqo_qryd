@@ -275,6 +275,9 @@ impl TweezerDevice {
     ) -> Result<Self, RoqoqoBackendError> {
         // Preparing variables
         let device_name_internal = device_name.unwrap_or_else(|| String::from("qryd_emulator"));
+        let api_version = api_version.unwrap_or_else(|| String::from("v1_1"));
+        let dev = dev.unwrap_or(false);
+        let hqs_env_var = env::var("QRYD_API_HQS").is_ok();
         let access_token_internal: String = if mock_port.is_some() {
             "".to_string()
         } else {
@@ -313,13 +316,12 @@ impl TweezerDevice {
                 .map_err(|e| RoqoqoBackendError::NetworkError {
                     msg: format!("{:?}", e),
                 })?
-        } else if dev.unwrap_or(false) {
-            if env::var("QRYD_API_HQS").is_ok() {
-                client
+        } else {
+            match (dev, hqs_env_var) {
+                (true, true) => client
                     .get(format!(
                         "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
-                        api_version.unwrap_or_else(|| String::from("v1_1")),
-                        device_name_internal.clone()
+                        api_version, device_name_internal
                     ))
                     .header("X-API-KEY", access_token_internal)
                     .header("X-DEV", "?1")
@@ -327,33 +329,40 @@ impl TweezerDevice {
                     .send()
                     .map_err(|e| RoqoqoBackendError::NetworkError {
                         msg: format!("{:?}", e),
-                    })?
-            } else {
-                client
+                    })?,
+                (true, false) => client
                     .get(format!(
                         "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
-                        api_version.unwrap_or_else(|| String::from("v1_1")),
-                        device_name_internal.clone()
+                        api_version, device_name_internal
                     ))
                     .header("X-API-KEY", access_token_internal)
                     .header("X-DEV", "?1")
                     .send()
                     .map_err(|e| RoqoqoBackendError::NetworkError {
                         msg: format!("{:?}", e),
-                    })?
+                    })?,
+                (false, true) => client
+                    .get(format!(
+                        "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
+                        api_version, device_name_internal
+                    ))
+                    .header("X-API-KEY", access_token_internal)
+                    .header("X-HQS", "?1")
+                    .send()
+                    .map_err(|e| RoqoqoBackendError::NetworkError {
+                        msg: format!("{:?}", e),
+                    })?,
+                (false, false) => client
+                    .get(format!(
+                        "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
+                        api_version, device_name_internal
+                    ))
+                    .header("X-API-KEY", access_token_internal)
+                    .send()
+                    .map_err(|e| RoqoqoBackendError::NetworkError {
+                        msg: format!("{:?}", e),
+                    })?,
             }
-        } else {
-            client
-                .get(format!(
-                    "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
-                    api_version.unwrap_or_else(|| String::from("v1_1")),
-                    device_name_internal.clone()
-                ))
-                .header("X-API-KEY", access_token_internal)
-                .send()
-                .map_err(|e| RoqoqoBackendError::NetworkError {
-                    msg: format!("{:?}", e),
-                })?
         };
 
         // Response handling

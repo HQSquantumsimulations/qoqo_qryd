@@ -361,7 +361,7 @@ impl APIBackend {
     ///               been queried `timeout` times.
     /// * `mock_port` - Server port to be used for testing purposes.
     /// * `dev` - The boolean to set the dev option to.
-    /// * `api_version` - The version of the QRyd WebAPI to use. Defaults to "v5_1".
+    /// * `api_version` - The version of the QRyd WebAPI to use. Defaults to "v5_2".
     ///
     pub fn new(
         device: QRydAPIDevice,
@@ -378,7 +378,7 @@ impl APIBackend {
                 timeout: timeout.unwrap_or(30),
                 mock_port,
                 dev: false,
-                api_version: api_version.unwrap_or("v5_1".to_string()),
+                api_version: api_version.unwrap_or("v5_2".to_string()),
             })
         } else {
             let access_token_internal: String = match access_token {
@@ -396,7 +396,7 @@ impl APIBackend {
                 timeout: timeout.unwrap_or(30),
                 mock_port,
                 dev: dev.unwrap_or(false),
-                api_version: api_version.unwrap_or("v5_1".to_string()),
+                api_version: api_version.unwrap_or("v5_2".to_string()),
             })
         }
     }
@@ -552,6 +552,7 @@ impl APIBackend {
                     msg: format!("could not create https client {:?}", x),
                 })?
         };
+        let hqs_env_var = env::var("QRYD_API_HQS").is_ok();
 
         // Call WebAPI client
         // here: value for put() temporarily fixed.
@@ -564,9 +565,9 @@ impl APIBackend {
                 .map_err(|e| RoqoqoBackendError::NetworkError {
                     msg: format!("{:?}", e),
                 })?
-        } else if self.dev {
-            if env::var("QRYD_API_HQS").is_ok() {
-                client
+        } else {
+            match (self.dev, hqs_env_var) {
+                (true, true) => client
                     .post(format!(
                         "https://api.qryddemo.itp3.uni-stuttgart.de/{}/jobs",
                         self.api_version
@@ -578,9 +579,8 @@ impl APIBackend {
                     .send()
                     .map_err(|e| RoqoqoBackendError::NetworkError {
                         msg: format!("{:?}", e),
-                    })?
-            } else {
-                client
+                    })?,
+                (true, false) => client
                     .post(format!(
                         "https://api.qryddemo.itp3.uni-stuttgart.de/{}/jobs",
                         self.api_version
@@ -591,20 +591,31 @@ impl APIBackend {
                     .send()
                     .map_err(|e| RoqoqoBackendError::NetworkError {
                         msg: format!("{:?}", e),
-                    })?
+                    })?,
+                (false, true) => client
+                    .post(format!(
+                        "https://api.qryddemo.itp3.uni-stuttgart.de/{}/jobs",
+                        self.api_version
+                    ))
+                    .header("X-API-KEY", self.access_token.clone())
+                    .header("X-HQS", "?1")
+                    .json(&data)
+                    .send()
+                    .map_err(|e| RoqoqoBackendError::NetworkError {
+                        msg: format!("{:?}", e),
+                    })?,
+                (false, false) => client
+                    .post(format!(
+                        "https://api.qryddemo.itp3.uni-stuttgart.de/{}/jobs",
+                        self.api_version
+                    ))
+                    .header("X-API-KEY", self.access_token.clone())
+                    .json(&data)
+                    .send()
+                    .map_err(|e| RoqoqoBackendError::NetworkError {
+                        msg: format!("{:?}", e),
+                    })?,
             }
-        } else {
-            client
-                .post(format!(
-                    "https://api.qryddemo.itp3.uni-stuttgart.de/{}/jobs",
-                    self.api_version
-                ))
-                .header("X-API-KEY", self.access_token.clone())
-                .json(&data)
-                .send()
-                .map_err(|e| RoqoqoBackendError::NetworkError {
-                    msg: format!("{:?}", e),
-                })?
         };
 
         let status_code = resp.status();
@@ -618,7 +629,6 @@ impl APIBackend {
                     })?;
                 return Err(self._handle_validation_error(querry_response));
             }
-            // dbg!(&resp);
             Err(RoqoqoBackendError::NetworkError {
                 msg: format!(
                     "Request to server failed with HTTP status code {:?}",
@@ -674,37 +684,42 @@ impl APIBackend {
         };
 
         let url_string: String = job_location + "/status";
+        let hqs_env_var = env::var("QRYD_API_HQS").is_ok();
 
         // Call WebAPI client
-        let resp = if self.dev {
-            if env::var("QRYD_API_HQS").is_ok() {
-                client
-                    .get(url_string)
-                    .header("X-API-KEY", self.access_token.clone())
-                    .header("X-DEV", "?1")
-                    .header("X-HQS", "?1")
-                    .send()
-                    .map_err(|e| RoqoqoBackendError::NetworkError {
-                        msg: format!("{:?}", e),
-                    })?
-            } else {
-                client
-                    .get(url_string)
-                    .header("X-API-KEY", self.access_token.clone())
-                    .header("X-DEV", "?1")
-                    .send()
-                    .map_err(|e| RoqoqoBackendError::NetworkError {
-                        msg: format!("{:?}", e),
-                    })?
-            }
-        } else {
-            client
+        let resp = match (self.dev, hqs_env_var) {
+            (true, true) => client
+                .get(url_string)
+                .header("X-API-KEY", self.access_token.clone())
+                .header("X-DEV", "?1")
+                .header("X-HQS", "?1")
+                .send()
+                .map_err(|e| RoqoqoBackendError::NetworkError {
+                    msg: format!("{:?}", e),
+                })?,
+            (true, false) => client
+                .get(url_string)
+                .header("X-API-KEY", self.access_token.clone())
+                .header("X-DEV", "?1")
+                .send()
+                .map_err(|e| RoqoqoBackendError::NetworkError {
+                    msg: format!("{:?}", e),
+                })?,
+            (false, true) => client
+                .get(url_string)
+                .header("X-API-KEY", self.access_token.clone())
+                .header("X-HQS", "?1")
+                .send()
+                .map_err(|e| RoqoqoBackendError::NetworkError {
+                    msg: format!("{:?}", e),
+                })?,
+            (false, false) => client
                 .get(url_string)
                 .header("X-API-KEY", self.access_token.clone())
                 .send()
                 .map_err(|e| RoqoqoBackendError::NetworkError {
                     msg: format!("{:?}", e),
-                })?
+                })?,
         };
 
         let status_code = resp.status();
@@ -767,37 +782,42 @@ impl APIBackend {
 
         // construct URL with {job_id} not required?
         let url_string: String = job_location + "/result";
+        let hqs_env_var = env::var("QRYD_API_HQS").is_ok();
 
         // Call WebAPI client
-        let resp = if self.dev {
-            if env::var("QRYD_API_HQS").is_ok() {
-                client
-                    .get(url_string)
-                    .header("X-API-KEY", self.access_token.clone())
-                    .header("X-DEV", "?1")
-                    .header("X-HQS", "?1")
-                    .send()
-                    .map_err(|e| RoqoqoBackendError::NetworkError {
-                        msg: format!("{:?}", e),
-                    })?
-            } else {
-                client
-                    .get(url_string)
-                    .header("X-API-KEY", self.access_token.clone())
-                    .header("X-DEV", "?1")
-                    .send()
-                    .map_err(|e| RoqoqoBackendError::NetworkError {
-                        msg: format!("{:?}", e),
-                    })?
-            }
-        } else {
-            client
+        let resp = match (self.dev, hqs_env_var) {
+            (true, true) => client
+                .get(url_string)
+                .header("X-API-KEY", self.access_token.clone())
+                .header("X-DEV", "?1")
+                .header("X-HQS", "?1")
+                .send()
+                .map_err(|e| RoqoqoBackendError::NetworkError {
+                    msg: format!("{:?}", e),
+                })?,
+            (true, false) => client
+                .get(url_string)
+                .header("X-API-KEY", self.access_token.clone())
+                .header("X-DEV", "?1")
+                .send()
+                .map_err(|e| RoqoqoBackendError::NetworkError {
+                    msg: format!("{:?}", e),
+                })?,
+            (false, true) => client
+                .get(url_string)
+                .header("X-API-KEY", self.access_token.clone())
+                .header("X-HQS", "?1")
+                .send()
+                .map_err(|e| RoqoqoBackendError::NetworkError {
+                    msg: format!("{:?}", e),
+                })?,
+            (false, false) => client
                 .get(url_string)
                 .header("X-API-KEY", self.access_token.clone())
                 .send()
                 .map_err(|e| RoqoqoBackendError::NetworkError {
                     msg: format!("{:?}", e),
-                })?
+                })?,
         };
 
         let status_code = resp.status();
@@ -853,36 +873,43 @@ impl APIBackend {
                     msg: format!("could not create https client {:?}", x),
                 })?
         };
+
+        let hqs_env_var = env::var("QRYD_API_HQS").is_ok();
+
         // Call WebAPI client
-        let resp = if self.dev {
-            if env::var("QRYD_API_HQS").is_ok() {
-                client
-                    .delete(job_location)
-                    .header("X-API-KEY", self.access_token.clone())
-                    .header("X-DEV", "?1")
-                    .header("X-HQS", "?1")
-                    .send()
-                    .map_err(|e| RoqoqoBackendError::NetworkError {
-                        msg: format!("{:?}", e),
-                    })?
-            } else {
-                client
-                    .delete(job_location)
-                    .header("X-API-KEY", self.access_token.clone())
-                    .header("X-DEV", "?1")
-                    .send()
-                    .map_err(|e| RoqoqoBackendError::NetworkError {
-                        msg: format!("{:?}", e),
-                    })?
-            }
-        } else {
-            client
+        let resp = match (self.dev, hqs_env_var) {
+            (true, true) => client
+                .delete(job_location)
+                .header("X-API-KEY", self.access_token.clone())
+                .header("X-DEV", "?1")
+                .header("X-HQS", "?1")
+                .send()
+                .map_err(|e| RoqoqoBackendError::NetworkError {
+                    msg: format!("{:?}", e),
+                })?,
+            (true, false) => client
+                .delete(job_location)
+                .header("X-API-KEY", self.access_token.clone())
+                .header("X-DEV", "?1")
+                .send()
+                .map_err(|e| RoqoqoBackendError::NetworkError {
+                    msg: format!("{:?}", e),
+                })?,
+            (false, true) => client
+                .delete(job_location)
+                .header("X-API-KEY", self.access_token.clone())
+                .header("X-HQS", "?1")
+                .send()
+                .map_err(|e| RoqoqoBackendError::NetworkError {
+                    msg: format!("{:?}", e),
+                })?,
+            (false, false) => client
                 .delete(job_location)
                 .header("X-API-KEY", self.access_token.clone())
                 .send()
                 .map_err(|e| RoqoqoBackendError::NetworkError {
                     msg: format!("{:?}", e),
-                })?
+                })?,
         };
 
         let status_code = resp.status();

@@ -61,7 +61,7 @@ impl APIBackendWrapper {
     ///               been queried `timeout` times.
     ///     mock_port (Optional[str]): Server port to be used for testing purposes.
     ///     dev (Optional[bool]): The boolean to set the dev option to.
-    ///     api_version(Optional[str]): The version of the QRyd WebAPI to use. Defaults to "v5_1".
+    ///     api_version(Optional[str]): The version of the QRyd WebAPI to use. Defaults to "v5_2".
     ///
     /// Raises:
     ///     TypeError: Device Parameter is not QRydAPIDevice

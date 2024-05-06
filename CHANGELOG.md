@@ -5,6 +5,7 @@ Tracks qoqo-qryd changes after 0.5
 # 0.16.2
 
 * Added X-HQS header to api requests for testing purposes
+* Modified `APIBackend.post_job()` to use `v5_2` endpoint by default
 
 # 0.16.1
 
