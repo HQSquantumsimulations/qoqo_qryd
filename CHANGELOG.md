@@ -2,6 +2,10 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+# 0.16.2
+
+* Added X-HQS header to api requests for testing purposes
+
 # 0.16.1
 
 * Substituted server mocking package `mockito` with `wiremock`
