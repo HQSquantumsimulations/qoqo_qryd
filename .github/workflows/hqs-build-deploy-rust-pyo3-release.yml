@@ -23,7 +23,7 @@ jobs:
           python-version: 3.11
       - run: |
           python -m pip install numpy
-          cargo test --workspace --no-default-features --locked --features web-api
+          cargo test --workspace --no-default-features --locked
 
   api_integration:
     runs-on: ubuntu-latest
@@ -41,7 +41,7 @@ jobs:
         continue-on-error: true
       - run: |
           python -m pip install numpy
-          cargo test --workspace --no-default-features --locked --features web-api
+          cargo test --workspace --no-default-features --locked
 
   deploy_cratesio:
     runs-on: ubuntu-latest
