@@ -816,7 +816,9 @@ fn test_change_device_switch() {
 fn test_allow_reset() {
     let mut device = TweezerDevice::new(None, None, None);
     assert!(!device.allow_reset);
-    device.set_allow_reset(true);
+    assert!(device.set_allow_reset(true).is_err());
+    device.device_name = "qryd_emulator".to_string();
+    device.set_allow_reset(true).unwrap();
     assert!(device.allow_reset);
 }
 
