@@ -817,7 +817,7 @@ fn test_allow_reset() {
     let mut device = TweezerDevice::new(None, None, None);
     assert!(!device.allow_reset);
     assert!(device.set_allow_reset(true).is_err());
-    device.device_name = "qryd_emulator".to_string();
+    device.device_name = "qiskit_emulator".to_string();
     device.set_allow_reset(true).unwrap();
     assert!(device.allow_reset);
 }

@@ -422,7 +422,7 @@ fn test_allowed_tweezer_shifts_from_rows() {
 #[test]
 fn test_allow_reset() {
     let mut specific_named_device = TweezerDevice::new(None, None, None);
-    specific_named_device.device_name = "qryd_emulator".to_string();
+    specific_named_device.device_name = "qiskit_emulator".to_string();
     let specific_named_device_wrapper = TweezerMutableDeviceWrapper {
         internal: specific_named_device,
     };

@@ -832,9 +832,9 @@ impl TweezerDevice {
     /// * `Ok(())` - The device now supports PragmaActiveReset.
     /// * `Err(RoqoqoBackendError)` - The device isn't compatible with PragmaActiveReset.
     pub fn set_allow_reset(&mut self, allow_reset: bool) -> Result<(), RoqoqoBackendError> {
-        if self.device_name != "qryd_emulator" {
+        if self.device_name != "qiskit_emulator" {
             return Err(RoqoqoBackendError::GenericError {
-                msg: "The device isn't a qryd emulator, PragmaActiveReset is not supported."
+                msg: "The device isn't qiskit_emulator, PragmaActiveReset is not supported."
                     .to_string(),
             });
         }
