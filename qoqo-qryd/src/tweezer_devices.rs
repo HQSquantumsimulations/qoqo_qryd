@@ -675,7 +675,7 @@ impl TweezerDeviceWrapper {
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct TweezerMutableDeviceWrapper {
     /// Internal storage of [roqoqo_qryd::TweezerDevice]
-    internal: TweezerDevice,
+    pub internal: TweezerDevice,
 }
 
 #[pymethods]
@@ -1455,9 +1455,14 @@ impl TweezerMutableDeviceWrapper {
     ///
     /// Args:
     ///     allow_reset(bool): Whether the device should allow PragmaActiveReset operations or not.
+    ///
+    /// Raises:
+    ///     ValueError: The device isn't compatible with PragmaActiveReset.
     #[pyo3(text_signature = "(allow_reset, /)")]
-    pub fn set_allow_reset(&mut self, allow_reset: bool) {
-        self.internal.set_allow_reset(allow_reset);
+    pub fn set_allow_reset(&mut self, allow_reset: bool) -> PyResult<()> {
+        self.internal
+            .set_allow_reset(allow_reset)
+            .map_err(|err| PyValueError::new_err(format!("{:}", err)))
     }
 
     /// Set the name of the default layout to use and switch to it.
@@ -1467,6 +1472,7 @@ impl TweezerMutableDeviceWrapper {
     ///
     /// Raises:
     ///     ValueError: The given layout name is not present in the layout register.
+    #[pyo3(text_signature = "(layout, /)")]
     pub fn set_default_layout(&mut self, layout: &str) -> PyResult<()> {
         self.internal
             .set_default_layout(layout)

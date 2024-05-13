@@ -826,8 +826,20 @@ impl TweezerDevice {
     /// # Arguments
     ///
     /// * `allow_reset` - Whether the device should allow PragmaActiveReset operations or not.
-    pub fn set_allow_reset(&mut self, allow_reset: bool) {
-        self.allow_reset = allow_reset
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(())` - The device now supports PragmaActiveReset.
+    /// * `Err(RoqoqoBackendError)` - The device isn't compatible with PragmaActiveReset.
+    pub fn set_allow_reset(&mut self, allow_reset: bool) -> Result<(), RoqoqoBackendError> {
+        if self.device_name != "qryd_emulator" {
+            return Err(RoqoqoBackendError::GenericError {
+                msg: "The device isn't a qryd emulator, PragmaActiveReset is not supported."
+                    .to_string(),
+            });
+        }
+        self.allow_reset = allow_reset;
+        Ok(())
     }
 
     /// Set the name of the default layout to use and switch to it.
