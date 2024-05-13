@@ -206,7 +206,7 @@ async fn async_api_backend() {
     circuit += operations::MeasureQubit::new(0, "ro".to_string(), 0);
     circuit += operations::PragmaSetNumberOfMeasurements::new(10, "ro".to_string());
     circuit += operations::PragmaRepeatedMeasurement::new("ro".to_string(), 40, None);
-    circuit += operations::PragmaActiveReset::new(0);
+    // circuit += operations::PragmaActiveReset::new(0);
 
     let measurement = ClassicalRegister {
         constant_circuit: None,
@@ -287,7 +287,15 @@ async fn async_api_backend() {
 fn api_backend_failing() {
     if env::var("QRYD_API_TOKEN").is_ok() {
         let number_qubits = 6;
-        let device = QrydEmuSquareDevice::new(Some(2), None, None);
+        let device = TweezerDevice::from_api(
+            None,
+            None,
+            None,
+            None,
+            Some(env::var("QRYD_API_HQS").is_ok()),
+            None,
+        )
+        .unwrap();
         let qryd_device: QRydAPIDevice = QRydAPIDevice::from(&device);
         let api_backend_new = APIBackend::new(
             qryd_device,
@@ -304,11 +312,8 @@ fn api_backend_failing() {
 
         circuit += operations::ControlledPhaseShift::new(1, 2, std::f64::consts::FRAC_PI_4.into());
         circuit += operations::PragmaRepeatedMeasurement::new("ro".to_string(), 20, None);
-        // circuit += operations::RotateX::new(2, std::f64::consts::FRAC_PI_2.into());
-        // for i in 0..number_qubits {
-        //     circuit += operations::MeasureQubit::new(i, "ro".to_string(), number_qubits - i - 1);
-        // }
-        // circuit += operations::PragmaSetNumberOfMeasurements::new(40, "ro".to_string()); // assert!(api_backend_new.is_ok());
+        circuit += operations::PragmaActiveReset::new(0);
+
         let measurement = ClassicalRegister {
             constant_circuit: None,
             circuits: vec![circuit.clone()],
@@ -317,8 +322,14 @@ fn api_backend_failing() {
             measurement,
             input_parameter_names: vec![],
         };
-        let program_result = program.run(api_backend_new, &[]);
+        let program_result = program.run(api_backend_new.clone(), &[]);
         assert!(program_result.is_err());
+
+        let active_reset_error = program.run_registers(api_backend_new, &[]);
+        assert!(active_reset_error
+            .unwrap_err()
+            .to_string()
+            .contains("qryd_emulator"));
     }
 }
 

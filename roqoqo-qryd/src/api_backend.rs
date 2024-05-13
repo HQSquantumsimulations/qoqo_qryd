@@ -217,70 +217,6 @@ pub struct QRydJobStatus {
 //     Ok(downconverted_program)
 // }
 
-fn check_operation_compatability(op: &Operation) -> Result<(), RoqoqoBackendError> {
-    match op {
-        Operation::MeasureQubit(_) => Ok(()),
-        Operation::DefinitionBit(_) => Ok(()),
-        Operation::PhaseShiftState1(_) => Ok(()),
-        Operation::RotateXY(_) => Ok(()),
-        Operation::RotateX(_) => Ok(()),
-        Operation::RotateY(_) => Ok(()),
-        Operation::RotateZ(_) => Ok(()),
-        Operation::PhaseShiftedControlledZ(_) => Ok(()),
-        Operation::PhaseShiftedControlledPhase(_) => Ok(()),
-        Operation::Hadamard(_) => Ok(()),
-        Operation::PauliX(_) => Ok(()),
-        Operation::PauliY(_) => Ok(()),
-        Operation::PauliZ(_) => Ok(()),
-        Operation::SqrtPauliX(_) =>  Ok(()),
-        Operation::InvSqrtPauliX(_) =>  Ok(()),
-        Operation::CNOT(_) => Ok(()),
-        Operation::ControlledPauliY(_) =>  Ok(()),
-        Operation::ControlledPauliZ(_) =>  Ok(()),
-        Operation::ControlledPhaseShift(_) => Ok(()),
-        Operation::PragmaControlledCircuit(_) => Ok(()),
-        Operation::ControlledControlledPauliZ(_) => Ok(()),
-        Operation::ControlledControlledPhaseShift(_) => Ok(()),
-        Operation::SWAP(_) =>  Ok(()),
-        Operation::ISwap(_) => Ok(()),
-        Operation::PragmaSetNumberOfMeasurements(_) => Ok(()),
-        Operation::PragmaRepeatedMeasurement(_) => Ok(()),
-        Operation::PragmaActiveReset(_) => Ok(()),
-        _ => Err(RoqoqoBackendError::GenericError {
-            msg: format!("Operation {} is not supported by QRydDemo Web API backend.\n
-            Use: MeasureQubit, PragmaSetNumberOfMeasurements, PragmaRepeatedMeasurement, PragmaActiveReset, PhaseShiftState1, RotateXY, RotateX, RotateY, RotateZ, RotateZ, Hadamard, PauliX, PauliY, PauliZ, SqrtPauliX, InvSqrtPauliX, PhaseShiftedControlledZ, PhaseShiftedControlledPhase, CNOT, ControlledPauliY, ControlledPauliZ, ControlledPhaseShift, PragmaControlledCircuit, ControlledControlledPauliZ, ControlledControlledPhaseShift, SWAP or ISwap instead.", op.hqslang())
-        })
-    }
-}
-
-fn check_for_api_compatability(program: &QuantumProgram) -> Result<(), RoqoqoBackendError> {
-    let (measurement, _input_parameter_names) = match program {
-        QuantumProgram::ClassicalRegister {
-            measurement,
-            input_parameter_names,
-        } => Ok((measurement, input_parameter_names)),
-        _ => Err(RoqoqoBackendError::GenericError {
-            msg:
-                "Only ClassiclaRegister measurements are supported by the Qryd WebAPI at the moment"
-                    .to_string(),
-        }),
-    }?;
-    for op in measurement.circuits[0].iter() {
-        check_operation_compatability(op)?
-    }
-
-    match &measurement.constant_circuit {
-        Some(constant_circuit) => {
-            for op in constant_circuit.iter() {
-                check_operation_compatability(op)?
-            }
-        }
-        None => (),
-    }
-
-    Ok(())
-}
-
 /// Struct to represent QRyd response on the result for the posted Job.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, Default)]
 pub struct QRydJobResult {
@@ -444,7 +380,7 @@ impl APIBackend {
             }
         }
 
-        check_for_api_compatability(&quantumprogram)?;
+        self._check_for_api_compatability(&quantumprogram)?;
 
         // If a PragmaRepeatedMeasurement is present, substitute it with a set of MeasureQubit operations
         //  followed by a PragmaSetNumberOfMeasurements.
@@ -999,6 +935,79 @@ impl APIBackend {
     ///
     pub fn set_dev(&mut self, dev: bool) {
         self.dev = dev;
+    }
+
+    fn _check_operation_compatability(&self, op: &Operation) -> Result<(), RoqoqoBackendError> {
+        match op {
+            Operation::MeasureQubit(_) => Ok(()),
+            Operation::DefinitionBit(_) => Ok(()),
+            Operation::PhaseShiftState1(_) => Ok(()),
+            Operation::RotateXY(_) => Ok(()),
+            Operation::RotateX(_) => Ok(()),
+            Operation::RotateY(_) => Ok(()),
+            Operation::RotateZ(_) => Ok(()),
+            Operation::PhaseShiftedControlledZ(_) => Ok(()),
+            Operation::PhaseShiftedControlledPhase(_) => Ok(()),
+            Operation::Hadamard(_) => Ok(()),
+            Operation::PauliX(_) => Ok(()),
+            Operation::PauliY(_) => Ok(()),
+            Operation::PauliZ(_) => Ok(()),
+            Operation::SqrtPauliX(_) =>  Ok(()),
+            Operation::InvSqrtPauliX(_) =>  Ok(()),
+            Operation::CNOT(_) => Ok(()),
+            Operation::ControlledPauliY(_) =>  Ok(()),
+            Operation::ControlledPauliZ(_) =>  Ok(()),
+            Operation::ControlledPhaseShift(_) => Ok(()),
+            Operation::PragmaControlledCircuit(_) => Ok(()),
+            Operation::ControlledControlledPauliZ(_) => Ok(()),
+            Operation::ControlledControlledPhaseShift(_) => Ok(()),
+            Operation::SWAP(_) =>  Ok(()),
+            Operation::ISwap(_) => Ok(()),
+            Operation::PragmaSetNumberOfMeasurements(_) => Ok(()),
+            Operation::PragmaRepeatedMeasurement(_) => Ok(()),
+            Operation::PragmaActiveReset(_) => {
+                if self.device.qrydbackend() != "qiskit_emulator" {
+                    Err(RoqoqoBackendError::GenericError { msg: "The device isn't qryd_emulator, PragmaActiveReset is not supported.".to_string() })
+                } else {
+                    Ok(())
+                }
+            },
+            _ => Err(RoqoqoBackendError::GenericError {
+                msg: format!("Operation {} is not supported by QRydDemo Web API backend.\n
+                Use: MeasureQubit, PragmaSetNumberOfMeasurements, PragmaRepeatedMeasurement, PragmaActiveReset, PhaseShiftState1, RotateXY, RotateX, RotateY, RotateZ, RotateZ, Hadamard, PauliX, PauliY, PauliZ, SqrtPauliX, InvSqrtPauliX, PhaseShiftedControlledZ, PhaseShiftedControlledPhase, CNOT, ControlledPauliY, ControlledPauliZ, ControlledPhaseShift, PragmaControlledCircuit, ControlledControlledPauliZ, ControlledControlledPhaseShift, SWAP or ISwap instead.", op.hqslang())
+            })
+        }
+    }
+
+    fn _check_for_api_compatability(
+        &self,
+        program: &QuantumProgram,
+    ) -> Result<(), RoqoqoBackendError> {
+        let (measurement, _input_parameter_names) = match program {
+            QuantumProgram::ClassicalRegister {
+                measurement,
+                input_parameter_names,
+            } => Ok((measurement, input_parameter_names)),
+            _ => Err(RoqoqoBackendError::GenericError {
+                msg:
+                    "Only ClassicalRegister measurements are supported by the Qryd WebAPI at the moment"
+                        .to_string(),
+            }),
+        }?;
+        for op in measurement.circuits[0].iter() {
+            self._check_operation_compatability(op)?
+        }
+
+        match &measurement.constant_circuit {
+            Some(constant_circuit) => {
+                for op in constant_circuit.iter() {
+                    self._check_operation_compatability(op)?
+                }
+            }
+            None => (),
+        }
+
+        Ok(())
     }
 
     /// Transforms a PragmaRepeatedMeasurement operation into a set of
