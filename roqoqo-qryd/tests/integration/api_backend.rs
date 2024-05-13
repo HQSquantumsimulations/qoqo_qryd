@@ -76,20 +76,11 @@ fn api_backend() {
         //     std::f64::consts::FRAC_PI_4.into(),
         // );
 
-        // circuit += operations::ControlledControlledPauliZ::new(1, 2, 3);
-        // circuit += operations::ControlledControlledPhaseShift::new(
-        //     1,
-        //     2,
-        //     3,
-        //     std::f64::consts::FRAC_PI_4.into(),
-        // );
-
         for i in 0..number_qubits {
             circuit += operations::MeasureQubit::new(i, "ro".to_string(), number_qubits - i - 1);
         }
         circuit += operations::PragmaSetNumberOfMeasurements::new(40, "ro".to_string()); // assert!(api_backend_new.is_ok());
         circuit += operations::PragmaRepeatedMeasurement::new("ro".to_string(), 40, None);
-        // circuit += operations::PragmaActiveReset::new(0);
         // circuit += operations::PragmaActiveReset::new(0);
 
         let measurement = ClassicalRegister {
