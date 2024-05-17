@@ -4,7 +4,7 @@ Tracks qoqo-qryd changes after 0.5
 
 # 0.16.3
 
-* Fixed 0.16.2 dependencies issues
+* Fixed 0.16.2 release dependencies issues
 
 # 0.16.2
 
