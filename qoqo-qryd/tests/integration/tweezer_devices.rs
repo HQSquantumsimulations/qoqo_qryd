@@ -421,8 +421,15 @@ fn test_allowed_tweezer_shifts_from_rows() {
 /// Test allow_reset for TweezerMutableDeviceWrapper
 #[test]
 fn test_allow_reset() {
+    let mut specific_named_device = TweezerDevice::new(None, None, None);
+    specific_named_device.device_name = "qiskit_emulator".to_string();
+    let specific_named_device_wrapper = TweezerMutableDeviceWrapper {
+        internal: specific_named_device,
+    };
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
+        let specific_named_device_pypyany = specific_named_device_wrapper.into_py(py);
+        let specific_named_device_ref = specific_named_device_pypyany.as_ref(py);
         let device_type_mut = py.get_type::<TweezerMutableDeviceWrapper>();
         let device_mut = device_type_mut.call0().unwrap();
         let device_type = py.get_type::<TweezerDeviceWrapper>();
@@ -438,10 +445,23 @@ fn test_allow_reset() {
             .unwrap()
             .extract::<bool>()
             .unwrap());
+        assert!(!specific_named_device_ref
+            .call_method0("get_allow_reset")
+            .unwrap()
+            .extract::<bool>()
+            .unwrap());
 
-        assert!(device_mut.call_method1("set_allow_reset", (true,)).is_ok());
+        assert!(device_mut.call_method1("set_allow_reset", (true,)).is_err());
+        assert!(specific_named_device_ref
+            .call_method1("set_allow_reset", (true,))
+            .is_ok());
 
-        assert!(device_mut
+        assert!(!device_mut
+            .call_method0("get_allow_reset")
+            .unwrap()
+            .extract::<bool>()
+            .unwrap());
+        assert!(specific_named_device_ref
             .call_method0("get_allow_reset")
             .unwrap()
             .extract::<bool>()

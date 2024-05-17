@@ -2,6 +2,12 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+# 0.16.2
+
+* Added X-HQS header to api requests for testing purposes
+* Modified `APIBackend.post_job()` to use `v5_2` endpoint by default
+* Modified `TweezerDevice.set_allow_reset()` and `APIBackend` to allow `PragmaActiveReset` only for "qiskit_emulator" devices
+
 # 0.16.1
 
 * Substituted server mocking package `mockito` with `wiremock`

@@ -68,6 +68,7 @@ fn create_valid_backend_with_tweezer_device(
                 Option::<String>::None,
                 Option::<String>::None,
                 seed,
+                Some(env::var("QRYD_API_HQS").is_ok()),
             ),
         )
         .unwrap()
@@ -352,7 +353,7 @@ fn test_run_job() {
                     .extract()
                     .unwrap();
                 let job_status = status_report.get("status").unwrap();
-                status = job_status.clone();
+                status.clone_from(job_status);
                 thread::sleep(fifteen);
 
                 if status == *"completed" {
@@ -442,7 +443,7 @@ async fn async_test_run_job() {
         })
         .await
         .unwrap();
-        status = job_status.clone();
+        status.clone_from(&job_status);
         assert_eq!(job_status, "in progress");
         thread::sleep(fifteen);
     }
@@ -512,7 +513,7 @@ fn test_run_circuit() {
             let result = backend.call_method1("run_circuit", (3usize,));
             assert!(result.is_err());
 
-            backend.call_method1("run_circuit", (circuit_py,)).unwrap();
+            assert!(backend.call_method1("run_circuit", (circuit_py,)).is_ok());
         });
     }
 }
