@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>qoqo_qryd.tweezer_devices &mdash; qoqo_qryd 0.16.0 documentation</title>
+  <title>qoqo_qryd.tweezer_devices &mdash; qoqo_qryd 0.16.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
 
@@ -15,8 +15,8 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=86f71a27"></script>
-        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/documentation_options.js?v=63033552"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -38,7 +38,7 @@
             qoqo_qryd
           </a>
               <div class="version">
-                0.16.0
+                0.16.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -226,7 +226,7 @@ access_token (Optional[str]): An access_token is required to access QRYD hardwar
 <p>mock_port (Optional[str]): Server port to be used for testing purposes.
 seed (Optional[int]): Optionally overwrite seed value from downloaded device instance.
 dev (Optional[bool]): The boolean to set the dev header to.
-api_version (Optional[str]): The version of the QRYD API to use. Defaults to &quot;v1_0&quot;.</p>
+api_version (Optional[str]): The version of the QRYD API to use. Defaults to &quot;v1_1&quot;.</p>
 </dd>
 <dt>Returns</dt><dd><p>TweezerDevice: The new TweezerDevice instance with populated tweezer data.</p>
 </dd>
@@ -1027,6 +1027,9 @@ None: The mapping is empty.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>allow_reset</strong> (<em>bool</em>) -- Whether the device should allow PragmaActiveReset operations or not.</p>
 </dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> -- The device isn't compatible with PragmaActiveReset.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -1078,7 +1081,7 @@ Defaults to the current Layout.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="qoqo_qryd.tweezer_devices.TweezerMutableDevice.set_default_layout">
-<span class="sig-name descname"><span class="pre">set_default_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.tweezer_devices.TweezerMutableDevice.set_default_layout" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">set_default_layout</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.tweezer_devices.TweezerMutableDevice.set_default_layout" title="Link to this definition"></a></dt>
 <dd><p>Set the name of the default layout to use and switch to it.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1182,8 +1185,8 @@ Only switching between layouts having the same tweezer per row value is supporte
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>set.</strong> (<em>tweezers_per_row` - Vector containing the number</em><em> of </em><em>tweezers per row to</em>) -- </p></li>
-<li><p><strong>Layout.</strong> (<em>layout_name` - The name</em><em> of </em><em>the Layout to set the tweezer per row for. Defaults to the current</em>) -- </p></li>
+<li><p><strong>set.</strong> (<em>tweezers_per_row` - Vector containing the number</em><em> of </em><em>tweezers per row to</em>)</p></li>
+<li><p><strong>Layout.</strong> (<em>layout_name` - The name</em><em> of </em><em>the Layout to set the tweezer per row for. Defaults to the current</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
