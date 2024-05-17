@@ -995,9 +995,9 @@ dependencies = [
 
 [[package]]
 name = "qoqo-macros"
-version = "1.12.0"
+version = "1.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a3b01add6173d33a9aca23c0a7d3e80ae96163194de7065bf965dcb64fc50b05"
+checksum = "4b4257b8b7106f0e28094d2be86345b838588e311a98b279644d9ceb6d0adc70"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1028,9 +1028,9 @@ dependencies = [
 
 [[package]]
 name = "qoqo_calculator"
-version = "1.2.2"
+version = "1.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6fa8b27bb34103af09afcca6d21ccb52dfa66a34c0ffa0f8103003bb1afd9d53"
+checksum = "67110647e68fb28b7afaec29245b7a40d2908635065df84361d99dbd4c75053e"
 dependencies = [
  "num-complex",
  "schemars",
@@ -1218,9 +1218,9 @@ dependencies = [
 
 [[package]]
 name = "roqoqo"
-version = "1.12.0"
+version = "1.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ddf32910fc2274cfc7eb825376ad5806ab1272b2857bd540f6cda1e1d8b15e55"
+checksum = "bb2b834c75bd9f710318ca31233fd69d1ec3eb784481db8d30b67c04050a3501"
 dependencies = [
  "bincode",
  "nalgebra",
@@ -1241,9 +1241,9 @@ dependencies = [
 
 [[package]]
 name = "roqoqo-derive"
-version = "1.12.0"
+version = "1.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "99bcb506f25ffed16cf1974cf67d29060526759521d88f3d947e2ae930b65b8c"
+checksum = "4e4a11f39e28c87b21bd943f6f0ed6dbc89c7879545ddab5efdee7ba3db8daf5"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1291,9 +1291,9 @@ dependencies = [
 
 [[package]]
 name = "roqoqo-test"
-version = "1.12.0"
+version = "1.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7d7788b63b9df35aff9e72ebba2ddefac9e6ca06fac6f528bd54e190b214fff3"
+checksum = "23773c83525ba7fd0de346e4cafade2be6ed2bfc24d1ab7b4dc8571f531e49e2"
 dependencies = [
  "nalgebra",
  "ndarray",
@@ -1512,9 +1512,9 @@ checksum = "6980e8d7511241f8acf4aebddbb1ff938df5eebe98691418c4468d0b72a96a67"
 
 [[package]]
 name = "struqture"
-version = "1.7.0"
+version = "1.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d2fe3b5ee158db81a424c6194639a689b67a37b133578ffd8fc9e07e3b6a1f57"
+checksum = "b5e6a6fae203fb8098042ab51364cf5ff79020312e68b63038371d627029ab08"
 dependencies = [
  "itertools 0.12.1",
  "ndarray",
