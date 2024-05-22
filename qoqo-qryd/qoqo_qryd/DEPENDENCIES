@@ -2940,7 +2940,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-cc 1.0.97
+cc 1.0.98
 https://github.com/rust-lang/cc-rs
 by Alex Crichton <alex@alexcrichton.com>
 A build-time dependency for Cargo build scripts to assist in invoking the native
@@ -8307,7 +8307,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-getrandom 0.2.14
+getrandom 0.2.15
 https://github.com/rust-random/getrandom
 by The Rand Project Developers
 A small cross-platform library for retrieving random data from system source
@@ -13264,7 +13264,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-libc 0.2.153
+libc 0.2.155
 https://github.com/rust-lang/libc
 by The Rust Project Developers
 Raw FFI bindings to platform libraries like libc.
@@ -14784,7 +14784,7 @@ THE SOFTWARE.
 
 
 ====================================================
-miniz_oxide 0.7.2
+miniz_oxide 0.7.3
 https://github.com/Frommi/miniz_oxide/tree/master/miniz_oxide
 by Frommi <daniil.liferenko@gmail.com>, oyvindln <oyvindln@users.noreply.github.com>
 DEFLATE compression and decompression library rewritten in Rust based on miniz
@@ -19338,7 +19338,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-proc-macro2 1.0.82
+proc-macro2 1.0.83
 https://github.com/dtolnay/proc-macro2
 by David Tolnay <dtolnay@gmail.com>, Alex Crichton <alex@alexcrichton.com>
 A substitute implementation of the compiler's `proc_macro` API to decouple token-based libraries from the procedural macro use case.
@@ -20697,7 +20697,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-qoqo 1.11.0
+qoqo 1.11.1
 https://github.com/HQSquantumsimulations/qoqo
 by HQS Quantum Simulations <info@quantumsimulations.de>
 Quantum computing circuit toolkit. Python interface of roqoqo
@@ -20909,7 +20909,7 @@ LICENSE:
 
 
 ====================================================
-qoqo-macros 1.12.0
+qoqo-macros 1.11.1
 by HQS Quantum Simulations <info@quantumsimulations.de>
 Macros for the qoqo crate
 License: Apache-2.0
@@ -21332,7 +21332,7 @@ LICENSE:
 
 
 ====================================================
-qoqo_calculator 1.2.2
+qoqo_calculator 1.1.6
 https://github.com/HQSquantumsimulations/qoqo_calculator
 by HQS Quantum Simulations <info@quantumsimulations.de>
 qoqo-calculator is the calculator backend of the qoqo quantum computing toolkit by HQS Quantum Simulations
@@ -21544,7 +21544,7 @@ LICENSE:
 
 
 ====================================================
-qoqo_calculator_pyo3 1.1.5
+qoqo_calculator_pyo3 1.1.6
 https://github.com/HQSquantumsimulations/qoqo_calculator_pyo3
 by HQS Quantum Simulations <info@quantumsimulations.de>
 Python interface to qoqo calculator, the calculator backend of the qoqo quantum computing toolkit by HQS Quantum Simulations
@@ -24440,7 +24440,7 @@ by Brian Smith <brian@briansmith.org>
 Safe, fast, small crypto using Rust.
 
 ====================================================
-roqoqo 1.12.0
+roqoqo 1.11.1
 https://github.com/HQSquantumsimulations/qoqo
 by HQS Quantum Simulations <info@quantumsimulations.de>
 Rust Quantum Computing Toolkit by HQS
@@ -24652,7 +24652,7 @@ LICENSE:
 
 
 ====================================================
-roqoqo-derive 1.12.0
+roqoqo-derive 1.11.1
 by HQS Quantum Simulations <info@quantumsimulations.de>
 Macros for the roqoqo crate
 License: Apache-2.0
@@ -25287,7 +25287,7 @@ LICENSE:
 
 
 ====================================================
-roqoqo-test 1.12.0
+roqoqo-test 1.11.1
 https://github.com/HQSquantumsimulations/qoqo
 by HQS Quantum Simulations <info@quantumsimulations.de>
 Testing helper functions for roqoqo toolkit
@@ -26858,7 +26858,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 ====================================================
-schemars 0.8.19
+schemars 0.8.20
 https://graham.cool/schemars/
 by Graham Esau <gesau@hotmail.co.uk>
 Generate JSON Schemas from Rust code
@@ -26890,7 +26890,7 @@ SOFTWARE.
 
 
 ====================================================
-schemars_derive 0.8.19
+schemars_derive 0.8.20
 https://graham.cool/schemars/
 by Graham Esau <gesau@hotmail.co.uk>
 Macros for #[derive(JsonSchema)], for use with schemars
@@ -29491,7 +29491,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 ====================================================
-struqture 1.7.0
+struqture 1.6.2
 by HQS Quantum Simulations <info@quantumsimulations.de>
 HQS tool for representing operators, Hamiltonians and open systems.
 License: Apache-2.0
@@ -29702,13 +29702,13 @@ LICENSE:
 
 
 ====================================================
-struqture-py 1.6.1
+struqture-py 1.6.2
 by HQS Quantum Simulations <info@quantumsimulations.de>
 Python interface of struqture, the HQS tool for representing operators, Hamiltonians and open systems.
 License: Apache-2.0
 
 ====================================================
-struqture-py-macros 1.7.0
+struqture-py-macros 1.6.2
 by HQS Quantum Simulations <info@quantumsimulations.de>
 Macros for struqture-py crate.
 License: Apache-2.0
@@ -30158,7 +30158,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-syn 2.0.64
+syn 2.0.65
 https://github.com/dtolnay/syn
 by David Tolnay <dtolnay@gmail.com>
 Parser for Rust source code
@@ -30933,7 +30933,7 @@ SOFTWARE.
 
 
 ====================================================
-thiserror 1.0.60
+thiserror 1.0.61
 https://github.com/dtolnay/thiserror
 by David Tolnay <dtolnay@gmail.com>
 derive(Error)
@@ -31147,7 +31147,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-thiserror-impl 1.0.60
+thiserror-impl 1.0.61
 https://github.com/dtolnay/thiserror
 by David Tolnay <dtolnay@gmail.com>
 Implementation detail of the `thiserror` crate
@@ -36070,7 +36070,7 @@ one at http://mozilla.org/MPL/2.0/.
 
 
 ====================================================
-wide 0.7.19
+wide 0.7.20
 https://github.com/Lokathor/wide
 by Lokathor <zefria@gmail.com>
 A crate to help you go wide.
