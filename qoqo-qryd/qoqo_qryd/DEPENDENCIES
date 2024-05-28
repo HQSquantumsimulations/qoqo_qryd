@@ -11162,7 +11162,7 @@ of these licenses, at your option.
 
 
 ====================================================
-hyper-util 0.1.3
+hyper-util 0.1.4
 https://hyper.rs
 by Sean McArthur <sean@seanmonstar.com>
 hyper utilities
@@ -17245,7 +17245,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-parking_lot 0.12.2
+parking_lot 0.12.3
 https://github.com/Amanieu/parking_lot
 by Amanieu d'Antras <amanieu@gmail.com>
 More compact and efficient implementations of the standard synchronization primitives.
@@ -19338,7 +19338,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-proc-macro2 1.0.83
+proc-macro2 1.0.84
 https://github.com/dtolnay/proc-macro2
 by David Tolnay <dtolnay@gmail.com>, Alex Crichton <alex@alexcrichton.com>
 A substitute implementation of the compiler's `proc_macro` API to decouple token-based libraries from the procedural macro use case.
@@ -21120,7 +21120,7 @@ LICENSE:
 
 
 ====================================================
-qoqo-qryd 0.16.3
+qoqo-qryd 0.16.4
 https://github.com/HQSquantumsimulations/qoqo_qryd
 by HQS Quantum Simulations <info@quantumsimulations.de>
 QRyd backend for qoqo quantum computing toolkit
@@ -24863,7 +24863,7 @@ LICENSE:
 
 
 ====================================================
-roqoqo-qryd 0.16.3
+roqoqo-qryd 0.16.4
 https://github.com/HQSquantumsimulations/qoqo_qryd
 by HQS Quantum Simulations <info@quantumsimulations.de>
 QRyd interface for roqoqo rust quantum computing toolkit
@@ -25741,10 +25741,10 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-rustc-hash 1.1.0
-https://github.com/rust-lang-nursery/rustc-hash
+rustc-hash 1.2.0
+https://github.com/rust-lang/rustc-hash
 by The Rust Project Developers
-speed, non-cryptographic hash used in rustc
+A speedy, non-cryptographic hashing algorithm used by rustc and Firefox
 License: Apache-2.0/MIT
 ----------------------------------------------------
 LICENSE-APACHE:
@@ -25925,32 +25925,6 @@ TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
    of your accepting any such warranty or additional liability.
 
 END OF TERMS AND CONDITIONS
-
-APPENDIX: How to apply the Apache License to your work.
-
-   To apply the Apache License to your work, attach the following
-   boilerplate notice, with the fields enclosed by brackets "[]"
-   replaced with your own identifying information. (Don't include
-   the brackets!)  The text should be enclosed in the appropriate
-   comment syntax for the file format. We also recommend that a
-   file or class name and description of purpose be included on the
-   same "printed page" as the copyright notice for easier
-   identification within third-party archives.
-
-Copyright [yyyy] [name of copyright owner]
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-	http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
 ----------------------------------------------------
 LICENSE-MIT:
 
@@ -25977,7 +25951,6 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
 IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
-
 
 ====================================================
 rustls 0.21.12
@@ -26858,7 +26831,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 ====================================================
-schemars 0.8.20
+schemars 0.8.21
 https://graham.cool/schemars/
 by Graham Esau <gesau@hotmail.co.uk>
 Generate JSON Schemas from Rust code
@@ -26890,7 +26863,7 @@ SOFTWARE.
 
 
 ====================================================
-schemars_derive 0.8.20
+schemars_derive 0.8.21
 https://graham.cool/schemars/
 by Graham Esau <gesau@hotmail.co.uk>
 Macros for #[derive(JsonSchema)], for use with schemars
@@ -27442,7 +27415,7 @@ of these licenses, at your option.
 
 
 ====================================================
-serde 1.0.202
+serde 1.0.203
 https://serde.rs
 by Erick Tryzelaar <erick.tryzelaar@gmail.com>, David Tolnay <dtolnay@gmail.com>
 A generic serialization/deserialization framework
@@ -27656,7 +27629,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-serde_derive 1.0.202
+serde_derive 1.0.203
 https://serde.rs
 by Erick Tryzelaar <erick.tryzelaar@gmail.com>, David Tolnay <dtolnay@gmail.com>
 Macros 1.1 implementation of #[derive(Serialize, Deserialize)]
@@ -30158,7 +30131,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-syn 2.0.65
+syn 2.0.66
 https://github.com/dtolnay/syn
 by David Tolnay <dtolnay@gmail.com>
 Parser for Rust source code
@@ -36070,7 +36043,7 @@ one at http://mozilla.org/MPL/2.0/.
 
 
 ====================================================
-wide 0.7.20
+wide 0.7.21
 https://github.com/Lokathor/wide
 by Lokathor <zefria@gmail.com>
 A crate to help you go wide.

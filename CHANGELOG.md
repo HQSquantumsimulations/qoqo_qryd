@@ -2,13 +2,17 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+# 0.16.4
+
+* Modified `PragmaActiveReset` support to be based first on the API device
+
 # 0.16.3
 
 * Fixed 0.16.2 release dependencies issues
 
 # 0.16.2
 
-* Added X-HQS header to api requests for testing purposes
+* Added X-HQS header to API requests for testing purposes
 * Modified `APIBackend.post_job()` to use `v5_2` endpoint by default
 * Modified `TweezerDevice.set_allow_reset()` and `APIBackend` to allow `PragmaActiveReset` only for "qiskit_emulator" devices
 

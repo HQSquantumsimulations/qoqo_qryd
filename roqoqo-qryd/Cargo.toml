@@ -1,6 +1,6 @@
 [package]
 name = "roqoqo-qryd"
-version = "0.16.3"
+version = "0.16.4"
 authors = ["HQS Quantum Simulations <info@quantumsimulations.de>"]
 edition = "2021"
 license = "Apache-2.0"
@@ -48,6 +48,7 @@ test-case = "3.0"
 serde_test = { version = "1.0" }
 wiremock = { version = "0.6" }
 tokio = { version = "1.36" }
+
 roqoqo-test = { version = "~1.11" }
 
 [features]
