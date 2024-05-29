@@ -4,7 +4,7 @@ Tracks qoqo-qryd changes after 0.5
 
 # 0.16.4
 
-* Modified `PragmaActiveReset` support to be based first on the API device
+* Modified `PragmaActiveReset` support's device name condition
 
 # 0.16.3
 
@@ -37,7 +37,7 @@ Tracks qoqo-qryd changes after 0.5
 * Modified the native gate set whitelist to be public
 * Fixed `TweezerDevice.to_json()` gate set validity check
 * Updated dependencies addressing security advisory
-* Update to Qoqo 1.10
+* Updated to Qoqo 1.10
 
 # 0.14.0
 
