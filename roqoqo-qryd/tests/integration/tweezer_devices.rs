@@ -816,9 +816,7 @@ fn test_change_device_switch() {
 fn test_allow_reset() {
     let mut device = TweezerDevice::new(None, None, None);
     assert!(!device.allow_reset);
-    assert!(device.set_allow_reset(true).is_err());
-    device.device_name = "qiskit_emulator".to_string();
-    device.set_allow_reset(true).unwrap();
+    assert!(device.set_allow_reset(true).is_ok());
     assert!(device.allow_reset);
 }
 
@@ -1005,6 +1003,7 @@ fn test_from_api() {
         assert!(response.is_ok());
         let device = response.unwrap();
         assert_eq!(device.qrydbackend(), "qryd_emulator".to_string());
+        assert!(!device.allow_reset);
 
         let response_new_seed = TweezerDevice::from_api(
             None,
@@ -1017,6 +1016,19 @@ fn test_from_api() {
         assert!(response_new_seed.is_ok());
         let device_new_seed = response_new_seed.unwrap();
         assert_eq!(device_new_seed.seed(), Some(42));
+
+        let response = TweezerDevice::from_api(
+            Some("qiskit_emulator".to_string()),
+            None,
+            None,
+            None,
+            Some(env::var("QRYD_API_HQS").is_ok()),
+            None,
+        );
+        assert!(response.is_ok());
+        let device = response.unwrap();
+        assert_eq!(device.qrydbackend(), "qiskit_emulator".to_string());
+        assert!(device.allow_reset);
     }
 }
 
