@@ -2,13 +2,17 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+# 0.16.4
+
+* Modified `PragmaActiveReset` support's device name condition
+
 # 0.16.3
 
 * Fixed 0.16.2 release dependencies issues
 
 # 0.16.2
 
-* Added X-HQS header to api requests for testing purposes
+* Added X-HQS header to API requests for testing purposes
 * Modified `APIBackend.post_job()` to use `v5_2` endpoint by default
 * Modified `TweezerDevice.set_allow_reset()` and `APIBackend` to allow `PragmaActiveReset` only for "qiskit_emulator" devices
 
@@ -33,7 +37,7 @@ Tracks qoqo-qryd changes after 0.5
 * Modified the native gate set whitelist to be public
 * Fixed `TweezerDevice.to_json()` gate set validity check
 * Updated dependencies addressing security advisory
-* Update to Qoqo 1.10
+* Updated to Qoqo 1.10
 
 # 0.14.0
 
