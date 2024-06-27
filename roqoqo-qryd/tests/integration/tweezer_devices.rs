@@ -338,11 +338,37 @@ fn test_allowed_tweezer_shifts_from_rows() {
             msg: "A given Tweezer is not present in the device Tweezer data.".to_string(),
         }
     );
+
+    let adding_to_already_present_key = device.set_allowed_tweezer_shifts_from_rows(
+        &[&[0, 3], &[1, 4], &[2, 5]],
+        Some("triangle".to_string()),
+    );
+    assert!(adding_to_already_present_key.is_ok());
+
+    let saved_shifts = &device
+        .layout_register
+        .get("triangle")
+        .unwrap()
+        .allowed_tweezer_shifts;
+    assert!(saved_shifts.get(&0).unwrap().contains(&vec![1, 2]));
+    assert!(saved_shifts.get(&0).unwrap().contains(&vec![3]));
+    assert!(saved_shifts.get(&1).unwrap().contains(&vec![0]));
+    assert!(saved_shifts.get(&1).unwrap().contains(&vec![2]));
+    assert!(saved_shifts.get(&1).unwrap().contains(&vec![4]));
+    assert!(saved_shifts.get(&2).unwrap().contains(&vec![1, 0]));
+    assert!(saved_shifts.get(&2).unwrap().contains(&vec![5]));
+    assert!(saved_shifts.get(&3).unwrap().contains(&vec![4, 5]));
+    assert!(saved_shifts.get(&3).unwrap().contains(&vec![0]));
+    assert!(saved_shifts.get(&4).unwrap().contains(&vec![3]));
+    assert!(saved_shifts.get(&4).unwrap().contains(&vec![5]));
+    assert!(saved_shifts.get(&4).unwrap().contains(&vec![1]));
+    assert!(saved_shifts.get(&5).unwrap().contains(&vec![4, 3]));
+    assert!(saved_shifts.get(&5).unwrap().contains(&vec![2]));
 }
 
 /// Test TweezerDevice set_allowed_tweezer_shifts() method
 #[test]
-fn test_allowed_tweezer_shifts_row() {
+fn test_allowed_tweezer_shifts() {
     let mut device = TweezerDevice::new(None, None, None);
     device.add_layout("OtherLayout").unwrap();
     device
@@ -353,6 +379,12 @@ fn test_allowed_tweezer_shifts_row() {
         .unwrap();
     device
         .set_tweezer_single_qubit_gate_time("RotateX", 2, 0.0, Some("OtherLayout".to_string()))
+        .unwrap();
+    device
+        .set_tweezer_single_qubit_gate_time("RotateX", 3, 0.0, Some("OtherLayout".to_string()))
+        .unwrap();
+    device
+        .set_tweezer_single_qubit_gate_time("RotateX", 4, 0.0, Some("OtherLayout".to_string()))
         .unwrap();
     device.switch_layout("OtherLayout", None).unwrap();
 
@@ -380,7 +412,7 @@ fn test_allowed_tweezer_shifts_row() {
         }
     );
 
-    let incorrect_tweezer = device.set_allowed_tweezer_shifts(&3, &[&[0]], None);
+    let incorrect_tweezer = device.set_allowed_tweezer_shifts(&5, &[&[0]], None);
     assert!(incorrect_tweezer.is_err());
     assert_eq!(
         incorrect_tweezer.unwrap_err(),
@@ -400,7 +432,20 @@ fn test_allowed_tweezer_shifts_row() {
                 "The given tweezer, or shifts tweezers, are not present in the device Tweezer data."
                     .to_string(),
         }
-    )
+    );
+
+    assert!(device
+        .set_allowed_tweezer_shifts(&0, &[&[3], &[4]], Some("OtherLayout".to_string()))
+        .is_ok());
+
+    let saved_shifts = &device
+        .layout_register
+        .get("OtherLayout")
+        .unwrap()
+        .allowed_tweezer_shifts;
+    assert!(saved_shifts.contains_key(&0));
+    assert!(saved_shifts.get(&0).unwrap().contains(&vec![3]));
+    assert!(saved_shifts.get(&0).unwrap().contains(&vec![4]));
 }
 
 /// Test TweezerDevice deactivate_qubit()
@@ -918,8 +963,6 @@ fn test_change_device_shift() {
     let pragma_s = PragmaShiftQubitsTweezers::new(vec![(1, 5)]);
     let err4 = device.change_device("PragmaShiftQubitsTweezers", &serialize(&pragma_s).unwrap());
     assert!(err4.is_err());
-
-    // device.set_allowed_tweezer_shifts_from_rows(&[&[0, 1, 2, 3], &[4, 5, 6]], Some("triangle".to_string())).unwrap();
 }
 
 /// Test TweezerDevice from_api() method
