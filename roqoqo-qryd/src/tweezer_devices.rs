@@ -719,10 +719,10 @@ impl TweezerDevice {
             });
         }
         if let Some(info) = self.layout_register.get_mut(&layout_name) {
-            info.allowed_tweezer_shifts.insert(
-                *tweezer,
-                allowed_shifts.iter().map(|&slice| slice.to_vec()).collect(),
-            );
+            info.allowed_tweezer_shifts
+                .entry(*tweezer)
+                .or_insert_with(Vec::new)
+                .extend(allowed_shifts.iter().map(|&slice| slice.to_vec()));
         }
         Ok(())
     }
@@ -779,12 +779,12 @@ impl TweezerDevice {
                 let vec_right = &row[i + 1..].to_vec();
 
                 // Insert the left and right side
-                allowed_shifts.insert(*mid, vec![]);
+                allowed_shifts.entry(*mid).or_default();
                 if let Some(val) = allowed_shifts.get_mut(mid) {
-                    if !vec_left.is_empty() {
+                    if !vec_left.is_empty() && !val.contains(&vec_left) {
                         val.push(vec_left.to_vec());
                     }
-                    if !vec_right.is_empty() {
+                    if !vec_right.is_empty() && !val.contains(vec_right) {
                         val.push(vec_right.to_vec());
                     }
                 }
