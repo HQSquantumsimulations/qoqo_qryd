@@ -779,14 +779,12 @@ impl TweezerDevice {
                 let vec_right = &row[i + 1..].to_vec();
 
                 // Insert the left and right side
-                allowed_shifts.entry(*mid).or_default();
-                if let Some(val) = allowed_shifts.get_mut(mid) {
-                    if !vec_left.is_empty() && !val.contains(&vec_left) {
-                        val.push(vec_left.to_vec());
-                    }
-                    if !vec_right.is_empty() && !val.contains(vec_right) {
-                        val.push(vec_right.to_vec());
-                    }
+                let val = allowed_shifts.entry(*mid).or_default();
+                if !vec_left.is_empty() && !val.contains(&vec_left) {
+                    val.push(vec_left.to_vec());
+                }
+                if !vec_right.is_empty() && !val.contains(vec_right) {
+                    val.push(vec_right.to_vec());
                 }
             }
         });
