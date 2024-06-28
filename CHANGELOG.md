@@ -2,6 +2,10 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+# 0.16.5
+
+* Fixed `set_allowed_tweezer_shifts()` and `set_allowed_tweezer_shifts_from_rows()` behaviour in case the user wants to insert additional shifts via a successive method call
+
 # 0.16.4
 
 * Modified `PragmaActiveReset` support's device name condition
