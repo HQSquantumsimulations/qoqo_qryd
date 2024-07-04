@@ -46,9 +46,10 @@ qoqo_calculator = { version = "~1.2" }
 [dev-dependencies]
 test-case = "3.0"
 serde_test = { version = "1.0" }
-roqoqo-test = { version = "1.10" }
 wiremock = { version = "0.6" }
 tokio = { version = "1.36" }
+
+roqoqo-test = { version = "~1.13" }
 
 [features]
 default = ["simulator", "web-api"]

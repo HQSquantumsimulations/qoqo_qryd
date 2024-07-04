@@ -275,6 +275,9 @@ impl TweezerDevice {
     ) -> Result<Self, RoqoqoBackendError> {
         // Preparing variables
         let device_name_internal = device_name.unwrap_or_else(|| String::from("qryd_emulator"));
+        let api_version = api_version.unwrap_or_else(|| String::from("v1_1"));
+        let dev = dev.unwrap_or(false);
+        let hqs_env_var = env::var("QRYD_API_HQS").is_ok();
         let access_token_internal: String = if mock_port.is_some() {
             "".to_string()
         } else {
@@ -313,31 +316,53 @@ impl TweezerDevice {
                 .map_err(|e| RoqoqoBackendError::NetworkError {
                     msg: format!("{:?}", e),
                 })?
-        } else if dev.unwrap_or(false) {
-            client
-                .get(format!(
-                    "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
-                    api_version.unwrap_or_else(|| String::from("v1_1")),
-                    device_name_internal.clone()
-                ))
-                .header("X-API-KEY", access_token_internal)
-                .header("X-DEV", "?1")
-                .send()
-                .map_err(|e| RoqoqoBackendError::NetworkError {
-                    msg: format!("{:?}", e),
-                })?
         } else {
-            client
-                .get(format!(
-                    "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
-                    api_version.unwrap_or_else(|| String::from("v1_1")),
-                    device_name_internal.clone()
-                ))
-                .header("X-API-KEY", access_token_internal)
-                .send()
-                .map_err(|e| RoqoqoBackendError::NetworkError {
-                    msg: format!("{:?}", e),
-                })?
+            match (dev, hqs_env_var) {
+                (true, true) => client
+                    .get(format!(
+                        "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
+                        api_version, device_name_internal
+                    ))
+                    .header("X-API-KEY", access_token_internal)
+                    .header("X-DEV", "?1")
+                    .header("X-HQS", "?1")
+                    .send()
+                    .map_err(|e| RoqoqoBackendError::NetworkError {
+                        msg: format!("{:?}", e),
+                    })?,
+                (true, false) => client
+                    .get(format!(
+                        "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
+                        api_version, device_name_internal
+                    ))
+                    .header("X-API-KEY", access_token_internal)
+                    .header("X-DEV", "?1")
+                    .send()
+                    .map_err(|e| RoqoqoBackendError::NetworkError {
+                        msg: format!("{:?}", e),
+                    })?,
+                (false, true) => client
+                    .get(format!(
+                        "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
+                        api_version, device_name_internal
+                    ))
+                    .header("X-API-KEY", access_token_internal)
+                    .header("X-HQS", "?1")
+                    .send()
+                    .map_err(|e| RoqoqoBackendError::NetworkError {
+                        msg: format!("{:?}", e),
+                    })?,
+                (false, false) => client
+                    .get(format!(
+                        "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
+                        api_version, device_name_internal
+                    ))
+                    .header("X-API-KEY", access_token_internal)
+                    .send()
+                    .map_err(|e| RoqoqoBackendError::NetworkError {
+                        msg: format!("{:?}", e),
+                    })?,
+            }
         };
 
         // Response handling
@@ -694,10 +719,10 @@ impl TweezerDevice {
             });
         }
         if let Some(info) = self.layout_register.get_mut(&layout_name) {
-            info.allowed_tweezer_shifts.insert(
-                *tweezer,
-                allowed_shifts.iter().map(|&slice| slice.to_vec()).collect(),
-            );
+            info.allowed_tweezer_shifts
+                .entry(*tweezer)
+                .or_insert_with(Vec::new)
+                .extend(allowed_shifts.iter().map(|&slice| slice.to_vec()));
         }
         Ok(())
     }
@@ -754,14 +779,12 @@ impl TweezerDevice {
                 let vec_right = &row[i + 1..].to_vec();
 
                 // Insert the left and right side
-                allowed_shifts.insert(*mid, vec![]);
-                if let Some(val) = allowed_shifts.get_mut(mid) {
-                    if !vec_left.is_empty() {
-                        val.push(vec_left.to_vec());
-                    }
-                    if !vec_right.is_empty() {
-                        val.push(vec_right.to_vec());
-                    }
+                let val = allowed_shifts.entry(*mid).or_default();
+                if !vec_left.is_empty() && !val.contains(&vec_left) {
+                    val.push(vec_left.to_vec());
+                }
+                if !vec_right.is_empty() && !val.contains(vec_right) {
+                    val.push(vec_right.to_vec());
                 }
             }
         });
@@ -801,8 +824,14 @@ impl TweezerDevice {
     /// # Arguments
     ///
     /// * `allow_reset` - Whether the device should allow PragmaActiveReset operations or not.
-    pub fn set_allow_reset(&mut self, allow_reset: bool) {
-        self.allow_reset = allow_reset
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(())` - The device now supports PragmaActiveReset.
+    /// * `Err(RoqoqoBackendError)` - The device isn't compatible with PragmaActiveReset.
+    pub fn set_allow_reset(&mut self, allow_reset: bool) -> Result<(), RoqoqoBackendError> {
+        self.allow_reset = allow_reset;
+        Ok(())
     }
 
     /// Set the name of the default layout to use and switch to it.

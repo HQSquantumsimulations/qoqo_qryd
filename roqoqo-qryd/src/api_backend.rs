@@ -56,14 +56,12 @@ pub struct APIBackend {
 }
 
 /// Local struct representing the body of the request message
-#[derive(Debug, serde::Serialize)]
+#[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]
 struct QRydRunData {
     /// Format of the quantum program: qoqo
     format: String,
     /// The QRyd WebAPI Backend used to execute operations and circuits.
-    /// At the moment limited to the QRyd emulators
-    /// ('qryd_emu_localcomp_square', 'qryd_emu_localcomp_triangle',
-    /// 'qryd_emu_cloudcomp_square', 'qryd_emu_cloudcomp_triangle')
+    /// At the moment limited to the string ('qryd_emulator')
     backend: String,
     /// Is develop version default: false
     dev: bool,
@@ -92,14 +90,29 @@ struct QRydRunData {
 /// Local struct representing the body of a validation error message
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 struct ValidationError {
-    detail: Vec<ValidationErrorDetail>,
+    detail: ValidationTypes,
+    body: Option<QRydRunData>,
+}
+
+#[derive(Debug, serde::Serialize, serde::Deserialize)]
+#[serde(untagged)]
+enum LocTypes {
+    LocStr(String),
+    LocInt(i32),
+}
+
+#[derive(Debug, serde::Serialize, serde::Deserialize)]
+#[serde(untagged)]
+enum ValidationTypes {
+    Simple(String),
+    Detailed(Vec<ValidationErrorDetail>),
 }
 
 /// Local struct representing the body of a validation error message
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 struct ValidationErrorDetail {
     #[serde(default)]
-    loc: Vec<String>,
+    loc: Vec<LocTypes>,
     #[serde(default)]
     msg: String,
     #[serde(alias = "type")]
@@ -204,70 +217,6 @@ pub struct QRydJobStatus {
 //     Ok(downconverted_program)
 // }
 
-fn check_operation_compatability(op: &Operation) -> Result<(), RoqoqoBackendError> {
-    match op {
-        Operation::MeasureQubit(_) => Ok(()),
-        Operation::DefinitionBit(_) => Ok(()),
-        Operation::PhaseShiftState1(_) => Ok(()),
-        Operation::RotateXY(_) => Ok(()),
-        Operation::RotateX(_) => Ok(()),
-        Operation::RotateY(_) => Ok(()),
-        Operation::RotateZ(_) => Ok(()),
-        Operation::PhaseShiftedControlledZ(_) => Ok(()),
-        Operation::PhaseShiftedControlledPhase(_) => Ok(()),
-        Operation::Hadamard(_) => Ok(()),
-        Operation::PauliX(_) => Ok(()),
-        Operation::PauliY(_) => Ok(()),
-        Operation::PauliZ(_) => Ok(()),
-        Operation::SqrtPauliX(_) =>  Ok(()),
-        Operation::InvSqrtPauliX(_) =>  Ok(()),
-        Operation::CNOT(_) => Ok(()),
-        Operation::ControlledPauliY(_) =>  Ok(()),
-        Operation::ControlledPauliZ(_) =>  Ok(()),
-        Operation::ControlledPhaseShift(_) => Ok(()),
-        Operation::PragmaControlledCircuit(_) => Ok(()),
-        Operation::ControlledControlledPauliZ(_) => Ok(()),
-        Operation::ControlledControlledPhaseShift(_) => Ok(()),
-        Operation::SWAP(_) =>  Ok(()),
-        Operation::ISwap(_) => Ok(()),
-        Operation::PragmaSetNumberOfMeasurements(_) => Ok(()),
-        Operation::PragmaRepeatedMeasurement(_) => Ok(()),
-        Operation::PragmaActiveReset(_) => Ok(()),
-        _ => Err(RoqoqoBackendError::GenericError {
-            msg: format!("Operation {} is not supported by QRydDemo Web API backend.\n
-            Use: MeasureQubit, PragmaSetNumberOfMeasurements, PragmaRepeatedMeasurement, PragmaActiveReset, PhaseShiftState1, RotateXY, RotateX, RotateY, RotateZ, RotateZ, Hadamard, PauliX, PauliY, PauliZ, SqrtPauliX, InvSqrtPauliX, PhaseShiftedControlledZ, PhaseShiftedControlledPhase, CNOT, ControlledPauliY, ControlledPauliZ, ControlledPhaseShift, PragmaControlledCircuit, ControlledControlledPauliZ, ControlledControlledPhaseShift, SWAP or ISwap instead.", op.hqslang())
-        })
-    }
-}
-
-fn check_for_api_compatability(program: &QuantumProgram) -> Result<(), RoqoqoBackendError> {
-    let (measurement, _input_parameter_names) = match program {
-        QuantumProgram::ClassicalRegister {
-            measurement,
-            input_parameter_names,
-        } => Ok((measurement, input_parameter_names)),
-        _ => Err(RoqoqoBackendError::GenericError {
-            msg:
-                "Only ClassiclaRegister measurements are supported by the Qryd WebAPI at the moment"
-                    .to_string(),
-        }),
-    }?;
-    for op in measurement.circuits[0].iter() {
-        check_operation_compatability(op)?
-    }
-
-    match &measurement.constant_circuit {
-        Some(constant_circuit) => {
-            for op in constant_circuit.iter() {
-                check_operation_compatability(op)?
-            }
-        }
-        None => (),
-    }
-
-    Ok(())
-}
-
 /// Struct to represent QRyd response on the result for the posted Job.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, Default)]
 pub struct QRydJobResult {
@@ -348,7 +297,7 @@ impl APIBackend {
     ///               been queried `timeout` times.
     /// * `mock_port` - Server port to be used for testing purposes.
     /// * `dev` - The boolean to set the dev option to.
-    /// * `api_version` - The version of the QRyd WebAPI to use. Defaults to "v5_1".
+    /// * `api_version` - The version of the QRyd WebAPI to use. Defaults to "v5_2".
     ///
     pub fn new(
         device: QRydAPIDevice,
@@ -365,7 +314,7 @@ impl APIBackend {
                 timeout: timeout.unwrap_or(30),
                 mock_port,
                 dev: false,
-                api_version: api_version.unwrap_or("v5_1".to_string()),
+                api_version: api_version.unwrap_or("v5_2".to_string()),
             })
         } else {
             let access_token_internal: String = match access_token {
@@ -383,7 +332,7 @@ impl APIBackend {
                 timeout: timeout.unwrap_or(30),
                 mock_port,
                 dev: dev.unwrap_or(false),
-                api_version: api_version.unwrap_or("v5_1".to_string()),
+                api_version: api_version.unwrap_or("v5_2".to_string()),
             })
         }
     }
@@ -431,7 +380,7 @@ impl APIBackend {
             }
         }
 
-        check_for_api_compatability(&quantumprogram)?;
+        self._check_for_api_compatability(&quantumprogram)?;
 
         // If a PragmaRepeatedMeasurement is present, substitute it with a set of MeasureQubit operations
         //  followed by a PragmaSetNumberOfMeasurements.
@@ -539,6 +488,7 @@ impl APIBackend {
                     msg: format!("could not create https client {:?}", x),
                 })?
         };
+        let hqs_env_var = env::var("QRYD_API_HQS").is_ok();
 
         // Call WebAPI client
         // here: value for put() temporarily fixed.
@@ -551,31 +501,57 @@ impl APIBackend {
                 .map_err(|e| RoqoqoBackendError::NetworkError {
                     msg: format!("{:?}", e),
                 })?
-        } else if self.dev {
-            client
-                .post(format!(
-                    "https://api.qryddemo.itp3.uni-stuttgart.de/{}/jobs",
-                    self.api_version
-                ))
-                .header("X-API-KEY", self.access_token.clone())
-                .header("X-DEV", "?1")
-                .json(&data)
-                .send()
-                .map_err(|e| RoqoqoBackendError::NetworkError {
-                    msg: format!("{:?}", e),
-                })?
         } else {
-            client
-                .post(format!(
-                    "https://api.qryddemo.itp3.uni-stuttgart.de/{}/jobs",
-                    self.api_version
-                ))
-                .header("X-API-KEY", self.access_token.clone())
-                .json(&data)
-                .send()
-                .map_err(|e| RoqoqoBackendError::NetworkError {
-                    msg: format!("{:?}", e),
-                })?
+            match (self.dev, hqs_env_var) {
+                (true, true) => client
+                    .post(format!(
+                        "https://api.qryddemo.itp3.uni-stuttgart.de/{}/jobs",
+                        self.api_version
+                    ))
+                    .header("X-API-KEY", self.access_token.clone())
+                    .header("X-DEV", "?1")
+                    .header("X-HQS", "?1")
+                    .json(&data)
+                    .send()
+                    .map_err(|e| RoqoqoBackendError::NetworkError {
+                        msg: format!("{:?}", e),
+                    })?,
+                (true, false) => client
+                    .post(format!(
+                        "https://api.qryddemo.itp3.uni-stuttgart.de/{}/jobs",
+                        self.api_version
+                    ))
+                    .header("X-API-KEY", self.access_token.clone())
+                    .header("X-DEV", "?1")
+                    .json(&data)
+                    .send()
+                    .map_err(|e| RoqoqoBackendError::NetworkError {
+                        msg: format!("{:?}", e),
+                    })?,
+                (false, true) => client
+                    .post(format!(
+                        "https://api.qryddemo.itp3.uni-stuttgart.de/{}/jobs",
+                        self.api_version
+                    ))
+                    .header("X-API-KEY", self.access_token.clone())
+                    .header("X-HQS", "?1")
+                    .json(&data)
+                    .send()
+                    .map_err(|e| RoqoqoBackendError::NetworkError {
+                        msg: format!("{:?}", e),
+                    })?,
+                (false, false) => client
+                    .post(format!(
+                        "https://api.qryddemo.itp3.uni-stuttgart.de/{}/jobs",
+                        self.api_version
+                    ))
+                    .header("X-API-KEY", self.access_token.clone())
+                    .json(&data)
+                    .send()
+                    .map_err(|e| RoqoqoBackendError::NetworkError {
+                        msg: format!("{:?}", e),
+                    })?,
+            }
         };
 
         let status_code = resp.status();
@@ -587,11 +563,8 @@ impl APIBackend {
                             msg: format!("Error parsing ValidationError message {:?}", e),
                         }
                     })?;
-                return Err(RoqoqoBackendError::GenericError{msg:
-                    format!( "QuantumProgram or metadata could not be parsed by QRyd Web-API Backend. msg: {} type: {}, loc: {:?}",querry_response.detail[0].msg, querry_response.detail[0].internal_type, querry_response.detail[0].loc,  )
-                });
+                return Err(self._handle_validation_error(querry_response));
             }
-            // dbg!(&resp);
             Err(RoqoqoBackendError::NetworkError {
                 msg: format!(
                     "Request to server failed with HTTP status code {:?}",
@@ -647,27 +620,42 @@ impl APIBackend {
         };
 
         let url_string: String = job_location + "/status";
+        let hqs_env_var = env::var("QRYD_API_HQS").is_ok();
 
         // Call WebAPI client
-        let resp = if self.dev {
-            client
+        let resp = match (self.dev, hqs_env_var) {
+            (true, true) => client
                 .get(url_string)
                 .header("X-API-KEY", self.access_token.clone())
                 .header("X-DEV", "?1")
-                // .json(&data)
+                .header("X-HQS", "?1")
                 .send()
                 .map_err(|e| RoqoqoBackendError::NetworkError {
                     msg: format!("{:?}", e),
-                })?
-        } else {
-            client
+                })?,
+            (true, false) => client
                 .get(url_string)
                 .header("X-API-KEY", self.access_token.clone())
-                // .json(&data)
+                .header("X-DEV", "?1")
                 .send()
                 .map_err(|e| RoqoqoBackendError::NetworkError {
                     msg: format!("{:?}", e),
-                })?
+                })?,
+            (false, true) => client
+                .get(url_string)
+                .header("X-API-KEY", self.access_token.clone())
+                .header("X-HQS", "?1")
+                .send()
+                .map_err(|e| RoqoqoBackendError::NetworkError {
+                    msg: format!("{:?}", e),
+                })?,
+            (false, false) => client
+                .get(url_string)
+                .header("X-API-KEY", self.access_token.clone())
+                .send()
+                .map_err(|e| RoqoqoBackendError::NetworkError {
+                    msg: format!("{:?}", e),
+                })?,
         };
 
         let status_code = resp.status();
@@ -679,9 +667,7 @@ impl APIBackend {
                             msg: format!("Error parsing ValidationError message {:?}", e),
                         }
                     })?;
-                return Err(RoqoqoBackendError::GenericError{msg:
-                    format!( "QuantumProgram or metadata could not be parsed by QRyd Web-API Backend. msg: {} type: {}, loc: {:?}",querry_response.detail[0].msg, querry_response.detail[0].internal_type, querry_response.detail[0].loc,  )
-            });
+                return Err(self._handle_validation_error(querry_response));
             }
             Err(RoqoqoBackendError::NetworkError {
                 msg: format!(
@@ -732,27 +718,42 @@ impl APIBackend {
 
         // construct URL with {job_id} not required?
         let url_string: String = job_location + "/result";
+        let hqs_env_var = env::var("QRYD_API_HQS").is_ok();
 
         // Call WebAPI client
-        let resp = if self.dev {
-            client
+        let resp = match (self.dev, hqs_env_var) {
+            (true, true) => client
                 .get(url_string)
                 .header("X-API-KEY", self.access_token.clone())
                 .header("X-DEV", "?1")
-                // .json(&data)
+                .header("X-HQS", "?1")
                 .send()
                 .map_err(|e| RoqoqoBackendError::NetworkError {
                     msg: format!("{:?}", e),
-                })?
-        } else {
-            client
+                })?,
+            (true, false) => client
                 .get(url_string)
                 .header("X-API-KEY", self.access_token.clone())
-                // .json(&data)
+                .header("X-DEV", "?1")
                 .send()
                 .map_err(|e| RoqoqoBackendError::NetworkError {
                     msg: format!("{:?}", e),
-                })?
+                })?,
+            (false, true) => client
+                .get(url_string)
+                .header("X-API-KEY", self.access_token.clone())
+                .header("X-HQS", "?1")
+                .send()
+                .map_err(|e| RoqoqoBackendError::NetworkError {
+                    msg: format!("{:?}", e),
+                })?,
+            (false, false) => client
+                .get(url_string)
+                .header("X-API-KEY", self.access_token.clone())
+                .send()
+                .map_err(|e| RoqoqoBackendError::NetworkError {
+                    msg: format!("{:?}", e),
+                })?,
         };
 
         let status_code = resp.status();
@@ -764,9 +765,7 @@ impl APIBackend {
                             msg: format!("Error parsing ValidationError message {:?}", e),
                         }
                     })?;
-                return Err(RoqoqoBackendError::GenericError{msg:
-                    format!( "QuantumProgram or metadata could not be parsed by QRyd Web-API Backend. msg: {} type: {}, loc: {:?}",querry_response.detail[0].msg, querry_response.detail[0].internal_type, querry_response.detail[0].loc,  )
-            });
+                return Err(self._handle_validation_error(querry_response));
             }
             Err(RoqoqoBackendError::NetworkError {
                 msg: format!(
@@ -810,24 +809,43 @@ impl APIBackend {
                     msg: format!("could not create https client {:?}", x),
                 })?
         };
+
+        let hqs_env_var = env::var("QRYD_API_HQS").is_ok();
+
         // Call WebAPI client
-        let resp = if self.dev {
-            client
+        let resp = match (self.dev, hqs_env_var) {
+            (true, true) => client
+                .delete(job_location)
+                .header("X-API-KEY", self.access_token.clone())
+                .header("X-DEV", "?1")
+                .header("X-HQS", "?1")
+                .send()
+                .map_err(|e| RoqoqoBackendError::NetworkError {
+                    msg: format!("{:?}", e),
+                })?,
+            (true, false) => client
                 .delete(job_location)
                 .header("X-API-KEY", self.access_token.clone())
                 .header("X-DEV", "?1")
                 .send()
                 .map_err(|e| RoqoqoBackendError::NetworkError {
                     msg: format!("{:?}", e),
-                })?
-        } else {
-            client
+                })?,
+            (false, true) => client
+                .delete(job_location)
+                .header("X-API-KEY", self.access_token.clone())
+                .header("X-HQS", "?1")
+                .send()
+                .map_err(|e| RoqoqoBackendError::NetworkError {
+                    msg: format!("{:?}", e),
+                })?,
+            (false, false) => client
                 .delete(job_location)
                 .header("X-API-KEY", self.access_token.clone())
                 .send()
                 .map_err(|e| RoqoqoBackendError::NetworkError {
                     msg: format!("{:?}", e),
-                })?
+                })?,
         };
 
         let status_code = resp.status();
@@ -839,9 +857,7 @@ impl APIBackend {
                             msg: format!("Error parsing ValidationError message {:?}", e),
                         }
                     })?;
-                return Err(RoqoqoBackendError::GenericError{msg:
-                    format!( "QuantumProgram or metadata could not be parsed by QRyd Web-API Backend. msg: {} type: {}, loc: {:?}",querry_response.detail[0].msg, querry_response.detail[0].internal_type, querry_response.detail[0].loc,  )
-            });
+                return Err(self._handle_validation_error(querry_response));
             }
             Err(RoqoqoBackendError::NetworkError {
                 msg: format!(
@@ -921,6 +937,79 @@ impl APIBackend {
         self.dev = dev;
     }
 
+    fn _check_operation_compatability(&self, op: &Operation) -> Result<(), RoqoqoBackendError> {
+        match op {
+            Operation::MeasureQubit(_) => Ok(()),
+            Operation::DefinitionBit(_) => Ok(()),
+            Operation::PhaseShiftState1(_) => Ok(()),
+            Operation::RotateXY(_) => Ok(()),
+            Operation::RotateX(_) => Ok(()),
+            Operation::RotateY(_) => Ok(()),
+            Operation::RotateZ(_) => Ok(()),
+            Operation::PhaseShiftedControlledZ(_) => Ok(()),
+            Operation::PhaseShiftedControlledPhase(_) => Ok(()),
+            Operation::Hadamard(_) => Ok(()),
+            Operation::PauliX(_) => Ok(()),
+            Operation::PauliY(_) => Ok(()),
+            Operation::PauliZ(_) => Ok(()),
+            Operation::SqrtPauliX(_) =>  Ok(()),
+            Operation::InvSqrtPauliX(_) =>  Ok(()),
+            Operation::CNOT(_) => Ok(()),
+            Operation::ControlledPauliY(_) =>  Ok(()),
+            Operation::ControlledPauliZ(_) =>  Ok(()),
+            Operation::ControlledPhaseShift(_) => Ok(()),
+            Operation::PragmaControlledCircuit(_) => Ok(()),
+            Operation::ControlledControlledPauliZ(_) => Ok(()),
+            Operation::ControlledControlledPhaseShift(_) => Ok(()),
+            Operation::SWAP(_) =>  Ok(()),
+            Operation::ISwap(_) => Ok(()),
+            Operation::PragmaSetNumberOfMeasurements(_) => Ok(()),
+            Operation::PragmaRepeatedMeasurement(_) => Ok(()),
+            Operation::PragmaActiveReset(_) => {
+                if self.device.qrydbackend() != "qiskit_emulator" {
+                    Err(RoqoqoBackendError::GenericError { msg: "The device isn't qryd_emulator, PragmaActiveReset is not supported.".to_string() })
+                } else {
+                    Ok(())
+                }
+            },
+            _ => Err(RoqoqoBackendError::GenericError {
+                msg: format!("Operation {} is not supported by QRydDemo Web API backend.\n
+                Use: MeasureQubit, PragmaSetNumberOfMeasurements, PragmaRepeatedMeasurement, PragmaActiveReset, PhaseShiftState1, RotateXY, RotateX, RotateY, RotateZ, RotateZ, Hadamard, PauliX, PauliY, PauliZ, SqrtPauliX, InvSqrtPauliX, PhaseShiftedControlledZ, PhaseShiftedControlledPhase, CNOT, ControlledPauliY, ControlledPauliZ, ControlledPhaseShift, PragmaControlledCircuit, ControlledControlledPauliZ, ControlledControlledPhaseShift, SWAP or ISwap instead.", op.hqslang())
+            })
+        }
+    }
+
+    fn _check_for_api_compatability(
+        &self,
+        program: &QuantumProgram,
+    ) -> Result<(), RoqoqoBackendError> {
+        let (measurement, _input_parameter_names) = match program {
+            QuantumProgram::ClassicalRegister {
+                measurement,
+                input_parameter_names,
+            } => Ok((measurement, input_parameter_names)),
+            _ => Err(RoqoqoBackendError::GenericError {
+                msg:
+                    "Only ClassicalRegister measurements are supported by the Qryd WebAPI at the moment"
+                        .to_string(),
+            }),
+        }?;
+        for op in measurement.circuits[0].iter() {
+            self._check_operation_compatability(op)?
+        }
+
+        match &measurement.constant_circuit {
+            Some(constant_circuit) => {
+                for op in constant_circuit.iter() {
+                    self._check_operation_compatability(op)?
+                }
+            }
+            None => (),
+        }
+
+        Ok(())
+    }
+
     /// Transforms a PragmaRepeatedMeasurement operation into a set of
     /// MeasureQubit operations followed by a PragmaSetNumberOfMeasurements.
     ///
@@ -939,6 +1028,19 @@ impl APIBackend {
             operation.readout().to_string(),
         );
         equivalent_circuit
+    }
+
+    fn _handle_validation_error(&self, val_error: ValidationError) -> RoqoqoBackendError {
+        let types = val_error.detail;
+        match types {
+            ValidationTypes::Simple(x) => RoqoqoBackendError::GenericError { msg: format!("QuantumProgram or metadata could not be parsed by QRyd Web-API Backend. msg: {}", x) },
+            ValidationTypes::Detailed(x) => {
+                let mut msg = "QuantumProgram or metadata could not be parsed by QRyd Web-API Backend. ".to_owned();
+                msg.extend(x.iter().map(|detail| format!("[loc: {:?}, msg: {}, type: {:?}]", detail.loc, detail.msg, detail.internal_type)));
+                msg.push('.');
+                RoqoqoBackendError::GenericError { msg }
+            },
+        }
     }
 }
 
@@ -1116,12 +1218,13 @@ mod test {
     #[tokio::test]
     async fn async_api_backend_errorcase1() {
         let detail = ValidationErrorDetail {
-            loc: vec!["DummyLoc".to_string()],
+            loc: vec![LocTypes::LocStr("DummyLoc".to_string())],
             msg: "DummyMsg".to_string(),
             internal_type: "DummyType".to_string(),
         };
         let error = ValidationError {
-            detail: vec![detail],
+            detail: ValidationTypes::Detailed(vec![detail]),
+            body: None,
         };
         let server_wiremock = MockServer::start().await;
         let uri = server_wiremock.uri();

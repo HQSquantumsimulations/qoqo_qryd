@@ -39,11 +39,6 @@ bincode = "1.3"
 serde_json = "1.0"
 numpy = "0.21"
 
-qoqo_calculator = { version = "~1.2" }
-qoqo_calculator_pyo3 = { version = "~1.2", default-features = false }
-qoqo = { version = "~1.13", default-features = false }
-roqoqo = { version = "~1.13", features = ["serialize"] }
-
 roqoqo-qryd = { version = "~0.17", path = "../roqoqo-qryd", default-features = false, features = [
     "web-api",
 ] }
@@ -51,6 +46,10 @@ roqoqo-qryd = { version = "~0.17", path = "../roqoqo-qryd", default-features = f
 
 [dev-dependencies]
 test-case = "3.0"
+qoqo_calculator = { version = "~1.2" }
+qoqo_calculator_pyo3 = { version = "~1.2", default-features = false }
+qoqo = { version = "~1.13", default-features = false }
+roqoqo = { version = "~1.13", features = ["serialize"] }
 wiremock = { version = "0.6" }
 tokio = { version = "1.36" }
 serde_json = "1.0"

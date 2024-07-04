@@ -2,9 +2,28 @@
 
 Tracks qoqo-qryd changes after 0.5
 
-# Unreleased
+# 0.16.5
+
+* Fixed `set_allowed_tweezer_shifts()` and `set_allowed_tweezer_shifts_from_rows()` behaviour in case the user wants to insert additional shifts via a successive method call
+
+# 0.16.4
+
+* Modified `PragmaActiveReset` support's device name condition
+
+# 0.16.3
+
+* Fixed 0.16.2 release dependencies issues
+
+# 0.16.2
+
+* Added X-HQS header to API requests for testing purposes
+* Modified `APIBackend.post_job()` to use `v5_2` endpoint by default
+* Modified `TweezerDevice.set_allow_reset()` and `APIBackend` to allow `PragmaActiveReset` only for "qiskit_emulator" devices
+
+# 0.16.1
 
 * Substituted server mocking package `mockito` with `wiremock`
+* Fixed API deserialization errors
 
 # 0.17.0
 
@@ -26,7 +45,7 @@ Tracks qoqo-qryd changes after 0.5
 * Modified the native gate set whitelist to be public
 * Fixed `TweezerDevice.to_json()` gate set validity check
 * Updated dependencies addressing security advisory
-* Update to Qoqo 1.10
+* Updated to Qoqo 1.10
 
 # 0.14.0
 
