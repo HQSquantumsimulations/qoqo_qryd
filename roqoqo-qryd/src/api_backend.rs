@@ -371,7 +371,7 @@ impl APIBackend {
             let access_token_internal: String = match access_token {
                 Some(s) => s,
                 None => env::var("QRYD_API_TOKEN").map_err(|_| {
-                    RoqoqoBackendError::MissingAuthentification {
+                    RoqoqoBackendError::MissingAuthentication {
                         msg: "QRYD access token is missing".to_string(),
                     }
                 })?,
@@ -984,7 +984,7 @@ impl EvaluatingBackend for APIBackend {
         while test_counter < self.timeout && status != "completed" {
             test_counter += 1;
             let job_status = self.get_job_status(job_loc.clone()).unwrap();
-            status = job_status.status.clone();
+            status.clone_from(&job_status.status);
             thread::sleep(fifteen);
             if status == *"completed" {
                 job_result = self.get_job_result(job_loc.clone()).unwrap();

@@ -15,7 +15,6 @@
 use pyo3::prelude::*;
 use pyo3::Python;
 use std::collections::{HashMap, HashSet};
-use std::usize;
 
 use qoqo::operations::PragmaChangeDeviceWrapper;
 use qoqo_qryd::pragma_operations::{

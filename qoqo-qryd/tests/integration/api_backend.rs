@@ -17,7 +17,6 @@ use pyo3::prelude::*;
 use pyo3::types::{PyList, PyType};
 use pyo3::Python;
 use std::collections::HashMap;
-use std::usize;
 use std::{env, thread};
 
 use qoqo::measurements::CheatedWrapper;
@@ -309,7 +308,7 @@ async fn async_test_run_job() {
                     .extract()
                     .unwrap();
                 let job_status = status_report.get("status").unwrap();
-                status = job_status.clone();
+                status.clone_from(job_status);
                 thread::sleep(fifteen);
 
                 if status == *"completed" {
@@ -396,7 +395,7 @@ async fn async_test_run_job() {
             })
             .await
             .unwrap();
-            status = job_status.clone();
+            status.clone_from(&job_status);
             assert_eq!(job_status, "in progress");
             thread::sleep(fifteen);
         }

@@ -16,7 +16,6 @@ use pyo3::prelude::*;
 use pyo3::Python;
 use qoqo_qryd::api_devices::{QrydEmuSquareDeviceWrapper, QrydEmuTriangularDeviceWrapper};
 use std::collections::HashSet;
-use std::usize;
 
 // Helper function to create a python object of square device
 fn create_square_device(

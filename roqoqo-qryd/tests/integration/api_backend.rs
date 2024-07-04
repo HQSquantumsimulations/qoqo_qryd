@@ -94,7 +94,7 @@ fn api_backend() {
         while test_counter < 20 && status != "completed" {
             test_counter += 1;
             let job_status = api_backend_new.get_job_status(job_loc.clone()).unwrap();
-            status = job_status.status.clone();
+            status.clone_from(&job_status.status);
             thread::sleep(fifteen);
 
             if status == *"completed" {
@@ -230,7 +230,7 @@ async fn async_api_backend() {
         .await
         .unwrap()
         .unwrap();
-        status = job_status.status.clone();
+        status.clone_from(&job_status.status);
         assert_eq!(job_status.status, "in progress");
         thread::sleep(fifteen);
     }
@@ -375,7 +375,7 @@ fn api_backend_with_constant_circuit() {
         while test_counter < 20 && status != "completed" {
             test_counter += 1;
             let job_status = api_backend_new.get_job_status(job_loc.clone()).unwrap();
-            status = job_status.status.clone();
+            status.clone_from(&job_status.status);
             thread::sleep(fifteen);
 
             if status == *"completed" {
@@ -446,7 +446,7 @@ fn api_triangular() {
         while test_counter < 20 && status != "completed" {
             test_counter += 1;
             let job_status = api_backend_new.get_job_status(job_loc.clone()).unwrap();
-            status = job_status.status.clone();
+            status.clone_from(&job_status.status);
             thread::sleep(fifteen);
             assert!(!job_status.status.clone().is_empty());
 
@@ -1048,7 +1048,7 @@ fn api_backend_errorcase3() {
         assert!(api_backend_err.is_err());
         assert_eq!(
             api_backend_err.unwrap_err(),
-            RoqoqoBackendError::MissingAuthentification {
+            RoqoqoBackendError::MissingAuthentication {
                 msg: "QRYD access token is missing".to_string()
             }
         );

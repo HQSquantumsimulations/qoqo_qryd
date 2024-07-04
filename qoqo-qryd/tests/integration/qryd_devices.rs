@@ -15,7 +15,6 @@
 use ndarray::{array, Array2};
 use numpy::ToPyArray;
 use std::collections::HashMap;
-use std::usize;
 
 use pyo3::prelude::*;
 use pyo3::Python;

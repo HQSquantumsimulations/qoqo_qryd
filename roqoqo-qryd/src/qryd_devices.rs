@@ -539,7 +539,7 @@ impl FirstDevice {
         }
 
         // Change the qubit positions if no error has been found
-        self.qubit_positions = new_positions.clone();
+        self.qubit_positions.clone_from(new_positions);
         Ok(())
     }
 }

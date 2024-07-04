@@ -281,7 +281,7 @@ impl TweezerDevice {
             match access_token {
                 Some(s) => s,
                 None => env::var("QRYD_API_TOKEN").map_err(|_| {
-                    RoqoqoBackendError::MissingAuthentification {
+                    RoqoqoBackendError::MissingAuthentication {
                         msg: "QRYD access token is missing.".to_string(),
                     }
                 })?,
