@@ -51,9 +51,9 @@ fn create_backend_with_square_device(py: Python, seed: Option<usize>) -> Bound<A
 fn create_valid_backend_with_tweezer_device(
     py: Python,
     seed: Option<usize>,
-) -> &PyCell<APIBackendWrapper> {
-    let device_type = py.get_type::<TweezerDeviceWrapper>();
-    let device = device_type
+) -> Bound<APIBackendWrapper> {
+    let device_type = py.get_type_bound::<TweezerDeviceWrapper>();
+    let binding = device_type
         .call_method1(
             "from_api",
             (
@@ -64,18 +64,14 @@ fn create_valid_backend_with_tweezer_device(
                 Some(env::var("QRYD_API_HQS").is_ok()),
             ),
         )
-        .unwrap()
-        .downcast::<PyCell<TweezerDeviceWrapper>>()
         .unwrap();
+    let device = binding.downcast::<TweezerDeviceWrapper>().unwrap();
 
-    let backend_type: &PyType = py.get_type::<APIBackendWrapper>();
+    let backend_type: &Bound<PyType> = &py.get_type_bound::<APIBackendWrapper>();
     let none_string: Option<String> = None;
-    let backend: &PyCell<APIBackendWrapper> = backend_type
-        .call1((device, none_string))
-        .unwrap()
-        .downcast::<PyCell<APIBackendWrapper>>()
-        .unwrap();
-    backend
+    let binding = backend_type.call1((device, none_string)).unwrap();
+    let backend: &Bound<APIBackendWrapper> = binding.downcast::<APIBackendWrapper>().unwrap();
+    backend.to_owned()
 }
 
 fn create_valid_backend_with_square_device(
@@ -493,8 +489,8 @@ fn test_run_circuit() {
 
         pyo3::prepare_freethreaded_python();
         Python::with_gil(|py| {
-            let backend: &PyCell<APIBackendWrapper> =
-                create_valid_backend_with_tweezer_device(py, Some(11));
+            let backend: &Bound<APIBackendWrapper> =
+                &create_valid_backend_with_tweezer_device(py, Some(11));
 
             let result = backend.call_method1("run_circuit", (3usize,));
             assert!(result.is_err());
@@ -582,8 +578,8 @@ fn test_run_measurement_registers() {
     if env::var("QRYD_API_TOKEN").is_ok() {
         pyo3::prepare_freethreaded_python();
         Python::with_gil(|py| {
-            let backend: &PyCell<APIBackendWrapper> =
-                create_valid_backend_with_tweezer_device(py, Some(11));
+            let backend: &Bound<APIBackendWrapper> =
+                &create_valid_backend_with_tweezer_device(py, Some(11));
 
             let failed_result = backend.call_method1("run_measurement_registers", (3_u32,));
             assert!(failed_result.is_err());
@@ -696,8 +692,8 @@ fn test_run_measurement() {
     if env::var("QRYD_API_TOKEN").is_ok() {
         pyo3::prepare_freethreaded_python();
         Python::with_gil(|py| {
-            let backend: &PyCell<APIBackendWrapper> =
-                create_valid_backend_with_tweezer_device(py, Some(11));
+            let backend: &Bound<APIBackendWrapper> =
+                &create_valid_backend_with_tweezer_device(py, Some(11));
 
             let cheated = create_cheated_measurement();
 
