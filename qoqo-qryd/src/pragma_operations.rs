@@ -104,10 +104,7 @@ impl PragmaChangeQRydLayoutWrapper {
     /// Returns:
     ///     set[int]: The involved qubits of the PRAGMA operation.
     fn involved_qubits(&self) -> PyObject {
-        let pyobject: PyObject = Python::with_gil(|py| -> PyObject {
-            PySet::new_bound(py, &["All"]).unwrap().to_object(py)
-        });
-        pyobject
+        Python::with_gil(|py| -> PyObject { PySet::new_bound(py, &["All"]).unwrap().to_object(py) })
     }
 
     /// Return the bincode representation of the PragmaChangeQRydLayout using the bincode crate.
@@ -359,10 +356,7 @@ impl PragmaShiftQRydQubitWrapper {
     /// Returns:
     ///     set[int]: The involved qubits of the PRAGMA operation.
     fn involved_qubits(&self) -> PyObject {
-        let pyobject: PyObject = Python::with_gil(|py| -> PyObject {
-            PySet::new_bound(py, &["All"]).unwrap().to_object(py)
-        });
-        pyobject
+        Python::with_gil(|py| -> PyObject { PySet::new_bound(py, &["All"]).unwrap().to_object(py) })
     }
 
     /// Return tags classifying the type of the operation.
@@ -614,10 +608,7 @@ impl PragmaDeactivateQRydQubitWrapper {
     /// Returns:
     ///     set[int]: The involved qubits of the PRAGMA operation.
     fn involved_qubits(&self) -> PyObject {
-        let pyobject: PyObject = Python::with_gil(|py| -> PyObject {
-            PySet::new_bound(py, &["All"]).unwrap().to_object(py)
-        });
-        pyobject
+        Python::with_gil(|py| -> PyObject { PySet::new_bound(py, &["All"]).unwrap().to_object(py) })
     }
 
     /// Return tags classifying the type of the operation.
@@ -871,10 +862,7 @@ impl PragmaShiftQubitsTweezersWrapper {
     /// Returns:
     ///     set[int]: The involved qubits of the PRAGMA operation.
     fn involved_qubits(&self) -> PyObject {
-        let pyobject: PyObject = Python::with_gil(|py| -> PyObject {
-            PySet::new_bound(py, &["All"]).unwrap().to_object(py)
-        });
-        pyobject
+        Python::with_gil(|py| -> PyObject { PySet::new_bound(py, &["All"]).unwrap().to_object(py) })
     }
 
     /// Return tags classifying the type of the operation.
@@ -1130,10 +1118,7 @@ impl PragmaSwitchDeviceLayoutWrapper {
     /// Returns:
     ///     set[int]: The involved qubits of the PRAGMA operation.
     fn involved_qubits(&self) -> PyObject {
-        let pyobject: PyObject = Python::with_gil(|py| -> PyObject {
-            PySet::new_bound(py, &["All"]).unwrap().to_object(py)
-        });
-        pyobject
+        Python::with_gil(|py| -> PyObject { PySet::new_bound(py, &["All"]).unwrap().to_object(py) })
     }
 
     /// Return the bincode representation of the PragmaSwitchDeviceLayout using the bincode crate.
