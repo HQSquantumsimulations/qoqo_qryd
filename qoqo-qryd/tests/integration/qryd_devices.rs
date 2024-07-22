@@ -15,7 +15,6 @@
 use ndarray::{array, Array2};
 use numpy::ToPyArray;
 use std::collections::HashMap;
-use std::usize;
 
 use pyo3::prelude::*;
 use pyo3::Python;
@@ -36,18 +35,17 @@ fn test_creating_device(
 ) {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type = py.get_type::<FirstDeviceWrapper>();
-        let device = device_type
+        let device_type = py.get_type_bound::<FirstDeviceWrapper>();
+        let binding = device_type
             .call1((
                 number_rows,
                 number_columns,
                 qubits_per_row.clone(),
                 row_distance,
-                initial_layout.to_pyarray(py),
+                initial_layout.to_pyarray_bound(py),
             ))
-            .unwrap()
-            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
+        let device = binding.downcast::<FirstDeviceWrapper>().unwrap();
 
         let number_qubits: i32 = qubits_per_row.iter().sum();
         let number_qubits_get = device
@@ -78,18 +76,17 @@ fn test_creating_device(
 fn test_copy_deepcopy() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type = py.get_type::<FirstDeviceWrapper>();
-        let device = device_type
+        let device_type = py.get_type_bound::<FirstDeviceWrapper>();
+        let binding = device_type
             .call1((
                 3,
                 2,
                 vec![2, 2, 2],
                 1.0,
-                array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]].to_pyarray(py),
+                array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]].to_pyarray_bound(py),
             ))
-            .unwrap()
-            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
+        let device = binding.downcast::<FirstDeviceWrapper>().unwrap();
 
         let copy_op = device.call_method0("__copy__").unwrap();
         let copy_wrapper = copy_op.extract::<FirstDeviceWrapper>().unwrap();
@@ -107,21 +104,20 @@ fn test_copy_deepcopy() {
 fn test_to_from_bincode() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type = py.get_type::<FirstDeviceWrapper>();
-        let device = device_type
+        let device_type = py.get_type_bound::<FirstDeviceWrapper>();
+        let binding = device_type
             .call1((
                 3,
                 2,
                 vec![2, 2, 2],
                 1.0,
-                array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]].to_pyarray(py),
+                array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]].to_pyarray_bound(py),
             ))
-            .unwrap()
-            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
+        let device = binding.downcast::<FirstDeviceWrapper>().unwrap();
 
         let serialised = device.call_method0("to_bincode").unwrap();
-        let deserialised = device.call_method1("from_bincode", (serialised,)).unwrap();
+        let deserialised = device.call_method1("from_bincode", (&serialised,)).unwrap();
 
         let vec: Vec<u8> = Vec::new();
         let deserialised_error = device.call_method1("from_bincode", (vec,));
@@ -144,18 +140,17 @@ fn test_to_from_bincode() {
 fn test_enum_to_bincode() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type = py.get_type::<FirstDeviceWrapper>();
-        let device = device_type
+        let device_type = py.get_type_bound::<FirstDeviceWrapper>();
+        let binding = device_type
             .call1((
                 3,
                 2,
                 vec![2, 2, 2],
                 1.0,
-                array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]].to_pyarray(py),
+                array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]].to_pyarray_bound(py),
             ))
-            .unwrap()
-            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
+        let device = binding.downcast::<FirstDeviceWrapper>().unwrap();
 
         let serialised = device.call_method0("_enum_to_bincode");
         assert!(serialised.is_ok());
@@ -167,21 +162,20 @@ fn test_enum_to_bincode() {
 fn test_to_from_json() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type = py.get_type::<FirstDeviceWrapper>();
-        let device = device_type
+        let device_type = py.get_type_bound::<FirstDeviceWrapper>();
+        let binding = device_type
             .call1((
                 3,
                 2,
                 vec![2, 2, 2],
                 1.0,
-                array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]].to_pyarray(py),
+                array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]].to_pyarray_bound(py),
             ))
-            .unwrap()
-            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
+        let device = binding.downcast::<FirstDeviceWrapper>().unwrap();
 
         let serialised = device.call_method0("to_json").unwrap();
-        let deserialised = device.call_method1("from_json", (serialised,)).unwrap();
+        let deserialised = device.call_method1("from_json", (&serialised,)).unwrap();
 
         let vec: Vec<u8> = Vec::new();
         let deserialised_error = device.call_method1("from_json", (vec,));
@@ -205,24 +199,28 @@ fn test_switch_layout() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let original_layout = array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]];
-        let device_type = py.get_type::<FirstDeviceWrapper>();
-        let device = device_type
-            .call1((3, 2, vec![2, 2, 2], 1.0, original_layout.to_pyarray(py)))
-            .unwrap()
-            .downcast::<PyCell<FirstDeviceWrapper>>()
+        let device_type = py.get_type_bound::<FirstDeviceWrapper>();
+        let binding = device_type
+            .call1((
+                3,
+                2,
+                vec![2, 2, 2],
+                1.0,
+                original_layout.to_pyarray_bound(py),
+            ))
             .unwrap();
+        let device = binding.downcast::<FirstDeviceWrapper>().unwrap();
 
         let new_layout: Array2<f64> = array![[0.5, 0.5], [0.5, 0.4], [0.4, 0.3]];
         let updated_device = device
-            .call_method1("add_layout", (1, new_layout.to_pyarray(py)))
+            .call_method1("add_layout", (1, new_layout.to_pyarray_bound(py)))
             .unwrap();
         updated_device.call_method1("switch_layout", (1,)).unwrap();
 
-        let comp_device = device_type
-            .call1((3, 2, vec![2, 2, 2], 1.0, new_layout.to_pyarray(py)))
-            .unwrap()
-            .downcast::<PyCell<FirstDeviceWrapper>>()
+        let binding = device_type
+            .call1((3, 2, vec![2, 2, 2], 1.0, new_layout.to_pyarray_bound(py)))
             .unwrap();
+        let comp_device = binding.downcast::<FirstDeviceWrapper>().unwrap();
 
         let number_qubits_get = updated_device
             .call_method0("number_columns")
@@ -280,12 +278,17 @@ fn test_set_cutoff() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let original_layout = array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 5.0]];
-        let device_type = py.get_type::<FirstDeviceWrapper>();
-        let device = device_type
-            .call1((3, 2, vec![2, 2, 2], 1.0, original_layout.to_pyarray(py)))
-            .unwrap()
-            .downcast::<PyCell<FirstDeviceWrapper>>()
+        let device_type = py.get_type_bound::<FirstDeviceWrapper>();
+        let binding = device_type
+            .call1((
+                3,
+                2,
+                vec![2, 2, 2],
+                1.0,
+                original_layout.to_pyarray_bound(py),
+            ))
             .unwrap();
+        let device = binding.downcast::<FirstDeviceWrapper>().unwrap();
         let _ = device.call_method1("set_cutoff", (3.0,));
         let number_qubits_get = device
             .call_method0("two_qubit_edges")
@@ -305,12 +308,17 @@ fn test_change_qubit_positions() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let original_layout = array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]];
-        let device_type = py.get_type::<FirstDeviceWrapper>();
-        let device = device_type
-            .call1((3, 2, vec![2, 2, 2], 1.0, original_layout.to_pyarray(py)))
-            .unwrap()
-            .downcast::<PyCell<FirstDeviceWrapper>>()
+        let device_type = py.get_type_bound::<FirstDeviceWrapper>();
+        let binding = device_type
+            .call1((
+                3,
+                2,
+                vec![2, 2, 2],
+                1.0,
+                original_layout.to_pyarray_bound(py),
+            ))
             .unwrap();
+        let device = binding.downcast::<FirstDeviceWrapper>().unwrap();
 
         let mut new_qubits: HashMap<usize, (usize, usize)> = HashMap::new();
         new_qubits.insert(0, (0, 1));
@@ -338,22 +346,21 @@ fn test_gate_times() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let original_layout = array![[0.0, 0.5,], [0.0, 0.5,], [0.0, 0.5]];
-        let device_type = py.get_type::<FirstDeviceWrapper>();
-        let device = device_type
+        let device_type = py.get_type_bound::<FirstDeviceWrapper>();
+        let binding = device_type
             .call1((
                 3,
                 2,
                 vec![2, 2, 2],
                 0.5,
-                original_layout.to_pyarray(py),
+                original_layout.to_pyarray_bound(py),
                 Option::<&PyAny>::None,
                 Option::<&PyAny>::None,
                 true,
                 true,
             ))
-            .unwrap()
-            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
+        let device = binding.downcast::<FirstDeviceWrapper>().unwrap();
 
         let sing_ok = device.call_method1("single_qubit_gate_time", ("RotateX", 0));
         let sing_err = device.call_method1("single_qubit_gate_time", ("Hadamard", 0));
@@ -389,15 +396,20 @@ fn test_phi_theta_relation() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let original_layout = array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]];
-        let device_type = py.get_type::<FirstDeviceWrapper>();
-        let device = device_type
-            .call1((3, 2, vec![2, 2, 2], 1.0, original_layout.to_pyarray(py)))
-            .unwrap()
-            .downcast::<PyCell<FirstDeviceWrapper>>()
+        let device_type = py.get_type_bound::<FirstDeviceWrapper>();
+        let binding = device_type
+            .call1((
+                3,
+                2,
+                vec![2, 2, 2],
+                1.0,
+                original_layout.to_pyarray_bound(py),
+            ))
             .unwrap();
+        let device = binding.downcast::<FirstDeviceWrapper>().unwrap();
         let new_layout: Array2<f64> = array![[0.5, 0.5], [0.5, 0.4], [0.4, 0.3]];
         let updated_device = device
-            .call_method1("add_layout", (1, new_layout.to_pyarray(py)))
+            .call_method1("add_layout", (1, new_layout.to_pyarray_bound(py)))
             .unwrap();
         updated_device.call_method1("switch_layout", (1,)).unwrap();
 
@@ -424,45 +436,42 @@ fn test_phi_theta_relation() {
         assert!(gtcp_err.is_err());
         assert!(gtcp_ok.is_ok());
 
-        let device_f_0 = device_type
+        let binding = device_type
             .call1((
                 3,
                 2,
                 vec![2, 2, 2],
                 1.0,
-                original_layout.to_pyarray(py),
+                original_layout.to_pyarray_bound(py),
                 Some("2.15".to_string()),
                 Option::<String>::None,
             ))
-            .unwrap()
-            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
-        let device_f_1 = device_type
+        let device_f_0 = binding.downcast::<FirstDeviceWrapper>().unwrap();
+        let binding = device_type
             .call1((
                 3,
                 2,
                 vec![2, 2, 2],
                 1.0,
-                original_layout.to_pyarray(py),
+                original_layout.to_pyarray_bound(py),
                 2.15,
                 1.36,
             ))
-            .unwrap()
-            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
-        let device_f_2 = device_type
+        let device_f_1 = binding.downcast::<FirstDeviceWrapper>().unwrap();
+        let binding = device_type
             .call1((
                 3,
                 2,
                 vec![2, 2, 2],
                 1.0,
-                original_layout.to_pyarray(py),
+                original_layout.to_pyarray_bound(py),
                 2.15,
                 Some(1.36.to_string()),
             ))
-            .unwrap()
-            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
+        let device_f_2 = binding.downcast::<FirstDeviceWrapper>().unwrap();
 
         let pscz_phase_f_0 = device_f_0
             .call_method0("phase_shift_controlled_z")
@@ -496,18 +505,17 @@ fn test_phi_theta_relation() {
 fn test_convert_to_device() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type = py.get_type::<FirstDeviceWrapper>();
-        let device = device_type
+        let device_type = py.get_type_bound::<FirstDeviceWrapper>();
+        let binding = device_type
             .call1((
                 3,
                 2,
                 vec![2, 2, 2],
                 1.0,
-                array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]].to_pyarray(py),
+                array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]].to_pyarray_bound(py),
             ))
-            .unwrap()
-            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
+        let device = binding.downcast::<FirstDeviceWrapper>().unwrap();
 
         let converted = convert_into_device(device).unwrap();
         let rust_dev: QRydDevice = FirstDevice::new(
@@ -533,26 +541,30 @@ fn test_pyo3_new_change_layout() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let layout = array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]];
-        let device_type = py.get_type::<FirstDeviceWrapper>();
+        let device_type = py.get_type_bound::<FirstDeviceWrapper>();
         let device = device_type
-            .call1((3, 2, vec![2, 2, 2], 1.0, layout.to_pyarray(py)))
-            .unwrap()
-            .downcast::<PyCell<FirstDeviceWrapper>>()
+            .call1((3, 2, vec![2, 2, 2], 1.0, layout.to_pyarray_bound(py)))
             .unwrap();
 
-        let pragma_wrapper = device.extract::<FirstDeviceWrapper>().unwrap();
+        let pragma_wrapper = device
+            .downcast::<FirstDeviceWrapper>()
+            .unwrap()
+            .extract::<FirstDeviceWrapper>()
+            .unwrap();
         let new_op_diff = device_type
             .call1((
                 3,
                 2,
                 vec![2, 2, 2],
                 2.0,
-                array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]].to_pyarray(py),
+                array![[0.0, 1.0,], [0.0, 1.0,], [0.0, 1.0]].to_pyarray_bound(py),
             ))
-            .unwrap()
-            .downcast::<PyCell<FirstDeviceWrapper>>()
             .unwrap();
-        let pragma_wrapper_diff = new_op_diff.extract::<FirstDeviceWrapper>().unwrap();
+        let pragma_wrapper_diff = new_op_diff
+            .downcast::<FirstDeviceWrapper>()
+            .unwrap()
+            .extract::<FirstDeviceWrapper>()
+            .unwrap();
         let helper_ne: bool = pragma_wrapper_diff != pragma_wrapper;
         assert!(helper_ne);
         let helper_eq: bool = pragma_wrapper == pragma_wrapper.clone();

@@ -62,8 +62,8 @@ impl TweezerDeviceWrapper {
     )]
     pub fn new(
         seed: Option<usize>,
-        controlled_z_phase_relation: Option<&PyAny>,
-        controlled_phase_phase_relation: Option<&PyAny>,
+        controlled_z_phase_relation: Option<&Bound<PyAny>>,
+        controlled_phase_phase_relation: Option<&Bound<PyAny>>,
     ) -> Self {
         let czpr = if let Some(value) = controlled_z_phase_relation {
             if convert_into_calculator_float(value).is_ok() {
@@ -208,7 +208,7 @@ impl TweezerDeviceWrapper {
     ) -> PyResult<PyObject> {
         Python::with_gil(|py| -> PyResult<PyObject> {
             match self.internal.add_qubit_tweezer_mapping(qubit, tweezer) {
-                Ok(mapping) => Ok(mapping.into_py_dict(py).into()),
+                Ok(mapping) => Ok(mapping.into_py_dict_bound(py).into()),
                 Err(err) => Err(PyValueError::new_err(format!("{:}", err))),
             }
         })
@@ -224,7 +224,7 @@ impl TweezerDeviceWrapper {
             self.internal
                 .qubit_to_tweezer
                 .as_ref()
-                .map(|mapping| mapping.into_py_dict(py).into())
+                .map(|mapping| mapping.into_py_dict_bound(py).into())
         })
     }
 
@@ -267,7 +267,7 @@ impl TweezerDeviceWrapper {
     pub fn deactivate_qubit(&mut self, qubit: usize) -> PyResult<PyObject> {
         Python::with_gil(|py| -> PyResult<PyObject> {
             match self.internal.deactivate_qubit(qubit) {
-                Ok(tweezers) => Ok(tweezers.into_py_dict(py).into()),
+                Ok(tweezers) => Ok(tweezers.into_py_dict_bound(py).into()),
                 Err(err) => Err(PyValueError::new_err(format!("{:}", err))),
             }
         })
@@ -456,7 +456,7 @@ impl TweezerDeviceWrapper {
         let serialized = serialize(&self.internal)
             .map_err(|_| PyValueError::new_err("Cannot serialize TweezerDevice to bytes"))?;
         let b: Py<PyByteArray> = Python::with_gil(|py| -> Py<PyByteArray> {
-            PyByteArray::new(py, &serialized[..]).into()
+            PyByteArray::new_bound(py, &serialized[..]).into()
         });
         Ok(b)
     }
@@ -474,7 +474,7 @@ impl TweezerDeviceWrapper {
     ///     ValueError: Input cannot be deserialized to TweezerDevice.
     #[staticmethod]
     #[pyo3(text_signature = "(input, /)")]
-    pub fn from_bincode(input: &PyAny) -> PyResult<TweezerDeviceWrapper> {
+    pub fn from_bincode(input: &Bound<PyAny>) -> PyResult<TweezerDeviceWrapper> {
         let bytes = input
             .extract::<Vec<u8>>()
             .map_err(|_| PyTypeError::new_err("Input cannot be converted to byte array"))?;
@@ -656,7 +656,7 @@ impl TweezerDeviceWrapper {
         let serialized = bincode::serialize(&qryd_enum)
             .map_err(|_| PyValueError::new_err("Cannot serialize TweezerDevice to bytes"))?;
         let b: Py<PyByteArray> = Python::with_gil(|py| -> Py<PyByteArray> {
-            PyByteArray::new(py, &serialized[..]).into()
+            PyByteArray::new_bound(py, &serialized[..]).into()
         });
         Ok(b)
     }
@@ -695,8 +695,8 @@ impl TweezerMutableDeviceWrapper {
     )]
     pub fn new(
         seed: Option<usize>,
-        controlled_z_phase_relation: Option<&PyAny>,
-        controlled_phase_phase_relation: Option<&PyAny>,
+        controlled_z_phase_relation: Option<&Bound<PyAny>>,
+        controlled_phase_phase_relation: Option<&Bound<PyAny>>,
     ) -> Self {
         let czpr = if let Some(value) = controlled_z_phase_relation {
             if convert_into_calculator_float(value).is_ok() {
@@ -802,7 +802,7 @@ impl TweezerMutableDeviceWrapper {
     ) -> PyResult<PyObject> {
         Python::with_gil(|py| -> PyResult<PyObject> {
             match self.internal.add_qubit_tweezer_mapping(qubit, tweezer) {
-                Ok(mapping) => Ok(mapping.into_py_dict(py).into()),
+                Ok(mapping) => Ok(mapping.into_py_dict_bound(py).into()),
                 Err(err) => Err(PyValueError::new_err(format!("{:}", err))),
             }
         })
@@ -818,7 +818,7 @@ impl TweezerMutableDeviceWrapper {
             self.internal
                 .qubit_to_tweezer
                 .as_ref()
-                .map(|mapping| mapping.into_py_dict(py).into())
+                .map(|mapping| mapping.into_py_dict_bound(py).into())
         })
     }
 
@@ -861,7 +861,7 @@ impl TweezerMutableDeviceWrapper {
     pub fn deactivate_qubit(&mut self, qubit: usize) -> PyResult<PyObject> {
         Python::with_gil(|py| -> PyResult<PyObject> {
             match self.internal.deactivate_qubit(qubit) {
-                Ok(tweezers) => Ok(tweezers.into_py_dict(py).into()),
+                Ok(tweezers) => Ok(tweezers.into_py_dict_bound(py).into()),
                 Err(err) => Err(PyValueError::new_err(format!("{:}", err))),
             }
         })
@@ -1050,7 +1050,7 @@ impl TweezerMutableDeviceWrapper {
         let serialized = serialize(&self.internal)
             .map_err(|_| PyValueError::new_err("Cannot serialize TweezerMutableDevice to bytes"))?;
         let b: Py<PyByteArray> = Python::with_gil(|py| -> Py<PyByteArray> {
-            PyByteArray::new(py, &serialized[..]).into()
+            PyByteArray::new_bound(py, &serialized[..]).into()
         });
         Ok(b)
     }
@@ -1069,7 +1069,7 @@ impl TweezerMutableDeviceWrapper {
     ///     ValueError: Input cannot be deserialized to TweezerMutableDevice.
     #[staticmethod]
     #[pyo3(text_signature = "(input, /)")]
-    pub fn from_bincode(input: &PyAny) -> PyResult<TweezerMutableDeviceWrapper> {
+    pub fn from_bincode(input: &Bound<PyAny>) -> PyResult<TweezerMutableDeviceWrapper> {
         let bytes = input
             .extract::<Vec<u8>>()
             .map_err(|_| PyTypeError::new_err("Input cannot be converted to byte array"))?;
@@ -1247,7 +1247,7 @@ impl TweezerMutableDeviceWrapper {
         let serialized = bincode::serialize(&qryd_enum)
             .map_err(|_| PyValueError::new_err("Cannot serialize TweezerMutableDevice to bytes"))?;
         let b: Py<PyByteArray> = Python::with_gil(|py| -> Py<PyByteArray> {
-            PyByteArray::new(py, &serialized[..]).into()
+            PyByteArray::new_bound(py, &serialized[..]).into()
         });
         Ok(b)
     }
@@ -1488,7 +1488,7 @@ impl TweezerMutableDeviceWrapper {
     /// `input` - The Python object that should be casted to a [roqoqo_qryd::TweezerDevice]
     pub fn from_pyany(input: Py<PyAny>) -> PyResult<TweezerDevice> {
         Python::with_gil(|py| -> PyResult<TweezerDevice> {
-            let input = input.as_ref(py);
+            let input = input.bind(py);
             if let Ok(try_downcast) = input.extract::<TweezerMutableDeviceWrapper>() {
                 Ok(try_downcast.internal)
             } else {
@@ -1511,7 +1511,7 @@ impl From<TweezerMutableDeviceWrapper> for TweezerDeviceWrapper {
 /// Convert generic python object to [roqoqo_qryd::TweezerDevice].
 ///
 /// Fallible conversion of generic python object to [roqoqo_qryd::TweezerDevice].
-pub fn convert_into_device(input: &PyAny) -> Result<TweezerDevice, QoqoBackendError> {
+pub fn convert_into_device(input: &Bound<PyAny>) -> Result<TweezerDevice, QoqoBackendError> {
     let get_bytes = input
         .call_method0("to_bincode")
         .map_err(|_| QoqoBackendError::CannotExtractObject)?;
@@ -1530,7 +1530,7 @@ pub fn convert_into_device(input: &PyAny) -> Result<TweezerDevice, QoqoBackendEr
 ///    TweezerMutableDevice
 ///
 #[pymodule]
-pub fn tweezer_devices(_py: Python, m: &PyModule) -> PyResult<()> {
+pub fn tweezer_devices(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     m.add_class::<TweezerDeviceWrapper>()?;
     m.add_class::<TweezerMutableDeviceWrapper>()?;
     Ok(())

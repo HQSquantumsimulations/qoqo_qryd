@@ -1024,7 +1024,7 @@ fn api_backend_errorcase3() {
         assert!(api_backend_err.is_err());
         assert_eq!(
             api_backend_err.unwrap_err(),
-            RoqoqoBackendError::MissingAuthentification {
+            RoqoqoBackendError::MissingAuthentication {
                 msg: "QRYD access token is missing".to_string()
             }
         );

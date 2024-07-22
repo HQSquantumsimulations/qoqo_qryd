@@ -17,7 +17,6 @@ use pyo3::prelude::*;
 use pyo3::types::{PyList, PyType};
 use pyo3::Python;
 use std::collections::HashMap;
-use std::usize;
 use std::{env, thread};
 
 use qoqo::measurements::CheatedWrapper;
@@ -35,32 +34,26 @@ use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
 // Helper function to create a python object of square device
-fn create_backend_with_square_device(
-    py: Python,
-    seed: Option<usize>,
-) -> &PyCell<APIBackendWrapper> {
-    let device_type = py.get_type::<QrydEmuSquareDeviceWrapper>();
-    let device: &PyCell<QrydEmuSquareDeviceWrapper> = device_type
-        .call1((seed,))
-        .unwrap()
-        .downcast::<PyCell<QrydEmuSquareDeviceWrapper>>()
-        .unwrap();
+fn create_backend_with_square_device(py: Python, seed: Option<usize>) -> Bound<APIBackendWrapper> {
+    let device_type = py.get_type_bound::<QrydEmuSquareDeviceWrapper>();
+    let device = &device_type.call1((seed,)).unwrap();
 
-    let backend_type: &PyType = py.get_type::<APIBackendWrapper>();
-    let backend: &PyCell<APIBackendWrapper> = backend_type
-        .call1((device, ""))
+    let backend_type: &Bound<PyType> = &py.get_type_bound::<APIBackendWrapper>();
+    let backend: Bound<APIBackendWrapper> = backend_type
+        .call1((device.downcast::<QrydEmuSquareDeviceWrapper>().unwrap(), ""))
         .unwrap()
-        .downcast::<PyCell<APIBackendWrapper>>()
-        .unwrap();
+        .downcast::<APIBackendWrapper>()
+        .unwrap()
+        .to_owned();
     backend
 }
 
 fn create_valid_backend_with_tweezer_device(
     py: Python,
     seed: Option<usize>,
-) -> &PyCell<APIBackendWrapper> {
-    let device_type = py.get_type::<TweezerDeviceWrapper>();
-    let device = device_type
+) -> Bound<APIBackendWrapper> {
+    let device_type = py.get_type_bound::<TweezerDeviceWrapper>();
+    let binding = device_type
         .call_method1(
             "from_api",
             (
@@ -71,38 +64,34 @@ fn create_valid_backend_with_tweezer_device(
                 Some(env::var("QRYD_API_HQS").is_ok()),
             ),
         )
-        .unwrap()
-        .downcast::<PyCell<TweezerDeviceWrapper>>()
         .unwrap();
+    let device = binding.downcast::<TweezerDeviceWrapper>().unwrap();
 
-    let backend_type: &PyType = py.get_type::<APIBackendWrapper>();
+    let backend_type: &Bound<PyType> = &py.get_type_bound::<APIBackendWrapper>();
     let none_string: Option<String> = None;
-    let backend: &PyCell<APIBackendWrapper> = backend_type
-        .call1((device, none_string))
-        .unwrap()
-        .downcast::<PyCell<APIBackendWrapper>>()
-        .unwrap();
-    backend
+    let binding = backend_type.call1((device, none_string)).unwrap();
+    let backend: &Bound<APIBackendWrapper> = binding.downcast::<APIBackendWrapper>().unwrap();
+    backend.to_owned()
 }
 
 fn create_valid_backend_with_square_device(
     py: Python,
     seed: Option<usize>,
-) -> &PyCell<APIBackendWrapper> {
-    let device_type = py.get_type::<QrydEmuSquareDeviceWrapper>();
-    let device: &PyCell<QrydEmuSquareDeviceWrapper> = device_type
-        .call1((seed,))
-        .unwrap()
-        .downcast::<PyCell<QrydEmuSquareDeviceWrapper>>()
-        .unwrap();
+) -> Bound<APIBackendWrapper> {
+    let device_type = py.get_type_bound::<QrydEmuSquareDeviceWrapper>();
+    let device = device_type.call1((seed,)).unwrap();
 
-    let backend_type: &PyType = py.get_type::<APIBackendWrapper>();
+    let backend_type: &Bound<PyType> = &py.get_type_bound::<APIBackendWrapper>();
     let none_string: Option<String> = None;
-    let backend: &PyCell<APIBackendWrapper> = backend_type
-        .call1((device, none_string))
+    let backend: Bound<APIBackendWrapper> = backend_type
+        .call1((
+            device.downcast::<QrydEmuSquareDeviceWrapper>().unwrap(),
+            none_string,
+        ))
         .unwrap()
-        .downcast::<PyCell<APIBackendWrapper>>()
-        .unwrap();
+        .downcast::<APIBackendWrapper>()
+        .unwrap()
+        .to_owned();
     backend
 }
 
@@ -110,21 +99,23 @@ fn create_valid_backend_with_square_device_mocked(
     py: Python,
     seed: Option<usize>,
     mock_port: String,
-) -> &PyCell<APIBackendWrapper> {
-    let device_type = py.get_type::<QrydEmuSquareDeviceWrapper>();
-    let device: &PyCell<QrydEmuSquareDeviceWrapper> = device_type
-        .call1((seed,))
-        .unwrap()
-        .downcast::<PyCell<QrydEmuSquareDeviceWrapper>>()
-        .unwrap();
+) -> Bound<APIBackendWrapper> {
+    let device_type = py.get_type_bound::<QrydEmuSquareDeviceWrapper>();
+    let device = device_type.call1((seed,)).unwrap();
 
-    let backend_type: &PyType = py.get_type::<APIBackendWrapper>();
+    let backend_type: &Bound<PyType> = &py.get_type_bound::<APIBackendWrapper>();
     let none_string: Option<String> = None;
-    let backend: &PyCell<APIBackendWrapper> = backend_type
-        .call1((device, none_string, 30, mock_port))
+    let backend: Bound<APIBackendWrapper> = backend_type
+        .call1((
+            device.downcast::<QrydEmuSquareDeviceWrapper>().unwrap(),
+            none_string,
+            30,
+            mock_port,
+        ))
         .unwrap()
-        .downcast::<PyCell<APIBackendWrapper>>()
-        .unwrap();
+        .downcast::<APIBackendWrapper>()
+        .unwrap()
+        .to_owned();
     backend
 }
 
@@ -176,19 +167,14 @@ fn test_new_square() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let seed: Option<usize> = Some(11);
-        let device_type = py.get_type::<QrydEmuSquareDeviceWrapper>();
-        let device: &PyCell<QrydEmuSquareDeviceWrapper> = device_type
-            .call1((seed,))
-            .unwrap()
-            .downcast::<PyCell<QrydEmuSquareDeviceWrapper>>()
-            .unwrap();
+        let device_type = py.get_type_bound::<QrydEmuSquareDeviceWrapper>();
+        let device = device_type.call1((seed,)).unwrap();
 
-        let backend_type: &PyType = py.get_type::<APIBackendWrapper>();
+        let backend_type: &Bound<PyType> = &py.get_type_bound::<APIBackendWrapper>();
         let backend = backend_type
-            .call1((device, ""))
-            .unwrap()
-            .downcast::<PyCell<APIBackendWrapper>>();
-        assert!(backend.is_ok());
+            .call1((device.downcast::<QrydEmuSquareDeviceWrapper>().unwrap(), ""))
+            .unwrap();
+        assert!(backend.downcast::<APIBackendWrapper>().is_ok());
     });
 }
 
@@ -198,23 +184,21 @@ fn test_fail_new_square() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let seed: Option<usize> = Some(11);
-        let device_type = py.get_type::<QrydEmuSquareDeviceWrapper>();
-        let device: &PyCell<QrydEmuSquareDeviceWrapper> = device_type
-            .call1((seed,))
-            .unwrap()
-            .downcast::<PyCell<QrydEmuSquareDeviceWrapper>>()
-            .unwrap();
+        let device_type = py.get_type_bound::<QrydEmuSquareDeviceWrapper>();
+        let device = device_type.call1((seed,)).unwrap();
 
-        let backend_type: &PyType = py.get_type::<APIBackendWrapper>();
+        let backend_type: &Bound<PyType> = &py.get_type_bound::<APIBackendWrapper>();
         let backend = backend_type.call1((3_u32, ""));
         assert!(backend.is_err());
         if let Ok(old_token) = env::var("QRYD_API_TOKEN") {
             env::remove_var("QRYD_API_TOKEN");
-            let backend = backend_type.call1((device,));
+            let backend =
+                backend_type.call1((device.downcast::<QrydEmuSquareDeviceWrapper>().unwrap(),));
             assert!(backend.is_err());
             env::set_var("QRYD_API_TOKEN", old_token);
         } else {
-            let backend = backend_type.call1((device,));
+            let backend =
+                backend_type.call1((device.downcast::<QrydEmuSquareDeviceWrapper>().unwrap(),));
             assert!(backend.is_err());
         }
     });
@@ -226,19 +210,17 @@ fn test_new_triangle() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let seed: Option<usize> = Some(11);
-        let device_type = py.get_type::<QrydEmuTriangularDeviceWrapper>();
-        let device: &PyCell<QrydEmuTriangularDeviceWrapper> = device_type
-            .call1((seed,))
-            .unwrap()
-            .downcast::<PyCell<QrydEmuTriangularDeviceWrapper>>()
-            .unwrap();
+        let device_type = py.get_type_bound::<QrydEmuTriangularDeviceWrapper>();
+        let device = device_type.call1((seed,)).unwrap();
 
-        let backend_type: &PyType = py.get_type::<APIBackendWrapper>();
+        let backend_type: &Bound<PyType> = &py.get_type_bound::<APIBackendWrapper>();
         let backend = backend_type
-            .call1((device, ""))
-            .unwrap()
-            .downcast::<PyCell<APIBackendWrapper>>();
-        assert!(backend.is_ok());
+            .call1((
+                device.downcast::<QrydEmuTriangularDeviceWrapper>().unwrap(),
+                "",
+            ))
+            .unwrap();
+        assert!(backend.downcast::<APIBackendWrapper>().is_ok());
     });
 }
 
@@ -272,7 +254,7 @@ fn test_json_square() {
         let backend = create_backend_with_square_device(py, Some(11));
 
         let serialised = backend.call_method0("to_json").unwrap();
-        let deserialised = backend.call_method1("from_json", (serialised,)).unwrap();
+        let deserialised = backend.call_method1("from_json", (&serialised,)).unwrap();
 
         let vec: Vec<u8> = Vec::new();
         let deserialised_error = backend.call_method1("from_json", (vec,));
@@ -348,7 +330,7 @@ fn test_run_job() {
             while test_counter < 20 && status != "completed" {
                 test_counter += 1;
                 let status_report: HashMap<String, String> = backend
-                    .call_method1("get_job_status", (job_loc,))
+                    .call_method1("get_job_status", (&job_loc,))
                     .unwrap()
                     .extract()
                     .unwrap();
@@ -358,7 +340,7 @@ fn test_run_job() {
 
                 if status == *"completed" {
                     assert_eq!(status, "completed");
-                    let _job_result = backend.call_method1("get_job_result", (job_loc,)).unwrap();
+                    let _job_result = backend.call_method1("get_job_result", (&job_loc,)).unwrap();
                 }
             }
         });
@@ -507,8 +489,8 @@ fn test_run_circuit() {
 
         pyo3::prepare_freethreaded_python();
         Python::with_gil(|py| {
-            let backend: &PyCell<APIBackendWrapper> =
-                create_valid_backend_with_tweezer_device(py, Some(11));
+            let backend: &Bound<APIBackendWrapper> =
+                &create_valid_backend_with_tweezer_device(py, Some(11));
 
             let result = backend.call_method1("run_circuit", (3usize,));
             assert!(result.is_err());
@@ -576,8 +558,8 @@ async fn async_test_run_circuit() {
     pyo3::prepare_freethreaded_python();
     tokio::task::spawn_blocking(move || {
         Python::with_gil(|py| {
-            let backend: &PyCell<APIBackendWrapper> =
-                create_valid_backend_with_square_device_mocked(py, Some(11), port);
+            let backend: &Bound<APIBackendWrapper> =
+                &create_valid_backend_with_square_device_mocked(py, Some(11), port);
 
             let result = backend.call_method1("run_circuit", (3usize,));
             assert!(result.is_err());
@@ -596,8 +578,8 @@ fn test_run_measurement_registers() {
     if env::var("QRYD_API_TOKEN").is_ok() {
         pyo3::prepare_freethreaded_python();
         Python::with_gil(|py| {
-            let backend: &PyCell<APIBackendWrapper> =
-                create_valid_backend_with_tweezer_device(py, Some(11));
+            let backend: &Bound<APIBackendWrapper> =
+                &create_valid_backend_with_tweezer_device(py, Some(11));
 
             let failed_result = backend.call_method1("run_measurement_registers", (3_u32,));
             assert!(failed_result.is_err());
@@ -674,8 +656,8 @@ async fn async_test_run_measurement_registers() {
     pyo3::prepare_freethreaded_python();
     tokio::task::spawn_blocking(move || {
         Python::with_gil(|py| {
-            let backend: &PyCell<APIBackendWrapper> =
-                create_valid_backend_with_square_device_mocked(py, Some(11), port);
+            let backend: &Bound<APIBackendWrapper> =
+                &create_valid_backend_with_square_device_mocked(py, Some(11), port);
 
             let failed_result = backend.call_method1("run_measurement_registers", (3_u32,));
             assert!(failed_result.is_err());
@@ -710,8 +692,8 @@ fn test_run_measurement() {
     if env::var("QRYD_API_TOKEN").is_ok() {
         pyo3::prepare_freethreaded_python();
         Python::with_gil(|py| {
-            let backend: &PyCell<APIBackendWrapper> =
-                create_valid_backend_with_tweezer_device(py, Some(11));
+            let backend: &Bound<APIBackendWrapper> =
+                &create_valid_backend_with_tweezer_device(py, Some(11));
 
             let cheated = create_cheated_measurement();
 
@@ -780,8 +762,8 @@ async fn async_test_run_measurement() {
     pyo3::prepare_freethreaded_python();
     tokio::task::spawn_blocking(|| {
         Python::with_gil(|py| {
-            let backend: &PyCell<APIBackendWrapper> =
-                create_valid_backend_with_square_device_mocked(py, Some(11), port);
+            let backend: &Bound<APIBackendWrapper> =
+                &create_valid_backend_with_square_device_mocked(py, Some(11), port);
 
             let cheated = create_cheated_measurement();
 
@@ -821,13 +803,13 @@ async fn async_test_convert_into_backend() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let none_string: Option<String> = None;
-        let initial: &PyCell<APIBackendWrapper> = if env::var("QRYD_API_TOKEN").is_ok() {
+        let initial: Bound<APIBackendWrapper> = if env::var("QRYD_API_TOKEN").is_ok() {
             create_valid_backend_with_square_device(py, Some(11))
         } else {
             create_valid_backend_with_square_device_mocked(py, Some(11), port.clone())
         };
 
-        let converted = convert_into_backend(initial).unwrap();
+        let converted = convert_into_backend(&initial).unwrap();
 
         let rust_dev: QrydEmuSquareDevice = QrydEmuSquareDevice::new(Some(11), None, None);
         let rust_api: QRydAPIDevice = QRydAPIDevice::from(rust_dev);
@@ -847,7 +829,7 @@ async fn async_test_convert_into_backend() {
 
         assert_eq!(converted, rust_backend);
 
-        let wrong_param: &PyAny = PyList::empty(py);
+        let wrong_param: &Bound<PyAny> = &PyList::empty_bound(py);
         let wrong_convert = convert_into_backend(wrong_param);
         assert!(wrong_convert.is_err());
     });
@@ -861,7 +843,9 @@ fn test_bincode_square() {
         let backend = create_backend_with_square_device(py, Some(11));
 
         let serialised = backend.call_method0("to_bincode").unwrap();
-        let deserialised = backend.call_method1("from_bincode", (serialised,)).unwrap();
+        let deserialised = backend
+            .call_method1("from_bincode", (&serialised,))
+            .unwrap();
 
         let vec: Vec<u8> = Vec::new();
         let deserialised_error = backend.call_method1("from_bincode", (vec,));
@@ -889,25 +873,20 @@ async fn test_dev() {
     let port = wiremock_server.address().port().to_string();
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
-        let device_type = py.get_type::<QrydEmuSquareDeviceWrapper>();
-        let device: &PyCell<QrydEmuSquareDeviceWrapper> = device_type
-            .call1((11,))
-            .unwrap()
-            .downcast::<PyCell<QrydEmuSquareDeviceWrapper>>()
-            .unwrap();
+        let device_type = py.get_type_bound::<QrydEmuSquareDeviceWrapper>();
+        let device = device_type.call1((11,)).unwrap();
 
-        let backend_type: &PyType = py.get_type::<APIBackendWrapper>();
-        let backend: &PyCell<APIBackendWrapper> = backend_type
+        let backend_type: &Bound<PyType> = &py.get_type_bound::<APIBackendWrapper>();
+        let binding = backend_type
             .call1((
-                device,
+                device.downcast::<QrydEmuSquareDeviceWrapper>().unwrap(),
                 Option::<String>::None,
                 Option::<usize>::None,
                 port,
                 false,
             ))
-            .unwrap()
-            .downcast::<PyCell<APIBackendWrapper>>()
             .unwrap();
+        let backend: &Bound<APIBackendWrapper> = binding.downcast::<APIBackendWrapper>().unwrap();
 
         assert!(backend.call_method1("set_dev", (true,)).is_ok());
 

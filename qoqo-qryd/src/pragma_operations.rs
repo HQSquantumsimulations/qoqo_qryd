@@ -104,9 +104,7 @@ impl PragmaChangeQRydLayoutWrapper {
     /// Returns:
     ///     set[int]: The involved qubits of the PRAGMA operation.
     fn involved_qubits(&self) -> PyObject {
-        let pyobject: PyObject =
-            Python::with_gil(|py| -> PyObject { PySet::new(py, &["All"]).unwrap().to_object(py) });
-        pyobject
+        Python::with_gil(|py| -> PyObject { PySet::new_bound(py, &["All"]).unwrap().to_object(py) })
     }
 
     /// Return the bincode representation of the PragmaChangeQRydLayout using the bincode crate.
@@ -120,7 +118,7 @@ impl PragmaChangeQRydLayoutWrapper {
         let serialized = serialize(&self.internal)
             .map_err(|_| PyValueError::new_err("Cannot serialize Circuit to bytes"))?;
         let b: Py<PyByteArray> = Python::with_gil(|py| -> Py<PyByteArray> {
-            PyByteArray::new(py, &serialized[..]).into()
+            PyByteArray::new_bound(py, &serialized[..]).into()
         });
         Ok(b)
     }
@@ -136,7 +134,7 @@ impl PragmaChangeQRydLayoutWrapper {
     /// Raises:
     ///     TypeError: Input cannot be converted to byte array.
     ///     ValueError: Input cannot be deserialized to PragmaChangeQRydLayout.
-    pub fn from_bincode(&self, input: &PyAny) -> PyResult<PragmaChangeQRydLayoutWrapper> {
+    pub fn from_bincode(&self, input: &Bound<PyAny>) -> PyResult<PragmaChangeQRydLayoutWrapper> {
         let bytes = input
             .extract::<Vec<u8>>()
             .map_err(|_| PyTypeError::new_err("Input cannot be converted to byte array"))?;
@@ -187,7 +185,7 @@ impl PragmaChangeQRydLayoutWrapper {
     #[pyo3(text_signature = "(substitution_parameters, /)")]
     fn substitute_parameters(
         &self,
-        substitution_parameters: std::collections::HashMap<&str, f64>,
+        substitution_parameters: std::collections::HashMap<String, f64>,
     ) -> PyResult<Self> {
         let mut calculator = qoqo_calculator::Calculator::new();
         for (key, val) in substitution_parameters.iter() {
@@ -358,9 +356,7 @@ impl PragmaShiftQRydQubitWrapper {
     /// Returns:
     ///     set[int]: The involved qubits of the PRAGMA operation.
     fn involved_qubits(&self) -> PyObject {
-        let pyobject: PyObject =
-            Python::with_gil(|py| -> PyObject { PySet::new(py, &["All"]).unwrap().to_object(py) });
-        pyobject
+        Python::with_gil(|py| -> PyObject { PySet::new_bound(py, &["All"]).unwrap().to_object(py) })
     }
 
     /// Return tags classifying the type of the operation.
@@ -400,7 +396,7 @@ impl PragmaShiftQRydQubitWrapper {
         let serialized = serialize(&self.internal)
             .map_err(|_| PyValueError::new_err("Cannot serialize PragmaShiftQRydQubit to bytes"))?;
         let b: Py<PyByteArray> = Python::with_gil(|py| -> Py<PyByteArray> {
-            PyByteArray::new(py, &serialized[..]).into()
+            PyByteArray::new_bound(py, &serialized[..]).into()
         });
         Ok(b)
     }
@@ -417,7 +413,7 @@ impl PragmaShiftQRydQubitWrapper {
     ///     TypeError: Input cannot be converted to byte array.
     ///     ValueError: Input cannot be deserialized to PragmaShiftQRydQubit.
     #[pyo3(text_signature = "(input, /)")]
-    pub fn from_bincode(&self, input: &PyAny) -> PyResult<PragmaShiftQRydQubitWrapper> {
+    pub fn from_bincode(&self, input: &Bound<PyAny>) -> PyResult<PragmaShiftQRydQubitWrapper> {
         let bytes = input
             .extract::<Vec<u8>>()
             .map_err(|_| PyTypeError::new_err("Input cannot be converted to byte array"))?;
@@ -441,7 +437,7 @@ impl PragmaShiftQRydQubitWrapper {
     #[pyo3(text_signature = "(substitution_parameters, /)")]
     fn substitute_parameters(
         &self,
-        substitution_parameters: std::collections::HashMap<&str, f64>,
+        substitution_parameters: std::collections::HashMap<String, f64>,
     ) -> PyResult<Self> {
         let mut calculator = qoqo_calculator::Calculator::new();
         for (key, val) in substitution_parameters.iter() {
@@ -612,9 +608,7 @@ impl PragmaDeactivateQRydQubitWrapper {
     /// Returns:
     ///     set[int]: The involved qubits of the PRAGMA operation.
     fn involved_qubits(&self) -> PyObject {
-        let pyobject: PyObject =
-            Python::with_gil(|py| -> PyObject { PySet::new(py, &["All"]).unwrap().to_object(py) });
-        pyobject
+        Python::with_gil(|py| -> PyObject { PySet::new_bound(py, &["All"]).unwrap().to_object(py) })
     }
 
     /// Return tags classifying the type of the operation.
@@ -655,7 +649,7 @@ impl PragmaDeactivateQRydQubitWrapper {
             PyValueError::new_err("Cannot serialize PragmaDeactivateQRydQubit to bytes")
         })?;
         let b: Py<PyByteArray> = Python::with_gil(|py| -> Py<PyByteArray> {
-            PyByteArray::new(py, &serialized[..]).into()
+            PyByteArray::new_bound(py, &serialized[..]).into()
         });
         Ok(b)
     }
@@ -672,7 +666,7 @@ impl PragmaDeactivateQRydQubitWrapper {
     ///     TypeError: Input cannot be converted to byte array.
     ///     ValueError: Input cannot be deserialized to PragmaDeactivateQRydQubit.
     #[pyo3(text_signature = "(input, /)")]
-    pub fn from_bincode(&self, input: &PyAny) -> PyResult<PragmaDeactivateQRydQubitWrapper> {
+    pub fn from_bincode(&self, input: &Bound<PyAny>) -> PyResult<PragmaDeactivateQRydQubitWrapper> {
         let bytes = input
             .extract::<Vec<u8>>()
             .map_err(|_| PyTypeError::new_err("Input cannot be converted to byte array"))?;
@@ -697,7 +691,7 @@ impl PragmaDeactivateQRydQubitWrapper {
     #[pyo3(text_signature = "(substitution_parameters, /)")]
     fn substitute_parameters(
         &self,
-        substitution_parameters: std::collections::HashMap<&str, f64>,
+        substitution_parameters: std::collections::HashMap<String, f64>,
     ) -> PyResult<Self> {
         let mut calculator = qoqo_calculator::Calculator::new();
         for (key, val) in substitution_parameters.iter() {
@@ -868,9 +862,7 @@ impl PragmaShiftQubitsTweezersWrapper {
     /// Returns:
     ///     set[int]: The involved qubits of the PRAGMA operation.
     fn involved_qubits(&self) -> PyObject {
-        let pyobject: PyObject =
-            Python::with_gil(|py| -> PyObject { PySet::new(py, &["All"]).unwrap().to_object(py) });
-        pyobject
+        Python::with_gil(|py| -> PyObject { PySet::new_bound(py, &["All"]).unwrap().to_object(py) })
     }
 
     /// Return tags classifying the type of the operation.
@@ -911,7 +903,7 @@ impl PragmaShiftQubitsTweezersWrapper {
             PyValueError::new_err("Cannot serialize PragmaShiftQubitsTweezers to bytes")
         })?;
         let b: Py<PyByteArray> = Python::with_gil(|py| -> Py<PyByteArray> {
-            PyByteArray::new(py, &serialized[..]).into()
+            PyByteArray::new_bound(py, &serialized[..]).into()
         });
         Ok(b)
     }
@@ -928,7 +920,7 @@ impl PragmaShiftQubitsTweezersWrapper {
     ///     TypeError: Input cannot be converted to byte array.
     ///     ValueError: Input cannot be deserialized to PragmaShiftQubitsTweezers.
     #[pyo3(text_signature = "(input, /)")]
-    pub fn from_bincode(&self, input: &PyAny) -> PyResult<PragmaShiftQubitsTweezersWrapper> {
+    pub fn from_bincode(&self, input: &Bound<PyAny>) -> PyResult<PragmaShiftQubitsTweezersWrapper> {
         let bytes = input
             .extract::<Vec<u8>>()
             .map_err(|_| PyTypeError::new_err("Input cannot be converted to byte array"))?;
@@ -953,7 +945,7 @@ impl PragmaShiftQubitsTweezersWrapper {
     #[pyo3(text_signature = "(substitution_parameters, /)")]
     fn substitute_parameters(
         &self,
-        substitution_parameters: std::collections::HashMap<&str, f64>,
+        substitution_parameters: std::collections::HashMap<String, f64>,
     ) -> PyResult<Self> {
         let mut calculator = qoqo_calculator::Calculator::new();
         for (key, val) in substitution_parameters.iter() {
@@ -1126,9 +1118,7 @@ impl PragmaSwitchDeviceLayoutWrapper {
     /// Returns:
     ///     set[int]: The involved qubits of the PRAGMA operation.
     fn involved_qubits(&self) -> PyObject {
-        let pyobject: PyObject =
-            Python::with_gil(|py| -> PyObject { PySet::new(py, &["All"]).unwrap().to_object(py) });
-        pyobject
+        Python::with_gil(|py| -> PyObject { PySet::new_bound(py, &["All"]).unwrap().to_object(py) })
     }
 
     /// Return the bincode representation of the PragmaSwitchDeviceLayout using the bincode crate.
@@ -1142,7 +1132,7 @@ impl PragmaSwitchDeviceLayoutWrapper {
         let serialized = serialize(&self.internal)
             .map_err(|_| PyValueError::new_err("Cannot serialize Circuit to bytes"))?;
         let b: Py<PyByteArray> = Python::with_gil(|py| -> Py<PyByteArray> {
-            PyByteArray::new(py, &serialized[..]).into()
+            PyByteArray::new_bound(py, &serialized[..]).into()
         });
         Ok(b)
     }
@@ -1159,7 +1149,7 @@ impl PragmaSwitchDeviceLayoutWrapper {
     /// Raises:
     ///     TypeError: Input cannot be converted to byte array.
     ///     ValueError: Input cannot be deserialized to PragmaSwitchDeviceLayout.
-    pub fn from_bincode(&self, input: &PyAny) -> PyResult<PragmaSwitchDeviceLayoutWrapper> {
+    pub fn from_bincode(&self, input: &Bound<PyAny>) -> PyResult<PragmaSwitchDeviceLayoutWrapper> {
         let bytes = input
             .extract::<Vec<u8>>()
             .map_err(|_| PyTypeError::new_err("Input cannot be converted to byte array"))?;
@@ -1210,7 +1200,7 @@ impl PragmaSwitchDeviceLayoutWrapper {
     #[pyo3(text_signature = "(substitution_parameters, /)")]
     fn substitute_parameters(
         &self,
-        substitution_parameters: std::collections::HashMap<&str, f64>,
+        substitution_parameters: std::collections::HashMap<String, f64>,
     ) -> PyResult<Self> {
         let mut calculator = qoqo_calculator::Calculator::new();
         for (key, val) in substitution_parameters.iter() {
@@ -1318,7 +1308,7 @@ impl PragmaSwitchDeviceLayoutWrapper {
 ///    PragmaShiftQubitsTweezers
 ///    PragmaSwitchDeviceLayout
 #[pymodule]
-pub fn pragma_operations(_py: Python, m: &PyModule) -> PyResult<()> {
+pub fn pragma_operations(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     m.add_class::<PragmaChangeQRydLayoutWrapper>()?;
     m.add_class::<PragmaShiftQRydQubitWrapper>()?;
     m.add_class::<PragmaDeactivateQRydQubitWrapper>()?;
