@@ -4,15 +4,6 @@ qoqo\_qryd.pragma\_operations
 .. automodule:: qoqo_qryd.pragma_operations
 
    
-   
-   
-
-   
-   
-   
-
-   
-   
    .. rubric:: Classes
 
    .. autosummary::
@@ -23,11 +14,3 @@ qoqo\_qryd.pragma\_operations
       PragmaShiftQubitsTweezers
       PragmaSwitchDeviceLayout
    
-   
-
-   
-   
-   
-
-
-

@@ -4,26 +4,9 @@ qoqo\_qryd.qryd\_devices
 .. automodule:: qoqo_qryd.qryd_devices
 
    
-   
-   
-
-   
-   
-   
-
-   
-   
    .. rubric:: Classes
 
    .. autosummary::
    
       FirstDevice
    
-   
-
-   
-   
-   
-
-
-
