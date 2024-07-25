@@ -1302,7 +1302,7 @@ impl TweezerDevice {
                 // If no shifts are allowed by the device for this tweezer, then it's not valid
                 None => return false,
             }
-            // "Faking" the removal of the qubit
+            // "Faking" the movement of the qubit
             if let Some((key, _)) = tmp_qubit_to_tweezer
                 .as_ref()
                 .unwrap()
@@ -1311,6 +1311,7 @@ impl TweezerDevice {
                 .map(|(&key, &value)| (key, value))
             {
                 tmp_qubit_to_tweezer.as_mut().unwrap().remove(&key);
+                tmp_qubit_to_tweezer.as_mut().unwrap().insert(key, *shift_end);
             }
         }
 

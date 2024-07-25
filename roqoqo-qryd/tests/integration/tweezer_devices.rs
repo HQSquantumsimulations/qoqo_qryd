@@ -998,6 +998,15 @@ fn test_change_device_shift_row() {
         )
         .unwrap();
     device
+        .set_tweezer_two_qubit_gate_time(
+            "PhaseShiftedControlledPhase",
+            4,
+            1,
+            0.34,
+            Some("row".to_string()),
+        )
+        .unwrap();
+    device
         .set_allowed_tweezer_shifts(&0, &[&[1, 2, 3]], Some("row".to_string()))
         .unwrap();
     device
@@ -1015,15 +1024,29 @@ fn test_change_device_shift_row() {
     device.add_qubit_tweezer_mapping(1, 1).unwrap();
     device.add_qubit_tweezer_mapping(2, 2).unwrap();
 
+    let mut cloned = device.clone();
+
     let pragma_s = PragmaShiftQubitsTweezers::new(vec![(2, 3), (1, 2), (0, 1)]);
 
-    let res = device.change_device("PragmaShiftQubitsTweezers", &serialize(&pragma_s).unwrap());
+    let res = cloned.change_device("PragmaShiftQubitsTweezers", &serialize(&pragma_s).unwrap());
 
     assert!(res.is_ok());
     assert_eq!(
-        device.qubit_to_tweezer.unwrap(),
+        cloned.qubit_to_tweezer.unwrap(),
         HashMap::from([(2, 3), (1, 2), (0, 1)])
     );
+
+    device
+        .set_allowed_tweezer_shifts(&4, &[&[1]], Some("row".to_string()))
+        .unwrap();
+
+    device.add_qubit_tweezer_mapping(4, 4).unwrap();
+
+    let pragma_s = PragmaShiftQubitsTweezers::new(vec![(2, 3), (1, 2), (0, 1), (4, 1)]);
+
+    let res = device.change_device("PragmaShiftQubitsTweezers", &serialize(&pragma_s).unwrap());
+
+    assert!(res.is_err());
 }
 
 /// Test TweezerDevice from_api() method
