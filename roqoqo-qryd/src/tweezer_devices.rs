@@ -1311,7 +1311,10 @@ impl TweezerDevice {
                 .map(|(&key, &value)| (key, value))
             {
                 tmp_qubit_to_tweezer.as_mut().unwrap().remove(&key);
-                tmp_qubit_to_tweezer.as_mut().unwrap().insert(key, *shift_end);
+                tmp_qubit_to_tweezer
+                    .as_mut()
+                    .unwrap()
+                    .insert(key, *shift_end);
             }
         }
 
