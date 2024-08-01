@@ -1607,3 +1607,42 @@ fn test_available_gate_names() {
         );
     })
 }
+
+#[test]
+fn test_draw() {
+    let mut device = TweezerDevice::new(None, None, None);
+    device.add_layout("default").unwrap();
+    device.current_layout = Some("default".to_string());
+    device
+        .set_tweezer_single_qubit_gate_time("RotateX", 0, 0.23, None)
+        .unwrap();
+    device
+        .set_tweezer_single_qubit_gate_time("RotateZ", 1, 0.23, None)
+        .unwrap();
+    device
+        .set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 2, 3, 0.34, None)
+        .unwrap();
+    device
+        .set_tweezer_two_qubit_gate_time("PhaseShiftedControlledZ", 1, 2, 0.34, None)
+        .unwrap();
+    device
+        .set_tweezers_per_row(vec![2, 2], Some("default".to_string()))
+        .unwrap();
+    device.add_qubit_tweezer_mapping(0, 0).unwrap();
+    device.add_qubit_tweezer_mapping(0, 1).unwrap();
+    device.add_qubit_tweezer_mapping(2, 2).unwrap();
+
+    let device_wrapper = TweezerDeviceWrapper { internal: device };
+
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let device_pyany = device_wrapper.into_py(py);
+        let device_bound = device_pyany.bind(py);
+        device_bound.call_method0("draw").unwrap();
+        device_bound
+            .call_method1("draw", (true, 3.2, "graph_test.png"))
+            .unwrap();
+        assert!(std::path::Path::new("graph_test.png").exists());
+        std::fs::remove_file("graph_test.png").unwrap();
+    });
+}

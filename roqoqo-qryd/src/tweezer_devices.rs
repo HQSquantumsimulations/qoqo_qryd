@@ -25,14 +25,16 @@ use std::{
     str::FromStr,
 };
 
-use roqoqo::{
-    devices::{Device, GenericDevice},
-    RoqoqoBackendError,
-};
-
 use crate::{
     phi_theta_relation, PragmaDeactivateQRydQubit, PragmaShiftQubitsTweezers,
     PragmaSwitchDeviceLayout,
+};
+
+use image::DynamicImage;
+use roqollage::render_typst_str;
+use roqoqo::{
+    devices::{Device, GenericDevice},
+    RoqoqoBackendError, RoqoqoError,
 };
 
 /// Native single-qubit gates allowed by the QRyd backend.
@@ -1312,6 +1314,93 @@ impl TweezerDevice {
     pub fn qrydbackend(&self) -> String {
         self.device_name.clone()
     }
+
+    /// Creates a graph representing a TweezerDevice.
+    ///
+    /// ## Arguments
+    ///
+    /// * `device` -  The device to represent.
+    ///
+    /// ## Returns
+    ///
+    /// * Ok(DynamicImage) - The representation of the device.
+    /// * Err(RoqoqoBackendError) - if there is no layout or an error occurred during the compilation.
+    ///
+    pub fn draw(
+        &self,
+        pixels_per_point: Option<f32>,
+        draw_shifts: bool,
+    ) -> Result<DynamicImage, RoqoqoBackendError> {
+        let layout = self.layout_register.get(
+            &self
+                .current_layout
+                .clone()
+                .or_else(|| self.default_layout.clone())
+                .unwrap_or_default(),
+        );
+        if layout.is_none() {
+            return Err(RoqoqoBackendError::GenericError {
+                msg: "No layout found for the device.".to_owned(),
+            });
+        }
+        let current_layout = layout.unwrap();
+        let nb_tweezers = current_layout
+            .tweezer_single_qubit_gate_times
+            .values()
+            .map(|single_gate_map| single_gate_map.keys().max().unwrap_or(&0_usize))
+            .chain(
+                current_layout
+                    .tweezer_two_qubit_gate_times
+                    .values()
+                    .map(|vals| {
+                        vals.keys()
+                            .map(|(key1, key2)| key1.max(key2))
+                            .max()
+                            .unwrap_or(&0_usize)
+                    }),
+            )
+            .max()
+            .unwrap_or(&0_usize)
+            .to_owned()
+            + 1;
+        let mut tweezers_positions = Vec::new();
+        let mut edges_map = HashMap::new();
+        let nodes = create_nodes(
+            nb_tweezers,
+            current_layout.tweezers_per_row.clone(),
+            &mut tweezers_positions,
+            &self.qubit_to_tweezer,
+        )?;
+        map_edges(
+            current_layout.tweezer_two_qubit_gate_times.clone(),
+            &mut edges_map,
+        )?;
+        if draw_shifts {
+            map_shifts(
+                current_layout.allowed_tweezer_shifts.clone(),
+                current_layout.tweezer_two_qubit_gate_times.clone(),
+                &mut edges_map,
+            )?
+        }
+        let edges = create_edges(&edges_map, &tweezers_positions)?;
+        let mut typst_str = r#"#import "@preview/fletcher:0.5.0" as fletcher: diagram, node, edge
+#set page(width: auto, height: auto, margin: 5mm, fill: white)
+#show math.equation: set text(font: "Fira Math")
+
+#diagram(
+ edge-stroke: 1pt,
+ node-stroke: black,
+	crossing-thickness: 3,
+	node-outset: 3pt,
+"#
+        .to_owned();
+
+        typst_str.push_str(nodes.as_str());
+        typst_str.push_str("\n	{\n");
+        typst_str.push_str(edges.as_str());
+        typst_str.push_str("\n	}\n)");
+        render_typst_str(typst_str, pixels_per_point)
+    }
 }
 
 impl Device for TweezerDevice {
@@ -1595,4 +1684,151 @@ impl Device for TweezerDevice {
         }
         new_generic_device
     }
+}
+
+enum ShiftType {
+    None,
+    LeftToRight,
+    RightToLeft,
+    Both,
+}
+
+fn create_nodes(
+    nb_tweezers: usize,
+    tweezers_per_row: Option<Vec<usize>>,
+    tweezers_positions: &mut Vec<(usize, usize)>,
+    qubit_to_tweezer: &Option<HashMap<usize, usize>>,
+) -> Result<String, RoqoqoBackendError> {
+    let mut nodes = "".to_owned();
+    if tweezers_per_row.is_some()
+        && tweezers_per_row
+            .clone()
+            .unwrap()
+            .iter()
+            .sum::<usize>()
+            .ge(&nb_tweezers)
+    {
+        let nb_tweezers_per_row = tweezers_per_row.unwrap();
+        let mut x = 0;
+        let mut y = 0;
+        for tweezer in 0..nb_tweezers {
+            tweezers_positions.insert(tweezer, (x, y));
+            nodes.push_str(&format!(
+                "node(({x},{y}), ${tweezer}_t{}, shape: circle),\n",
+                qubit_to_tweezer
+                    .clone()
+                    .map(|qubit_map| {
+                        for (qubit, tweez) in qubit_map {
+                            if tweez == tweezer {
+                                return format!("|{qubit}_q$, radius: 2.3em");
+                            }
+                        }
+                        "$, radius: 1.3em".to_owned()
+                    })
+                    .unwrap_or("$, radius: 1.3em".to_owned())
+            ));
+            x += 1;
+            if x == nb_tweezers_per_row[y] {
+                x = 0;
+                y += 1;
+            }
+        }
+    } else {
+        return Err(RoqoqoBackendError::RoqoqoError(
+            RoqoqoError::MismatchedRegisterDimension {
+                dim: tweezers_per_row
+                    .map(|tweezers_per_row: Vec<usize>| tweezers_per_row.iter().sum::<usize>())
+                    .unwrap_or_default(),
+                number_qubits: nb_tweezers,
+            },
+        ));
+    }
+    Ok(nodes)
+}
+
+fn map_edges(
+    tweezer_two_qubit_gate_times: HashMap<String, HashMap<(usize, usize), f64>>,
+    edges_map: &mut HashMap<(usize, usize), ShiftType>,
+) -> Result<(), RoqoqoBackendError> {
+    let mut links: Vec<(usize, usize)> = tweezer_two_qubit_gate_times
+        .values()
+        .flat_map(|value| value.keys().cloned().collect::<Vec<(usize, usize)>>())
+        .collect();
+    links.sort();
+    links.dedup();
+    for &(qb1, qb2) in links.iter() {
+        if !edges_map.contains_key(&(qb1, qb2)) && !edges_map.contains_key(&(qb2, qb1)) {
+            edges_map.insert((qb1, qb2), ShiftType::None);
+        }
+    }
+    Ok(())
+}
+
+fn create_edges(
+    edges_map: &HashMap<(usize, usize), ShiftType>,
+    tweezers_positions: &[(usize, usize)],
+) -> Result<String, RoqoqoBackendError> {
+    let mut edges = "".to_owned();
+    for (&(qb1, qb2), shift_type) in edges_map.iter() {
+        edges.push_str(&format!(
+            "   edge(({},{}), ({},{}){})\n",
+            tweezers_positions[qb1].0,
+            tweezers_positions[qb1].1,
+            tweezers_positions[qb2].0,
+            tweezers_positions[qb2].1,
+            match shift_type {
+                ShiftType::None => "",
+                ShiftType::Both => ", \"<|-|>\"",
+                ShiftType::LeftToRight => ", \"-|>\"",
+                ShiftType::RightToLeft => ", \"<|-\"",
+            }
+        ))
+    }
+    Ok(edges)
+}
+
+fn map_shifts(
+    allowed_tweezer_shifts: HashMap<usize, Vec<Vec<usize>>>,
+    tweezer_two_qubit_gate_times: HashMap<String, HashMap<(usize, usize), f64>>,
+    edges_map: &mut HashMap<(usize, usize), ShiftType>,
+) -> Result<(), RoqoqoBackendError> {
+    let mut links: Vec<(usize, usize)> = tweezer_two_qubit_gate_times
+        .values()
+        .flat_map(|value| value.keys().cloned().collect::<Vec<(usize, usize)>>())
+        .collect();
+    links.sort();
+    links.dedup();
+    for (&tweezer, allowed_shifts) in allowed_tweezer_shifts.iter() {
+        for allowed_shift in allowed_shifts {
+            for &directly_linked_shift in allowed_shift.iter().filter(|&&tweezer_shift| {
+                links.contains(&(tweezer, tweezer_shift))
+                    || links.contains(&(tweezer_shift, tweezer))
+            }) {
+                if let Some(shift_type) = edges_map.get(&(tweezer, directly_linked_shift)) {
+                    let key = (tweezer, directly_linked_shift);
+                    match shift_type {
+                        ShiftType::None => edges_map.insert(key, ShiftType::LeftToRight),
+                        ShiftType::Both => edges_map.insert(key, ShiftType::Both),
+                        ShiftType::LeftToRight => edges_map.insert(key, ShiftType::LeftToRight),
+                        ShiftType::RightToLeft => edges_map.insert(key, ShiftType::Both),
+                    };
+                } else if let Some(shift_type) = edges_map.get(&(directly_linked_shift, tweezer)) {
+                    let key = (directly_linked_shift, tweezer);
+                    match shift_type {
+                        ShiftType::None => edges_map.insert(key, ShiftType::RightToLeft),
+                        ShiftType::Both => edges_map.insert(key, ShiftType::Both),
+                        ShiftType::LeftToRight => edges_map.insert(key, ShiftType::Both),
+                        ShiftType::RightToLeft => edges_map.insert(key, ShiftType::RightToLeft),
+                    };
+                } else {
+                    return Err(RoqoqoBackendError::GenericError {
+                        msg: format!(
+                            "Unexpected tweezer shift: {tweezer}->{directly_linked_shift}"
+                        ),
+                    });
+                }
+            }
+        }
+    }
+    Ok(())
 }
