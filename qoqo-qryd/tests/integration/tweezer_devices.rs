@@ -1638,7 +1638,6 @@ fn test_draw() {
     Python::with_gil(|py| {
         let device_pyany = device_wrapper.into_py(py);
         let device_bound = device_pyany.bind(py);
-        device_bound.call_method0("draw").unwrap();
         device_bound
             .call_method1("draw", (true, 3.2, "graph_test.png"))
             .unwrap();
