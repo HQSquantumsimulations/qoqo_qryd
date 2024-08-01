@@ -357,11 +357,11 @@ class TweezerDevice:
             int: The number of qubits.
         """
 
-    def number_tweezer_positions(self) -> int:
+    def number_tweezer_positions(self, layout_name: Optional[str]) -> int:
         """
         Returns the number of total tweezer positions in the device.
 
-        Arguments:
+        Args:
             layout_name (Optional[str]): The name of the layout to reference. Defaults to the current layout.
 
         Returns:
@@ -423,26 +423,16 @@ class TweezerDevice:
 
     def draw(
         self,
-<<<<<<< Updated upstream
         draw_shifts: Optional[bool],
         pixel_per_point: Optional[float],
-=======
-        pixel_per_point: Optional[float],
-        draw_shifts: Optional[bool],
->>>>>>> Stashed changes
         file_save_path: Optional[str],
     ):
         """
         Creates a graph representing a TweezerDevice.
 
         Args:
-<<<<<<< Updated upstream
             draw_shifts (Optional[bool]): Whether to draw shifts or not. Default: false
             pixel_per_point (Optional[float]): The quality of the image.
-=======
-            pixel_per_point (Optional[float]): The quality of the image.
-            draw_shifts (Optional[bool]): Whether to draw shifts or not. Default: false
->>>>>>> Stashed changes
             file_save_path (Optional[str]): Path to save the image to. Default: output the image with the display method.:
 
         Raises:
@@ -757,11 +747,11 @@ class TweezerMutableDevice:
 
         """
 
-    def number_tweezer_positions(self) -> int:
+    def number_tweezer_positions(self, layout_name: Optional[str]) -> int:
         """
         Returns the number of total tweezer positions in the device.
 
-        Arguments:
+        Args:
             layout_name (Optional[str]): The name of the layout to reference. Defaults to the current layout.
 
         Returns:
@@ -887,7 +877,11 @@ class TweezerMutableDevice:
         """
 
     def set_tweezer_multi_qubit_gate_time(
-        self, hqslang: str, tweezers: List[int], gate_time: float, layout_name: Optional[str]
+        self,
+        hqslang: str,
+        tweezers: List[int],
+        gate_time: float,
+        layout_name: Optional[str],
     ):
         """
         Set the time of a multi-qubit gate for a list of tweezers in a given Layout.
@@ -978,4 +972,23 @@ class TweezerMutableDevice:
 
         Raises:
             ValueError: The given layout name is not present in the layout register.
+        """
+
+    def draw(
+        self,
+        draw_shifts: Optional[bool],
+        pixel_per_point: Optional[float],
+        file_save_path: Optional[str],
+    ):
+        """
+        Creates a graph representing a TweezerDevice.
+
+        Args:
+            draw_shifts (Optional[bool]): Whether to draw shifts or not. Default: false
+            pixel_per_point (Optional[float]): The quality of the image.
+            file_save_path (Optional[str]): Path to save the image to. Default: output the image with the display method.:
+
+        Raises:
+            PyValueError - if there is no layout, an error occurred during the compilation or and invalid path was provided.
+
         """

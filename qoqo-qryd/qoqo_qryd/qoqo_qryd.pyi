@@ -21,7 +21,7 @@ qoqo is the HQS python package to represent quantum circuits.
 
 from typing import Optional, List, Tuple, Dict, Union
 from qoqo import Circuit
-from qoqo.measurements import Cheated, CheatedPauliZProduct, PauliZProduct, ClassicalRegister
+from qoqo.measurements import ClassicalRegister, Cheated, CheatedPauliZProduct, PauliZProduct
 from .tweezer_devices import TweezerDevice  # type: ignore
 from .qryd_devices import QRydDevice  # type: ignore
 
@@ -102,10 +102,10 @@ class SimulatorBackend:
             ValueError: Input cannot be deserialized to SimulatorBackend.
         """
 
-    def run_circuit(
-        self, circuit: Circuit
-    ) -> Tuple[
-        Dict[str, List[List[bool]]], Dict[str, List[List[float]]], Dict[str, List[List[complex]]]
+    def run_circuit(self, circuit: Circuit) -> Tuple[
+        Dict[str, List[List[bool]]],
+        Dict[str, List[List[float]]],
+        Dict[str, List[List[complex]]],
     ]:
         """
         Run a circuit with the QRyd backend.
@@ -131,9 +131,12 @@ class SimulatorBackend:
         """
 
     def run_measurement_registers(
-        self, measurement: Union[Cheated, ClassicalRegister, CheatedPauliZProduct, PauliZProduct]
+        self,
+        measurement: Union[Cheated, ClassicalRegister, CheatedPauliZProduct, PauliZProduct],
     ) -> Tuple[
-        Dict[str, List[List[bool]]], Dict[str, List[List[float]]], Dict[str, List[List[complex]]]
+        Dict[str, List[List[bool]]],
+        Dict[str, List[List[float]]],
+        Dict[str, List[List[complex]]],
     ]:
         """
         Run all circuits corresponding to one measurement with the QRyd backend.
@@ -160,7 +163,8 @@ class SimulatorBackend:
         """
 
     def run_measurement(
-        self, measurement: Union[Cheated, ClassicalRegister, CheatedPauliZProduct, PauliZProduct]
+        self,
+        measurement: Union[Cheated, ClassicalRegister, CheatedPauliZProduct, PauliZProduct],
     ) -> Optional[Dict[str, float]]:
         """
         Evaluates expectation values of a measurement with the backend.
@@ -298,10 +302,10 @@ class APIBackend:
             ValueError: Input cannot be deserialized to APIBackend.
         """
 
-    def run_circuit(
-        self, circuit: Circuit
-    ) -> Tuple[
-        Dict[str, List[List[bool]]], Dict[str, List[List[float]]], Dict[str, List[List[complex]]]
+    def run_circuit(self, circuit: Circuit) -> Tuple[
+        Dict[str, List[List[bool]]],
+        Dict[str, List[List[float]]],
+        Dict[str, List[List[complex]]],
     ]:
         """
         Run a circuit with the QRyd APIBackend.
@@ -327,9 +331,12 @@ class APIBackend:
         """
 
     def run_measurement_registers(
-        self, measurement: Union[Cheated, ClassicalRegister, CheatedPauliZProduct, PauliZProduct]
+        self,
+        measurement: Union[Cheated, ClassicalRegister, CheatedPauliZProduct, PauliZProduct],
     ) -> Tuple[
-        Dict[str, List[List[bool]]], Dict[str, List[List[float]]], Dict[str, List[List[complex]]]
+        Dict[str, List[List[bool]]],
+        Dict[str, List[List[float]]],
+        Dict[str, List[List[complex]]],
     ]:
         """
         Run all circuits corresponding to one measurement with the QRyd APIBackend.
@@ -356,7 +363,8 @@ class APIBackend:
         """
 
     def run_measurement(
-        self, measurement: Union[Cheated, ClassicalRegister, CheatedPauliZProduct, PauliZProduct]
+        self,
+        measurement: Union[Cheated, ClassicalRegister, CheatedPauliZProduct, PauliZProduct],
     ) -> Optional[Dict[str, float]]:
         """
         Evaluates expectation values of a measurement with the APIBackend.

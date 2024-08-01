@@ -16,7 +16,7 @@ from typing import Optional, List, Dict, Union, Sequence
 from qoqo.devices import GenericDevice
 
 class QRydDevice:
-    """Base class for QRyd devices."""
+    """Base class for Qryd devices."""
 
 class FirstDevice(QRydDevice):
     """

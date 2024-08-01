@@ -1335,6 +1335,6 @@ fn test_render_device() {
     device.add_qubit_tweezer_mapping(0, 0).unwrap();
     device.add_qubit_tweezer_mapping(0, 1).unwrap();
     device.add_qubit_tweezer_mapping(2, 2).unwrap();
-    // device.set_allowed_tweezer_shifts(&mut 1, &[&0, 2], None);
+
     let _image = device.draw(None, false).unwrap();
 }

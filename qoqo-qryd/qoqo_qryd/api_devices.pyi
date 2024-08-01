@@ -15,11 +15,7 @@ Devices available on the QRydDemo WebAPI.
 
 from typing import Optional, Union, Sequence
 from qoqo.devices import GenericDevice
-<<<<<<< Updated upstream
 from .qryd_devices import QRydDevice  # type: ignore
-=======
-from .qryd_devices import QRydDevice
->>>>>>> Stashed changes
 
 class QrydEmuSquareDevice(QRydDevice):
     """
@@ -240,7 +236,7 @@ class QrydEmuSquareDevice(QRydDevice):
         Returns the gate time of a PhaseShiftedControlledPhase operation with the given qubits and phi and theta angles.
         """
 
-class QrydEmuTriangularDevice(QRydDevice):
+class QrydEmuTriangularDevice:
     """
     QRyd quantum device having a triangular configuration.
 

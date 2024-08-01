@@ -666,11 +666,13 @@ impl TweezerDeviceWrapper {
     /// Args:
     ///     draw_shifts (Optional[bool]): Whether to draw shifts or not. Default: false
     ///     pixel_per_point (Optional[float]): The quality of the image.
+
     ///     file_save_path (Optional[str]): Path to save the image to. Default: output the image with the display method.:
     ///
     /// Raises:
     ///     PyValueError - if there is no layout, an error occurred during the compilation or and invalid path was provided.
     ///
+
     #[pyo3(text_signature = "(draw_shifts, pixel_per_point, file_save_path, /)")]
     pub fn draw(
         &self,
