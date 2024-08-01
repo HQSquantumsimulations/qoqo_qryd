@@ -26,7 +26,7 @@
 
 from .qoqo_qryd import *  # type: ignore
 from .api_devices import *  # type: ignore
-from .prama_operations import *  # type: ignore
+from .pragma_operations import *  # type: ignore
 from .qryd_devices import *  # type: ignore
 from .tweezer_devices import *  # type: ignore
 
