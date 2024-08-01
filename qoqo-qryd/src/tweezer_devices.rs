@@ -680,16 +680,17 @@ impl TweezerDeviceWrapper {
         pixel_per_point: Option<f32>,
         file_save_path: Option<String>,
     ) -> PyResult<()> {
+        let display_image = file_save_path.is_none();
         let image = self
             .internal
-            .draw(pixel_per_point, draw_shifts.unwrap_or(false))
+            .draw(
+                pixel_per_point,
+                draw_shifts.unwrap_or(false),
+                file_save_path,
+            )
             .map_err(|x| PyValueError::new_err(format!("Error during Circuit drawing: {x:?}")))?;
 
-        if let Some(file_path) = file_save_path {
-            image
-                .save(file_path)
-                .map_err(|x| PyValueError::new_err(format!("Error during image saving: {x:?}")))?;
-        } else {
+        if display_image {
             let mut buffer = Cursor::new(Vec::new());
             image
                 .write_to(&mut buffer, image::ImageFormat::Png)
@@ -1551,16 +1552,17 @@ impl TweezerMutableDeviceWrapper {
         pixel_per_point: Option<f32>,
         file_save_path: Option<String>,
     ) -> PyResult<()> {
+        let display_image = file_save_path.is_none();
         let image = self
             .internal
-            .draw(pixel_per_point, draw_shifts.unwrap_or(false))
+            .draw(
+                pixel_per_point,
+                draw_shifts.unwrap_or(false),
+                file_save_path,
+            )
             .map_err(|x| PyValueError::new_err(format!("Error during Circuit drawing: {x:?}")))?;
 
-        if let Some(file_path) = file_save_path {
-            image
-                .save(file_path)
-                .map_err(|x| PyValueError::new_err(format!("Error during image saving: {x:?}")))?;
-        } else {
+        if display_image {
             let mut buffer = Cursor::new(Vec::new());
             image
                 .write_to(&mut buffer, image::ImageFormat::Png)

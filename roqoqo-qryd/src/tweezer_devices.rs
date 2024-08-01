@@ -1330,6 +1330,7 @@ impl TweezerDevice {
         &self,
         pixels_per_point: Option<f32>,
         draw_shifts: bool,
+        file_save_path: Option<String>,
     ) -> Result<DynamicImage, RoqoqoBackendError> {
         let layout = self.layout_register.get(
             &self
@@ -1399,7 +1400,15 @@ impl TweezerDevice {
         typst_str.push_str("\n	{\n");
         typst_str.push_str(edges.as_str());
         typst_str.push_str("\n	}\n)");
-        render_typst_str(typst_str, pixels_per_point)
+        let image = render_typst_str(typst_str, pixels_per_point)?;
+        if let Some(file_path) = file_save_path {
+            image
+                .save(file_path)
+                .map_err(|x| RoqoqoBackendError::GenericError {
+                    msg: format!("Error during image saving: {x:?}"),
+                })?;
+        }
+        Ok(image)
     }
 }
 
