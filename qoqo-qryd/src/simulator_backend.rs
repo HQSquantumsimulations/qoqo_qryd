@@ -189,7 +189,7 @@ impl SimulatorBackendWrapper {
     ///     circuit (Circuit): The circuit that is run on the backend.
     ///
     /// Returns:
-    ///     Tuple[Dict[str, List[List[bool]]], Dict[str, List[List[float]]]], Dict[str, List[List[complex]]]]: The output registers written by the evaluated circuits.
+    ///     Tuple[Dict[str, List[List[bool]]], Dict[str, List[List[float]]], Dict[str, List[List[complex]]]]: The output registers written by the evaluated circuits.
     ///
     /// Raises:
     ///     TypeError: Circuit argument cannot be converted to qoqo Circuit
@@ -222,7 +222,7 @@ impl SimulatorBackendWrapper {
     ///     measurement (Measurement): The measurement that is run on the backend.
     ///
     /// Returns:
-    ///     Tuple[Dict[str, List[List[bool]]], Dict[str, List[List[float]]]], Dict[str, List[List[complex]]]]: The output registers written by the evaluated circuits.
+    ///     Tuple[Dict[str, List[List[bool]]], Dict[str, List[List[float]]], Dict[str, List[List[complex]]]]: The output registers written by the evaluated circuits.
     ///
     /// Raises:
     ///     TypeError: Circuit argument cannot be converted to qoqo Circuit
