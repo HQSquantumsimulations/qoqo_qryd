@@ -1270,12 +1270,12 @@ impl TweezerDevice {
             true
         }
         // Temporary clone: pretending the shift of the qubits in order to understand
-        //  if the whole row could indeed be shifted or not
+        //  if the whole row can indeed be shifted or not
         let mut tmp_qubit_to_tweezer = self.qubit_to_tweezer.clone();
         // Checks for all shifts from pragma:
         // - if the starting tweezer has any valid shifts associated with it in the device
         // - if the ending tweezer is contained in the associated valid shifts
-        // - if the device has a quantum state to move in the starting tweezer position
+        // - if the device in the starting tweezer position is already occupied
         // - if any tweezer in between the starting and ending tweezers is free (ending included)
         for (shift_start, shift_end) in &pragma.shifts {
             match self
