@@ -39176,7 +39176,7 @@ LICENSE:
 
 
 ====================================================
-qoqo-qryd 0.18.0
+qoqo-qryd 0.19.0
 https://github.com/HQSquantumsimulations/qoqo_qryd
 by HQS Quantum Simulations <info@quantumsimulations.de>
 QRyd backend for qoqo quantum computing toolkit
@@ -44411,7 +44411,7 @@ LICENSE:
 
 
 ====================================================
-roqoqo-qryd 0.18.0
+roqoqo-qryd 0.19.0
 https://github.com/HQSquantumsimulations/qoqo_qryd
 by HQS Quantum Simulations <info@quantumsimulations.de>
 QRyd interface for roqoqo rust quantum computing toolkit

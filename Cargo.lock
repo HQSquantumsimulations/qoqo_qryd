@@ -2165,7 +2165,7 @@ dependencies = [
 
 [[package]]
 name = "qoqo-qryd"
-version = "0.18.0"
+version = "0.19.0"
 dependencies = [
  "bincode",
  "image 0.25.2",
@@ -2176,7 +2176,6 @@ dependencies = [
  "qoqo",
  "qoqo_calculator",
  "qoqo_calculator_pyo3",
- "regex",
  "roqoqo",
  "roqoqo-qryd",
  "serde",
@@ -2555,7 +2554,7 @@ dependencies = [
 
 [[package]]
 name = "roqoqo-qryd"
-version = "0.18.0"
+version = "0.19.0"
 dependencies = [
  "bincode",
  "bitvec",
