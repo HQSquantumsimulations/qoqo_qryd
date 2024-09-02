@@ -1397,7 +1397,6 @@ fn test_available_gate_names() {
 
 #[test]
 fn test_render_device() {
-    // let device = TweezerDevice::new(None, None, None);
     let mut device = TweezerDevice::new(None, None, None);
     device.add_layout("default").unwrap();
     device.current_layout = Some("default".to_string());
@@ -1417,11 +1416,11 @@ fn test_render_device() {
         .set_tweezers_per_row(vec![2, 2], Some("default".to_string()))
         .unwrap();
     device.add_qubit_tweezer_mapping(0, 0).unwrap();
-    device.add_qubit_tweezer_mapping(0, 1).unwrap();
+    device.add_qubit_tweezer_mapping(1, 1).unwrap();
     device.add_qubit_tweezer_mapping(2, 2).unwrap();
 
     let _image = device
-        .draw(None, false, Some("graph_test.png".to_owned()))
+        .draw(None, false, &Some("graph_test.png".to_owned()))
         .unwrap();
     assert!(std::path::Path::new("graph_test.png").exists());
     std::fs::remove_file("graph_test.png").unwrap();

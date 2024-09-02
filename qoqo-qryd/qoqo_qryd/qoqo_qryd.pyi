@@ -1,6 +1,6 @@
 # This is an auto generated file containing only the documentation.
 # You can find the full implementation on this page:
-# https://github.com/HQSquantumsimulations/struqture
+# https://github.com/HQSquantumsimulations/qoqo_qryd
 
 """
 QRyd utilities for qoqo quantum computation toolkit.
@@ -21,7 +21,12 @@ qoqo is the HQS python package to represent quantum circuits.
 
 from typing import Optional, List, Tuple, Dict, Union
 from qoqo import Circuit
-from qoqo.measurements import ClassicalRegister, Cheated, CheatedPauliZProduct, PauliZProduct
+from qoqo.measurements import (
+    ClassicalRegister,
+    Cheated,
+    CheatedPauliZProduct,
+    PauliZProduct,
+)
 from .tweezer_devices import TweezerDevice  # type: ignore
 from .qryd_devices import QRydDevice  # type: ignore
 

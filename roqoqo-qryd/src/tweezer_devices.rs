@@ -1348,7 +1348,7 @@ impl TweezerDevice {
         &self,
         pixels_per_point: Option<f32>,
         draw_shifts: bool,
-        file_save_path: Option<String>,
+        file_save_path: &Option<String>,
     ) -> Result<DynamicImage, RoqoqoBackendError> {
         let layout = self.layout_register.get(
             &self

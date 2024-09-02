@@ -1,6 +1,6 @@
 # This is an auto generated file containing only the documentation.
 # You can find the full implementation on this page:
-# https://github.com/HQSquantumsimulations/struqture
+# https://github.com/HQSquantumsimulations/qoqo_qryd
 
 """
 QRyd specific PragmaOperations that support changing the QRyd device during a circuit evaluation

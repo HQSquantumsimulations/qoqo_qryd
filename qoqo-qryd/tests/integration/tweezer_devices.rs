@@ -1629,7 +1629,7 @@ fn test_draw() {
         .set_tweezers_per_row(vec![2, 2], Some("default".to_string()))
         .unwrap();
     device.add_qubit_tweezer_mapping(0, 0).unwrap();
-    device.add_qubit_tweezer_mapping(0, 1).unwrap();
+    device.add_qubit_tweezer_mapping(1, 1).unwrap();
     device.add_qubit_tweezer_mapping(2, 2).unwrap();
 
     let device_wrapper = TweezerDeviceWrapper { internal: device };

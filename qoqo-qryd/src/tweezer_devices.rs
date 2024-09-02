@@ -666,8 +666,7 @@ impl TweezerDeviceWrapper {
     /// Args:
     ///     draw_shifts (Optional[bool]): Whether to draw shifts or not. Default: false
     ///     pixel_per_point (Optional[float]): The quality of the image.
-
-    ///     file_save_path (Optional[str]): Path to save the image to. Default: output the image with the display method.:
+    ///     file_save_path (Optional[str]): Path to save the image to. Default: output the image with the display method.
     ///
     /// Raises:
     ///     PyValueError - if there is no layout, an error occurred during the compilation or and invalid path was provided.
@@ -686,7 +685,7 @@ impl TweezerDeviceWrapper {
             .draw(
                 pixel_per_point,
                 draw_shifts.unwrap_or(false),
-                file_save_path,
+                &file_save_path,
             )
             .map_err(|x| PyValueError::new_err(format!("Error during Circuit drawing: {x:?}")))?;
 
@@ -1427,7 +1426,7 @@ impl TweezerMutableDeviceWrapper {
     ///
     /// Args:
     ///     tweezer (int): The index of the tweezer.
-    ///     allowed_shifts (list(list(int))): The allowed tweezer shifts.
+    ///     allowed_shifts (list[list[int]]): The allowed tweezer shifts.
     ///     layout_name (Optional[str]): The name of the Layout to apply the allowed shifts in.
     ///         Defaults to the current Layout.
     ///
@@ -1461,7 +1460,7 @@ impl TweezerMutableDeviceWrapper {
     /// and into tweezer 3 if tweezer 2 is not occupied by a qubit.
     ///
     /// Args:
-    ///     row_shifts (list(list(int))): A list of lists, each representing a row of tweezers.
+    ///     row_shifts (list[list[int]]): A list of lists, each representing a row of tweezers.
     ///     layout_name (Optional[str]): The name of the Layout to apply the allowed shifts in.
     ///         Defaults to the current Layout.
     ///
@@ -1491,8 +1490,8 @@ impl TweezerMutableDeviceWrapper {
     /// Only switching between layouts having the same tweezer per row value is supported.
     ///
     /// Args:
-    ///     tweezers_per_row` - Vector containing the number of tweezers per row to set.
-    ///     layout_name` - The name of the Layout to set the tweezer per row for. Defaults to the current Layout.
+    ///     tweezers_per_row(List[int]): Vector containing the number of tweezers per row to set.
+    ///     layout_name(Optional[str]): The name of the Layout to set the tweezer per row for. Defaults to the current Layout.
     ///
     /// Raises:
     ///     ValueError: No layout name provided and no current layout set.
@@ -1540,7 +1539,7 @@ impl TweezerMutableDeviceWrapper {
     /// Args:
     ///     draw_shifts (Optional[bool]): Whether to draw shifts or not. Default: false
     ///     pixel_per_point (Optional[float]): The quality of the image.
-    ///     file_save_path (Optional[str]): Path to save the image to. Default: output the image with the display method.:
+    ///     file_save_path (Optional[str]): Path to save the image to. Default: output the image with the display method.
     ///
     /// Raises:
     ///     PyValueError - if there is no layout, an error occurred during the compilation or and invalid path was provided.
@@ -1552,17 +1551,16 @@ impl TweezerMutableDeviceWrapper {
         pixel_per_point: Option<f32>,
         file_save_path: Option<String>,
     ) -> PyResult<()> {
-        let display_image = file_save_path.is_none();
         let image = self
             .internal
             .draw(
                 pixel_per_point,
                 draw_shifts.unwrap_or(false),
-                file_save_path,
+                &file_save_path,
             )
             .map_err(|x| PyValueError::new_err(format!("Error during Circuit drawing: {x:?}")))?;
 
-        if display_image {
+        if file_save_path.is_none() {
             let mut buffer = Cursor::new(Vec::new());
             image
                 .write_to(&mut buffer, image::ImageFormat::Png)

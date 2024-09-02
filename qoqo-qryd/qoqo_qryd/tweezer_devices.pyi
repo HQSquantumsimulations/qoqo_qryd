@@ -1,6 +1,6 @@
 # This is an auto generated file containing only the documentation.
 # You can find the full implementation on this page:
-# https://github.com/HQSquantumsimulations/struqture
+# https://github.com/HQSquantumsimulations/qoqo_qryd
 
 """
 Tweezer devices for the QRyd platform.
@@ -433,11 +433,10 @@ class TweezerDevice:
         Args:
             draw_shifts (Optional[bool]): Whether to draw shifts or not. Default: false
             pixel_per_point (Optional[float]): The quality of the image.
-            file_save_path (Optional[str]): Path to save the image to. Default: output the image with the display method.:
+            file_save_path (Optional[str]): Path to save the image to. Default: output the image with the display method.
 
         Raises:
-            PyValueError - if there is no layout, an error occurred during the compilation or and invalid path was provided.
-
+            ValueError: if there is no layout, an error occurred during the compilation or and invalid path was provided.
         """
 
 class TweezerMutableDevice:
@@ -898,7 +897,7 @@ class TweezerMutableDevice:
         """
 
     def set_allowed_tweezer_shifts(
-        self, tweezer: int, allowed_shifts: int, layout_name: Optional[str]
+        self, tweezer: int, allowed_shifts: list[list[int]], layout_name: Optional[str]
     ):
         """
         Set the allowed Tweezer shifts of a specified Tweezer.
@@ -911,7 +910,7 @@ class TweezerMutableDevice:
 
         Args:
             tweezer (int): The index of the tweezer.
-            allowed_shifts (list(list(int))): The allowed tweezer shifts.
+            allowed_shifts (list[list[int]]): The allowed tweezer shifts.
             layout_name (Optional[str]): The name of the Layout to apply the allowed shifts in.
                 Defaults to the current Layout.
 
@@ -920,7 +919,9 @@ class TweezerMutableDevice:
                 the given tweezer is contained in the shift list.
         """
 
-    def set_allowed_tweezer_shifts_from_rows(self, row_shifts: int, layout_name: Optional[str]):
+    def set_allowed_tweezer_shifts_from_rows(
+        self, row_shifts: list[list[int]], layout_name: Optional[str]
+    ):
         """
         Set the allowed Tweezer shifts from a list of tweezers.
 
@@ -929,7 +930,7 @@ class TweezerMutableDevice:
         and into tweezer 3 if tweezer 2 is not occupied by a qubit.
 
         Args:
-            row_shifts (list(list(int))): A list of lists, each representing a row of tweezers.
+            row_shifts (list[list[int]]): A list of lists, each representing a row of tweezers.
             layout_name (Optional[str]): The name of the Layout to apply the allowed shifts in.
                 Defaults to the current Layout.
 
@@ -937,7 +938,7 @@ class TweezerMutableDevice:
             ValueError: The involved tweezers are not present in the device.
         """
 
-    def set_tweezers_per_row(self):
+    def set_tweezers_per_row(tweezers_per_row: List[int], layout_name: Optional[str], self):
         """
         Set the tweezer per row value for a given Layout.
 
@@ -945,8 +946,8 @@ class TweezerMutableDevice:
         Only switching between layouts having the same tweezer per row value is supported.
 
         Args:
-            tweezers_per_row` - Vector containing the number of tweezers per row to set.
-            layout_name` - The name of the Layout to set the tweezer per row for. Defaults to the current Layout.
+            tweezers_per_row(List[int]): Vector containing the number of tweezers per row to set.
+            layout_name(Optional[str]): The name of the Layout to set the tweezer per row for. Defaults to the current Layout.
 
         Raises:
             ValueError: No layout name provided and no current layout set.
@@ -986,9 +987,8 @@ class TweezerMutableDevice:
         Args:
             draw_shifts (Optional[bool]): Whether to draw shifts or not. Default: false
             pixel_per_point (Optional[float]): The quality of the image.
-            file_save_path (Optional[str]): Path to save the image to. Default: output the image with the display method.:
+            file_save_path (Optional[str]): Path to save the image to. Default: output the image with the display method.
 
         Raises:
-            PyValueError - if there is no layout, an error occurred during the compilation or and invalid path was provided.
-
+            ValueError: if there is no layout, an error occurred during the compilation or and invalid path was provided.
         """
