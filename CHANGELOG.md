@@ -2,10 +2,18 @@
 
 Tracks qoqo-qryd changes after 0.5
 
-# 0.17.0
+# 0.19.0
 
 * Added `draw()` method to `TweezerDevice`
 * Added support for IDE hints
+
+# 0.18.0
+
+* Modified `PragmaShiftQubitsTweezers` to functionally allow full-row shifts
+
+# 0.17.0
+
+* Updated to pyo3 0.21 and qoqo 1.15
 
 # 0.16.5
 
@@ -29,10 +37,6 @@ Tracks qoqo-qryd changes after 0.5
 
 * Substituted server mocking package `mockito` with `wiremock`
 * Fixed API deserialization errors
-
-# 0.17.0
-
-* Updated to pyo3 0.21 and qoqo 1.12
 
 # 0.16.0
 

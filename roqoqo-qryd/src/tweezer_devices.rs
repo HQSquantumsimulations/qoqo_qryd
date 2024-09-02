@@ -1271,11 +1271,14 @@ impl TweezerDevice {
             }
             true
         }
+        // Temporary clone: pretending the shift of the qubits in order to understand
+        //  if the whole row can indeed be shifted or not
+        let mut tmp_qubit_to_tweezer = self.qubit_to_tweezer.clone();
         // Checks for all shifts from pragma:
         // - if the starting tweezer has any valid shifts associated with it in the device
         // - if the ending tweezer is contained in the associated valid shifts
-        // - if the device has has a quantum state to move in the starting tweezer position
-        // - if any tweezer in between the staring and ending tweezers is free (ending included)
+        // - if the device in the starting tweezer position is already occupied
+        // - if any tweezer in between the starting and ending tweezers is free (ending included)
         for (shift_start, shift_end) in &pragma.shifts {
             match self
                 .get_current_layout_info()
@@ -1286,11 +1289,11 @@ impl TweezerDevice {
                 Some(allowed_shifts) => {
                     if !_is_tweezer_in_shift_lists(shift_end, allowed_shifts)
                         || !_is_tweezer_occupied(
-                            self.qubit_to_tweezer.as_ref().unwrap(),
+                            tmp_qubit_to_tweezer.as_ref().unwrap(),
                             shift_start,
                         )
                         || !_is_path_free(
-                            self.qubit_to_tweezer.as_ref().unwrap(),
+                            tmp_qubit_to_tweezer.as_ref().unwrap(),
                             shift_end,
                             allowed_shifts,
                         )
@@ -1301,7 +1304,22 @@ impl TweezerDevice {
                 // If no shifts are allowed by the device for this tweezer, then it's not valid
                 None => return false,
             }
+            // "Faking" the movement of the qubit
+            if let Some((key, _)) = tmp_qubit_to_tweezer
+                .as_ref()
+                .unwrap()
+                .iter()
+                .find(|&(_, &value)| value == *shift_start)
+                .map(|(&key, &value)| (key, value))
+            {
+                tmp_qubit_to_tweezer.as_mut().unwrap().remove(&key);
+                tmp_qubit_to_tweezer
+                    .as_mut()
+                    .unwrap()
+                    .insert(key, *shift_end);
+            }
         }
+
         true
     }
 
