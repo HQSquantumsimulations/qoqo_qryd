@@ -15,10 +15,10 @@ supported by TweezerDevice and TweezerMutableDevice."""
 # or implied. See the License for the specific language governing permissions and limitations under
 # the License.
 import numpy as np
+import qoqo.operations as ops  # type:ignore
 from qoqo import Circuit
-import qoqo.operations as ops
-from qoqo_qryd import qryd_devices, SimulatorBackend
-from qoqo_qryd import pragma_operations as qrydops
+from qoqo_qryd import SimulatorBackend, qryd_devices
+from qoqo_qryd import pragma_operations as qrydops  # type:ignore
 
 # --------------------- The set-up of the device ----------------------- #
 
