@@ -1,6 +1,6 @@
 """A simple example for shifting the qubit positions."""
 
-# Copyright © 2021-2022 HQS Quantum Simulations GmbH.
+# Copyright © 2021-2024 HQS Quantum Simulations GmbH.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
 # in compliance with the License. You may obtain a copy of the License at
@@ -13,11 +13,12 @@
 # the License.
 
 import numpy as np
+import qoqo.operations as ops  # type:ignore
 from qoqo import Circuit
-import qoqo.operations as ops
-from qoqo_qryd import qryd_devices, SimulatorBackend
+from qoqo_qryd import SimulatorBackend
 from qoqo_qryd import pragma_operations as qrydops
-
+from qoqo_qryd.tweezer_devices import TweezerMutableDevice  # type:ignore
+from utils import apply_column_square, apply_row
 
 # ------------------------- The set-up of the device -------------------------- #
 
@@ -31,37 +32,49 @@ from qoqo_qryd import pragma_operations as qrydops
 #   0 --- 1
 #   2 --- 3
 #
-device = qryd_devices.FirstDevice(
-    number_rows=2,
-    number_columns=4,
-    qubits_per_row=[2, 2],
-    row_distance=1.0,
-    initial_layout=np.array([
-        [0.0, 1.0, 2.0, 3.0],
-        [0.0, 1.0, 2.0, 3.0]
-    ])
+rows = 2
+columns = 4
+
+device = TweezerMutableDevice()
+device.add_layout("square_lattice")
+
+for i in range(rows * columns):
+    for gate in ["RotateX", "PhaseShiftState1"]:
+        device.set_tweezer_single_qubit_gate_time(gate, i, 1.0, "square_lattice")
+
+for row in range(rows):
+    for column in range(columns):
+        row_indices = apply_row(row, column, columns, rows)
+        column_indices = apply_column_square(row, column, columns, rows)
+        if row_indices is not None:
+            device.set_tweezer_two_qubit_gate_time(
+                "PhaseShiftedControlledZ",
+                row_indices[0],
+                row_indices[1],
+                1.0,
+                "square_lattice",
+            )
+        if column_indices is not None:
+            device.set_tweezer_two_qubit_gate_time(
+                "PhaseShiftedControlledZ",
+                column_indices[0],
+                column_indices[1],
+                1.0,
+                "square_lattice",
+            )
+
+device.set_allowed_tweezer_shifts_from_rows(
+    [[0, 1, 2, 3], [4, 5, 6, 7]], "square_lattice"
 )
 
-# Adding a triangular lattice
-#
-#   Tweezer positions:
-#   (0, 0) ----- (0, 1) ----- (0, 2) ----- (0, 3)
-#          (1, 0) ----- (1, 1) ----- (1, 2) ----- (1, 3)
-#
-#   Qubit positions:
-#   0 --- 1
-#      2 --- 3
-device = device.add_layout(
-    1,
-    np.array([
-       [0.0, 1.0, 2.0, 3.0],
-       [0.5, 1.5, 2.5, 3.5]
-   ])
-)
-# Set the cut-off distance for two-qubit interactions
-device.set_cutoff(1.0)
-# Setting up the device in the square lattice
-device.change_qubit_positions({0: (0, 0), 1: (0, 1), 2: (1, 0), 3: (1, 1)})
+device.switch_layout("square_lattice", with_trivial_map=False)
+
+# Populate the device according to initialization explained above
+device.add_qubit_tweezer_mapping(0, 0)
+device.add_qubit_tweezer_mapping(1, 1)
+device.add_qubit_tweezer_mapping(2, 4)
+device.add_qubit_tweezer_mapping(3, 5)
+
 backend = SimulatorBackend(device)
 
 # ------------------------ The set-up of the circuit ------------------------ #
@@ -85,10 +98,10 @@ circuit += ops.DefinitionComplex("state_vector_after", 16, True)
 circuit += ops.RotateX(1, np.pi)
 circuit += ops.RotateX(2, np.pi / 2)
 circuit += ops.PragmaGetStateVector("state_vector_before", None)
-circuit += qrydops.PragmaShiftQRydQubit(
-    {0: (0, 0), 1: (0, 1), 2: (1, 1), 3: (1, 2)}).to_pragma_change_device()
+circuit += qrydops.PragmaShiftQubitsTweezers([(5, 6)]).to_pragma_change_device()
+circuit += qrydops.PragmaShiftQubitsTweezers([(4, 5)]).to_pragma_change_device()
 circuit += ops.PhaseShiftedControlledZ(control=1, target=2, phi=0.0)
-circuit += ops.PragmaGetStateVector("state_vector_before", None)
+circuit += ops.PragmaGetStateVector("state_vector_after", None)
 # This should pass
 result = backend.run_circuit(circuit)
 print("State vector before applying shift and two-qubit gate")

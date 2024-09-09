@@ -1,6 +1,9 @@
-"""A simple example demonstrating multi qubit operations."""
+"""A simple example demonstrating multi qubit operations.
 
-# Copyright © 2021 - 2022 HQS Quantum Simulations GmbH.
+Kept as past reference, as there are no multi-qubit operations that are natively
+supported by TweezerDevice and TweezerMutableDevice."""
+
+# Copyright © 2021 - 2024 HQS Quantum Simulations GmbH.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
 # in compliance with the License. You may obtain a copy of the License at
@@ -12,10 +15,10 @@
 # or implied. See the License for the specific language governing permissions and limitations under
 # the License.
 import numpy as np
+import qoqo.operations as ops  # type:ignore
 from qoqo import Circuit
-import qoqo.operations as ops
-from qoqo_qryd import qryd_devices, SimulatorBackend
-from qoqo_qryd import pragma_operations as qrydops
+from qoqo_qryd import SimulatorBackend, qryd_devices
+from qoqo_qryd import pragma_operations as qrydops  # type:ignore
 
 # --------------------- The set-up of the device ----------------------- #
 
@@ -36,16 +39,16 @@ device = qryd_devices.FirstDevice(
     number_columns=4,
     qubits_per_row=[4, 4, 4],
     row_distance=1.0,
-    initial_layout=np.array([
-        [0.0, 1.0, 2.0, 3.0],
-        [0.0, 1.0, 2.0, 3.0],
-        [0.0, 1.0, 2.0, 3.0]]))
+    initial_layout=np.array(
+        [[0.0, 1.0, 2.0, 3.0], [0.0, 1.0, 2.0, 3.0], [0.0, 1.0, 2.0, 3.0]]
+    ),
+)
 
 backend = SimulatorBackend(device)
 
 # ---------------- Multi Qubit Circuits that will fail ---------------------- #
 
-# For the Prototype we assume that only MultiQubitZZ operations 
+# For the Prototype we assume that only MultiQubitZZ operations
 # are allowed between qubits in one row.
 # This is an arbitrary limitation implemented to showcase
 # how a restricted operation would be implemented
@@ -63,7 +66,7 @@ circuit = Circuit()
 # MultiQubitZZ not supported along a column
 circuit += ops.MultiQubitZZ(qubits=[0, 4, 8], theta=1.0)
 # This should fail
-#result = backend.run_circuit(circuit)
+# result = backend.run_circuit(circuit)
 
 
 # --------------------- Working Multi Qubit Circuit ------------------------- #

@@ -3,8 +3,8 @@
 A small collection of example python programs for the QRydDemo project.
 
 * `howto_webapi_qoqo.ipynb` provides an example accessing the QRydDemo's emulator with Qoqo.
-* `switch_layout_example.py` shows how to construct a QRydDemo device and using the PragmaChangeQrydLayout operation to switch between layouts in a quantum Circuit.
-* `shift_qubits_example.py` shows how to construct a QRydDemo device and using the PragmaShiftQrydQubit operation to shift qubits between tweezer positions in a quantum Circuit.
+* `switch_layout_example.py` shows how to construct a QRydDemo device and using the PragmaSwitchDeviceLayout operation to switch between layouts in a quantum Circuit.
+* `shift_qubits_example.py` shows how to construct a QRydDemo device and using the PragmaShiftQubitsTweezers operation to shift qubits between tweezer positions in a quantum Circuit.
 * `multi_qubit_example.py` shows how to use multi-qubit-operations.
 * `serialisation_example.py` demonstrates how to serialize a QuantumProgram to json.
 
