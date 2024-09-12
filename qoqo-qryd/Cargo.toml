@@ -14,7 +14,7 @@ description = "QRyd backend for qoqo quantum computing toolkit"
 include = [
     "src/*",
     "qoqo_qryd/*",
-    "README.md",
+    "README_qoqo_qryd.md",
     "pyproject.toml",
     "Cargo.toml",
     "LICENSE",
