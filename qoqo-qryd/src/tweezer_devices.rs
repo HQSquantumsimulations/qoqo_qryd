@@ -361,9 +361,17 @@ impl TweezerDeviceWrapper {
     /// Raises:
     ///     ValueError: Error in relation selection.
     #[pyo3(text_signature = "(theta, /)")]
-    pub fn phase_shift_controlled_phase(&self, theta: f64) -> PyResult<f64> {
+    pub fn phase_shift_controlled_phase(&self, theta: &Bound<PyAny>) -> PyResult<f64> {
+        let float = if let Ok(conv) = convert_into_calculator_float(theta) {
+            *conv
+                .float()
+                .map_err(|err| PyValueError::new_err(format!("{:}", err)))?
+        } else {
+            theta.extract::<f64>()?
+        };
+
         self.internal
-            .phase_shift_controlled_phase(theta)
+            .phase_shift_controlled_phase(float)
             .ok_or_else(|| PyValueError::new_err("Error in relation selection."))
     }
 
@@ -955,9 +963,17 @@ impl TweezerMutableDeviceWrapper {
     /// Raises:
     ///     ValueError: Error in relation selection.
     #[pyo3(text_signature = "(theta, /)")]
-    pub fn phase_shift_controlled_phase(&self, theta: f64) -> PyResult<f64> {
+    pub fn phase_shift_controlled_phase(&self, theta: &Bound<PyAny>) -> PyResult<f64> {
+        let float = if let Ok(conv) = convert_into_calculator_float(theta) {
+            *conv
+                .float()
+                .map_err(|err| PyValueError::new_err(format!("{:}", err)))?
+        } else {
+            theta.extract::<f64>()?
+        };
+
         self.internal
-            .phase_shift_controlled_phase(theta)
+            .phase_shift_controlled_phase(float)
             .ok_or_else(|| PyValueError::new_err("Error in relation selection."))
     }
 
