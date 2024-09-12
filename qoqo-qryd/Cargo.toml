@@ -6,7 +6,7 @@ edition = "2021"
 license = "Apache-2.0"
 rust-version = "1.68"
 categories = ["science", "simulation"]
-readme = "README.md"
+readme = "README_qoqo_qryd.md"
 homepage = "https://github.com/HQSquantumsimulations/qoqo_qryd"
 documentation = "https://hqsquantumsimulations.github.io/qoqo_qryd/"
 repository = "https://github.com/HQSquantumsimulations/qoqo_qryd/"
@@ -14,7 +14,7 @@ description = "QRyd backend for qoqo quantum computing toolkit"
 include = [
     "src/*",
     "qoqo_qryd/*",
-    "README_qoqo_qryd.md",
+    "README.md",
     "pyproject.toml",
     "Cargo.toml",
     "LICENSE",
