@@ -31,40 +31,18 @@ use roqoqo::{
 };
 
 use crate::{
-    phi_theta_relation, PragmaDeactivateQRydQubit, PragmaShiftQubitsTweezers,
-    PragmaSwitchDeviceLayout,
+    phi_theta_relation, tweezer_devices::TweezerLayoutInfo,
+    tweezer_devices::ALLOWED_NATIVE_MULTI_QUBIT_GATES,
+    tweezer_devices::ALLOWED_NATIVE_SINGLE_QUBIT_GATES,
+    tweezer_devices::ALLOWED_NATIVE_THREE_QUBIT_GATES,
+    tweezer_devices::ALLOWED_NATIVE_TWO_QUBIT_GATES, PragmaDeactivateQRydQubit,
+    PragmaShiftQubitsTweezers, PragmaSwitchDeviceLayout,
 };
 
-/// Native single-qubit gates allowed by the QRyd backend.
-pub static ALLOWED_NATIVE_SINGLE_QUBIT_GATES: [&str; 5] = [
-    "RotateZ",
-    "RotateX",
-    "RotateXY",
-    "PhaseShiftState0",
-    "PhaseShiftState1",
-];
-
-/// Native two-qubit gates allowed by the QRyd backend.
-pub static ALLOWED_NATIVE_TWO_QUBIT_GATES: [&str; 4] = [
-    "ControlledPhaseShift",
-    "ControlledPauliZ",
-    "PhaseShiftedControlledZ",
-    "PhaseShiftedControlledPhase",
-];
-
-/// Native three-qubit gates allowed by the QRyd backend.
-pub static ALLOWED_NATIVE_THREE_QUBIT_GATES: [&str; 2] = [
-    "ControlledControlledPauliZ",
-    "ControlledControlledPhaseShift",
-];
-
-/// Native multi-qubit gates allowed by the QRyd backend.
-pub static ALLOWED_NATIVE_MULTI_QUBIT_GATES: [&str; 0] = [];
-
-/// Tweezer Device
+/// Emulator Device
 ///
 #[derive(Debug, PartialEq, Default, Clone, serde::Serialize, serde::Deserialize)]
-pub struct TweezerDevice {
+pub struct EmulatorDevice {
     /// Mapping from qubit to tweezer.
     pub qubit_to_tweezer: Option<HashMap<usize, usize>>,
     /// Register of Layouts.
@@ -85,128 +63,8 @@ pub struct TweezerDevice {
     pub device_name: String,
 }
 
-/// Tweezers information relative to a Layout
-///
-#[derive(Debug, Default, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
-#[serde(from = "TweezerLayoutInfoSerialize")]
-#[serde(into = "TweezerLayoutInfoSerialize")]
-pub struct TweezerLayoutInfo {
-    /// Maps a single-qubit gate name to a tweezer -> time mapping
-    pub tweezer_single_qubit_gate_times: HashMap<String, HashMap<usize, f64>>,
-    /// Maps a two-qubit gate name to a (tweezer, tweezer) -> time mapping
-    pub tweezer_two_qubit_gate_times: HashMap<String, HashMap<(usize, usize), f64>>,
-    /// Maps a three-qubit gate name to a (tweezer, tweezer, tweezer) -> time mapping
-    pub tweezer_three_qubit_gate_times: HashMap<String, HashMap<(usize, usize, usize), f64>>,
-    /// Maps a multi-qubit gate name to a Vec<tweezer> -> time mapping
-    pub tweezer_multi_qubit_gate_times: HashMap<String, HashMap<Vec<usize>, f64>>,
-    /// Allowed shifts from one tweezer to others.
-    /// The keys give the tweezer a qubit can be shifted out of.
-    /// The values are lists over the directions the qubit in the tweezer can be shifted into.
-    /// The items in the list give the allowed tweezers the qubit can be shifted into in order.
-    /// For a list 1,2,3 the qubit can be shifted into tweezer 1, into tweezer 2 if tweezer 1 is not occupied,
-    /// and into tweezer 3 if tweezer 1 and 2 are not occupied.
-    pub allowed_tweezer_shifts: HashMap<usize, Vec<Vec<usize>>>,
-    /// Specifies how many tweezers per row are present. Dynamic layout switching is only allowed between layouts
-    /// having the same number of tweezers per row.
-    pub tweezers_per_row: Option<Vec<usize>>,
-}
-
-#[derive(Debug, Clone, PartialEq, serde::Deserialize, serde::Serialize)]
-struct TweezerLayoutInfoSerialize {
-    /// Maps a single-qubit gate name to a tweezer -> time mapping
-    tweezer_single_qubit_gate_times: Vec<(String, SingleTweezerTimes)>,
-    /// Maps a two-qubit gate name to a (tweezer, tweezer) -> time mapping
-    tweezer_two_qubit_gate_times: Vec<(String, TwoTweezersTimes)>,
-    /// Maps a three-qubit gate name to a (tweezer, tweezer, tweezer) -> time mapping
-    tweezer_three_qubit_gate_times: Vec<(String, ThreeTweezersTimes)>,
-    /// Maps a multi-qubit gate name to a Vec<tweezer> -> time mapping
-    tweezer_multi_qubit_gate_times: Vec<(String, MultiTweezersTimes)>,
-    /// Allowed shifts from one tweezer to others
-    allowed_tweezer_shifts: Vec<(usize, Vec<Vec<usize>>)>,
-    /// Specifies how many tweezers per row are present.
-    tweezers_per_row: Option<Vec<usize>>,
-}
-type SingleTweezerTimes = Vec<(usize, f64)>;
-type TwoTweezersTimes = Vec<((usize, usize), f64)>;
-type ThreeTweezersTimes = Vec<((usize, usize, usize), f64)>;
-type MultiTweezersTimes = Vec<(Vec<usize>, f64)>;
-
-impl From<TweezerLayoutInfoSerialize> for TweezerLayoutInfo {
-    fn from(info: TweezerLayoutInfoSerialize) -> Self {
-        let tweezer_single_qubit_gate_times: HashMap<String, HashMap<usize, f64>> = info
-            .tweezer_single_qubit_gate_times
-            .into_iter()
-            .map(|(k, v)| (k, v.into_iter().collect()))
-            .collect();
-        let tweezer_two_qubit_gate_times: HashMap<String, HashMap<(usize, usize), f64>> = info
-            .tweezer_two_qubit_gate_times
-            .into_iter()
-            .map(|(k, v)| (k, v.into_iter().collect()))
-            .collect();
-        let tweezer_three_qubit_gate_times: HashMap<String, HashMap<(usize, usize, usize), f64>> =
-            info.tweezer_three_qubit_gate_times
-                .into_iter()
-                .map(|(k, v)| (k, v.into_iter().collect()))
-                .collect();
-        let tweezer_multi_qubit_gate_times: HashMap<String, HashMap<Vec<usize>, f64>> = info
-            .tweezer_multi_qubit_gate_times
-            .into_iter()
-            .map(|(k, v)| (k, v.into_iter().collect()))
-            .collect();
-        let allowed_tweezer_shifts: HashMap<usize, Vec<Vec<usize>>> =
-            info.allowed_tweezer_shifts.into_iter().collect();
-        let tweezers_per_row = info.tweezers_per_row;
-
-        Self {
-            tweezer_single_qubit_gate_times,
-            tweezer_two_qubit_gate_times,
-            tweezer_three_qubit_gate_times,
-            tweezer_multi_qubit_gate_times,
-            allowed_tweezer_shifts,
-            tweezers_per_row,
-        }
-    }
-}
-
-impl From<TweezerLayoutInfo> for TweezerLayoutInfoSerialize {
-    fn from(info: TweezerLayoutInfo) -> Self {
-        let tweezer_single_qubit_gate_times: Vec<(String, SingleTweezerTimes)> = info
-            .tweezer_single_qubit_gate_times
-            .into_iter()
-            .map(|(k, v)| (k, v.into_iter().collect()))
-            .collect();
-        let tweezer_two_qubit_gate_times: Vec<(String, TwoTweezersTimes)> = info
-            .tweezer_two_qubit_gate_times
-            .into_iter()
-            .map(|(k, v)| (k, v.into_iter().collect()))
-            .collect();
-        let tweezer_three_qubit_gate_times: Vec<(String, ThreeTweezersTimes)> = info
-            .tweezer_three_qubit_gate_times
-            .into_iter()
-            .map(|(k, v)| (k, v.into_iter().collect()))
-            .collect();
-        let tweezer_multi_qubit_gate_times: Vec<(String, MultiTweezersTimes)> = info
-            .tweezer_multi_qubit_gate_times
-            .into_iter()
-            .map(|(k, v)| (k, v.into_iter().collect()))
-            .collect();
-        let allowed_tweezer_shifts: Vec<(usize, Vec<Vec<usize>>)> =
-            info.allowed_tweezer_shifts.into_iter().collect();
-        let tweezers_per_row = info.tweezers_per_row;
-
-        Self {
-            tweezer_single_qubit_gate_times,
-            tweezer_two_qubit_gate_times,
-            tweezer_three_qubit_gate_times,
-            tweezer_multi_qubit_gate_times,
-            allowed_tweezer_shifts,
-            tweezers_per_row,
-        }
-    }
-}
-
-impl TweezerDevice {
-    /// Creates a new TweezerDevice instance.
+impl EmulatorDevice {
+    /// Creates a new EmulatorDevice instance.
     ///
     /// # Arguments
     ///
@@ -217,7 +75,7 @@ impl TweezerDevice {
     ///
     /// # Returns
     ///
-    /// * `TweezerDevice` - The new TweezerDevice instance.
+    /// * `EmulatorDevice` - The new EmulatorDevice instance.
     pub fn new(
         seed: Option<usize>,
         controlled_z_phase_relation: Option<String>,
@@ -229,7 +87,7 @@ impl TweezerDevice {
         let controlled_phase_phase_relation =
             controlled_phase_phase_relation.unwrap_or_else(|| "DefaultRelation".to_string());
 
-        TweezerDevice {
+        EmulatorDevice {
             qubit_to_tweezer: None,
             layout_register,
             current_layout: None,
@@ -238,11 +96,11 @@ impl TweezerDevice {
             default_layout: None,
             seed,
             allow_reset: false,
-            device_name: String::from("qryd_tweezer_device"),
+            device_name: String::from("qryd_emulator_device"),
         }
     }
 
-    /// Creates a new TweezerDevice instance containing populated tweezer data.
+    /// Creates a new EmulatorDevice instance containing populated tweezer data.
     ///
     /// This requires a valid QRYD_API_TOKEN. Visit `https://thequantumlaend.de/get-access/` to get one.
     ///
@@ -259,7 +117,7 @@ impl TweezerDevice {
     ///
     /// # Returns
     ///
-    /// * `TweezerDevice` - The new TweezerDevice instance with populated tweezer data.
+    /// * `EmulatorDevice` - The new EmulatorDevice instance with populated tweezer data.
     ///
     /// # Errors
     ///
@@ -368,7 +226,7 @@ impl TweezerDevice {
         // Response handling
         let status_code = resp.status();
         if status_code == reqwest::StatusCode::OK {
-            let mut device = resp.json::<TweezerDevice>().unwrap();
+            let mut device = resp.json::<EmulatorDevice>().unwrap();
             if let Some(default) = device.default_layout.clone() {
                 device.switch_layout(&default, None).unwrap();
             }
@@ -424,7 +282,7 @@ impl TweezerDevice {
         if !self.layout_register.keys().contains(&name.to_string()) {
             return Err(RoqoqoBackendError::GenericError {
                 msg: format!(
-                    "Error switching layout of TweezerDevice. Layout {} is not set.",
+                    "Error switching layout of EmulatorDevice. Layout {} is not set.",
                     name
                 ),
             });
@@ -1332,7 +1190,7 @@ impl TweezerDevice {
     }
 }
 
-impl Device for TweezerDevice {
+impl Device for EmulatorDevice {
     fn single_qubit_gate_time(&self, hqslang: &str, qubit: &usize) -> Option<f64> {
         let tweezer_layout_info = self.get_current_layout_info();
         let mapped_qubit = self.get_tweezer_from_qubit(qubit).ok()?;
@@ -1454,7 +1312,7 @@ impl Device for TweezerDevice {
     fn change_device(&mut self, hqslang: &str, operation: &[u8]) -> Result<(), RoqoqoBackendError> {
         match hqslang {
             "PragmaChangeQRydLayout" => Err(RoqoqoBackendError::GenericError {
-                msg: "Operation not supported in TweezerDevice. Please use PragmaSwitchDeviceLayout.".to_string(),
+                msg: "Operation not supported in EmulatorDevice. Please use PragmaSwitchDeviceLayout.".to_string(),
             }),
             "PragmaSwitchDeviceLayout" => {
                 let de_change_layout: Result<PragmaSwitchDeviceLayout, Box<bincode::ErrorKind>> =
@@ -1474,7 +1332,7 @@ impl Device for TweezerDevice {
                                         } else {
                                             Err(RoqoqoBackendError::GenericError {
                                                 msg: format!(
-                                                    "Error with dynamic layout switching of TweezerDevice. Current tweezers per row is {:?} but switching to a layout with {:?} tweezers per row.",
+                                                    "Error with dynamic layout switching of EmulatorDevice. Current tweezers per row is {:?} but switching to a layout with {:?} tweezers per row.",
                                                     current_tweezers_per_row,
                                                     new_tweezers_per_row,
                                                 ),
@@ -1482,14 +1340,14 @@ impl Device for TweezerDevice {
                                         }
                                     },
                                     _ => Err(RoqoqoBackendError::GenericError {
-                                        msg: "Error with dynamic layout switching of TweezerDevice. Tweezers per row info missing from current or new layout.".to_string()
+                                        msg: "Error with dynamic layout switching of EmulatorDevice. Tweezers per row info missing from current or new layout.".to_string()
                                     })
                                 }
                             },
                             None => {
                                 Err(RoqoqoBackendError::GenericError {
                                     msg: format!(
-                                        "Error with dynamic layout switching of TweezerDevice. Layout {} is not set.",
+                                        "Error with dynamic layout switching of EmulatorDevice. Layout {} is not set.",
                                         pragma.new_layout()
                                     ),
                                 })
@@ -1497,7 +1355,7 @@ impl Device for TweezerDevice {
                         }
                     },
                     Err(_) => Err(RoqoqoBackendError::GenericError {
-                        msg: "Wrapped operation not supported in TweezerDevice".to_string(),
+                        msg: "Wrapped operation not supported in EmulatorDevice".to_string(),
                     }),
                 }
             },
@@ -1510,12 +1368,12 @@ impl Device for TweezerDevice {
                         Ok(())
                     }
                     Err(_) => Err(RoqoqoBackendError::GenericError {
-                        msg: "Wrapped operation not supported in TweezerDevice".to_string(),
+                        msg: "Wrapped operation not supported in EmulatorDevice".to_string(),
                     }),
                 }
             },
             "PragmaShiftQRydQubit" => Err(RoqoqoBackendError::GenericError {
-                msg: "Operation not supported in TweezerDevice. Please use PragmaShiftQubitsTweezers.".to_string(),
+                msg: "Operation not supported in EmulatorDevice. Please use PragmaShiftQubitsTweezers.".to_string(),
             }),
             "PragmaShiftQubitsTweezers" => {
                 let de_shift_qubits_tweezers: Result<
@@ -1553,12 +1411,12 @@ impl Device for TweezerDevice {
                         Ok(())
                     }
                     Err(_) => Err(RoqoqoBackendError::GenericError {
-                        msg: "Wrapped operation not supported in TweezerDevice".to_string(),
+                        msg: "Wrapped operation not supported in EmulatorDevice".to_string(),
                     }),
                 }
             },
             _ => Err(RoqoqoBackendError::GenericError {
-                msg: "Wrapped operation not supported in TweezerDevice".to_string(),
+                msg: "Wrapped operation not supported in EmulatorDevice".to_string(),
             }),
         }
     }
