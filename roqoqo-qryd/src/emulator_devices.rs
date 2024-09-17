@@ -17,6 +17,7 @@
 //! QRyd devices can be physical hardware or simulators.
 
 use std::collections::HashMap;
+use std::env;
 
 use roqoqo::RoqoqoBackendError;
 
@@ -90,128 +91,134 @@ impl EmulatorDevice {
     /// # Errors
     ///
     /// * `RoqoqoBackendError`
-    // #[cfg(feature = "web-api")]
-    // pub fn from_api(
-    //     device_name: Option<String>,
-    //     access_token: Option<String>,
-    //     mock_port: Option<String>,
-    //     seed: Option<usize>,
-    //     dev: Option<bool>,
-    //     api_version: Option<String>,
-    // ) -> Result<Self, RoqoqoBackendError> {
-    //     // Preparing variables
-    //     let device_name_internal = device_name.unwrap_or_else(|| String::from("qryd_emulator"));
-    //     let api_version = api_version.unwrap_or_else(|| String::from("v1_1"));
-    //     let dev = dev.unwrap_or(false);
-    //     let hqs_env_var = env::var("QRYD_API_HQS").is_ok();
-    //     let access_token_internal: String = if mock_port.is_some() {
-    //         "".to_string()
-    //     } else {
-    //         match access_token {
-    //             Some(s) => s,
-    //             None => env::var("QRYD_API_TOKEN").map_err(|_| {
-    //                 RoqoqoBackendError::MissingAuthentication {
-    //                     msg: "QRYD access token is missing.".to_string(),
-    //                 }
-    //             })?,
-    //         }
-    //     };
+    #[cfg(feature = "web-api")]
+    pub fn from_api(
+        device_name: Option<String>,
+        access_token: Option<String>,
+        mock_port: Option<String>,
+        seed: Option<usize>,
+        dev: Option<bool>,
+        api_version: Option<String>,
+    ) -> Result<Self, RoqoqoBackendError> {
+        // Preparing variables
+        let device_name_internal = device_name.unwrap_or_else(|| String::from("qryd_emulator"));
+        let api_version = api_version.unwrap_or_else(|| String::from("v1_1"));
+        let dev = dev.unwrap_or(false);
+        let hqs_env_var = env::var("QRYD_API_HQS").is_ok();
+        let access_token_internal: String = if mock_port.is_some() {
+            "".to_string()
+        } else {
+            match access_token {
+                Some(s) => s,
+                None => env::var("QRYD_API_TOKEN").map_err(|_| {
+                    RoqoqoBackendError::MissingAuthentication {
+                        msg: "QRYD access token is missing.".to_string(),
+                    }
+                })?,
+            }
+        };
 
-    //     // Client setup
-    //     let client = if mock_port.is_some() {
-    //         reqwest::blocking::Client::builder().build().map_err(|x| {
-    //             RoqoqoBackendError::NetworkError {
-    //                 msg: format!("Could not create test client {:?}.", x),
-    //             }
-    //         })?
-    //     } else {
-    //         reqwest::blocking::Client::builder()
-    //             .https_only(true)
-    //             .build()
-    //             .map_err(|x| RoqoqoBackendError::NetworkError {
-    //                 msg: format!("Could not create https client {:?}.", x),
-    //             })?
-    //     };
+        // Client setup
+        let client = if mock_port.is_some() {
+            reqwest::blocking::Client::builder().build().map_err(|x| {
+                RoqoqoBackendError::NetworkError {
+                    msg: format!("Could not create test client {:?}.", x),
+                }
+            })?
+        } else {
+            reqwest::blocking::Client::builder()
+                .https_only(true)
+                .build()
+                .map_err(|x| RoqoqoBackendError::NetworkError {
+                    msg: format!("Could not create https client {:?}.", x),
+                })?
+        };
 
-    //     // Response gathering
-    //     let resp = if let Some(port) = mock_port {
-    //         client
-    //             .get(format!("http://127.0.0.1:{}", port))
-    //             .body(device_name_internal.clone())
-    //             .send()
-    //             .map_err(|e| RoqoqoBackendError::NetworkError {
-    //                 msg: format!("{:?}", e),
-    //             })?
-    //     } else {
-    //         match (dev, hqs_env_var) {
-    //             (true, true) => client
-    //                 .get(format!(
-    //                     "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
-    //                     api_version, device_name_internal
-    //                 ))
-    //                 .header("X-API-KEY", access_token_internal)
-    //                 .header("X-DEV", "?1")
-    //                 .header("X-HQS", "?1")
-    //                 .send()
-    //                 .map_err(|e| RoqoqoBackendError::NetworkError {
-    //                     msg: format!("{:?}", e),
-    //                 })?,
-    //             (true, false) => client
-    //                 .get(format!(
-    //                     "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
-    //                     api_version, device_name_internal
-    //                 ))
-    //                 .header("X-API-KEY", access_token_internal)
-    //                 .header("X-DEV", "?1")
-    //                 .send()
-    //                 .map_err(|e| RoqoqoBackendError::NetworkError {
-    //                     msg: format!("{:?}", e),
-    //                 })?,
-    //             (false, true) => client
-    //                 .get(format!(
-    //                     "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
-    //                     api_version, device_name_internal
-    //                 ))
-    //                 .header("X-API-KEY", access_token_internal)
-    //                 .header("X-HQS", "?1")
-    //                 .send()
-    //                 .map_err(|e| RoqoqoBackendError::NetworkError {
-    //                     msg: format!("{:?}", e),
-    //                 })?,
-    //             (false, false) => client
-    //                 .get(format!(
-    //                     "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
-    //                     api_version, device_name_internal
-    //                 ))
-    //                 .header("X-API-KEY", access_token_internal)
-    //                 .send()
-    //                 .map_err(|e| RoqoqoBackendError::NetworkError {
-    //                     msg: format!("{:?}", e),
-    //                 })?,
-    //         }
-    //     };
+        // Response gathering
+        let resp = if let Some(port) = mock_port {
+            client
+                .get(format!("http://127.0.0.1:{}", port))
+                .body(device_name_internal.clone())
+                .send()
+                .map_err(|e| RoqoqoBackendError::NetworkError {
+                    msg: format!("{:?}", e),
+                })?
+        } else {
+            match (dev, hqs_env_var) {
+                (true, true) => client
+                    .get(format!(
+                        "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
+                        api_version, device_name_internal
+                    ))
+                    .header("X-API-KEY", access_token_internal)
+                    .header("X-DEV", "?1")
+                    .header("X-HQS", "?1")
+                    .send()
+                    .map_err(|e| RoqoqoBackendError::NetworkError {
+                        msg: format!("{:?}", e),
+                    })?,
+                (true, false) => client
+                    .get(format!(
+                        "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
+                        api_version, device_name_internal
+                    ))
+                    .header("X-API-KEY", access_token_internal)
+                    .header("X-DEV", "?1")
+                    .send()
+                    .map_err(|e| RoqoqoBackendError::NetworkError {
+                        msg: format!("{:?}", e),
+                    })?,
+                (false, true) => client
+                    .get(format!(
+                        "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
+                        api_version, device_name_internal
+                    ))
+                    .header("X-API-KEY", access_token_internal)
+                    .header("X-HQS", "?1")
+                    .send()
+                    .map_err(|e| RoqoqoBackendError::NetworkError {
+                        msg: format!("{:?}", e),
+                    })?,
+                (false, false) => client
+                    .get(format!(
+                        "https://api.qryddemo.itp3.uni-stuttgart.de/{}/devices/{}",
+                        api_version, device_name_internal
+                    ))
+                    .header("X-API-KEY", access_token_internal)
+                    .send()
+                    .map_err(|e| RoqoqoBackendError::NetworkError {
+                        msg: format!("{:?}", e),
+                    })?,
+            }
+        };
 
-    //     // Response handling
-    //     let status_code = resp.status();
-    //     if status_code == reqwest::StatusCode::OK {
-    //         let mut device = resp.json::<EmulatorDevice>().unwrap();
-    //         if let Some(default) = device.default_layout.clone() {
-    //             device.switch_layout(&default, None).unwrap();
-    //         }
-    //         if let Some(new_seed) = seed {
-    //             device.seed = Some(new_seed);
-    //         }
-    //         device.device_name = device_name_internal;
-    //         Ok(device)
-    //     } else {
-    //         Err(RoqoqoBackendError::NetworkError {
-    //             msg: format!(
-    //                 "Request to server failed with HTTP status code {:?}.",
-    //                 status_code
-    //             ),
-    //         })
-    //     }
-    // }
+        // Response handling
+        let status_code = resp.status();
+        if status_code == reqwest::StatusCode::OK {
+            let mut device = resp.json::<TweezerDevice>().unwrap();
+            if device.layout_register.is_some() {
+                return Err(RoqoqoBackendError::NetworkError {
+                    msg: "`.from_api() pulled a TweezerDevice instance incompatible with EmulatorDevice.`.".to_string(),
+                });
+            }
+            if let Some(default) = device.default_layout.clone() {
+                device.switch_layout(&default, None).unwrap();
+            }
+            if let Some(new_seed) = seed {
+                device.seed = Some(new_seed);
+            }
+            device.device_name = device_name_internal;
+            let emulator = EmulatorDevice { internal: device };
+            Ok(emulator)
+        } else {
+            Err(RoqoqoBackendError::NetworkError {
+                msg: format!(
+                    "Request to server failed with HTTP status code {:?}.",
+                    status_code
+                ),
+            })
+        }
+    }
 
     /// Adds a new empty Layout to the device's register.
     ///
