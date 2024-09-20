@@ -16,12 +16,22 @@
 //! Provides the devices that are used to execute quantum programs with the QRyd backend.
 //! QRyd devices can be physical hardware or simulators.
 
+use bincode::deserialize;
+use ndarray::Array2;
 use std::collections::HashMap;
 use std::env;
 
+use roqoqo::devices::{Device, GenericDevice};
 use roqoqo::RoqoqoBackendError;
 
-use crate::tweezer_devices::TweezerDevice;
+use crate::{tweezer_devices::TweezerDevice, PragmaDeactivateQRydQubit, PragmaShiftQubitsTweezers};
+
+const SINGLE_QUBIT_GATE_NAMES: [&str; 2] = ["RotateX", "RotateZ"];
+const TWO_QUBIT_GATE_NAMES: [&str; 3] = [
+    "ControlledPhaseShift",
+    "PhaseShiftedControlledPhase",
+    "PhaseShiftedControlledZ",
+];
 
 /// Emulator Device
 ///
@@ -198,18 +208,14 @@ impl EmulatorDevice {
             let mut device = resp.json::<TweezerDevice>().unwrap();
             if device.layout_register.is_some() {
                 return Err(RoqoqoBackendError::NetworkError {
-                    msg: "`.from_api() pulled a TweezerDevice instance incompatible with EmulatorDevice.`.".to_string(),
+                    msg: "`.from_api()` pulled a TweezerDevice instance incompatible with EmulatorDevice.".to_string(),
                 });
-            }
-            if let Some(default) = device.default_layout.clone() {
-                device.switch_layout(&default, None).unwrap();
             }
             if let Some(new_seed) = seed {
                 device.seed = Some(new_seed);
             }
             device.device_name = device_name_internal;
-            let emulator = EmulatorDevice { internal: device };
-            Ok(emulator)
+            Ok(EmulatorDevice { internal: device })
         } else {
             Err(RoqoqoBackendError::NetworkError {
                 msg: format!(
@@ -218,42 +224,6 @@ impl EmulatorDevice {
                 ),
             })
         }
-    }
-
-    /// Adds a new empty Layout to the device's register.
-    ///
-    /// # Arguments
-    ///
-    /// * `name` - The name of the new Layout to be added to the register.
-    pub fn add_layout(&mut self, name: &str) -> Result<(), RoqoqoBackendError> {
-        self.internal.add_layout(name)
-    }
-
-    /// Switch to a different pre-defined Layout.
-    ///
-    /// It is updated only if the given Layout name is present in the device's
-    /// Layout register. If the qubit -> tweezer mapping is empty, it is
-    /// trivially populated by default.
-    ///
-    /// # Arguments
-    ///
-    /// * `name` - The name of the new Layout.
-    /// * `with_trivial_map` - Whether the qubit -> tweezer mapping should be trivially populated. Defaults to true.
-    pub fn switch_layout(
-        &mut self,
-        name: &str,
-        with_trivial_map: Option<bool>,
-    ) -> Result<(), RoqoqoBackendError> {
-        self.internal.switch_layout(name, with_trivial_map)
-    }
-
-    /// Returns a vector of all available Layout names.
-    ///
-    /// # Returns:
-    ///
-    /// * `Vec<&str>` - The vector of all available Layout names.
-    pub fn available_layouts(&self) -> Vec<&str> {
-        self.internal.available_layouts()
     }
 
     /// Modifies the qubit -> tweezer mapping of the device.
@@ -278,160 +248,6 @@ impl EmulatorDevice {
         self.internal.add_qubit_tweezer_mapping(qubit, tweezer)
     }
 
-    /// Set the time of a single-qubit gate for a tweezer in a given Layout.
-    ///
-    /// # Arguments
-    ///
-    /// * `hqslang` - The hqslang name of a single-qubit gate.
-    /// * `tweezer` - The index of the tweezer.
-    /// * `gate_time` - The the gate time for the given gate.
-    /// * `layout_name` - The name of the Layout to apply the gate time in. Defaults to the current Layout.
-    pub fn set_tweezer_single_qubit_gate_time(
-        &mut self,
-        hqslang: &str,
-        tweezer: usize,
-        gate_time: f64,
-        layout_name: Option<String>,
-    ) -> Result<(), RoqoqoBackendError> {
-        self.internal
-            .set_tweezer_single_qubit_gate_time(hqslang, tweezer, gate_time, layout_name)
-    }
-
-    /// Set the time of a two-qubit gate for a tweezer couple in a given Layout.
-    ///
-    /// # Arguments
-    ///
-    /// * `hqslang` - The hqslang name of a two-qubit gate.
-    /// * `tweezer0` - The index of the first tweezer.
-    /// * `tweezer1` - The index of the second tweezer.
-    /// * `gate_time` - The the gate time for the given gate.
-    /// * `layout_name` - The name of the Layout to apply the gate time in. Defaults to the current Layout.
-    pub fn set_tweezer_two_qubit_gate_time(
-        &mut self,
-        hqslang: &str,
-        tweezer0: usize,
-        tweezer1: usize,
-        gate_time: f64,
-        layout_name: Option<String>,
-    ) -> Result<(), RoqoqoBackendError> {
-        self.internal.set_tweezer_two_qubit_gate_time(
-            hqslang,
-            tweezer0,
-            tweezer1,
-            gate_time,
-            layout_name,
-        )
-    }
-
-    /// Set the time of a three-qubit gate for a tweezer trio in a given Layout.
-    ///
-    /// # Arguments
-    ///
-    /// * `hqslang` - The hqslang name of a three-qubit gate.
-    /// * `tweezer0` - The index of the first tweezer.
-    /// * `tweezer1` - The index of the second tweezer.
-    /// * `tweezer2` - The index of the third tweezer.
-    /// * `gate_time` - The the gate time for the given gate.
-    /// * `layout_name` - The name of the Layout to apply the gate time in. Defaults to the current Layout.
-    pub fn set_tweezer_three_qubit_gate_time(
-        &mut self,
-        hqslang: &str,
-        tweezer0: usize,
-        tweezer1: usize,
-        tweezer2: usize,
-        gate_time: f64,
-        layout_name: Option<String>,
-    ) -> Result<(), RoqoqoBackendError> {
-        self.internal.set_tweezer_three_qubit_gate_time(
-            hqslang,
-            tweezer0,
-            tweezer1,
-            tweezer2,
-            gate_time,
-            layout_name,
-        )
-    }
-
-    /// Set the time of a multi-qubit gate for a list of tweezers in a given Layout.
-    ///
-    /// # Arguments
-    ///
-    /// * `hqslang` - The hqslang name of a multi-qubit gate.
-    /// * `tweezers` - The list of tweezer indexes.
-    /// * `gate_time` - The the gate time for the given gate.
-    /// * `layout_name` - The name of the Layout to apply the gate time in. Defaults to the current Layout.
-    pub fn set_tweezer_multi_qubit_gate_time(
-        &mut self,
-        hqslang: &str,
-        tweezers: &[usize],
-        gate_time: f64,
-        layout_name: Option<String>,
-    ) -> Result<(), RoqoqoBackendError> {
-        self.internal
-            .set_tweezer_multi_qubit_gate_time(hqslang, tweezers, gate_time, layout_name)
-    }
-
-    /// Set the allowed Tweezer shifts of a specified Tweezer.
-    ///
-    /// The tweezer give the tweezer a qubit can be shifted out of. The values are lists
-    /// over the directions the qubit in the tweezer can be shifted into.
-    /// The items in the list give the allowed tweezers the qubit can be shifted into in order.
-    /// For a list 1,2,3 the qubit can be shifted into tweezer 1, into tweezer 2 if tweezer 1 is not occupied,
-    /// and into tweezer 3 if tweezer 1 and 2 are not occupied.
-    ///
-    /// # Arguments
-    ///
-    /// * `tweezer` - The index of the tweezer.
-    /// * `allowed_shifts` - The allowed Tweezer shifts.
-    /// * `layout_name` - The name of the Layout to apply the gate time in. Defaults to the current Layout.
-    ///
-    /// # Returns
-    ///
-    /// * `Ok(())` - The allowed shifts have been set.
-    /// * `Err(RoqoqoBackendError)` - The given shifts are not valid.
-    pub fn set_allowed_tweezer_shifts(
-        &mut self,
-        tweezer: &usize,
-        allowed_shifts: &[&[usize]],
-        layout_name: Option<String>,
-    ) -> Result<(), RoqoqoBackendError> {
-        self.internal
-            .set_allowed_tweezer_shifts(tweezer, allowed_shifts, layout_name)
-    }
-
-    /// Set the allowed Tweezer shifts from a list of tweezers.
-    ///
-    /// # Arguments
-    ///
-    /// * `row_shifts` - A list of lists, each representing a row of tweezers.
-    /// * `layout_name` - The name of the Layout to apply the gate time in. Defaults to the current Layout.
-    pub fn set_allowed_tweezer_shifts_from_rows(
-        &mut self,
-        row_shifts: &[&[usize]],
-        layout_name: Option<String>,
-    ) -> Result<(), RoqoqoBackendError> {
-        self.internal
-            .set_allowed_tweezer_shifts_from_rows(row_shifts, layout_name)
-    }
-
-    /// Set the tweezer per row value for a given Layout.
-    ///
-    /// This is needed for dynamically switching layouts during circuit execution.
-    /// Only switching between layouts having the same tweezer per row value is supported.
-    ///
-    /// # Arguments
-    ///
-    /// * `tweezers_per_row` - Vector containing the number of tweezers per row to set.
-    /// * `layout_name` - The name of the Layout to set the tweezer per row for. Defaults to the current Layout.
-    pub fn set_tweezers_per_row(
-        &mut self,
-        tweezers_per_row: Vec<usize>,
-        layout_name: Option<String>,
-    ) -> Result<(), RoqoqoBackendError> {
-        self.internal
-            .set_tweezers_per_row(tweezers_per_row, layout_name)
-    }
-
     /// Set whether the device allows PragmaActiveReset operations or not.
     ///
     /// # Arguments
@@ -444,20 +260,6 @@ impl EmulatorDevice {
     /// * `Err(RoqoqoBackendError)` - The device isn't compatible with PragmaActiveReset.
     pub fn set_allow_reset(&mut self, allow_reset: bool) -> Result<(), RoqoqoBackendError> {
         self.internal.set_allow_reset(allow_reset)
-    }
-
-    /// Set the name of the default layout to use and switch to it.
-    ///
-    /// # Arguments
-    ///
-    /// * `layout` - The name of the layout to use.
-    ///
-    /// # Returns
-    ///
-    /// * `Ok(())` - The default layout has been set and switched to.
-    /// * `Err(RoqoqoBackendError)` - The given layout name is not present in the layout register.
-    pub fn set_default_layout(&mut self, layout: &str) -> Result<(), RoqoqoBackendError> {
-        self.internal.set_default_layout(layout)
     }
 
     /// Get the tweezer identifier of the given qubit.
@@ -476,19 +278,13 @@ impl EmulatorDevice {
 
     /// Get the names of the available gates in the given layout.
     ///
-    /// # Arguments
-    ///
-    /// * `layout` - The name of the layout. Defaults to the current Layout.
-    ///
     /// # Returns
     ///
     /// * `Vec<&str>` - Vector of the names of the available gates in the given layout.
     /// * `Err(RoqoqoBackendError)` - The given layout name is not present in the layout register.
-    pub fn get_available_gates_names(
-        &self,
-        layout_name: Option<String>,
-    ) -> Result<Vec<&str>, RoqoqoBackendError> {
-        self.internal.get_available_gates_names(layout_name)
+    pub fn get_available_gates_names(&self) -> Result<Vec<&str>, RoqoqoBackendError> {
+        // TODO ouput all that's available in qoqo
+        Ok(vec![])
     }
 
     /// Deactivate the given qubit in the device.
@@ -538,8 +334,18 @@ impl EmulatorDevice {
     ///
     /// * `Some<f64>` - The gate time.
     /// * `None` - The gate is not available on the device.
-    pub fn gate_time_controlled_z(&self, control: &usize, target: &usize, phi: f64) -> Option<f64> {
-        self.internal.gate_time_controlled_z(control, target, phi)
+    pub fn gate_time_controlled_z(
+        &self,
+        _control: &usize,
+        _target: &usize,
+        phi: f64,
+    ) -> Option<f64> {
+        if let Some(relation_phi) = self.phase_shift_controlled_z() {
+            if (relation_phi.abs() - phi.abs()).abs() < 0.0001 {
+                return Some(1e-6);
+            }
+        }
+        None
     }
 
     /// Returns the gate time of a PhaseShiftedControlledPhase operation with the given qubits and phi and theta angles.
@@ -557,25 +363,17 @@ impl EmulatorDevice {
     /// * `None` - The gate is not available on the device.
     pub fn gate_time_controlled_phase(
         &self,
-        control: &usize,
-        target: &usize,
+        _control: &usize,
+        _target: &usize,
         phi: f64,
         theta: f64,
     ) -> Option<f64> {
-        self.internal
-            .gate_time_controlled_phase(control, target, phi, theta)
-    }
-
-    /// Returns the two tweezer edges of the device.
-    ///
-    /// And edge between two tweezer is valid only if the
-    /// PhaseShiftedControlledPhase gate can be performed.
-    ///
-    /// # Returns:
-    ///
-    /// * `Vec<(usize, usize)>` - The vector containing the edges.
-    pub fn two_tweezer_edges(&self) -> Vec<(usize, usize)> {
-        self.internal.two_tweezer_edges()
+        if let Some(relation_phi) = self.phase_shift_controlled_phase(theta) {
+            if (relation_phi.abs() - phi.abs()).abs() < 0.0001 {
+                return Some(1e-6);
+            }
+        }
+        None
     }
 
     /// Returns the number of total tweezer positions in the device.
@@ -583,12 +381,11 @@ impl EmulatorDevice {
     /// # Returns
     ///
     /// * `usize` - The number of tweezer positions in the device.
-    /// * `layout_name` - The name of the layout to reference. Defaults to the current layout.
-    pub fn number_tweezer_positions(
-        &self,
-        layout_name: Option<String>,
-    ) -> Result<usize, RoqoqoBackendError> {
-        self.internal.number_tweezer_positions(layout_name)
+    pub fn number_tweezer_positions(&self) -> usize {
+        if let Some(map) = &self.internal.qubit_to_tweezer {
+            return map.len();
+        }
+        0
     }
 
     /// Returns the seed usized for the API.
@@ -599,5 +396,142 @@ impl EmulatorDevice {
     /// Returns the backend associated with the device.
     pub fn qrydbackend(&self) -> String {
         self.internal.device_name.clone()
+    }
+}
+
+impl Device for EmulatorDevice {
+    fn single_qubit_gate_time(&self, _hqslang: &str, _qubit: &usize) -> Option<f64> {
+        Some(1.0)
+    }
+
+    fn two_qubit_gate_time(
+        &self,
+        _hqslang: &str,
+        _control: &usize,
+        _target: &usize,
+    ) -> Option<f64> {
+        Some(1.0)
+    }
+
+    fn three_qubit_gate_time(
+        &self,
+        _hqslang: &str,
+        _control_0: &usize,
+        _control_1: &usize,
+        _target: &usize,
+    ) -> Option<f64> {
+        Some(1.0)
+    }
+
+    fn multi_qubit_gate_time(&self, _hqslang: &str, _qubits: &[usize]) -> Option<f64> {
+        Some(1.0)
+    }
+
+    #[allow(unused_variables)]
+    fn qubit_decoherence_rates(&self, qubit: &usize) -> Option<Array2<f64>> {
+        self.internal.qubit_decoherence_rates(qubit)
+    }
+
+    fn number_qubits(&self) -> usize {
+        self.internal.number_qubits()
+    }
+
+    fn two_qubit_edges(&self) -> Vec<(usize, usize)> {
+        vec![]
+    }
+
+    fn change_device(&mut self, hqslang: &str, operation: &[u8]) -> Result<(), RoqoqoBackendError> {
+        match hqslang {
+            "PragmaChangeQRydLayout" => Err(RoqoqoBackendError::GenericError {
+                msg: "Operation PragmaChangeQRydLayout not supported in EmulatorDevice.".to_string(),
+            }),
+            "PragmaSwitchDeviceLayout" => Err(RoqoqoBackendError::GenericError {
+                msg: "Operation PragmaSwitchDeviceLayout not supported in EmulatorDevice.".to_string(),
+            }),
+            "PragmaDeactivateQRydQubit" => {
+                let de_change_layout: Result<PragmaDeactivateQRydQubit, Box<bincode::ErrorKind>> =
+                    deserialize(operation);
+                match de_change_layout {
+                    Ok(pragma) => {
+                        self.deactivate_qubit(pragma.qubit)?;
+                        Ok(())
+                    }
+                    Err(_) => Err(RoqoqoBackendError::GenericError {
+                        msg: "Wrapped operation not supported in EmulatorDevice".to_string(),
+                    }),
+                }
+            },
+            "PragmaShiftQRydQubit" => Err(RoqoqoBackendError::GenericError {
+                msg: "Operation PragmaShiftQRydQubit not supported in EmulatorDevice. Please use PragmaShiftQubitsTweezers.".to_string(),
+            }),
+            "PragmaShiftQubitsTweezers" => {
+                let de_shift_qubits_tweezers: Result<
+                    PragmaShiftQubitsTweezers,
+                    Box<bincode::ErrorKind>,
+                > = deserialize(operation);
+                match de_shift_qubits_tweezers {
+                    Ok(pragma) => {
+                        // Check if the there are qubits to move
+                        if self.internal.qubit_to_tweezer.is_none() {
+                            return Err(RoqoqoBackendError::GenericError {
+                                msg: "The device qubit -> tweezer mapping is empty: no qubits to shift.".to_string(),
+                            });
+                        }
+                        // Start applying the shifts
+                        if let Some(map) = &mut self.internal.qubit_to_tweezer {
+                            for (shift_start, shift_end) in &pragma.shifts {
+                                if let Some(qubit_to_move) =
+                                    map.iter()
+                                        .find_map(|(&qbt, &twz)| if twz == *shift_start { Some(qbt) } else { None })
+                                {
+                                    // Move the qubit into the new tweezer
+                                    map.remove(&qubit_to_move);
+                                    map.insert(qubit_to_move, *shift_end);
+                                }
+                            }
+                        }
+                        Ok(())
+                    }
+                    Err(_) => Err(RoqoqoBackendError::GenericError {
+                        msg: "Wrapped operation not supported in TweezerDevice".to_string(),
+                    }),
+                }
+            },
+            _ => Err(RoqoqoBackendError::GenericError {
+                msg: "Wrapped operation not supported in TweezerDevice".to_string(),
+            }),
+        }
+    }
+
+    fn to_generic_device(&self) -> GenericDevice {
+        let mut new_generic_device = GenericDevice::new(self.number_qubits());
+
+        for single_qubit_gate_name in SINGLE_QUBIT_GATE_NAMES {
+            for i in 0..self.number_qubits() {
+                new_generic_device
+                    .set_single_qubit_gate_time(single_qubit_gate_name, i, 1.0)
+                    .unwrap();
+            }
+        }
+
+        for two_qubit_gate_name in TWO_QUBIT_GATE_NAMES {
+            for i in 0..self.number_qubits() {
+                for j in 0..self.number_qubits() {
+                    if i != j {
+                        new_generic_device
+                            .set_two_qubit_gate_time(two_qubit_gate_name, i, j, 1.0)
+                            .unwrap();
+                    }
+                }
+            }
+        }
+
+        for qubit in 0..self.number_qubits() {
+            new_generic_device
+                .set_qubit_decoherence_rates(qubit, self.qubit_decoherence_rates(&qubit).unwrap())
+                .unwrap();
+        }
+
+        new_generic_device
     }
 }
