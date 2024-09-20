@@ -35,6 +35,7 @@ use roqoqo_qryd::{QRydAPIDevice, TweezerDevice};
 /// tweezers. This class is meant to be used by the end user.
 ///
 /// Args:
+///     seed ((Optional[int])): Optional seed, for simulation purposes.
 ///     controlled_z_phase_relation ((Optional[Union[str, float]])): The relation to use for the PhaseShiftedControlledZ gate.
 ///                                   It can be hardcoded to a specific value if a float is passed in as String.
 ///     controlled_phase_phase_relation ((Optional[Union[str, float]])): The relation to use for the PhaseShiftedControlledPhase gate.
@@ -50,7 +51,7 @@ impl TweezerDeviceWrapper {
     /// Creates a new TweezerDevice instance.
     ///
     /// Args:
-    ///     seed (int): Optional seed, for simulation purposes.
+    ///     seed (Optional[int]): Optional seed, for simulation purposes.
     ///     controlled_z_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledZ gate.
     ///     controlled_phase_phase_relation (Optional[Union[str, float]]): The relation to use for the PhaseShiftedControlledPhase gate.
     ///
@@ -532,7 +533,7 @@ impl TweezerDeviceWrapper {
             ));
         }
         let serialized = serde_json::to_string(&self.internal)
-            .map_err(|_| PyValueError::new_err("Cannot serialize TweezerMutableDevice to json"))?;
+            .map_err(|_| PyValueError::new_err("Cannot serialize TweezerDevice to json"))?;
         Ok(serialized)
     }
 
