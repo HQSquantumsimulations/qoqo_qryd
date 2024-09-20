@@ -68,7 +68,8 @@ pub struct TweezerDevice {
     /// Mapping from qubit to tweezer.
     pub qubit_to_tweezer: Option<HashMap<usize, usize>>,
     /// Register of Layouts.
-    pub layout_register: HashMap<String, TweezerLayoutInfo>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub layout_register: Option<HashMap<String, TweezerLayoutInfo>>,
     /// Current Layout.
     pub current_layout: Option<String>,
     /// The specific PhaseShiftedControlledZ relation to use.
@@ -78,7 +79,7 @@ pub struct TweezerDevice {
     /// The default layout to use at first intantiation.
     pub default_layout: Option<String>,
     /// Optional seed, for simulation purposes.
-    seed: Option<usize>,
+    pub(crate) seed: Option<usize>,
     /// Whether to allow PragmaActiveReset operations on the device.
     pub allow_reset: bool,
     /// Device name.
@@ -223,7 +224,7 @@ impl TweezerDevice {
         controlled_z_phase_relation: Option<String>,
         controlled_phase_phase_relation: Option<String>,
     ) -> Self {
-        let layout_register: HashMap<String, TweezerLayoutInfo> = HashMap::new();
+        let layout_register: Option<HashMap<String, TweezerLayoutInfo>> = Some(HashMap::new());
         let controlled_z_phase_relation =
             controlled_z_phase_relation.unwrap_or_else(|| "DefaultRelation".to_string());
         let controlled_phase_phase_relation =
@@ -393,16 +394,20 @@ impl TweezerDevice {
     ///
     /// * `name` - The name of the new Layout to be added to the register.
     pub fn add_layout(&mut self, name: &str) -> Result<(), RoqoqoBackendError> {
-        if self.layout_register.contains_key(name) {
-            return Err(RoqoqoBackendError::GenericError {
-                msg: format!(
-                    "Error adding layout to ExperimentalDevice. Layout name {} is already in use in the Layout register.",
-                    name,
-                ),
-            });
+        if let Some(int_register) = &self.layout_register {
+            if int_register.contains_key(name) {
+                return Err(RoqoqoBackendError::GenericError {
+                    msg: format!(
+                        "Error adding layout to TweezerDevice. Layout name {} is already in use in the Layout register.",
+                        name,
+                    ),
+                });
+            }
+            self.layout_register
+                .as_mut()
+                .unwrap()
+                .insert(name.to_string(), TweezerLayoutInfo::default());
         }
-        self.layout_register
-            .insert(name.to_string(), TweezerLayoutInfo::default());
         Ok(())
     }
 
@@ -421,17 +426,19 @@ impl TweezerDevice {
         name: &str,
         with_trivial_map: Option<bool>,
     ) -> Result<(), RoqoqoBackendError> {
-        if !self.layout_register.keys().contains(&name.to_string()) {
-            return Err(RoqoqoBackendError::GenericError {
-                msg: format!(
-                    "Error switching layout of TweezerDevice. Layout {} is not set.",
-                    name
-                ),
-            });
-        }
-        self.current_layout = Some(name.to_string());
-        if self.qubit_to_tweezer.is_none() && with_trivial_map.unwrap_or(true) {
-            self.qubit_to_tweezer = Some(self.new_trivial_mapping());
+        if let Some(int_register) = &self.layout_register {
+            if !int_register.keys().contains(&name.to_string()) {
+                return Err(RoqoqoBackendError::GenericError {
+                    msg: format!(
+                        "Error switching layout of TweezerDevice. Layout {} is not set.",
+                        name
+                    ),
+                });
+            }
+            self.current_layout = Some(name.to_string());
+            if self.qubit_to_tweezer.is_none() && with_trivial_map.unwrap_or(true) {
+                self.qubit_to_tweezer = Some(self.new_trivial_mapping());
+            }
         }
         Ok(())
     }
@@ -442,12 +449,15 @@ impl TweezerDevice {
     ///
     /// * `Vec<&str>` - The vector of all available Layout names.
     pub fn available_layouts(&self) -> Vec<&str> {
-        self.layout_register
-            .keys()
-            .collect_vec()
-            .iter()
-            .map(|x| x.as_str())
-            .collect()
+        if let Some(int_register) = &self.layout_register {
+            return int_register
+                .keys()
+                .collect_vec()
+                .iter()
+                .map(|x| x.as_str())
+                .collect();
+        }
+        vec![]
     }
 
     /// Modifies the qubit -> tweezer mapping of the device.
@@ -519,7 +529,7 @@ impl TweezerDevice {
             })?;
         self.qubit_to_tweezer = None;
 
-        if let Some(info) = self.layout_register.get_mut(&layout_name) {
+        if let Some(info) = self.layout_register.as_mut().unwrap().get_mut(&layout_name) {
             let sqt = &mut info.tweezer_single_qubit_gate_times;
             if let Some(present_hm) = sqt.get_mut(hqslang) {
                 present_hm.insert(tweezer, gate_time);
@@ -564,7 +574,7 @@ impl TweezerDevice {
             })?;
         self.qubit_to_tweezer = None;
 
-        if let Some(info) = self.layout_register.get_mut(&layout_name) {
+        if let Some(info) = self.layout_register.as_mut().unwrap().get_mut(&layout_name) {
             let sqt = &mut info.tweezer_two_qubit_gate_times;
             if let Some(present_hm) = sqt.get_mut(hqslang) {
                 present_hm.insert((tweezer0, tweezer1), gate_time);
@@ -611,7 +621,7 @@ impl TweezerDevice {
             })?;
         self.qubit_to_tweezer = None;
 
-        if let Some(info) = self.layout_register.get_mut(&layout_name) {
+        if let Some(info) = self.layout_register.as_mut().unwrap().get_mut(&layout_name) {
             let sqt = &mut info.tweezer_three_qubit_gate_times;
             if let Some(present_hm) = sqt.get_mut(hqslang) {
                 present_hm.insert((tweezer0, tweezer1, tweezer2), gate_time);
@@ -654,7 +664,7 @@ impl TweezerDevice {
             })?;
         self.qubit_to_tweezer = None;
 
-        if let Some(info) = self.layout_register.get_mut(&layout_name) {
+        if let Some(info) = self.layout_register.as_mut().unwrap().get_mut(&layout_name) {
             let sqt = &mut info.tweezer_multi_qubit_gate_times;
             if let Some(present_hm) = sqt.get_mut(hqslang) {
                 present_hm.insert(tweezers.to_vec(), gate_time);
@@ -718,7 +728,7 @@ impl TweezerDevice {
                 msg: "The allowed shifts contain the given tweezer.".to_string(),
             });
         }
-        if let Some(info) = self.layout_register.get_mut(&layout_name) {
+        if let Some(info) = self.layout_register.as_mut().unwrap().get_mut(&layout_name) {
             info.allowed_tweezer_shifts
                 .entry(*tweezer)
                 .or_insert_with(Vec::new)
@@ -764,6 +774,8 @@ impl TweezerDevice {
 
         let allowed_shifts = &mut self
             .layout_register
+            .as_mut()
+            .unwrap()
             .get_mut(&layout_name)
             .unwrap()
             .allowed_tweezer_shifts;
@@ -812,7 +824,7 @@ impl TweezerDevice {
                 msg: "No layout name provided and no current layout set.".to_string(),
             })?;
 
-        if let Some(info) = self.layout_register.get_mut(&layout_name) {
+        if let Some(info) = self.layout_register.as_mut().unwrap().get_mut(&layout_name) {
             info.tweezers_per_row = Some(tweezers_per_row);
         }
 
@@ -845,7 +857,7 @@ impl TweezerDevice {
     /// * `Ok(())` - The default layout has been set and switched to.
     /// * `Err(RoqoqoBackendError)` - The given layout name is not present in the layout register.
     pub fn set_default_layout(&mut self, layout: &str) -> Result<(), RoqoqoBackendError> {
-        if !self.layout_register.contains_key(layout) {
+        if !self.layout_register.as_ref().unwrap().contains_key(layout) {
             return Err(RoqoqoBackendError::GenericError {
                 msg: "The given layout name is not present in the layout register.".to_string(),
             });
@@ -900,7 +912,7 @@ impl TweezerDevice {
             })?;
 
         let mut names: HashSet<&str> = HashSet::new();
-        if let Some(info) = self.layout_register.get(&layout_name) {
+        if let Some(info) = self.layout_register.as_ref().unwrap().get(&layout_name) {
             let sqg = &info.tweezer_single_qubit_gate_times;
             for name in sqg.keys().by_ref() {
                 names.insert(name);
@@ -1073,7 +1085,7 @@ impl TweezerDevice {
     ) -> Result<usize, RoqoqoBackendError> {
         let mut set_tweezer_indices: HashSet<usize> = HashSet::new();
         let tweezer_info = if let Some(layout_name) = layout_name {
-            if let Some(tw) = self.layout_register.get(&layout_name) {
+            if let Some(tw) = self.layout_register.as_ref().unwrap().get(&layout_name) {
                 tw
             } else {
                 return Err(RoqoqoBackendError::GenericError {
@@ -1117,6 +1129,8 @@ impl TweezerDevice {
         if let Some(current) = &self.current_layout {
             Ok(self
                 .layout_register
+                .as_ref()
+                .unwrap()
                 .get(current)
                 .expect("Unexpectedly did not find current layout. Bug in roqoqo-qryd."))
         } else {
@@ -1124,13 +1138,18 @@ impl TweezerDevice {
                 msg: "Tried to access current layout info but no current layout is set."
                     .to_string(),
             })
-            // panic!("Tried to access current layout info but no current layout is set.")
         }
     }
 
     fn is_tweezer_present(&self, tweezer: usize, layout_name: Option<String>) -> bool {
+        // For the EmulatorDevice, the tweezer check must not be performed
+        if self.layout_register.is_none() {
+            return true;
+        }
         let tweezer_info = if let Some(x) = layout_name {
             self.layout_register
+                .as_ref()
+                .unwrap()
                 .get(&x)
                 .expect("The specified layout does not exist.")
         } else {
@@ -1462,7 +1481,7 @@ impl Device for TweezerDevice {
                 match de_change_layout {
                     Ok(pragma) => {
                         // Check layout existance
-                        match self.layout_register.get(pragma.new_layout()) {
+                        match self.layout_register.as_ref().unwrap().get(pragma.new_layout()) {
                             Some(new_layout_tweezer_info) => {
                                 // Check layout tweezers per row
                                 match (&self.get_current_layout_info()?.tweezers_per_row, &new_layout_tweezer_info.tweezers_per_row) {
@@ -1563,20 +1582,6 @@ impl Device for TweezerDevice {
         }
     }
 
-    /// Turns Device into GenericDevice.
-    ///
-    /// Can be used as a generic interface for devices when a boxed dyn trait object cannot be used
-    /// (for example when the interface needs to be serialized).
-    ///
-    /// # Notes
-    ///
-    /// GenericDevice uses nested HashMaps to represent the most general device connectivity.
-    /// The memory usage will be inefficient for devices with large qubit numbers.
-    ///
-    /// # Returns
-    ///
-    /// * `GenericDevice` - The device in generic representation.
-    ///
     fn to_generic_device(&self) -> GenericDevice {
         let mut new_generic_device = GenericDevice::new(self.number_qubits());
         let tweezer_info = self.get_current_layout_info().unwrap();
