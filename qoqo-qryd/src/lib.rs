@@ -57,6 +57,11 @@ pub use pragma_operations::*;
 pub mod tweezer_devices;
 pub use tweezer_devices::*;
 
+/// QRyd Emulator Devices.
+///
+pub mod emulator_devices;
+pub use emulator_devices::*;
+
 #[cfg(feature = "simulator")]
 pub mod simulator_backend;
 #[cfg(feature = "simulator")]
