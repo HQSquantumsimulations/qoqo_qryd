@@ -18,20 +18,17 @@
 
 use bincode::deserialize;
 use ndarray::Array2;
+use roqoqo::prelude::Operate;
 use std::collections::HashMap;
 use std::env;
 
 use roqoqo::devices::{Device, GenericDevice};
+use roqoqo::operations::*;
 use roqoqo::RoqoqoBackendError;
 
-use crate::{tweezer_devices::TweezerDevice, PragmaDeactivateQRydQubit, PragmaShiftQubitsTweezers};
+use strum::IntoEnumIterator;
 
-const SINGLE_QUBIT_GATE_NAMES: [&str; 2] = ["RotateX", "RotateZ"];
-const TWO_QUBIT_GATE_NAMES: [&str; 3] = [
-    "ControlledPhaseShift",
-    "PhaseShiftedControlledPhase",
-    "PhaseShiftedControlledZ",
-];
+use crate::{tweezer_devices::TweezerDevice, PragmaDeactivateQRydQubit, PragmaShiftQubitsTweezers};
 
 /// Emulator Device
 ///
@@ -283,8 +280,20 @@ impl EmulatorDevice {
     /// * `Vec<&str>` - Vector of the names of the available gates in the given layout.
     /// * `Err(RoqoqoBackendError)` - The given layout name is not present in the layout register.
     pub fn get_available_gates_names(&self) -> Result<Vec<&str>, RoqoqoBackendError> {
-        // TODO ouput all that's available in qoqo
-        Ok(vec![])
+        let mut gate_names: Vec<&str> = vec![];
+        for gate in SingleQubitGateOperation::iter() {
+            gate_names.push(gate.hqslang());
+        }
+        for gate in TwoQubitGateOperation::iter() {
+            gate_names.push(gate.hqslang());
+        }
+        for gate in ThreeQubitGateOperation::iter() {
+            gate_names.push(gate.hqslang());
+        }
+        for gate in MultiQubitGateOperation::iter() {
+            gate_names.push(gate.hqslang());
+        }
+        Ok(gate_names)
     }
 
     /// Deactivate the given qubit in the device.
@@ -506,7 +515,8 @@ impl Device for EmulatorDevice {
     fn to_generic_device(&self) -> GenericDevice {
         let mut new_generic_device = GenericDevice::new(self.number_qubits());
 
-        for single_qubit_gate_name in SINGLE_QUBIT_GATE_NAMES {
+        for single_qubit_gate in SingleQubitGateOperation::iter() {
+            let single_qubit_gate_name = single_qubit_gate.hqslang();
             for i in 0..self.number_qubits() {
                 new_generic_device
                     .set_single_qubit_gate_time(single_qubit_gate_name, i, 1.0)
@@ -514,7 +524,8 @@ impl Device for EmulatorDevice {
             }
         }
 
-        for two_qubit_gate_name in TWO_QUBIT_GATE_NAMES {
+        for two_qubit_gate in TwoQubitGateOperation::iter() {
+            let two_qubit_gate_name = two_qubit_gate.hqslang();
             for i in 0..self.number_qubits() {
                 for j in 0..self.number_qubits() {
                     if i != j {
