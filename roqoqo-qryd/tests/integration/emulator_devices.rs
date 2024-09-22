@@ -61,6 +61,17 @@ fn test_qubit_tweezer_mapping() {
     assert_eq!(add_01.unwrap(), vec![(0, 1), (2, 3)].into_iter().collect());
 }
 
+#[test]
+fn test_available_gate_names() {
+    let device = EmulatorDevice::new(None, None, None);
+
+    let gates = device.get_available_gates_names().unwrap();
+    assert!(gates.contains(&"RotateX"));
+    assert!(gates.contains(&"SWAP"));
+    assert!(gates.contains(&"Toffoli"));
+    assert!(gates.contains(&"MultiQubitZZ"));
+}
+
 /// Test EmulatorDevice allow_reset field
 #[test]
 fn test_allow_reset() {
@@ -317,4 +328,6 @@ fn test_to_generic_device() {
         generic_device.qubit_decoherence_rates(&1),
         Some(Array2::zeros((3, 3).to_owned()))
     );
+
+    assert!(generic_device.single_qubit_gates.get("error").is_none());
 }
