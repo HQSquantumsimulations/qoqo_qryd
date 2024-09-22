@@ -42,7 +42,7 @@ roqoqo = { git = "https://github.com/mlodi-hqs/qoqo", branch = "strum", features
     "serialize",
 ] }
 roqoqo-derive = { git = "https://github.com/mlodi-hqs/qoqo", branch = "strum" }
-roqoqo-quest = { version = "~0.14", default-features = false, optional = true }
+roqoqo-quest = { git = "https://github.com/mlodi-hqs/qoqo-quest", branch = "strum_fix_temp", default-features = false, optional = true }
 qoqo_calculator = { version = "~1.2" }
 strum = { version = "0.26" }
 

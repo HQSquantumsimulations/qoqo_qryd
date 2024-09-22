@@ -119,10 +119,10 @@ fn test_available_gate_names() {
         let res = device
             .call_method1("get_available_gates_names", ())
             .unwrap();
-        assert!(res.contains(&"RotateX".to_string()).unwrap());
-        assert!(res.contains(&"SWAP".to_string()).unwrap());
-        assert!(res.contains(&"Toffoli".to_string()).unwrap());
-        assert!(res.contains(&"MultiQubitZZ".to_string()).unwrap());
+        assert!(res.contains("RotateX".to_string()).unwrap());
+        assert!(res.contains("SWAP".to_string()).unwrap());
+        assert!(res.contains("Toffoli".to_string()).unwrap());
+        assert!(res.contains("MultiQubitZZ".to_string()).unwrap());
     })
 }
 
