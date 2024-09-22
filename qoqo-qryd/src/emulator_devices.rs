@@ -15,10 +15,10 @@ use pyo3::exceptions::{PyTypeError, PyValueError};
 use pyo3::prelude::*;
 use pyo3::types::{IntoPyDict, PyByteArray};
 
-use qoqo::devices::GenericDeviceWrapper;
+use qoqo::{devices::GenericDeviceWrapper, QoqoBackendError};
 use qoqo_calculator_pyo3::convert_into_calculator_float;
 use roqoqo::devices::Device;
-use roqoqo_qryd::EmulatorDevice;
+use roqoqo_qryd::{EmulatorDevice, TweezerDevice};
 
 /// Emulator Device
 ///
@@ -175,6 +175,20 @@ impl EmulatorDeviceWrapper {
     pub fn get_available_gates_names(&self) -> PyResult<Vec<&str>> {
         self.internal
             .get_available_gates_names()
+            .map_err(|err| PyValueError::new_err(format!("{:}", err)))
+    }
+
+    /// Set whether the device allows PragmaActiveReset operations or not.
+    ///
+    /// Args:
+    ///     allow_reset(bool): Whether the device should allow PragmaActiveReset operations or not.
+    ///
+    /// Raises:
+    ///     ValueError: The device isn't compatible with PragmaActiveReset.
+    #[pyo3(text_signature = "(allow_reset, /)")]
+    pub fn set_allow_reset(&mut self, allow_reset: bool) -> PyResult<()> {
+        self.internal
+            .set_allow_reset(allow_reset)
             .map_err(|err| PyValueError::new_err(format!("{:}", err)))
     }
 
@@ -394,7 +408,7 @@ impl EmulatorDeviceWrapper {
     /// Raises:
     ///     ValueError: Cannot serialize EmulatorDevice to bytes.
     pub fn to_bincode(&self) -> PyResult<Py<PyByteArray>> {
-        let serialized = serialize(&self.internal)
+        let serialized = serialize(&self.internal.internal)
             .map_err(|_| PyValueError::new_err("Cannot serialize EmulatorDevice to bytes"))?;
         let b: Py<PyByteArray> = Python::with_gil(|py| -> Py<PyByteArray> {
             PyByteArray::new_bound(py, &serialized[..]).into()
@@ -408,7 +422,7 @@ impl EmulatorDeviceWrapper {
     ///     input (ByteArray): The serialized EmulatorDevice (in bincode form).
     ///
     /// Returns:
-    ///     TweezerDevice: The deserialized EmulatorDevice.
+    ///     EmulatorDevice: The deserialized EmulatorDevice.
     ///
     /// Raises:
     ///     TypeError: Input cannot be converted to byte array.
@@ -421,9 +435,11 @@ impl EmulatorDeviceWrapper {
             .map_err(|_| PyTypeError::new_err("Input cannot be converted to byte array"))?;
 
         Ok(EmulatorDeviceWrapper {
-            internal: deserialize(&bytes[..]).map_err(|_| {
-                PyValueError::new_err("Input cannot be deserialized to TweezerDevice")
-            })?,
+            internal: EmulatorDevice {
+                internal: deserialize(&bytes[..]).map_err(|_| {
+                    PyValueError::new_err("Input cannot be deserialized to EmulatorDevice")
+                })?,
+            },
         })
     }
 
@@ -459,8 +475,9 @@ impl EmulatorDeviceWrapper {
     #[staticmethod]
     #[pyo3(text_signature = "(input, /)")]
     fn from_json(input: &str) -> PyResult<EmulatorDeviceWrapper> {
-        let internal: EmulatorDevice = serde_json::from_str(input)
+        let tw: TweezerDevice = serde_json::from_str(input)
             .map_err(|_| PyValueError::new_err("Input cannot be deserialized to EmulatorDevice"))?;
+        let internal = EmulatorDevice { internal: tw };
         Ok(EmulatorDeviceWrapper { internal })
     }
 
@@ -489,4 +506,17 @@ impl EmulatorDeviceWrapper {
     pub fn seed(&self) -> Option<usize> {
         self.internal.seed()
     }
+}
+
+/// Convert generic python object to [roqoqo_qryd::EmulatorDevice].
+///
+/// Fallible conversion of generic python object to [roqoqo_qryd::EmulatorDevice].
+pub fn convert_into_device(input: &Bound<PyAny>) -> Result<EmulatorDevice, QoqoBackendError> {
+    let get_bytes = input
+        .call_method0("to_bincode")
+        .map_err(|_| QoqoBackendError::CannotExtractObject)?;
+    let bytes = get_bytes
+        .extract::<Vec<u8>>()
+        .map_err(|_| QoqoBackendError::CannotExtractObject)?;
+    bincode::deserialize(&bytes[..]).map_err(|_| QoqoBackendError::CannotExtractObject)
 }
