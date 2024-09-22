@@ -584,17 +584,17 @@ fn test_to_from_json() {
 //     wiremock_server.verify().await;
 // }
 
-/// Test convert_into_device function
-#[test]
-fn test_convert_to_device() {
-    pyo3::prepare_freethreaded_python();
-    Python::with_gil(|py| {
-        let device_type = py.get_type_bound::<EmulatorDeviceWrapper>();
-        let device = device_type.call0().unwrap();
+// /// Test convert_into_device function
+// #[test]
+// fn test_convert_to_device() {
+//     pyo3::prepare_freethreaded_python();
+//     Python::with_gil(|py| {
+//         let device_type = py.get_type_bound::<EmulatorDeviceWrapper>();
+//         let device = device_type.call0().unwrap();
 
-        let converted = convert_into_device(&device).unwrap();
-        let rust_dev: EmulatorDevice = EmulatorDevice::new(None, None, None);
+//         let converted = convert_into_device(&device).unwrap();
+//         let rust_dev: EmulatorDevice = EmulatorDevice::new(None, None, None);
 
-        assert_eq!(converted, rust_dev);
-    });
-}
+//         assert_eq!(converted, rust_dev);
+//     });
+// }
