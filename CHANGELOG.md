@@ -2,6 +2,10 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+# Unreleased
+
+* Added `EmulatorDevice`
+
 # 0.18.0
 
 * Modified `PragmaShiftQubitsTweezers` to functionally allow full-row shifts
