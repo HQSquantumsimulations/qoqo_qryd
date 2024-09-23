@@ -436,31 +436,46 @@ impl EmulatorDevice {
 }
 
 impl Device for EmulatorDevice {
-    fn single_qubit_gate_time(&self, _hqslang: &str, _qubit: &usize) -> Option<f64> {
-        Some(1.0)
+    fn single_qubit_gate_time(&self, hqslang: &str, _qubit: &usize) -> Option<f64> {
+        if let Some(available) = &self.internal.available_gates {
+            if available.contains(&hqslang.to_string()) {
+                return Some(1.0);
+            }
+        }
+        None
     }
 
-    fn two_qubit_gate_time(
-        &self,
-        _hqslang: &str,
-        _control: &usize,
-        _target: &usize,
-    ) -> Option<f64> {
-        Some(1.0)
+    fn two_qubit_gate_time(&self, hqslang: &str, _control: &usize, _target: &usize) -> Option<f64> {
+        if let Some(available) = &self.internal.available_gates {
+            if available.contains(&hqslang.to_string()) {
+                return Some(1.0);
+            }
+        }
+        None
     }
 
     fn three_qubit_gate_time(
         &self,
-        _hqslang: &str,
+        hqslang: &str,
         _control_0: &usize,
         _control_1: &usize,
         _target: &usize,
     ) -> Option<f64> {
-        Some(1.0)
+        if let Some(available) = &self.internal.available_gates {
+            if available.contains(&hqslang.to_string()) {
+                return Some(1.0);
+            }
+        }
+        None
     }
 
-    fn multi_qubit_gate_time(&self, _hqslang: &str, _qubits: &[usize]) -> Option<f64> {
-        Some(1.0)
+    fn multi_qubit_gate_time(&self, hqslang: &str, _qubits: &[usize]) -> Option<f64> {
+        if let Some(available) = &self.internal.available_gates {
+            if available.contains(&hqslang.to_string()) {
+                return Some(1.0);
+            }
+        }
+        None
     }
 
     #[allow(unused_variables)]

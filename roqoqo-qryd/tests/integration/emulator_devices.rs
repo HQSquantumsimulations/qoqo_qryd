@@ -173,7 +173,18 @@ fn test_number_tweezer_positions() {
 /// Test EmulatorDevice ..._qubit_gate_time() methods
 #[test]
 fn test_qubit_times() {
-    let device = EmulatorDevice::new(None, None, None);
+    let mut device = EmulatorDevice::new(None, None, None);
+
+    assert!(device.single_qubit_gate_time("RotateX", &0).is_none());
+
+    device.add_available_gate("RotateX").unwrap();
+    device
+        .add_available_gate("PhaseShiftedControlledPhase")
+        .unwrap();
+    device
+        .add_available_gate("ControlledControlledPhaseShift")
+        .unwrap();
+    device.add_available_gate("MultiQubitZZ").unwrap();
 
     assert!(device.single_qubit_gate_time("RotateX", &0).is_some());
     assert!(device

@@ -265,13 +265,13 @@ fn test_qubit_times() {
         let device = device_type.call0().unwrap();
 
         device
-            .call_method1("add_qubit_tweezer_mapping", (0, 1))
+            .call_method1("add_available_gate", ("RotateX",))
             .unwrap();
         device
-            .call_method1("add_qubit_tweezer_mapping", (1, 2))
+            .call_method1("add_available_gate", ("PhaseShiftedControlledZ",))
             .unwrap();
         device
-            .call_method1("add_qubit_tweezer_mapping", (3, 0))
+            .call_method1("add_available_gate", ("ControlledControlledPauliZ",))
             .unwrap();
 
         assert!(device
