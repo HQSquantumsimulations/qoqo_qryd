@@ -34,7 +34,7 @@ use crate::{tweezer_devices::TweezerDevice, PragmaDeactivateQRydQubit, PragmaShi
 ///
 #[derive(Debug, PartialEq, Default, Clone, serde::Serialize, serde::Deserialize)]
 pub struct EmulatorDevice {
-    /// Mapping from qubit to tweezer.
+    /// Internal TweezerDevice instance.
     pub internal: TweezerDevice,
 }
 
@@ -72,6 +72,7 @@ impl EmulatorDevice {
                 seed,
                 allow_reset: false,
                 device_name: String::from("qryd_tweezer_device"),
+                available_gates: Some(vec![]),
             },
         }
     }
@@ -245,6 +246,41 @@ impl EmulatorDevice {
         self.internal.add_qubit_tweezer_mapping(qubit, tweezer)
     }
 
+    /// Adds a gate to the available list.
+    ///
+    /// # Arguments
+    ///
+    /// * `hqslang` - The hqslang name of the gate.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(())` - The gate has been successfully added to the available ones.
+    /// * `Err(RoqoqoBackendError)` - The gate does not exist.
+    pub fn add_available_gate(&mut self, hqslang: &str) -> Result<(), RoqoqoBackendError> {
+        let mut gate_names: Vec<&str> = vec![];
+        for gate in SingleQubitGateOperation::iter() {
+            gate_names.push(gate.hqslang());
+        }
+        for gate in TwoQubitGateOperation::iter() {
+            gate_names.push(gate.hqslang());
+        }
+        for gate in ThreeQubitGateOperation::iter() {
+            gate_names.push(gate.hqslang());
+        }
+        for gate in MultiQubitGateOperation::iter() {
+            gate_names.push(gate.hqslang());
+        }
+        if !gate_names.contains(&hqslang) {
+            return Err(RoqoqoBackendError::GenericError {
+                msg: format!("Gate '{}' does not exist.", hqslang),
+            });
+        }
+        if let Some(available) = self.internal.available_gates.as_mut() {
+            available.push(hqslang.to_string());
+        }
+        Ok(())
+    }
+
     /// Set whether the device allows PragmaActiveReset operations or not.
     ///
     /// # Arguments
@@ -273,27 +309,18 @@ impl EmulatorDevice {
         self.internal.get_tweezer_from_qubit(qubit)
     }
 
-    /// Get the names of the available gates in the given layout.
+    /// Get the names of the available gates in the device.
     ///
     /// # Returns
     ///
-    /// * `Vec<&str>` - Vector of the names of the available gates in the given layout.
-    /// * `Err(RoqoqoBackendError)` - The given layout name is not present in the layout register.
+    /// * `Vec<&str>` - Vector of the names of the available gates in the device.
+    /// * `Err(RoqoqoBackendError)` - The given layout name is not present in the device.
     pub fn get_available_gates_names(&self) -> Result<Vec<&str>, RoqoqoBackendError> {
-        let mut gate_names: Vec<&str> = vec![];
-        for gate in SingleQubitGateOperation::iter() {
-            gate_names.push(gate.hqslang());
+        if let Some(available) = self.internal.available_gates.as_ref() {
+            Ok(available.iter().map(|g| g.as_str()).collect())
+        } else {
+            Ok(vec![])
         }
-        for gate in TwoQubitGateOperation::iter() {
-            gate_names.push(gate.hqslang());
-        }
-        for gate in ThreeQubitGateOperation::iter() {
-            gate_names.push(gate.hqslang());
-        }
-        for gate in MultiQubitGateOperation::iter() {
-            gate_names.push(gate.hqslang());
-        }
-        Ok(gate_names)
     }
 
     /// Deactivate the given qubit in the device.

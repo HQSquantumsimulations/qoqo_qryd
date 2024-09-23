@@ -150,6 +150,19 @@ impl EmulatorDeviceWrapper {
         })
     }
 
+    /// Modifies the qubit -> tweezer mapping of the device.
+    ///
+    /// Args:
+    ///     hqslang (str): The hqslang name of the gate.
+    ///     
+    /// Raises:
+    ///     ValueError: The gate does not exist.
+    pub fn add_available_gate(&mut self, hqslang: &str) -> PyResult<()> {
+        self.internal
+            .add_available_gate(hqslang)
+            .map_err(|err| PyValueError::new_err(format!("{:}", err)))
+    }
+
     /// Get the qubit -> tweezer mapping of the device.
     ///
     /// Returns:
