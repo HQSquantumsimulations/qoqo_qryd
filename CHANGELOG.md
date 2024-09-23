@@ -2,7 +2,7 @@
 
 Tracks qoqo-qryd changes after 0.5
 
-# Unreleased
+# 0.19.0
 
 * Added `EmulatorDevice`
 
