@@ -68,7 +68,6 @@ pub struct TweezerDevice {
     /// Mapping from qubit to tweezer.
     pub qubit_to_tweezer: Option<HashMap<usize, usize>>,
     /// Register of Layouts.
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub layout_register: Option<HashMap<String, TweezerLayoutInfo>>,
     /// Current Layout.
     pub current_layout: Option<String>,
@@ -84,6 +83,9 @@ pub struct TweezerDevice {
     pub allow_reset: bool,
     /// Device name.
     pub device_name: String,
+    /// Available gates (EmulatorDevice).
+    #[serde(default)]
+    pub available_gates: Option<Vec<String>>,
 }
 
 /// Tweezers information relative to a Layout
@@ -240,6 +242,7 @@ impl TweezerDevice {
             seed,
             allow_reset: false,
             device_name: String::from("qryd_tweezer_device"),
+            available_gates: None,
         }
     }
 
