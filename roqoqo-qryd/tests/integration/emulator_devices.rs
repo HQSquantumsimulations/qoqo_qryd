@@ -61,9 +61,19 @@ fn test_qubit_tweezer_mapping() {
     assert_eq!(add_01.unwrap(), vec![(0, 1), (2, 3)].into_iter().collect());
 }
 
+// Test EmulatorDevice get_available_gates_names() and add_available_gate() methods
 #[test]
 fn test_available_gate_names() {
-    let device = EmulatorDevice::new(None, None, None);
+    let mut device = EmulatorDevice::new(None, None, None);
+
+    assert!(device.get_available_gates_names().unwrap().is_empty());
+
+    assert!(device.add_available_gate("error").is_err());
+
+    device.add_available_gate("RotateX").unwrap();
+    device.add_available_gate("SWAP").unwrap();
+    device.add_available_gate("Toffoli").unwrap();
+    device.add_available_gate("MultiQubitZZ").unwrap();
 
     let gates = device.get_available_gates_names().unwrap();
     assert!(gates.contains(&"RotateX"));
@@ -329,5 +339,5 @@ fn test_to_generic_device() {
         Some(Array2::zeros((3, 3).to_owned()))
     );
 
-    assert!(generic_device.single_qubit_gates.get("error").is_none());
+    assert!(!generic_device.single_qubit_gates.contains_key("error"));
 }

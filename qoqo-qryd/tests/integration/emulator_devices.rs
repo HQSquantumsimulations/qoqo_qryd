@@ -13,20 +13,12 @@
 //! Integration test for Emulator Devices
 
 use pyo3::{
-    exceptions::PyValueError,
     prelude::*,
     types::{IntoPyDict, PyDict},
 };
-#[cfg(feature = "web-api")]
-use serde_json::Value;
 
 use qoqo_qryd::{emulator_devices::convert_into_device, EmulatorDeviceWrapper};
 use roqoqo_qryd::{phi_theta_relation, EmulatorDevice};
-
-#[cfg(feature = "web-api")]
-use wiremock::matchers::method;
-#[cfg(feature = "web-api")]
-use wiremock::{Mock, MockServer, ResponseTemplate};
 
 /// Test new instantiation of EmulatorDeviceWrapper
 #[test]
@@ -109,12 +101,31 @@ fn test_qubit_tweezer_mapping() {
     })
 }
 
+/// Test get_available_gates_names and add_available_gate for EmulatorDeviceWrapper
 #[test]
 fn test_available_gate_names() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let device_type = py.get_type_bound::<EmulatorDeviceWrapper>();
         let device = device_type.call0().unwrap();
+
+        let res = device
+            .call_method1("get_available_gates_names", ())
+            .unwrap();
+        assert!(res.is_empty().unwrap());
+
+        device
+            .call_method1("add_available_gate", ("RotateX",))
+            .unwrap();
+        device
+            .call_method1("add_available_gate", ("SWAP",))
+            .unwrap();
+        device
+            .call_method1("add_available_gate", ("Toffoli",))
+            .unwrap();
+        device
+            .call_method1("add_available_gate", ("MultiQubitZZ",))
+            .unwrap();
 
         let res = device
             .call_method1("get_available_gates_names", ())
@@ -425,32 +436,32 @@ fn test_to_from_json() {
     });
 }
 
-// /// Test to_ and from_bincode functions of EmulatorDeviceWrapper
-// #[test]
-// fn test_to_from_bincode() {
-//     pyo3::prepare_freethreaded_python();
-//     Python::with_gil(|py| {
-//         let device_type = py.get_type_bound::<EmulatorDeviceWrapper>();
-//         let device = device_type.call0().unwrap();
+/// Test to_ and from_bincode functions of EmulatorDeviceWrapper
+#[test]
+fn test_to_from_bincode() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let device_type = py.get_type_bound::<EmulatorDeviceWrapper>();
+        let device = device_type.call0().unwrap();
 
-//         let serialised = device.call_method0("to_bincode").unwrap();
-//         let deserialised = device.call_method1("from_bincode", (&serialised,)).unwrap();
+        let serialised = device.call_method0("to_bincode").unwrap();
+        let deserialised = device.call_method1("from_bincode", (&serialised,)).unwrap();
 
-//         let vec: Vec<u8> = Vec::new();
-//         let deserialised_error = device.call_method1("from_bincode", (vec.clone(),));
-//         assert!(deserialised_error.is_err());
+        let vec: Vec<u8> = Vec::new();
+        let deserialised_error = device.call_method1("from_bincode", (vec.clone(),));
+        assert!(deserialised_error.is_err());
 
-//         let deserialised_error = deserialised.call_method0("from_bincode");
-//         assert!(deserialised_error.is_err());
+        let deserialised_error = deserialised.call_method0("from_bincode");
+        assert!(deserialised_error.is_err());
 
-//         let serialised_error = serialised.call_method0("to_bincode");
-//         assert!(serialised_error.is_err());
+        let serialised_error = serialised.call_method0("to_bincode");
+        assert!(serialised_error.is_err());
 
-//         let serde_wrapper = deserialised.extract::<EmulatorDeviceWrapper>().unwrap();
-//         let device_wrapper = device.extract::<EmulatorDeviceWrapper>().unwrap();
-//         assert_eq!(device_wrapper, serde_wrapper);
-//     });
-// }
+        let serde_wrapper = deserialised.extract::<EmulatorDeviceWrapper>().unwrap();
+        let device_wrapper = device.extract::<EmulatorDeviceWrapper>().unwrap();
+        assert_eq!(device_wrapper, serde_wrapper);
+    });
+}
 
 // /// Test from_api of TweezerDeviceWrapper
 // #[tokio::test]
@@ -584,17 +595,17 @@ fn test_to_from_json() {
 //     wiremock_server.verify().await;
 // }
 
-// /// Test convert_into_device function
-// #[test]
-// fn test_convert_to_device() {
-//     pyo3::prepare_freethreaded_python();
-//     Python::with_gil(|py| {
-//         let device_type = py.get_type_bound::<EmulatorDeviceWrapper>();
-//         let device = device_type.call0().unwrap();
+/// Test convert_into_device function
+#[test]
+fn test_convert_to_device() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let device_type = py.get_type_bound::<EmulatorDeviceWrapper>();
+        let device = device_type.call0().unwrap();
 
-//         let converted = convert_into_device(&device).unwrap();
-//         let rust_dev: EmulatorDevice = EmulatorDevice::new(None, None, None);
+        let converted = convert_into_device(&device).unwrap();
+        let rust_dev: EmulatorDevice = EmulatorDevice::new(None, None, None);
 
-//         assert_eq!(converted, rust_dev);
-//     });
-// }
+        assert_eq!(converted, rust_dev);
+    });
+}
