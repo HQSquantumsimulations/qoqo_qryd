@@ -95,6 +95,7 @@ pub use api_devices::*;
 ///     pragma_operations
 ///     qryd_devices
 ///     tweezer_devices
+///     emulator_devices
 ///
 ///
 #[pymodule]
@@ -125,6 +126,10 @@ fn qoqo_qryd(_py: Python, module: &Bound<PyModule>) -> PyResult<()> {
     system_modules.set_item(
         "qoqo_qryd.tweezer_devices",
         module.getattr("tweezer_devices")?,
+    )?;
+    system_modules.set_item(
+        "qoqo_qryd.emulator_devices",
+        module.getattr("emulator_devices")?,
     )?;
     Ok(())
 }
