@@ -45,6 +45,7 @@ use pyo3::wrap_pymodule;
 ///     SimulatorBackend
 ///     APIBackend
 ///     tweezer_devices
+///     emulator_devices
 ///
 pub mod qryd_devices;
 pub use qryd_devices::*;
@@ -112,6 +113,8 @@ fn qoqo_qryd(_py: Python, module: &Bound<PyModule>) -> PyResult<()> {
     module.add_wrapped(wrapper)?;
     // Adding nice imports corresponding to maturin example
     let wrapper = wrap_pymodule!(pragma_operations::pragma_operations);
+    module.add_wrapped(wrapper)?;
+    let wrapper = wrap_pymodule!(emulator_devices::emulator_devices);
     module.add_wrapped(wrapper)?;
     // Adding nice imports corresponding to maturin example
     let system = PyModule::import_bound(_py, "sys")?;

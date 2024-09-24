@@ -533,3 +533,16 @@ pub fn convert_into_device(input: &Bound<PyAny>) -> Result<EmulatorDevice, QoqoB
         .map_err(|_| QoqoBackendError::CannotExtractObject)?;
     bincode::deserialize(&bytes[..]).map_err(|_| QoqoBackendError::CannotExtractObject)
 }
+
+/// Emulator devices for the QRyd platform.
+///
+/// .. autosummary::
+///    :toctree: generated/
+///
+///    EmulatorDevice
+///
+#[pymodule]
+pub fn emulator_devices(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
+    m.add_class::<EmulatorDeviceWrapper>()?;
+    Ok(())
+}
