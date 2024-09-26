@@ -18,15 +18,12 @@
 
 use bincode::deserialize;
 use ndarray::Array2;
-use roqoqo::prelude::Operate;
 use std::collections::HashMap;
 use std::env;
 
 use roqoqo::devices::{Device, GenericDevice};
 use roqoqo::operations::*;
 use roqoqo::RoqoqoBackendError;
-
-use strum::IntoEnumIterator;
 
 use crate::{tweezer_devices::TweezerDevice, PragmaDeactivateQRydQubit, PragmaShiftQubitsTweezers};
 
@@ -257,20 +254,7 @@ impl EmulatorDevice {
     /// * `Ok(())` - The gate has been successfully added to the available ones.
     /// * `Err(RoqoqoBackendError)` - The gate does not exist.
     pub fn add_available_gate(&mut self, hqslang: &str) -> Result<(), RoqoqoBackendError> {
-        let mut gate_names: Vec<&str> = vec![];
-        for gate in SingleQubitGateOperation::iter() {
-            gate_names.push(gate.hqslang());
-        }
-        for gate in TwoQubitGateOperation::iter() {
-            gate_names.push(gate.hqslang());
-        }
-        for gate in ThreeQubitGateOperation::iter() {
-            gate_names.push(gate.hqslang());
-        }
-        for gate in MultiQubitGateOperation::iter() {
-            gate_names.push(gate.hqslang());
-        }
-        if !gate_names.contains(&hqslang) {
+        if !AVAILABLE_GATES_HQSLANG.contains(&hqslang) {
             return Err(RoqoqoBackendError::GenericError {
                 msg: format!("Gate '{}' does not exist.", hqslang),
             });
@@ -556,9 +540,58 @@ impl Device for EmulatorDevice {
 
     fn to_generic_device(&self) -> GenericDevice {
         let mut new_generic_device = GenericDevice::new(self.number_qubits());
+        let single_qubit_gates_names = vec![
+            "SingleQubitGate",
+            "RotateZ",
+            "RotateX",
+            "RotateY",
+            "PauliX",
+            "PauliY",
+            "PauliZ",
+            "SqrtPauliX",
+            "InvSqrtPauliX",
+            "Hadamard",
+            "SGate",
+            "TGate",
+            "PhaseShiftState1",
+            "PhaseShiftState0",
+            "RotateAroundSphericalAxis",
+            "RotateXY",
+            "GPi",
+            "GPi2",
+            "Identity",
+            "SqrtPauliY",
+            "InvSqrtPauliY",
+        ];
+        let two_qubit_gates_names = vec![
+            "CNOT",
+            "SWAP",
+            "ISwap",
+            "FSwap",
+            "SqrtISwap",
+            "InvSqrtISwap",
+            "XY",
+            "ControlledPhaseShift",
+            "ControlledPauliY",
+            "ControlledPauliZ",
+            "MolmerSorensenXX",
+            "VariableMSXX",
+            "GivensRotation",
+            "GivensRotationLittleEndian",
+            "Qsim",
+            "Fsim",
+            "SpinInteraction",
+            "Bogoliubov",
+            "PMInteraction",
+            "ComplexPMInteraction",
+            "PhaseShiftedControlledZ",
+            "PhaseShiftedControlledPhase",
+            "ControlledRotateX",
+            "ControlledRotateXY",
+            "EchoCrossResonance",
+        ];
 
-        for single_qubit_gate in SingleQubitGateOperation::iter() {
-            let single_qubit_gate_name = single_qubit_gate.hqslang();
+        for single_qubit_gate_name in single_qubit_gates_names {
             for i in 0..self.number_qubits() {
                 new_generic_device
                     .set_single_qubit_gate_time(single_qubit_gate_name, i, 1.0)
@@ -566,8 +599,7 @@ impl Device for EmulatorDevice {
             }
         }
 
-        for two_qubit_gate in TwoQubitGateOperation::iter() {
-            let two_qubit_gate_name = two_qubit_gate.hqslang();
+        for two_qubit_gate_name in two_qubit_gates_names {
             for i in 0..self.number_qubits() {
                 for j in 0..self.number_qubits() {
                     if i != j {
