@@ -96,9 +96,9 @@ dependencies = [
 
 [[package]]
 name = "async-trait"
-version = "0.1.82"
+version = "0.1.83"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a27b8a3a6e1a44fa4c8baf1f653e4172e81486d4941f2237e20dc2d0cf4ddff1"
+checksum = "721cae7de5c34fbb2acd27e21e6d2cf7b886dce0c27388d46c4e6c47ea4318dd"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -494,12 +494,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "95505c38b4572b2d910cecb0281560f54b440a19336cbbcb27bf6ce6adc6f5a8"
 
 [[package]]
-name = "heck"
-version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
-
-[[package]]
 name = "hermit-abi"
 version = "0.3.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -640,9 +634,9 @@ dependencies = [
 
 [[package]]
 name = "hyper-util"
-version = "0.1.8"
+version = "0.1.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "da62f120a8a37763efb0cf8fdf264b884c7b8b9ac8660b900c8661030c00e6ba"
+checksum = "41296eb09f183ac68eec06e03cdbea2e759633d4067b2f6552fc2e009bcad08b"
 dependencies = [
  "bytes",
  "futures-util",
@@ -741,9 +735,9 @@ dependencies = [
 
 [[package]]
 name = "libc"
-version = "0.2.158"
+version = "0.2.159"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d8adc4bb1803a324070e64a98ae98f38934d91957a99cfb3a43dcbc01bc56439"
+checksum = "561d97a539a36e26a9a5fad1ea11a3039a67714694aaa379433e580854bc3dc5"
 
 [[package]]
 name = "libm"
@@ -1080,7 +1074,7 @@ version = "0.21.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "08260721f32db5e1a5beae69a55553f56b99bd0e1c3e6e0a5e8851a9d0f5a85c"
 dependencies = [
- "heck 0.4.1",
+ "heck",
  "proc-macro2",
  "pyo3-build-config",
  "quote",
@@ -1089,8 +1083,9 @@ dependencies = [
 
 [[package]]
 name = "qoqo"
-version = "1.15.2-alpha.5"
-source = "git+https://github.com/mlodi-hqs/qoqo?branch=strum#b8829238f4741bcf39ad5409c64c1422a263c38c"
+version = "1.15.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b17c1020aeb4ca5208ed9c351b5e251f63777d44e159a09a76963ac66fb73b22"
 dependencies = [
  "bincode",
  "clap",
@@ -1117,8 +1112,9 @@ dependencies = [
 
 [[package]]
 name = "qoqo-macros"
-version = "1.15.2-alpha.5"
-source = "git+https://github.com/mlodi-hqs/qoqo?branch=strum#b8829238f4741bcf39ad5409c64c1422a263c38c"
+version = "1.15.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9ef77776bbadf7ec00640ae104b96d872a40254c3a880b68ce12bc8ef4758bdc"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1175,8 +1171,9 @@ dependencies = [
 
 [[package]]
 name = "quest-sys"
-version = "0.14.4-alpha.3"
-source = "git+https://github.com/mlodi-hqs/qoqo-quest?branch=strum_fix_temp#d85f82ba638e28e1656e5b99c73677623ddee57d"
+version = "0.14.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d8cfee5c0e9474ffafb980c1a2fd3098caeb5884ac4ccbd73d215468e0310dfb"
 dependencies = [
  "cc",
 ]
@@ -1244,9 +1241,9 @@ checksum = "60a357793950651c4ed0f3f52338f53b2f809f32d83a07f72909fa13e4c6c1e3"
 
 [[package]]
 name = "redox_syscall"
-version = "0.5.4"
+version = "0.5.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0884ad60e090bf1345b93da0a5de8923c93884cd03f40dfcfddd3b4bee661853"
+checksum = "355ae415ccd3a04315d3f8246e86d67689ea74d88d915576e1589a351062a13b"
 dependencies = [
  "bitflags 2.6.0",
 ]
@@ -1338,8 +1335,9 @@ dependencies = [
 
 [[package]]
 name = "roqoqo"
-version = "1.15.2-alpha.5"
-source = "git+https://github.com/mlodi-hqs/qoqo?branch=strum#b8829238f4741bcf39ad5409c64c1422a263c38c"
+version = "1.15.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1f84906016a7e4001f4176f787980ccf057b34df51af6e3c62912e61968a723f"
 dependencies = [
  "bincode",
  "nalgebra",
@@ -1353,8 +1351,6 @@ dependencies = [
  "rand_distr",
  "roqoqo-derive",
  "serde",
- "strum",
- "strum_macros",
  "struqture 1.9.2",
  "syn",
  "thiserror",
@@ -1362,8 +1358,9 @@ dependencies = [
 
 [[package]]
 name = "roqoqo-derive"
-version = "1.15.2-alpha.5"
-source = "git+https://github.com/mlodi-hqs/qoqo?branch=strum#b8829238f4741bcf39ad5409c64c1422a263c38c"
+version = "1.15.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "424481b26f82c1b5c78e0d2b7457ad77d3bbd281f4e724882829160364733c1f"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1397,8 +1394,9 @@ dependencies = [
 
 [[package]]
 name = "roqoqo-quest"
-version = "0.14.4-alpha.3"
-source = "git+https://github.com/mlodi-hqs/qoqo-quest?branch=strum_fix_temp#d85f82ba638e28e1656e5b99c73677623ddee57d"
+version = "0.14.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "05b22eb5f413c5b83c1d06d35c38c49e3475879ce2d563d31c41a490c6f8b2bd"
 dependencies = [
  "ndarray",
  "num-complex",
@@ -1411,8 +1409,9 @@ dependencies = [
 
 [[package]]
 name = "roqoqo-test"
-version = "1.15.2-alpha.5"
-source = "git+https://github.com/mlodi-hqs/qoqo?branch=strum#b8829238f4741bcf39ad5409c64c1422a263c38c"
+version = "1.15.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d73c2fcd37961b33be38d7beabb54663e5057532ad9c2e1b17666fa936aa8368"
 dependencies = [
  "nalgebra",
  "ndarray",
@@ -1466,12 +1465,6 @@ dependencies = [
  "ring",
  "untrusted",
 ]
-
-[[package]]
-name = "rustversion"
-version = "1.0.17"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "955d28af4278de8121b7ebeb796b6a45735dc01436d898801014aced2773a3d6"
 
 [[package]]
 name = "ryu"
@@ -1653,19 +1646,6 @@ name = "strum"
 version = "0.26.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8fec0f0aef304996cf250b31b5a10dee7980c85da9d759361292b8bca5a18f06"
-
-[[package]]
-name = "strum_macros"
-version = "0.26.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4c6bee85a5a24955dc440386795aa378cd9cf82acd5f764469152d2270e581be"
-dependencies = [
- "heck 0.5.0",
- "proc-macro2",
- "quote",
- "rustversion",
- "syn",
-]
 
 [[package]]
 name = "struqture"

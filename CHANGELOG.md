@@ -5,6 +5,7 @@ Tracks qoqo-qryd changes after 0.5
 # 0.19.0
 
 * Added `EmulatorDevice`
+* Updated the MSRV to 1.70
 
 # 0.18.0
 
