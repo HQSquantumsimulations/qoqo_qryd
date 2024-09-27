@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>qoqo_qryd.tweezer_devices.TweezerDevice &mdash; qoqo_qryd 0.18.0 documentation</title>
+  <title>qoqo_qryd.tweezer_devices.TweezerDevice &mdash; qoqo_qryd 0.19.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
 
@@ -15,7 +15,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=07aabbbe"></script>
+        <script src="../../../_static/documentation_options.js?v=7b661131"></script>
         <script src="../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -38,7 +38,7 @@
             qoqo_qryd
           </a>
               <div class="version">
-                0.18.0
+                0.19.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -64,6 +64,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../qoqo_qryd.tweezer_devices.html#qoqo_qryd.tweezer_devices.TweezerMutableDevice"><code class="docutils literal notranslate"><span class="pre">TweezerMutableDevice</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="../qoqo_qryd.emulator_devices.html">qoqo_qryd.emulator_devices</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../qoqo_qryd.html#qoqo_qryd.APIBackend"><code class="docutils literal notranslate"><span class="pre">APIBackend</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../qoqo_qryd.html#qoqo_qryd.SimulatorBackend"><code class="docutils literal notranslate"><span class="pre">SimulatorBackend</span></code></a></li>
 </ul>
@@ -110,6 +111,7 @@ tweezers. This class is meant to be used by the end user.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>seed</strong> (<em>(</em><em>Optional</em><em>[</em><em>int</em><em>]</em><em>)</em>) -- Optional seed, for simulation purposes.</p></li>
 <li><p><strong>controlled_z_phase_relation</strong> (<em>(</em><em>Optional</em><em>[</em><em>Union</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em><em>]</em><em>)</em>) -- The relation to use for the PhaseShiftedControlledZ gate.
 It can be hardcoded to a specific value if a float is passed in as String.</p></li>
 <li><p><strong>controlled_phase_phase_relation</strong> (<em>(</em><em>Optional</em><em>[</em><em>Union</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em><em>]</em><em>)</em>) -- The relation to use for the PhaseShiftedControlledPhase gate.</p></li>

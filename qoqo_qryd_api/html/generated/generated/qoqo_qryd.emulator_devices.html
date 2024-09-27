@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>qoqo_qryd.emulator_devices &mdash; qoqo_qryd 0.19.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=7b661131"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="qoqo_qryd.emulator_devices.EmulatorDevice" href="generated/qoqo_qryd.emulator_devices.EmulatorDevice.html" />
+    <link rel="prev" title="qoqo_qryd.tweezer_devices.TweezerMutableDevice" href="generated/qoqo_qryd.tweezer_devices.TweezerMutableDevice.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            qoqo_qryd
+          </a>
+              <div class="version">
+                0.19.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../modules.html">qoqo_qryd documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../qoqo_qryd.html">qoqo_qryd</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="qoqo_qryd.qryd_devices.html">qoqo_qryd.qryd_devices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qoqo_qryd.api_devices.html">qoqo_qryd.api_devices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qoqo_qryd.pragma_operations.html">qoqo_qryd.pragma_operations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qoqo_qryd.SimulatorBackend.html">qoqo_qryd.SimulatorBackend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qoqo_qryd.APIBackend.html">qoqo_qryd.APIBackend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qoqo_qryd.tweezer_devices.html">qoqo_qryd.tweezer_devices</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">qoqo_qryd.emulator_devices</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="generated/qoqo_qryd.emulator_devices.EmulatorDevice.html">qoqo_qryd.emulator_devices.EmulatorDevice</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qoqo_qryd.emulator_devices.EmulatorDevice"><code class="docutils literal notranslate"><span class="pre">EmulatorDevice</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../qoqo_qryd.html#qoqo_qryd.APIBackend"><code class="docutils literal notranslate"><span class="pre">APIBackend</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../qoqo_qryd.html#qoqo_qryd.SimulatorBackend"><code class="docutils literal notranslate"><span class="pre">SimulatorBackend</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">qoqo_qryd</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../modules.html">qoqo_qryd documentation</a></li>
+          <li class="breadcrumb-item"><a href="../qoqo_qryd.html">qoqo_qryd</a></li>
+      <li class="breadcrumb-item active">qoqo_qryd.emulator_devices</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/generated/generated/qoqo_qryd.emulator_devices.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-qoqo_qryd.emulator_devices">
+<span id="qoqo-qryd-emulator-devices"></span><h1>qoqo_qryd.emulator_devices<a class="headerlink" href="#module-qoqo_qryd.emulator_devices" title="Link to this heading"></a></h1>
+<p>Emulator devices for the QRyd platform.</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#qoqo_qryd.emulator_devices.EmulatorDevice" title="qoqo_qryd.emulator_devices.EmulatorDevice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EmulatorDevice</span></code></a>(seed, ...)</p></td>
+<td><p>Emulator Device</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#qoqo_qryd.emulator_devices.EmulatorDevice" title="qoqo_qryd.emulator_devices.EmulatorDevice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EmulatorDevice</span></code></a>(seed, ...)</p></td>
+<td><p>Emulator Device</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="qoqo_qryd.emulator_devices.EmulatorDevice">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qoqo_qryd.emulator_devices.</span></span><span class="sig-name descname"><span class="pre">EmulatorDevice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlled_z_phase_relation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlled_phase_phase_relation</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.emulator_devices.EmulatorDevice" title="Link to this definition"></a></dt>
+<dd><p>Emulator Device</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seed</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) -- Optional seed, for simulation purposes.</p></li>
+<li><p><strong>controlled_z_phase_relation</strong> (<em>(</em><em>Optional</em><em>[</em><em>Union</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em><em>]</em><em>)</em>) -- The relation to use for the PhaseShiftedControlledZ gate.
+It can be hardcoded to a specific value if a float is passed in as String.</p></li>
+<li><p><strong>controlled_phase_phase_relation</strong> (<em>(</em><em>Optional</em><em>[</em><em>Union</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em><em>]</em><em>)</em>) -- The relation to use for the PhaseShiftedControlledPhase gate.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.emulator_devices.EmulatorDevice.add_available_gate">
+<span class="sig-name descname"><span class="pre">add_available_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hqslang</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.emulator_devices.EmulatorDevice.add_available_gate" title="Link to this definition"></a></dt>
+<dd><p>Modifies the qubit -&gt; tweezer mapping of the device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>hqslang</strong> (<em>str</em>) -- The hqslang name of the gate.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> -- The gate does not exist.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.emulator_devices.EmulatorDevice.add_qubit_tweezer_mapping">
+<span class="sig-name descname"><span class="pre">add_qubit_tweezer_mapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tweezer</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.emulator_devices.EmulatorDevice.add_qubit_tweezer_mapping" title="Link to this definition"></a></dt>
+<dd><p>Modifies the qubit -&gt; tweezer mapping of the device.</p>
+<p>If a qubit -&gt; tweezer mapping is already present, it is overwritten.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>qubit</strong> (<em>int</em>) -- The index of the qubit.</p></li>
+<li><p><strong>tweezer</strong> (<em>int</em>) -- The index of the tweezer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The updated qubit -&gt; tweezer mapping.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[int, int]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> -- The tweezer is not present in the device.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.emulator_devices.EmulatorDevice.deactivate_qubit">
+<span class="sig-name descname"><span class="pre">deactivate_qubit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.emulator_devices.EmulatorDevice.deactivate_qubit" title="Link to this definition"></a></dt>
+<dd><p>Deactivate the given qubit in the device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>qubit</strong> (<em>int</em>) -- The input qubit identifier.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The updated qubit -&gt; tweezer mapping.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[int, int]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>PyValueError</strong> -- If the given qubit identifier is not present in the mapping.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.emulator_devices.EmulatorDevice.from_api">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_api</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">access_token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_port</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_version</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.emulator_devices.EmulatorDevice.from_api" title="Link to this definition"></a></dt>
+<dd><p>Creates a new Emulator instance containing populated tweezer data.</p>
+<p>This requires a valid QRYD_API_TOKEN. Visit <cite>https://thequantumlaend.de/get-access/</cite> to get one.</p>
+<dl>
+<dt>Args</dt><dd><p>device_name (Optional[str]): The name of the device to instantiate. Defaults to &quot;qryd_emulator&quot;.
+access_token (Optional[str]): An access_token is required to access QRYD hardware and emulators.</p>
+<blockquote>
+<div><dl class="simple">
+<dt>The access_token can either be given as an argument here</dt><dd><p>or set via the environmental variable <cite>$QRYD_API_TOKEN</cite>.</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>mock_port (Optional[str]): Server port to be used for testing purposes.
+seed (Optional[int]): Optionally overwrite seed value from downloaded device instance.
+dev (Optional[bool]): The boolean to set the dev header to.
+api_version (Optional[str]): The version of the QRYD API to use. Defaults to &quot;v1_1&quot;.</p>
+</dd>
+<dt>Returns</dt><dd><p>TweezerDevice: The new TweezerDevice instance with populated tweezer data.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>RoqoqoBackendError</strong> -- </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.emulator_devices.EmulatorDevice.from_bincode">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_bincode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.emulator_devices.EmulatorDevice.from_bincode" title="Link to this definition"></a></dt>
+<dd><p>Convert the bincode representation of the EmulatorDevice to a EmulatorDevice using the bincode crate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input</strong> (<em>ByteArray</em>) -- The serialized EmulatorDevice (in bincode form).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The deserialized EmulatorDevice.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#qoqo_qryd.emulator_devices.EmulatorDevice" title="qoqo_qryd.emulator_devices.EmulatorDevice">EmulatorDevice</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> -- Input cannot be converted to byte array.</p></li>
+<li><p><strong>ValueError</strong> -- Input cannot be deserialized to EmulatorDevice.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.emulator_devices.EmulatorDevice.from_json">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.emulator_devices.EmulatorDevice.from_json" title="Link to this definition"></a></dt>
+<dd><p>Convert the json representation of a EmulatorDevice to a EmulatorDevice.</p>
+<p>If a default_layout is found in the input, a layout switch is executed.
+Additionally, a gate set check is performed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input</strong> (<em>str</em>) -- The serialized EmulatorDevice in json form.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The deserialized EmulatorDevice.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#qoqo_qryd.emulator_devices.EmulatorDevice" title="qoqo_qryd.emulator_devices.EmulatorDevice">EmulatorDevice</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> -- Input cannot be deserialized to EmulatorDevice or
+    the device does not have valid QRyd gates available.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.emulator_devices.EmulatorDevice.gate_time_controlled_phase">
+<span class="sig-name descname"><span class="pre">gate_time_controlled_phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.emulator_devices.EmulatorDevice.gate_time_controlled_phase" title="Link to this definition"></a></dt>
+<dd><p>Returns the gate time of a PhaseShiftedControlledPhase operation with the given qubits and phi and theta angles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>control</strong> (<em>int</em>) -- The control qubit the gate acts on</p></li>
+<li><p><strong>target</strong> (<em>int</em>) -- The target qubit the gate acts on</p></li>
+<li><p><strong>phi</strong> (<em>float</em>) -- The phi angle to be checked.</p></li>
+<li><p><strong>theta</strong> (<em>float</em>) -- The theta angle to be checked.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The gate time.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> -- The gate is not available on the device.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.emulator_devices.EmulatorDevice.gate_time_controlled_z">
+<span class="sig-name descname"><span class="pre">gate_time_controlled_z</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.emulator_devices.EmulatorDevice.gate_time_controlled_z" title="Link to this definition"></a></dt>
+<dd><p>Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>control</strong> (<em>int</em>) -- The control qubit the gate acts on</p></li>
+<li><p><strong>target</strong> (<em>int</em>) -- The target qubit the gate acts on</p></li>
+<li><p><strong>phi</strong> (<em>float</em>) -- The phi angle to be checked.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The gate time.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> -- The gate is not available on the device.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.emulator_devices.EmulatorDevice.generic_device">
+<span class="sig-name descname"><span class="pre">generic_device</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.emulator_devices.EmulatorDevice.generic_device" title="Link to this definition"></a></dt>
+<dd><p>Turns Device into GenericDevice</p>
+<p>Can be used as a generic interface for devices when a boxed dyn trait object cannot be used
+(for example when the interface needs to be serialized)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The device in generic representation</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>GenericDevice</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>GenericDevice uses nested HashMaps to represent the most general device connectivity.
+The memory usage will be inefficient for devices with large qubit numbers.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.emulator_devices.EmulatorDevice.get_allow_reset">
+<span class="sig-name descname"><span class="pre">get_allow_reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.emulator_devices.EmulatorDevice.get_allow_reset" title="Link to this definition"></a></dt>
+<dd><p>Get whether the device allows PragmaActiveReset operations or not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Whether the device allows PragmaActiveReset operations or not.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.emulator_devices.EmulatorDevice.get_available_gates_names">
+<span class="sig-name descname"><span class="pre">get_available_gates_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.emulator_devices.EmulatorDevice.get_available_gates_names" title="Link to this definition"></a></dt>
+<dd><p>Get the names of the available gates in the given layout.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of the names of the available gates in the given layout.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[str]</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> -- No layout name provided and no current layout set.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.emulator_devices.EmulatorDevice.get_qubit_to_tweezer_mapping">
+<span class="sig-name descname"><span class="pre">get_qubit_to_tweezer_mapping</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.emulator_devices.EmulatorDevice.get_qubit_to_tweezer_mapping" title="Link to this definition"></a></dt>
+<dd><p>Get the qubit -&gt; tweezer mapping of the device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The qubit -&gt; tweezer mapping.
+None: The mapping is empty.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict[int, int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.emulator_devices.EmulatorDevice.multi_qubit_gate_time">
+<span class="sig-name descname"><span class="pre">multi_qubit_gate_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qubits</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.emulator_devices.EmulatorDevice.multi_qubit_gate_time" title="Link to this definition"></a></dt>
+<dd><p>Returns the gate time of a multi qubit operation on this device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The gate time.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>f64</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> -- The gate is not available in the device.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.emulator_devices.EmulatorDevice.number_qubits">
+<span class="sig-name descname"><span class="pre">number_qubits</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.emulator_devices.EmulatorDevice.number_qubits" title="Link to this definition"></a></dt>
+<dd><p>Return number of qubits in device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The number of qubits.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.emulator_devices.EmulatorDevice.number_tweezer_positions">
+<span class="sig-name descname"><span class="pre">number_tweezer_positions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.emulator_devices.EmulatorDevice.number_tweezer_positions" title="Link to this definition"></a></dt>
+<dd><p>Returns the number of total tweezer positions in the device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The number of tweezer positions in the device.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.emulator_devices.EmulatorDevice.phase_shift_controlled_phase">
+<span class="sig-name descname"><span class="pre">phase_shift_controlled_phase</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.emulator_devices.EmulatorDevice.phase_shift_controlled_phase" title="Link to this definition"></a></dt>
+<dd><p>Returns the PhaseShiftedControlledPhase phase shift according to the device's relation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The PhaseShiftedControlledPhase phase shift.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> -- Error in relation selection.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.emulator_devices.EmulatorDevice.phase_shift_controlled_z">
+<span class="sig-name descname"><span class="pre">phase_shift_controlled_z</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.emulator_devices.EmulatorDevice.phase_shift_controlled_z" title="Link to this definition"></a></dt>
+<dd><p>Returns the PhaseShiftedControlledZ phase shift according to the device's relation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The PhaseShiftedControlledZ phase shift.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> -- Error in relation selection.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.emulator_devices.EmulatorDevice.qrydbackend">
+<span class="sig-name descname"><span class="pre">qrydbackend</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.emulator_devices.EmulatorDevice.qrydbackend" title="Link to this definition"></a></dt>
+<dd><p>Returns the backend associated with the device.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.emulator_devices.EmulatorDevice.seed">
+<span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.emulator_devices.EmulatorDevice.seed" title="Link to this definition"></a></dt>
+<dd><p>Returns the seed usized for the API.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.emulator_devices.EmulatorDevice.set_allow_reset">
+<span class="sig-name descname"><span class="pre">set_allow_reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.emulator_devices.EmulatorDevice.set_allow_reset" title="Link to this definition"></a></dt>
+<dd><p>Set whether the device allows PragmaActiveReset operations or not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>allow_reset</strong> (<em>bool</em>) -- Whether the device should allow PragmaActiveReset operations or not.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> -- The device isn't compatible with PragmaActiveReset.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.emulator_devices.EmulatorDevice.single_qubit_gate_time">
+<span class="sig-name descname"><span class="pre">single_qubit_gate_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qubit</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.emulator_devices.EmulatorDevice.single_qubit_gate_time" title="Link to this definition"></a></dt>
+<dd><p>Returns the gate time of a single qubit operation on this device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The gate time.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>f64</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> -- The gate is not available in the device.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.emulator_devices.EmulatorDevice.three_qubit_gate_time">
+<span class="sig-name descname"><span class="pre">three_qubit_gate_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">control_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">control_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.emulator_devices.EmulatorDevice.three_qubit_gate_time" title="Link to this definition"></a></dt>
+<dd><p>Returns the gate time of a three qubit operation on this device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The gate time.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>f64</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> -- The gate is not available in the device.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.emulator_devices.EmulatorDevice.to_bincode">
+<span class="sig-name descname"><span class="pre">to_bincode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.emulator_devices.EmulatorDevice.to_bincode" title="Link to this definition"></a></dt>
+<dd><p>Return the bincode representation of the EmulatorDevice using the bincode crate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The serialized EmulatorDevice (in bincode form).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>ByteArray</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> -- Cannot serialize EmulatorDevice to bytes.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.emulator_devices.EmulatorDevice.to_json">
+<span class="sig-name descname"><span class="pre">to_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.emulator_devices.EmulatorDevice.to_json" title="Link to this definition"></a></dt>
+<dd><p>Return the json representation of the EmulatorDevice.</p>
+<p>Additionally, a gate set check is performed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The serialized form of EmulatorDevice.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> -- Cannot serialize EmulatorDevice to json.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.emulator_devices.EmulatorDevice.two_qubit_gate_time">
+<span class="sig-name descname"><span class="pre">two_qubit_gate_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">control</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.emulator_devices.EmulatorDevice.two_qubit_gate_time" title="Link to this definition"></a></dt>
+<dd><p>Returns the gate time of a two qubit operation on this device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The gate time.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>f64</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> -- The gate is not available in the device.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="generated/qoqo_qryd.tweezer_devices.TweezerMutableDevice.html" class="btn btn-neutral float-left" title="qoqo_qryd.tweezer_devices.TweezerMutableDevice" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="generated/qoqo_qryd.emulator_devices.EmulatorDevice.html" class="btn btn-neutral float-right" title="qoqo_qryd.emulator_devices.EmulatorDevice" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, HQS Quantum Simulations GmbH.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

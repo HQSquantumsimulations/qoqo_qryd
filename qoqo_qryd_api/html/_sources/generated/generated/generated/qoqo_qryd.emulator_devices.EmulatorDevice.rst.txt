@@ -1,0 +1,47 @@
+qoqo\_qryd.emulator\_devices.EmulatorDevice
+===========================================
+
+.. currentmodule:: qoqo_qryd.emulator_devices
+
+.. autoclass:: EmulatorDevice
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~EmulatorDevice.__init__
+      ~EmulatorDevice.add_available_gate
+      ~EmulatorDevice.add_qubit_tweezer_mapping
+      ~EmulatorDevice.deactivate_qubit
+      ~EmulatorDevice.from_api
+      ~EmulatorDevice.from_bincode
+      ~EmulatorDevice.from_json
+      ~EmulatorDevice.gate_time_controlled_phase
+      ~EmulatorDevice.gate_time_controlled_z
+      ~EmulatorDevice.generic_device
+      ~EmulatorDevice.get_allow_reset
+      ~EmulatorDevice.get_available_gates_names
+      ~EmulatorDevice.get_qubit_to_tweezer_mapping
+      ~EmulatorDevice.multi_qubit_gate_time
+      ~EmulatorDevice.number_qubits
+      ~EmulatorDevice.number_tweezer_positions
+      ~EmulatorDevice.phase_shift_controlled_phase
+      ~EmulatorDevice.phase_shift_controlled_z
+      ~EmulatorDevice.qrydbackend
+      ~EmulatorDevice.seed
+      ~EmulatorDevice.set_allow_reset
+      ~EmulatorDevice.single_qubit_gate_time
+      ~EmulatorDevice.three_qubit_gate_time
+      ~EmulatorDevice.to_bincode
+      ~EmulatorDevice.to_json
+      ~EmulatorDevice.two_qubit_gate_time
+   
+   
+
+   
+   
+   
