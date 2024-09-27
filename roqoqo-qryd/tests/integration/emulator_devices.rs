@@ -13,6 +13,8 @@
 use bincode::serialize;
 use ndarray::Array2;
 use std::collections::HashMap;
+#[cfg(feature = "web-api")]
+use std::env;
 
 use roqoqo::devices::Device;
 
@@ -21,6 +23,7 @@ use roqoqo_qryd::{
     PragmaChangeQRydLayout, PragmaShiftQRydQubit, PragmaShiftQubitsTweezers,
     PragmaSwitchDeviceLayout,
 };
+
 /// Test EmulatorDevice new()
 #[test]
 fn test_new() {
@@ -109,6 +112,13 @@ fn test_deactivate_qubit() {
 fn test_phi_theta_relation() {
     let mut device = EmulatorDevice::new(None, None, None);
     let device_f = EmulatorDevice::new(None, Some(2.13.to_string()), Some(2.15.to_string()));
+
+    device
+        .add_available_gate("PhaseShiftedControlledZ")
+        .unwrap();
+    device
+        .add_available_gate("PhaseShiftedControlledPhase")
+        .unwrap();
 
     assert_eq!(
         device.phase_shift_controlled_z().unwrap(),
@@ -351,4 +361,21 @@ fn test_to_generic_device() {
     );
 
     assert!(!generic_device.single_qubit_gates.contains_key("error"));
+}
+
+#[test]
+#[cfg(feature = "web-api")]
+fn test_from_api() {
+    if env::var("QRYD_API_TOKEN").is_ok() {
+        let response = EmulatorDevice::from_api(
+            None,
+            None,
+            None,
+            None,
+            Some(env::var("QRYD_API_HQS").is_ok()),
+            None,
+        );
+        assert!(response.is_err());
+        assert!(response.unwrap_err().to_string().contains("incompatible"));
+    }
 }

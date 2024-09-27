@@ -244,6 +244,13 @@ fn test_phi_theta_relations() {
         assert!(pscz_phase.is_finite());
         assert!(pscp_phase.is_finite());
 
+        device
+            .call_method1("add_available_gate", ("PhaseShiftedControlledZ",))
+            .unwrap();
+        device
+            .call_method1("add_available_gate", ("PhaseShiftedControlledPhase",))
+            .unwrap();
+
         let gtcz_err = device.call_method1("gate_time_controlled_z", (0, 1, 0.3));
         let gtcz_ok = device.call_method1("gate_time_controlled_z", (0, 1, pscz_phase));
         assert!(gtcz_err.is_err());
@@ -462,138 +469,6 @@ fn test_to_from_bincode() {
         assert_eq!(device_wrapper, serde_wrapper);
     });
 }
-
-// /// Test from_api of TweezerDeviceWrapper
-// #[tokio::test]
-// #[cfg(feature = "web-api")]
-// async fn test_from_api() {
-//     let mut sent_device = TweezerDevice::new(None, None, None);
-//     sent_device.add_layout("triangle").unwrap();
-//     sent_device
-//         .set_tweezer_single_qubit_gate_time(
-//             "PhaseShiftState1",
-//             0,
-//             0.23,
-//             Some("triangle".to_string()),
-//         )
-//         .unwrap();
-//     sent_device.set_default_layout("triangle").unwrap();
-//     let mut received_device = TweezerDevice::new(None, None, None);
-//     received_device.add_layout("triangle").unwrap();
-//     received_device
-//         .set_tweezer_single_qubit_gate_time(
-//             "PhaseShiftState1",
-//             0,
-//             0.23,
-//             Some("triangle".to_string()),
-//         )
-//         .unwrap();
-//     received_device.switch_layout("triangle", None).unwrap();
-//     received_device.set_default_layout("triangle").unwrap();
-//     let received_device_wrapper = TweezerDeviceWrapper {
-//         internal: received_device.clone(),
-//     };
-//     let wiremock_server = MockServer::start().await;
-//     let port = wiremock_server.address().port().to_string();
-//     let _mock = Mock::given(method("GET"))
-//         .respond_with(ResponseTemplate::new(200).set_body_json(&sent_device))
-//         .expect(1)
-//         .mount(&wiremock_server)
-//         .await;
-
-//     pyo3::prepare_freethreaded_python();
-//     tokio::task::spawn_blocking(move || {
-//         Python::with_gil(|py| {
-//             // let sent_device_type = sent_device_wrapper.into_py(py);
-//             // let sent_device_py = sent_device_type.bind(py);
-//             let received_device_type = received_device_wrapper.into_py(py);
-//             let received_device_py = received_device_type.bind(py);
-
-//             let device_type = py.get_type_bound::<TweezerDeviceWrapper>();
-
-//             let device = device_type
-//                 .call_method1(
-//                     "from_api",
-//                     (Option::<String>::None, Option::<String>::None, port, 42),
-//                 )
-//                 .unwrap();
-
-//             assert_eq!(
-//                 device
-//                     .call_method0("current_layout")
-//                     .unwrap()
-//                     .extract::<String>()
-//                     .unwrap(),
-//                 "triangle"
-//             );
-//             assert_eq!(
-//                 device
-//                     .call_method0("seed")
-//                     .unwrap()
-//                     .extract::<usize>()
-//                     .unwrap(),
-//                 42
-//             );
-
-//             let returned_device_string = device
-//                 .call_method0("to_json")
-//                 .unwrap()
-//                 .extract::<String>()
-//                 .unwrap();
-//             let original_device_string = received_device_py
-//                 .call_method0("to_json")
-//                 .unwrap()
-//                 .extract::<String>()
-//                 .unwrap();
-//             let return_device_json: Value = serde_json::from_str(&returned_device_string).unwrap();
-//             let original_device_json: Value =
-//                 serde_json::from_str(&original_device_string).unwrap();
-
-//             assert_eq!(
-//                 return_device_json.get("qubit_to_tweezer").unwrap(),
-//                 original_device_json.get("qubit_to_tweezer").unwrap()
-//             );
-//             assert!(return_device_json
-//                 .get("layout_register")
-//                 .unwrap()
-//                 .get("triangle")
-//                 .is_some());
-//             assert!(original_device_json
-//                 .get("layout_register")
-//                 .unwrap()
-//                 .get("triangle")
-//                 .is_some());
-//             assert_eq!(
-//                 return_device_json.get("current_layout").unwrap(),
-//                 original_device_json.get("current_layout").unwrap()
-//             );
-//             assert_eq!(
-//                 return_device_json
-//                     .get("controlled_z_phase_relation")
-//                     .unwrap(),
-//                 original_device_json
-//                     .get("controlled_z_phase_relation")
-//                     .unwrap()
-//             );
-//             assert_eq!(
-//                 return_device_json
-//                     .get("controlled_phase_phase_relation")
-//                     .unwrap(),
-//                 original_device_json
-//                     .get("controlled_phase_phase_relation")
-//                     .unwrap()
-//             );
-//             assert_eq!(
-//                 return_device_json.get("default_layout").unwrap(),
-//                 original_device_json.get("default_layout").unwrap()
-//             );
-//         });
-//     })
-//     .await
-//     .unwrap();
-
-//     wiremock_server.verify().await;
-// }
 
 /// Test convert_into_device function
 #[test]
