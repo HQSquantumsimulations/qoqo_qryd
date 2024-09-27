@@ -33,7 +33,8 @@ fn test_new() {
 
     assert!(device.current_layout.is_none());
     assert!(device.qubit_to_tweezer.is_none());
-    assert_eq!(device.layout_register.len(), 0);
+    assert!(device.layout_register.is_some());
+    assert_eq!(device.layout_register.as_ref().unwrap().len(), 0);
     assert_eq!(device.seed(), Some(2));
     assert_eq!(device.qrydbackend(), "qryd_tweezer_device");
 
@@ -59,9 +60,17 @@ fn test_layouts() {
 
     assert!(device.add_layout("Test").is_err());
 
-    assert_eq!(device.layout_register.len(), 2);
-    assert!(device.layout_register.contains_key("default"));
-    assert!(device.layout_register.contains_key("Test"));
+    assert_eq!(device.layout_register.as_ref().unwrap().len(), 2);
+    assert!(device
+        .layout_register
+        .as_ref()
+        .unwrap()
+        .contains_key("default"));
+    assert!(device
+        .layout_register
+        .as_ref()
+        .unwrap()
+        .contains_key("Test"));
 
     device
         .set_tweezer_single_qubit_gate_time("RotateX", 0, 0.23, None)
@@ -110,8 +119,18 @@ fn test_layouts() {
     //     )
     //     .unwrap();
 
-    let default_layout = device.layout_register.get("default").unwrap();
-    let test_layout = device.layout_register.get("Test").unwrap();
+    let default_layout = device
+        .layout_register
+        .as_ref()
+        .unwrap()
+        .get("default")
+        .unwrap();
+    let test_layout = device
+        .layout_register
+        .as_ref()
+        .unwrap()
+        .get("Test")
+        .unwrap();
     assert!(default_layout
         .tweezer_single_qubit_gate_times
         .contains_key("RotateX"));
@@ -315,6 +334,8 @@ fn test_allowed_tweezer_shifts_from_rows() {
 
     let saved_shifts = &device
         .layout_register
+        .as_ref()
+        .unwrap()
         .get("triangle")
         .unwrap()
         .allowed_tweezer_shifts;
@@ -347,6 +368,8 @@ fn test_allowed_tweezer_shifts_from_rows() {
 
     let saved_shifts = &device
         .layout_register
+        .as_ref()
+        .unwrap()
         .get("triangle")
         .unwrap()
         .allowed_tweezer_shifts;
@@ -394,6 +417,8 @@ fn test_allowed_tweezer_shifts() {
 
     let saved_shifts = &device
         .layout_register
+        .as_ref()
+        .unwrap()
         .get("OtherLayout")
         .unwrap()
         .allowed_tweezer_shifts;
@@ -440,6 +465,8 @@ fn test_allowed_tweezer_shifts() {
 
     let saved_shifts = &device
         .layout_register
+        .as_ref()
+        .unwrap()
         .get("OtherLayout")
         .unwrap()
         .allowed_tweezer_shifts;
