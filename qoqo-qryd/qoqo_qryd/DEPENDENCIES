@@ -2480,7 +2480,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-autocfg 1.3.0
+autocfg 1.4.0
 https://github.com/cuviper/autocfg
 by Josh Stone <cuviper@gmail.com>
 Automatic cfg for Rust compiler features
@@ -4429,7 +4429,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-cc 1.1.21
+cc 1.1.22
 https://github.com/rust-lang/cc-rs
 by Alex Crichton <alex@alexcrichton.com>
 A build-time dependency for Cargo build scripts to assist in invoking the native
@@ -24730,7 +24730,7 @@ LICENSE:
 
 
 ====================================================
-quest-sys 0.14.3
+quest-sys 0.14.4
 https://github.com/HQSquantumsimulations/qoqo-quest
 by HQS Quantum Simulations <info@quantumsimulations.de>
 Bindings to the QuEST quantum computer simulator C library
@@ -28049,7 +28049,7 @@ LICENSE:
 
 
 ====================================================
-roqoqo-quest 0.14.3
+roqoqo-quest 0.14.4
 https://github.com/HQSquantumsimulations/qoqo-quest
 by HQS Quantum Simulations <info@quantumsimulations.de>
 QuEST simulator for the qoqo quantum computing toolkit
