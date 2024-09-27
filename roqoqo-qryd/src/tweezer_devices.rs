@@ -499,7 +499,11 @@ impl TweezerDevice {
         } else {
             self.qubit_to_tweezer = Some(HashMap::from([(qubit, tweezer)]));
         }
-        Ok(self.qubit_to_tweezer.as_ref().unwrap().clone())
+        Ok(self
+            .qubit_to_tweezer
+            .as_ref()
+            .expect("Internal error: qubit_to_tweezer mapping supposed to be Some().")
+            .clone())
     }
 
     /// Set the time of a single-qubit gate for a tweezer in a given Layout.
@@ -860,7 +864,7 @@ impl TweezerDevice {
     /// * `Ok(())` - The default layout has been set and switched to.
     /// * `Err(RoqoqoBackendError)` - The given layout name is not present in the layout register.
     pub fn set_default_layout(&mut self, layout: &str) -> Result<(), RoqoqoBackendError> {
-        if !self.layout_register.as_ref().unwrap().contains_key(layout) {
+        if !self._extract_layout_register()?.contains_key(layout) {
             return Err(RoqoqoBackendError::GenericError {
                 msg: "The given layout name is not present in the layout register.".to_string(),
             });
@@ -915,7 +919,7 @@ impl TweezerDevice {
             })?;
 
         let mut names: HashSet<&str> = HashSet::new();
-        if let Some(info) = self.layout_register.as_ref().unwrap().get(&layout_name) {
+        if let Some(info) = self._extract_layout_register()?.get(&layout_name) {
             let sqg = &info.tweezer_single_qubit_gate_times;
             for name in sqg.keys().by_ref() {
                 names.insert(name);
@@ -1088,7 +1092,7 @@ impl TweezerDevice {
     ) -> Result<usize, RoqoqoBackendError> {
         let mut set_tweezer_indices: HashSet<usize> = HashSet::new();
         let tweezer_info = if let Some(layout_name) = layout_name {
-            if let Some(tw) = self.layout_register.as_ref().unwrap().get(&layout_name) {
+            if let Some(tw) = self._extract_layout_register()?.get(&layout_name) {
                 tw
             } else {
                 return Err(RoqoqoBackendError::GenericError {
@@ -1257,6 +1261,17 @@ impl TweezerDevice {
         }
     }
 
+    fn _extract_layout_register(
+        &self,
+    ) -> Result<&HashMap<String, TweezerLayoutInfo>, RoqoqoBackendError> {
+        match &self.layout_register {
+            Some(layout_register) => Ok(layout_register),
+            None => Err(RoqoqoBackendError::GenericError {
+                msg: "Internal error: layout_register supposed to be Some().".to_string(),
+            }),
+        }
+    }
+
     fn _are_all_shifts_valid(&mut self, pragma: &PragmaShiftQubitsTweezers) -> bool {
         #[inline]
         fn _is_tweezer_in_shift_lists(tweezer_id: &usize, shift_lists: &[Vec<usize>]) -> bool {
@@ -1309,11 +1324,15 @@ impl TweezerDevice {
                 Some(allowed_shifts) => {
                     if !_is_tweezer_in_shift_lists(shift_end, allowed_shifts)
                         || !_is_tweezer_occupied(
-                            tmp_qubit_to_tweezer.as_ref().unwrap(),
+                            tmp_qubit_to_tweezer.as_ref().expect(
+                                "Internal error: qubit_to_tweezer mapping supposed to be Some().",
+                            ),
                             shift_start,
                         )
                         || !_is_path_free(
-                            tmp_qubit_to_tweezer.as_ref().unwrap(),
+                            tmp_qubit_to_tweezer.as_ref().expect(
+                                "Internal error: qubit_to_tweezer mapping supposed to be Some().",
+                            ),
                             shift_end,
                             allowed_shifts,
                         )
@@ -1484,7 +1503,7 @@ impl Device for TweezerDevice {
                 match de_change_layout {
                     Ok(pragma) => {
                         // Check layout existance
-                        match self.layout_register.as_ref().unwrap().get(pragma.new_layout()) {
+                        match self._extract_layout_register()?.get(pragma.new_layout()) {
                             Some(new_layout_tweezer_info) => {
                                 // Check layout tweezers per row
                                 match (&self.get_current_layout_info()?.tweezers_per_row, &new_layout_tweezer_info.tweezers_per_row) {
