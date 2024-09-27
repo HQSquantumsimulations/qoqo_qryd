@@ -6,6 +6,8 @@ Tracks qoqo-qryd changes after 0.5
 
 * Added `EmulatorDevice`
 * Updated the MSRV to 1.70
+* Updated the example scripts in `qoqo-qryd/examples`
+* Renamed the README files in both packages to fix build issues.
 
 # 0.18.0
 
