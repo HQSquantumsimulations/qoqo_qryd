@@ -31,3 +31,15 @@ mod simulator_backend;
 mod api_backend;
 
 mod api_devices;
+
+#[cfg(feature = "web-api")]
+#[test]
+fn test_device_from_api() {
+    use roqoqo_qryd::device_from_api;
+    use std::env;
+    if env::var("QRYD_API_TOKEN").is_ok() {
+        let response = device_from_api(None, None, None, None, None);
+        assert!(response.is_ok());
+        // TODO: add more specific testing once the available devices gathered from the API endpoint can be distinguished
+    }
+}

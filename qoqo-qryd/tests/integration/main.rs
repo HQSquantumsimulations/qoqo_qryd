@@ -32,3 +32,13 @@ mod emulator_devices;
 #[cfg(test)]
 #[cfg(feature = "simulator")]
 mod simulator_backend;
+
+#[cfg(feature = "web-api")]
+#[test]
+fn test_device_from_api() {
+    use qoqo_qryd::device_from_api;
+
+    let response = device_from_api(None, None, None, None, None);
+    assert!(response.is_ok());
+    // TODO: add more specific testing once the available devices gathered from the API endpoint can be distinguished
+}
