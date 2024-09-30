@@ -25,6 +25,8 @@
 //! * operations: roqoqo Pragma operations specific to QRyd devices that can change the topology of QRyd devices
 //! * simulator (optional): A QuEST based simulator for QRyd devices that checks the availability of the quantum operations on a chosen device during simulation
 
+#[cfg(feature = "web-api")]
+use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
 use pyo3::wrap_pymodule;
@@ -84,6 +86,53 @@ pub use api_backend::APIBackendWrapper;
 pub mod api_devices;
 pub use api_devices::*;
 
+/// Creates a new TweezerDevice instance containing populated tweezer data or EmulatorDevice instance.
+///
+/// This requires a valid QRYD_API_TOKEN. Visit `https://thequantumlaend.de/get-access/` to get one.
+///
+/// Args
+///     device_name (Optional[str]): The name of the device to instantiate. Defaults to "qryd_emulator".
+///     access_token (Optional[str]): An access_token is required to access QRYD hardware and emulators.
+///                         The access_token can either be given as an argument here
+///                             or set via the environmental variable `$QRYD_API_TOKEN`.
+///     seed (Optional[int]): Optionally overwrite seed value from downloaded device instance.
+///     dev (Optional[bool]): The boolean to set the dev header to.
+///     api_version (Optional[str]): The version of the QRYD API to use. Defaults to "v1_1".
+///
+/// Returns
+///     Union[TweezerDevice, EmulatorDevice]: Either the TweezerDevice or EmulatorDevice instance
+///         depending on the pulled information.
+///
+/// Raises:
+///     RoqoqoBackendError
+#[cfg(feature = "web-api")]
+#[pyfunction]
+pub fn device_from_api(
+    device_name: Option<String>,
+    access_token: Option<String>,
+    seed: Option<usize>,
+    dev: Option<bool>,
+    api_version: Option<String>,
+) -> PyResult<PyObject> {
+    Python::with_gil(|py| -> PyResult<PyObject> {
+        match roqoqo_qryd::device_from_api(device_name, access_token, seed, dev, api_version) {
+            Ok(device) => match device {
+                roqoqo_qryd::CombinedDevice::Tweezer(tweezer_device) => Ok(TweezerDeviceWrapper {
+                    internal: tweezer_device,
+                }
+                .into_py(py)),
+                roqoqo_qryd::CombinedDevice::Emulator(emulator_device) => {
+                    Ok(EmulatorDeviceWrapper {
+                        internal: emulator_device,
+                    }
+                    .into_py(py))
+                }
+            },
+            Err(err) => Err(PyValueError::new_err(format!("{:}", err))),
+        }
+    })
+}
+
 /// QRyd utilities for qoqo quantum computation toolkit.
 ///
 /// qoqo is the HQS python package to represent quantum circuits.
@@ -97,6 +146,7 @@ pub use api_devices::*;
 ///     qryd_devices
 ///     tweezer_devices
 ///     emulator_devices
+///     device_from_api
 ///
 ///
 #[pymodule]
@@ -105,6 +155,8 @@ fn qoqo_qryd(_py: Python, module: &Bound<PyModule>) -> PyResult<()> {
     module.add_class::<SimulatorBackendWrapper>()?;
     #[cfg(feature = "web-api")]
     module.add_class::<APIBackendWrapper>()?;
+    #[cfg(feature = "web-api")]
+    module.add_function(wrap_pyfunction!(device_from_api, module)?)?;
     let wrapper = wrap_pymodule!(qryd_devices::qryd_devices);
     module.add_wrapped(wrapper)?;
     let wrapper = wrap_pymodule!(api_devices::api_devices);
