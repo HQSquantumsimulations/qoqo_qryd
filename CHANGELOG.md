@@ -4,6 +4,10 @@ Tracks qoqo-qryd changes after 0.5
 
 # 0.19.0
 
+* Added `EmulatorDevice`
+* Updated the MSRV to 1.70
+* Updated the example scripts in `qoqo-qryd/examples`
+* Renamed the README files in both packages to fix build issues.
 * Added `draw()` method to `TweezerDevice`
 * Added support for IDE hints
 

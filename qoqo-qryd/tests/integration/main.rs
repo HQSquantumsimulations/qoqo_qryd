@@ -27,5 +27,8 @@ mod api_backend;
 mod operations;
 
 #[cfg(test)]
+mod emulator_devices;
+
+#[cfg(test)]
 #[cfg(feature = "simulator")]
 mod simulator_backend;

@@ -58,6 +58,10 @@ pub use api_devices::*;
 pub mod pragma_operations;
 pub use pragma_operations::*;
 
+/// Emulator device, TweezerDevice instance with all-to-all connectivity
+pub mod emulator_devices;
+pub use emulator_devices::*;
+
 /// Simulator backend for the QRyd quantum computer
 #[cfg(feature = "simulator")]
 mod simulator_backend;

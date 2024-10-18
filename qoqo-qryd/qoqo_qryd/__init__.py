@@ -21,6 +21,7 @@
     SimulatorBackend
     APIBackend
     tweezer_devices
+    emulator_devices
 
 """
 

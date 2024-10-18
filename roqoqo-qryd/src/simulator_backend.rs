@@ -60,7 +60,7 @@ impl EvaluatingBackend for SimulatorBackend {
     ) -> RegisterResult {
         let mut tmp_device: Option<Box<dyn Device>> = Some(Box::new(self.device.clone()));
 
-        let quest_backend = roqoqo_quest::Backend::new(self.number_qubits);
+        let quest_backend = roqoqo_quest::Backend::new(self.number_qubits, None);
 
         quest_backend.run_circuit_iterator_with_device(circuit, &mut tmp_device)
     }
