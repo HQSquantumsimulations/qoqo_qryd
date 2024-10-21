@@ -134,7 +134,7 @@ impl FirstDeviceWrapper {
     /// Returns the gate time of a single qubit operation on this device.
     ///
     /// Returns:
-    ///     f64: The gate time.
+    ///     float: The gate time.
     ///
     /// Raises:
     ///     ValueError: The gate is not available in the device.
@@ -147,7 +147,7 @@ impl FirstDeviceWrapper {
     /// Returns the gate time of a two qubit operation on this device.
     ///
     /// Returns:
-    ///     f64: The gate time.
+    ///     float: The gate time.
     ///
     /// Raises:
     ///     ValueError: The gate is not available in the device.
@@ -165,7 +165,7 @@ impl FirstDeviceWrapper {
     /// Returns the gate time of a three qubit operation on this device.
     ///
     /// Returns:
-    ///     f64: The gate time.
+    ///     float: The gate time.
     ///
     /// Raises:
     ///     ValueError: The gate is not available in the device.
@@ -184,7 +184,7 @@ impl FirstDeviceWrapper {
     /// Returns the gate time of a multi qubit operation on this device.
     ///
     /// Returns:
-    ///     f64: The gate time.
+    ///     float: The gate time.
     ///
     /// Raises:
     ///     ValueError: The gate is not available in the device.

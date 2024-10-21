@@ -25,9 +25,9 @@ use roqoqo_qryd::api_devices::{QRydAPIDevice, QrydEmuSquareDevice, QrydEmuTriang
 ///
 /// Args:
 ///     seed (int): Seed, if not provided will be set to 0 per default (not recommended!)
-///     controlled_z_phase_relation (Optinal[Union[str, float]]): The String used to choose what kind of phi-theta relation
+///     controlled_z_phase_relation (Optional[Union[str, float]]): The String used to choose what kind of phi-theta relation
 ///                                                 to use for the PhaseShiftedControlledZ gate
-///     controlled_phase_phase_relation (Optinal[Union[str, float]]): The String used to choose what kind of phi-theta relation
+///     controlled_phase_phase_relation (Optional[Union[str, float]]): The String used to choose what kind of phi-theta relation
 ///                                                     to use for the PhaseShiftedControlledPhase gate
 #[pyclass(name = "QrydEmuSquareDevice", module = "qoqo_qryd")]
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -42,9 +42,9 @@ impl QrydEmuSquareDeviceWrapper {
     ///
     /// Args:
     ///     seed (int): Seed, if not provided will be set to 0 per default (not recommended!)
-    ///     controlled_z_phase_relation (Optinal[Union[str, float]]): The String used to choose what kind of phi-theta relation
+    ///     controlled_z_phase_relation (Optional[Union[str, float]]): The String used to choose what kind of phi-theta relation
     ///                                                 to use for the PhaseShiftedControlledZ gate
-    ///     controlled_phase_phase_relation (Optinal[Union[str, float]]): The String used to choose what kind of phi-theta relation
+    ///     controlled_phase_phase_relation (Optional[Union[str, float]]): The String used to choose what kind of phi-theta relation
     ///                                                     to use for the PhaseShiftedControlledPhase gate
     ///
     /// Returns:
@@ -271,7 +271,7 @@ impl QrydEmuSquareDeviceWrapper {
     /// Returns the gate time of a single qubit operation on this device.
     ///
     /// Returns:
-    ///     f64: The gate time.
+    ///     float: The gate time.
     ///
     /// Raises:
     ///     ValueError: The gate is not available in the device.
@@ -284,7 +284,7 @@ impl QrydEmuSquareDeviceWrapper {
     /// Returns the gate time of a two qubit operation on this device.
     ///
     /// Returns:
-    ///     f64: The gate time.
+    ///     float: The gate time.
     ///
     /// Raises:
     ///     ValueError: The gate is not available in the device.
@@ -302,7 +302,7 @@ impl QrydEmuSquareDeviceWrapper {
     /// Returns the gate time of a three qubit operation on this device.
     ///
     /// Returns:
-    ///     f64: The gate time.
+    ///     float: The gate time.
     ///
     /// Raises:
     ///     ValueError: The gate is not available in the device.
@@ -321,7 +321,7 @@ impl QrydEmuSquareDeviceWrapper {
     /// Returns the gate time of a multi qubit operation on this device.
     ///
     /// Returns:
-    ///     f64: The gate time.
+    ///     float: The gate time.
     ///
     /// Raises:
     ///     ValueError: The gate is not available in the device.
@@ -373,9 +373,9 @@ impl QrydEmuSquareDeviceWrapper {
 ///
 /// Args:
 ///     seed (int): Seed, if not provided will be set to 0 per default (not recommended!)
-///     controlled_z_phase_relation (Optinal[Union[str, float]]): The String used to choose what kind of phi-theta relation
+///     controlled_z_phase_relation (Optional[Union[str, float]]): The String used to choose what kind of phi-theta relation
 ///                                                 to use for the PhaseShiftedControlledZ gate.
-///     controlled_phase_phase_relation (Optinal[Union[str, float]]): The String used to choose what kind of phi-theta relation
+///     controlled_phase_phase_relation (Optional[Union[str, float]]): The String used to choose what kind of phi-theta relation
 ///                                                     to use for the PhaseShiftedControlledPhase gate.
 ///     allow_ccz_gate (Optional[bool]): Whether to allow ControlledControlledPauliZ operations in the device.
 ///     allow_ccp_gate (Optional[bool]): Whether to allow ControlledControlledPhaseShift operations in the device.
@@ -392,9 +392,9 @@ impl QrydEmuTriangularDeviceWrapper {
     ///
     /// Args:
     ///     seed (int): Seed, if not provided will be set to 0 per default (not recommended!)
-    ///     controlled_z_phase_relation (Optinal[Union[str, float]]): The String used to choose what kind of phi-theta relation
+    ///     controlled_z_phase_relation (Optional[Union[str, float]]): The String used to choose what kind of phi-theta relation
     ///                                                 to use for the PhaseShiftedControlledZ gate.
-    ///     controlled_phase_phase_relation (Optinal[Union[str, float]]): The String used to choose what kind of phi-theta relation
+    ///     controlled_phase_phase_relation (Optional[Union[str, float]]): The String used to choose what kind of phi-theta relation
     ///                                                     to use for the PhaseShiftedControlledPhase gate.
     ///     allow_ccz_gate (Optional[bool]): Whether to allow ControlledControlledPauliZ operations in the device.
     ///     allow_ccp_gate (Optional[bool]): Whether to allow ControlledControlledPhaseShift operations in the device.
@@ -635,7 +635,7 @@ impl QrydEmuTriangularDeviceWrapper {
     /// Returns the gate time of a single qubit operation on this device.
     ///
     /// Returns:
-    ///     f64: The gate time.
+    ///     float: The gate time.
     ///
     /// Raises:
     ///     ValueError: The gate is not available in the device.
@@ -648,7 +648,7 @@ impl QrydEmuTriangularDeviceWrapper {
     /// Returns the gate time of a two qubit operation on this device.
     ///
     /// Returns:
-    ///     f64: The gate time.
+    ///     float: The gate time.
     ///
     /// Raises:
     ///     ValueError: The gate is not available in the device.
@@ -666,7 +666,7 @@ impl QrydEmuTriangularDeviceWrapper {
     /// Returns the gate time of a three qubit operation on this device.
     ///
     /// Returns:
-    ///     f64: The gate time.
+    ///     float: The gate time.
     ///
     /// Raises:
     ///     ValueError: The gate is not available in the device.
@@ -685,7 +685,7 @@ impl QrydEmuTriangularDeviceWrapper {
     /// Returns the gate time of a multi qubit operation on this device.
     ///
     /// Returns:
-    ///     f64: The gate time.
+    ///     float: The gate time.
     ///
     /// Raises:
     ///     ValueError: The gate is not available in the device.

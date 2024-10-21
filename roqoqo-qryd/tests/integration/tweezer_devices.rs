@@ -1421,3 +1421,34 @@ fn test_available_gate_names() {
         expected_result.len()
     );
 }
+
+#[test]
+fn test_render_device() {
+    let mut device = TweezerDevice::new(None, None, None);
+    device.add_layout("default").unwrap();
+    device.current_layout = Some("default".to_string());
+    device
+        .set_tweezer_single_qubit_gate_time("RotateX", 0, 0.23, None)
+        .unwrap();
+    device
+        .set_tweezer_single_qubit_gate_time("RotateZ", 1, 0.23, None)
+        .unwrap();
+    device
+        .set_tweezer_two_qubit_gate_time("PhaseShiftedControlledPhase", 2, 3, 0.34, None)
+        .unwrap();
+    device
+        .set_tweezer_two_qubit_gate_time("PhaseShiftedControlledZ", 1, 2, 0.34, None)
+        .unwrap();
+    device
+        .set_tweezers_per_row(vec![2, 2], Some("default".to_string()))
+        .unwrap();
+    device.add_qubit_tweezer_mapping(0, 0).unwrap();
+    device.add_qubit_tweezer_mapping(1, 1).unwrap();
+    device.add_qubit_tweezer_mapping(2, 2).unwrap();
+
+    let _image = device
+        .draw(None, false, &Some("graph_test.png".to_owned()))
+        .unwrap();
+    assert!(std::path::Path::new("graph_test.png").exists());
+    std::fs::remove_file("graph_test.png").unwrap();
+}

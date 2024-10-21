@@ -10,7 +10,7 @@
 // express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::collections::HashSet;
+use std::{collections::HashSet, io::Cursor};
 
 use bincode::{deserialize, serialize};
 use pyo3::{
@@ -117,7 +117,7 @@ impl TweezerDeviceWrapper {
     ///
     /// This requires a valid QRYD_API_TOKEN. Visit `https://thequantumlaend.de/get-access/` to get one.
     ///
-    /// Args
+    /// Args:
     ///     device_name (Optional[str]): The name of the device to instantiate. Defaults to "qryd_emulator".
     ///     access_token (Optional[str]): An access_token is required to access QRYD hardware and emulators.
     ///                         The access_token can either be given as an argument here
@@ -127,7 +127,7 @@ impl TweezerDeviceWrapper {
     ///     dev (Optional[bool]): The boolean to set the dev header to.
     ///     api_version (Optional[str]): The version of the QRYD API to use. Defaults to "v1_1".
     ///
-    /// Returns
+    /// Returns:
     ///     TweezerDevice: The new TweezerDevice instance with populated tweezer data.
     ///
     /// Raises:
@@ -277,7 +277,7 @@ impl TweezerDeviceWrapper {
     /// Returns the gate time of a single qubit operation on this device.
     ///
     /// Returns:
-    ///     f64: The gate time.
+    ///     float: The gate time.
     ///
     /// Raises:
     ///     ValueError: The gate is not available in the device.
@@ -291,7 +291,7 @@ impl TweezerDeviceWrapper {
     /// Returns the gate time of a two qubit operation on this device.
     ///
     /// Returns:
-    ///     f64: The gate time.
+    ///     float: The gate time.
     ///
     /// Raises:
     ///     ValueError: The gate is not available in the device.
@@ -310,7 +310,7 @@ impl TweezerDeviceWrapper {
     /// Returns the gate time of a three qubit operation on this device.
     ///
     /// Returns:
-    ///     f64: The gate time.
+    ///     float: The gate time.
     ///
     /// Raises:
     ///     ValueError: The gate is not available in the device.
@@ -330,7 +330,7 @@ impl TweezerDeviceWrapper {
     /// Returns the gate time of a multi qubit operation on this device.
     ///
     /// Returns:
-    ///     f64: The gate time.
+    ///     float: The gate time.
     ///
     /// Raises:
     ///     ValueError: The gate is not available in the device.
@@ -599,7 +599,7 @@ impl TweezerDeviceWrapper {
 
     /// Returns the number of total tweezer positions in the device.
     ///
-    /// Arguments:
+    /// Args:
     ///     layout_name (Optional[str]): The name of the layout to reference. Defaults to the current layout.
     ///
     /// Returns:
@@ -668,6 +668,60 @@ impl TweezerDeviceWrapper {
             PyByteArray::new_bound(py, &serialized[..]).into()
         });
         Ok(b)
+    }
+
+    /// Creates a graph representing a TweezerDevice.
+    ///
+    /// Args:
+    ///     draw_shifts (Optional[bool]): Whether to draw shifts or not. Default: false
+    ///     pixel_per_point (Optional[float]): The quality of the image.
+    ///     file_save_path (Optional[str]): Path to save the image to. Default: output the image with the display method.
+    ///
+    /// Raises:
+    ///     PyValueError - if there is no layout, an error occurred during the compilation or and invalid path was provided.
+    ///
+    #[pyo3(text_signature = "(draw_shifts, pixel_per_point, file_save_path, /)")]
+    pub fn draw(
+        &self,
+        draw_shifts: Option<bool>,
+        pixel_per_point: Option<f32>,
+        file_save_path: Option<String>,
+    ) -> PyResult<()> {
+        let display_image = file_save_path.is_none();
+        let image = self
+            .internal
+            .draw(
+                pixel_per_point,
+                draw_shifts.unwrap_or(false),
+                &file_save_path,
+            )
+            .map_err(|x| PyValueError::new_err(format!("Error during Circuit drawing: {x:?}")))?;
+
+        if display_image {
+            let mut buffer = Cursor::new(Vec::new());
+            image
+                .write_to(&mut buffer, image::ImageFormat::Png)
+                .map_err(|x| {
+                    PyValueError::new_err(format!(
+                        "Error during the generation of the Png file: {x:?}"
+                    ))
+                })?;
+            Python::with_gil(|py| {
+                let pil = PyModule::import_bound(py, "PIL.Image").unwrap();
+                let io = PyModule::import_bound(py, "io").unwrap();
+                let display = PyModule::import_bound(py, "IPython.display").unwrap();
+                let builtins = PyModule::import_bound(py, "builtins").unwrap();
+
+                let bytes_image_data = builtins
+                    .call_method1("bytes", (buffer.clone().into_inner(),))
+                    .unwrap();
+                let bytes_io = io.call_method1("BytesIO", (bytes_image_data,)).unwrap();
+                let image = pil.call_method1("open", (bytes_io,)).unwrap();
+
+                display.call_method1("display", (image,)).unwrap();
+            });
+        }
+        Ok(())
     }
 }
 
@@ -879,7 +933,7 @@ impl TweezerMutableDeviceWrapper {
     /// Returns the gate time of a single qubit operation on this device.
     ///
     /// Returns:
-    ///     f64: The gate time.
+    ///     float: The gate time.
     ///
     /// Raises:
     ///     ValueError: The gate is not available in the device.
@@ -893,7 +947,7 @@ impl TweezerMutableDeviceWrapper {
     /// Returns the gate time of a two qubit operation on this device.
     ///
     /// Returns:
-    ///     f64: The gate time.
+    ///     float: The gate time.
     ///
     /// Raises:
     ///     ValueError: The gate is not available in the device.
@@ -912,7 +966,7 @@ impl TweezerMutableDeviceWrapper {
     /// Returns the gate time of a three qubit operation on this device.
     ///
     /// Returns:
-    ///     f64: The gate time.
+    ///     float: The gate time.
     ///
     /// Raises:
     ///     ValueError: The gate is not available in the device.
@@ -932,7 +986,7 @@ impl TweezerMutableDeviceWrapper {
     /// Returns the gate time of a multi qubit operation on this device.
     ///
     /// Returns:
-    ///     f64: The gate time.
+    ///     float: The gate time.
     ///
     /// Raises:
     ///     ValueError: The gate is not available in the device.
@@ -1198,7 +1252,7 @@ impl TweezerMutableDeviceWrapper {
 
     /// Returns the number of total tweezer positions in the device.
     ///
-    /// Arguments:
+    /// Args:
     ///     layout_name (Optional[str]): The name of the layout to reference. Defaults to the current layout.
     ///
     /// Returns:
@@ -1273,7 +1327,7 @@ impl TweezerMutableDeviceWrapper {
     ///
     /// Args:
     ///     hqslang (str): The hqslang name of a single-qubit gate.
-    ///     tweezer (usize): The index of the tweezer.
+    ///     tweezer (int): The index of the tweezer.
     ///     gate_time (float): The the gate time for the given gate.
     ///     layout_name (Optional[str]): The name of the Layout to apply the gate time in.
     ///         Defaults to the current Layout.
@@ -1297,8 +1351,8 @@ impl TweezerMutableDeviceWrapper {
     ///
     /// Args:
     ///     hqslang (str): The hqslang name of a single-qubit gate.
-    ///     tweezer0 (usize): The index of the first tweezer.
-    ///     tweezer1 (usize): The index of the second tweezer.
+    ///     tweezer0 (int): The index of the first tweezer.
+    ///     tweezer1 (int): The index of the second tweezer.
     ///     gate_time (float): The the gate time for the given gate.
     ///     layout_name (Optional[str]): The name of the Layout to apply the gate time in.
     ///         Defaults to the current Layout.
@@ -1323,9 +1377,9 @@ impl TweezerMutableDeviceWrapper {
     ///
     /// Args:
     ///     hqslang (str): The hqslang name of a three-qubit gate.
-    ///     tweezer0 (usize): The index of the first tweezer.
-    ///     tweezer1 (usize): The index of the second tweezer.
-    ///     tweezer2 (usize): The index of the third tweezer.
+    ///     tweezer0 (int): The index of the first tweezer.
+    ///     tweezer1 (int): The index of the second tweezer.
+    ///     tweezer2 (int): The index of the third tweezer.
     ///     gate_time (float): The the gate time for the given gate.
     ///     layout_name (Optional[str]): The name of the Layout to apply the gate time in.
     ///         Defaults to the current Layout.
@@ -1357,8 +1411,8 @@ impl TweezerMutableDeviceWrapper {
     /// Set the time of a multi-qubit gate for a list of tweezers in a given Layout.
     ///
     /// Args:
-    ///     hqslang (name): The hqslang name of a multi-qubit gate.
-    ///     tweezers (List[usize]): The list of tweezer indexes.
+    ///     hqslang (str): The hqslang name of a multi-qubit gate.
+    ///     tweezers (List[int]): The list of tweezer indexes.
     ///     gate_time (float): The the gate time for the given gate.
     ///     layout_name (Optional[str]): The name of the Layout to apply the gate time in.
     ///         Defaults to the current Layout.
@@ -1388,7 +1442,7 @@ impl TweezerMutableDeviceWrapper {
     ///
     /// Args:
     ///     tweezer (int): The index of the tweezer.
-    ///     allowed_shifts (list(list(int))): The allowed tweezer shifts.
+    ///     allowed_shifts (list[list[int]]): The allowed tweezer shifts.
     ///     layout_name (Optional[str]): The name of the Layout to apply the allowed shifts in.
     ///         Defaults to the current Layout.
     ///
@@ -1422,7 +1476,7 @@ impl TweezerMutableDeviceWrapper {
     /// and into tweezer 3 if tweezer 2 is not occupied by a qubit.
     ///
     /// Args:
-    ///     row_shifts (list(list(int))): A list of lists, each representing a row of tweezers.
+    ///     row_shifts (list[list[int]]): A list of lists, each representing a row of tweezers.
     ///     layout_name (Optional[str]): The name of the Layout to apply the allowed shifts in.
     ///         Defaults to the current Layout.
     ///
@@ -1452,8 +1506,8 @@ impl TweezerMutableDeviceWrapper {
     /// Only switching between layouts having the same tweezer per row value is supported.
     ///
     /// Args:
-    ///     tweezers_per_row` - Vector containing the number of tweezers per row to set.
-    ///     layout_name` - The name of the Layout to set the tweezer per row for. Defaults to the current Layout.
+    ///     tweezers_per_row(List[int]): Vector containing the number of tweezers per row to set.
+    ///     layout_name(Optional[str]): The name of the Layout to set the tweezer per row for. Defaults to the current Layout.
     ///
     /// Raises:
     ///     ValueError: No layout name provided and no current layout set.
@@ -1471,7 +1525,7 @@ impl TweezerMutableDeviceWrapper {
     /// Set whether the device allows PragmaActiveReset operations or not.
     ///
     /// Args:
-    ///     allow_reset(bool): Whether the device should allow PragmaActiveReset operations or not.
+    ///     allow_reset (bool): Whether the device should allow PragmaActiveReset operations or not.
     ///
     /// Raises:
     ///     ValueError: The device isn't compatible with PragmaActiveReset.
@@ -1494,6 +1548,59 @@ impl TweezerMutableDeviceWrapper {
         self.internal
             .set_default_layout(layout)
             .map_err(|err| PyValueError::new_err(format!("{:}", err)))
+    }
+
+    /// Creates a graph representing a TweezerDevice.
+    ///
+    /// Args:
+    ///     draw_shifts (Optional[bool]): Whether to draw shifts or not. Default: false
+    ///     pixel_per_point (Optional[float]): The quality of the image.
+    ///     file_save_path (Optional[str]): Path to save the image to. Default: output the image with the display method.
+    ///
+    /// Raises:
+    ///     PyValueError - if there is no layout, an error occurred during the compilation or and invalid path was provided.
+    ///
+    #[pyo3(text_signature = "(draw_shifts, pixel_per_point, file_save_path, /)")]
+    pub fn draw(
+        &self,
+        draw_shifts: Option<bool>,
+        pixel_per_point: Option<f32>,
+        file_save_path: Option<String>,
+    ) -> PyResult<()> {
+        let image = self
+            .internal
+            .draw(
+                pixel_per_point,
+                draw_shifts.unwrap_or(false),
+                &file_save_path,
+            )
+            .map_err(|x| PyValueError::new_err(format!("Error during Circuit drawing: {x:?}")))?;
+
+        if file_save_path.is_none() {
+            let mut buffer = Cursor::new(Vec::new());
+            image
+                .write_to(&mut buffer, image::ImageFormat::Png)
+                .map_err(|x| {
+                    PyValueError::new_err(format!(
+                        "Error during the generation of the Png file: {x:?}"
+                    ))
+                })?;
+            Python::with_gil(|py| {
+                let pil = PyModule::import_bound(py, "PIL.Image").unwrap();
+                let io = PyModule::import_bound(py, "io").unwrap();
+                let display = PyModule::import_bound(py, "IPython.display").unwrap();
+                let builtins = PyModule::import_bound(py, "builtins").unwrap();
+
+                let bytes_image_data = builtins
+                    .call_method1("bytes", (buffer.clone().into_inner(),))
+                    .unwrap();
+                let bytes_io = io.call_method1("BytesIO", (bytes_image_data,)).unwrap();
+                let image = pil.call_method1("open", (bytes_io,)).unwrap();
+
+                display.call_method1("display", (image,)).unwrap();
+            });
+        }
+        Ok(())
     }
 }
 
