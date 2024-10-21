@@ -1391,13 +1391,20 @@ impl TweezerDevice {
         draw_shifts: bool,
         file_save_path: &Option<String>,
     ) -> Result<DynamicImage, RoqoqoBackendError> {
-        let layout = self.layout_register.get(
-            &self
-                .current_layout
-                .clone()
-                .or_else(|| self.default_layout.clone())
-                .unwrap_or_default(),
-        );
+        let layout = match &self.layout_register {
+            Some(x) => x.get(
+                &self
+                    .current_layout
+                    .clone()
+                    .or_else(|| self.default_layout.clone())
+                    .unwrap_or_default(),
+            ),
+            None => {
+                return Err(RoqoqoBackendError::GenericError {
+                    msg: "Draw method not available for EmulatorDevice.".to_owned(),
+                })
+            }
+        };
         if layout.is_none() {
             return Err(RoqoqoBackendError::GenericError {
                 msg: "No layout found for the device.".to_owned(),

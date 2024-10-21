@@ -680,7 +680,6 @@ impl TweezerDeviceWrapper {
     /// Raises:
     ///     PyValueError - if there is no layout, an error occurred during the compilation or and invalid path was provided.
     ///
-
     #[pyo3(text_signature = "(draw_shifts, pixel_per_point, file_save_path, /)")]
     pub fn draw(
         &self,

@@ -998,13 +998,10 @@ impl APIBackend {
             self._check_operation_compatability(op)?
         }
 
-        match &measurement.constant_circuit {
-            Some(constant_circuit) => {
-                for op in constant_circuit.iter() {
-                    self._check_operation_compatability(op)?
-                }
+        if let Some(constant_circuit) = &measurement.constant_circuit {
+            for op in constant_circuit.iter() {
+                self._check_operation_compatability(op)?
             }
-            None => (),
         }
 
         Ok(())
