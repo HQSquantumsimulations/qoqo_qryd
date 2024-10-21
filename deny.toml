@@ -84,7 +84,10 @@ allow = [
     "Unicode-DFS-2016",
     "CC0-1.0",
     "ISC",
-    "OpenSSL"
+    "OpenSSL",
+    "Unicode-3.0",
+    "Zlib",
+    "ISC",
 ]
 # List of explicitly disallowed licenses
 # See https://spdx.org/licenses/ for list of possible licenses
@@ -117,7 +120,12 @@ exceptions = [
     # Each entry is the crate and version constraint, and its specific allow
     # list
     #{ allow = ["Zlib"], name = "adler32", version = "*" },
-    {allow = ["MPL-2.0"], name ="webpki-roots", version = "*" },
+    { allow = ["MPL-2.0"], name = "resvg", version = "*" },
+    { allow = ["MPL-2.0"], name = "usvg", version = "*" },
+    { allow = ["MPL-2.0"], name = "usvg-parser", version = "*" },
+    { allow = ["MPL-2.0"], name = "usvg-text-layout", version = "*" },
+    { allow = ["MPL-2.0"], name = "usvg-tree", version = "*" },
+    { allow = ["MPL-2.0"], name = "webpki-roots", version = "*" },
 ]
 
 # Some crates don't have (easily) machine readable licensing information,
@@ -137,7 +145,7 @@ expression = "MIT AND ISC AND OpenSSL"
 # depending on the rest of your configuration
 license-files = [
     # Each entry is a crate relative path, and the (opaque) hash of its contents
-    { path = "LICENSE", hash = 0xbd0eed23 }
+    { path = "LICENSE", hash = 0xbd0eed23 },
 ]
 
 [licenses.private]

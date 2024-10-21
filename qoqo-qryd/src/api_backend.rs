@@ -122,7 +122,7 @@ impl APIBackendWrapper {
     ///     job_location (str): location (url) of the job one is interested in.
     ///
     /// Returns:
-    ///     QRydJobStatus(dict): status and message of the job.
+    ///     Dict[str, str]: status and message of the job.
     ///
     #[pyo3(text_signature = "($self, job_location, /)")]
     pub fn get_job_status(&self, job_location: String) -> PyResult<HashMap<&'static str, String>> {
@@ -294,7 +294,7 @@ impl APIBackendWrapper {
     ///     circuit (Circuit): The circuit that is run on the APIBackend.
     ///
     /// Returns:
-    ///     Tuple[Dict[str, List[List[bool]]], Dict[str, List[List[float]]]], Dict[str, List[List[complex]]]]: The output registers written by the evaluated circuits.
+    ///     Tuple[Dict[str, List[List[bool]]], Dict[str, List[List[float]]], Dict[str, List[List[complex]]]]: The output registers written by the evaluated circuits.
     ///
     /// Raises:
     ///     TypeError: Circuit argument cannot be converted to qoqo Circuit
@@ -328,7 +328,7 @@ impl APIBackendWrapper {
     ///     measurement (Measurement): The measurement that is run on the APIBackend.
     ///
     /// Returns:
-    ///     Tuple[Dict[str, List[List[bool]]], Dict[str, List[List[float]]]], Dict[str, List[List[complex]]]]: The output registers written by the evaluated circuits.
+    ///     Tuple[Dict[str, List[List[bool]]], Dict[str, List[List[float]]], Dict[str, List[List[complex]]]]: The output registers written by the evaluated circuits.
     ///
     /// Raises:
     ///     TypeError: Circuit argument cannot be converted to qoqo Circuit

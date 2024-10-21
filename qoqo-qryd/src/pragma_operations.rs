@@ -825,7 +825,7 @@ impl PragmaShiftQubitsTweezersWrapper {
     /// Return the shifts involved in the Operation.
     ///
     /// Returns:
-    ///     list(Tuple[int, int]): The shifts involved in the Operation.
+    ///     list[Tuple[int, int]]: The shifts involved in the Operation.
     fn shifts(&self) -> Vec<(usize, usize)> {
         self.internal.shifts.clone()
     }

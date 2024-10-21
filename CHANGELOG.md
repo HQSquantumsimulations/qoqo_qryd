@@ -4,6 +4,8 @@ Tracks qoqo-qryd changes after 0.5
 
 # 0.20.0
 
+* Added `draw()` method to `TweezerDevice`
+* Added support for IDE hints
 * Added `device_from_api()` function
 
 # 0.19.0

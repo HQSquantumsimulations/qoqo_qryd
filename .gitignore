@@ -17,3 +17,4 @@ doc/generated*
 tmp*
 *.ipynb_checkpoints*
 */book/*
+.qollage*
