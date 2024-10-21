@@ -45,6 +45,7 @@ use pyo3::wrap_pymodule;
 ///     SimulatorBackend
 ///     APIBackend
 ///     tweezer_devices
+///     emulator_devices
 ///
 pub mod qryd_devices;
 pub use qryd_devices::*;
@@ -56,6 +57,11 @@ pub use pragma_operations::*;
 ///
 pub mod tweezer_devices;
 pub use tweezer_devices::*;
+
+/// QRyd Emulator Devices.
+///
+pub mod emulator_devices;
+pub use emulator_devices::*;
 
 #[cfg(feature = "simulator")]
 pub mod simulator_backend;
@@ -90,6 +96,7 @@ pub use api_devices::*;
 ///     pragma_operations
 ///     qryd_devices
 ///     tweezer_devices
+///     emulator_devices
 ///
 ///
 #[pymodule]
@@ -107,6 +114,8 @@ fn qoqo_qryd(_py: Python, module: &Bound<PyModule>) -> PyResult<()> {
     // Adding nice imports corresponding to maturin example
     let wrapper = wrap_pymodule!(pragma_operations::pragma_operations);
     module.add_wrapped(wrapper)?;
+    let wrapper = wrap_pymodule!(emulator_devices::emulator_devices);
+    module.add_wrapped(wrapper)?;
     // Adding nice imports corresponding to maturin example
     let system = PyModule::import_bound(_py, "sys")?;
     let binding = system.getattr("modules")?;
@@ -120,6 +129,10 @@ fn qoqo_qryd(_py: Python, module: &Bound<PyModule>) -> PyResult<()> {
     system_modules.set_item(
         "qoqo_qryd.tweezer_devices",
         module.getattr("tweezer_devices")?,
+    )?;
+    system_modules.set_item(
+        "qoqo_qryd.emulator_devices",
+        module.getattr("emulator_devices")?,
     )?;
     Ok(())
 }

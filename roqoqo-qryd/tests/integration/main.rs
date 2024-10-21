@@ -17,6 +17,9 @@ mod qryd_devices;
 mod tweezer_devices;
 
 #[cfg(test)]
+mod emulator_devices;
+
+#[cfg(test)]
 mod pragma_operations;
 
 #[cfg(test)]

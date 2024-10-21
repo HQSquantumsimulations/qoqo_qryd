@@ -1301,10 +1301,13 @@ fn test_convert_to_device() {
     Python::with_gil(|py| {
         let device_type = py.get_type_bound::<TweezerDeviceWrapper>();
         let device = device_type.call0().unwrap();
+        let device_type_mut = py.get_type_bound::<TweezerMutableDeviceWrapper>();
+        let device_mut = device_type_mut.call0().unwrap();
 
         let converted = convert_into_device(&device).unwrap();
+        let converted_mut = convert_into_device(&device_mut).unwrap();
         let rust_dev: TweezerDevice = TweezerDevice::new(None, None, None);
-
+        assert_eq!(converted_mut, rust_dev);
         assert_eq!(converted, rust_dev);
     });
 }

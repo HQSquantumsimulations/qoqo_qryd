@@ -52,7 +52,7 @@ fn test_creating_backend_error() {
 fn test_running_circuit() {
     pyo3::prepare_freethreaded_python();
     let mut circuit = Circuit::new();
-    circuit += operations::DefinitionBit::new("readout".to_string(), 3, true);
+    circuit += operations::DefinitionBit::new("readout".to_string(), 2, true);
     circuit += operations::RotateX::new(0, 0.0.into());
     circuit += operations::RotateX::new(0, 1.0.into());
     circuit += operations::RotateX::new(0, 2.0.into());
@@ -123,7 +123,7 @@ fn test_running_circuit_error() {
 fn test_running_measurement_registers() {
     pyo3::prepare_freethreaded_python();
     let mut circuit = Circuit::new();
-    circuit += operations::DefinitionBit::new("readout".to_string(), 3, true);
+    circuit += operations::DefinitionBit::new("readout".to_string(), 2, true);
     circuit += operations::RotateX::new(0, 0.0.into());
     circuit += operations::RotateX::new(0, 1.0.into());
     circuit += operations::RotateX::new(0, 2.0.into());
@@ -237,10 +237,10 @@ fn test_running_measurement_registers_some() {
 fn test_running_measurement_registers_all_registers() {
     pyo3::prepare_freethreaded_python();
     let mut circuit = Circuit::new();
-    circuit += operations::DefinitionBit::new("readout".to_string(), 3, true);
-    circuit += operations::DefinitionFloat::new("readout".to_string(), 3, true);
-    circuit += operations::DefinitionComplex::new("readout".to_string(), 3, true);
-    circuit += operations::DefinitionUsize::new("readout".to_string(), 3, true);
+    circuit += operations::DefinitionBit::new("readout".to_string(), 2, true);
+    circuit += operations::DefinitionFloat::new("readout".to_string(), 2, true);
+    circuit += operations::DefinitionComplex::new("readout".to_string(), 2, true);
+    circuit += operations::DefinitionUsize::new("readout".to_string(), 2, true);
     circuit += operations::RotateX::new(0, 0.0.into());
     circuit += operations::RotateX::new(0, 1.0.into());
     circuit += operations::RotateX::new(0, 2.0.into());
@@ -287,7 +287,7 @@ fn test_running_measurement_registers_all_registers() {
 fn test_running_measurement() {
     pyo3::prepare_freethreaded_python();
     let mut circuit = Circuit::new();
-    circuit += operations::DefinitionBit::new("ro".to_string(), 3, true);
+    circuit += operations::DefinitionBit::new("ro".to_string(), 2, true);
     circuit += operations::RotateX::new(0, 0.0.into());
     circuit += operations::RotateX::new(0, 1.0.into());
     circuit += operations::RotateX::new(0, 2.0.into());
