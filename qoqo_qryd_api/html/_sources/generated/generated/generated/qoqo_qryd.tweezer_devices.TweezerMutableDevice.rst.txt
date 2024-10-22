@@ -19,6 +19,7 @@ qoqo\_qryd.tweezer\_devices.TweezerMutableDevice
       ~TweezerMutableDevice.available_layouts
       ~TweezerMutableDevice.current_layout
       ~TweezerMutableDevice.deactivate_qubit
+      ~TweezerMutableDevice.draw
       ~TweezerMutableDevice.from_bincode
       ~TweezerMutableDevice.from_json
       ~TweezerMutableDevice.gate_time_controlled_phase

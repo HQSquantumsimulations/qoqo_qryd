@@ -4,10 +4,26 @@
 .. automodule:: qoqo_qryd
 
    
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      device_from_api
+   
    .. rubric:: Classes
 
    .. autosummary::
    
       APIBackend
+      FirstDevice
+      PragmaChangeQRydLayout
+      PragmaDeactivateQRydQubit
+      PragmaShiftQRydQubit
+      PragmaShiftQubitsTweezers
+      PragmaSwitchDeviceLayout
+      QrydEmuSquareDevice
+      QrydEmuTriangularDevice
       SimulatorBackend
+      TweezerDevice
+      TweezerMutableDevice
    

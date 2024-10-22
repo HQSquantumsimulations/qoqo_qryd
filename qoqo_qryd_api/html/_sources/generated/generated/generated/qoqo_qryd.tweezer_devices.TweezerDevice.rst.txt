@@ -18,6 +18,7 @@ qoqo\_qryd.tweezer\_devices.TweezerDevice
       ~TweezerDevice.available_layouts
       ~TweezerDevice.current_layout
       ~TweezerDevice.deactivate_qubit
+      ~TweezerDevice.draw
       ~TweezerDevice.from_api
       ~TweezerDevice.from_bincode
       ~TweezerDevice.from_json
