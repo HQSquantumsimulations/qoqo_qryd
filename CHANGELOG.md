@@ -2,6 +2,10 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+# 0.20.1
+
+* Fixed 0.20.0 release issues
+
 # 0.20.0
 
 * Added `draw()` method to `TweezerDevice`
