@@ -6111,7 +6111,7 @@ THE SOFTWARE.
 
 
 ====================================================
-bytes 1.7.2
+bytes 1.8.0
 https://github.com/tokio-rs/bytes
 by Carl Lerche <me@carllerche.com>, Sean McArthur <sean@seanmonstar.com>
 Types and traits for working with bytes
@@ -36242,7 +36242,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-proc-macro2 1.0.88
+proc-macro2 1.0.89
 https://github.com/dtolnay/proc-macro2
 by David Tolnay <dtolnay@gmail.com>, Alex Crichton <alex@alexcrichton.com>
 A substitute implementation of the compiler's `proc_macro` API to decouple token-based libraries from the procedural macro use case.
@@ -38518,7 +38518,7 @@ LICENSE:
 
 
 ====================================================
-qoqo-qryd 0.20.0
+qoqo-qryd 0.20.1
 https://github.com/HQSquantumsimulations/qoqo_qryd
 by HQS Quantum Simulations <info@quantumsimulations.de>
 QRyd backend for qoqo quantum computing toolkit
@@ -44422,7 +44422,7 @@ LICENSE:
 
 
 ====================================================
-roqoqo-qryd 0.20.0
+roqoqo-qryd 0.20.1
 https://github.com/HQSquantumsimulations/qoqo_qryd
 by HQS Quantum Simulations <info@quantumsimulations.de>
 QRyd interface for roqoqo rust quantum computing toolkit
@@ -48195,7 +48195,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-serde 1.0.210
+serde 1.0.212
 https://serde.rs
 by Erick Tryzelaar <erick.tryzelaar@gmail.com>, David Tolnay <dtolnay@gmail.com>
 A generic serialization/deserialization framework
@@ -48409,7 +48409,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ====================================================
-serde_derive 1.0.210
+serde_derive 1.0.212
 https://serde.rs
 by Erick Tryzelaar <erick.tryzelaar@gmail.com>, David Tolnay <dtolnay@gmail.com>
 Macros 1.1 implementation of #[derive(Serialize, Deserialize)]
@@ -55681,7 +55681,7 @@ SOFTWARE.
 
 
 ====================================================
-tokio 1.40.0
+tokio 1.41.0
 https://tokio.rs
 by Tokio Contributors <team@tokio.rs>
 An event-driven, non-blocking I/O platform for writing asynchronous I/O
