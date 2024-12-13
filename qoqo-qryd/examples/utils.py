@@ -1,4 +1,4 @@
-# Copyright © 2024 HQS Quantum Simulations GmbH.
+# Copyright © 2024-2025 HQS Quantum Simulations GmbH.
 
 """Utils for TweezerMutableDevice layout setting."""
 

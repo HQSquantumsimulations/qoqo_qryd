@@ -3,7 +3,7 @@
 Kept as past reference, as there are no multi-qubit operations that are natively
 supported by TweezerDevice and TweezerMutableDevice."""
 
-# Copyright © 2021 - 2024 HQS Quantum Simulations GmbH.
+# Copyright © 2021 - 2025 HQS Quantum Simulations GmbH.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
 # in compliance with the License. You may obtain a copy of the License at

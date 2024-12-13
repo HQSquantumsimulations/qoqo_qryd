@@ -1,4 +1,4 @@
-# Copyright © 2021-2022 HQS Quantum Simulations GmbH.
+# Copyright © 2021-2025 HQS Quantum Simulations GmbH.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
 # in compliance with the License. You may obtain a copy of the License at
@@ -22,25 +22,22 @@ from qoqo.measurements import ClassicalRegister
 from time import sleep
 
 from qoqo_qryd import APIBackend
-from typing import (
-    Dict,
-    Optional,
-    List
-)
+from typing import Dict, Optional, List
 from copy import copy
+
 
 def test():
     # device = QrydEmuSquareDevice(seed=1)
     # backend = APIBackend(device=device, timeout=20)
     # circuit = Circuit()
-  
+
     # circuit += ops.RotateX(0, np.pi/2)
     # circuit += ops.RotateX(2, np.pi/2)
     # circuit += ops.RotateX(4, np.pi/2)
 
     # circuit += ops.DefinitionBit("ro", 6, is_output=True)
     # circuit += ops.PragmaRepeatedMeasurement("ro", 1000, None)
-    
+
     # measurement = ClassicalRegister(constant_circuit=None, circuits=[circuit])
     # program = QuantumProgram(measurement=measurement, input_parameter_names=[])
 
@@ -56,5 +53,6 @@ def test():
     #         break
     pass
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     pytest.main(sys.argv)
