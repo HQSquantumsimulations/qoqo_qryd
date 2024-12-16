@@ -123,6 +123,17 @@ impl EmulatorDeviceWrapper {
         Ok(EmulatorDeviceWrapper { internal })
     }
 
+    /// Returns a list of all available Layout names.
+    ///
+    /// Implemented for compatibility reasons, as the returning vector
+    /// will always be empty.
+    ///
+    /// Returns:
+    ///     List[str]: The list of all available Layout names.
+    pub fn available_layouts(&self) -> Vec<&str> {
+        self.internal.available_layouts()
+    }
+
     /// Modifies the qubit -> tweezer mapping of the device.
     ///
     /// If a qubit -> tweezer mapping is already present, it is overwritten.

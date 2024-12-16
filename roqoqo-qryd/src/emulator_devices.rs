@@ -221,6 +221,18 @@ impl EmulatorDevice {
         }
     }
 
+    /// Returns a vector of all available Layout names.
+    ///
+    /// Implemented for compatibility reasons, as the returning vector
+    /// will always be empty.
+    ///
+    /// # Returns:
+    ///
+    /// * `Vec<&str>` - The vector of all available Layout names.
+    pub fn available_layouts(&self) -> Vec<&str> {
+        self.internal.available_layouts()
+    }
+
     /// Modifies the qubit -> tweezer mapping of the device.
     ///
     /// If a qubit -> tweezer mapping is already present, it is overwritten.
