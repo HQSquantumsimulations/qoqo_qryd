@@ -2,6 +2,9 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+# 0.21.0
+
+
 # 0.20.1
 
 * Fixed 0.20.0 release issues
