@@ -64,6 +64,14 @@ fn test_qubit_tweezer_mapping() {
     assert_eq!(add_01.unwrap(), vec![(0, 1), (2, 3)].into_iter().collect());
 }
 
+//Test EmulatorDevice available_layouts() method
+#[test]
+fn test_available_layouts() {
+    let device = EmulatorDevice::new(None, None, None);
+
+    assert!(device.available_layouts().is_empty());
+}
+
 // Test EmulatorDevice get_available_gates_names() and add_available_gate() methods
 #[test]
 fn test_available_gate_names() {
