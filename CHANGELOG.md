@@ -2,6 +2,11 @@
 
 Tracks qoqo-qryd changes after 0.5
 
+# 0.21.0
+
+* Added `EmulatorDevice.available_layouts()`
+* Added deserialization check in `EmulatorDevice.from_json()`
+
 # 0.20.1
 
 * Fixed 0.20.0 release issues

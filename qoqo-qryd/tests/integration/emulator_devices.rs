@@ -14,7 +14,7 @@
 
 use pyo3::{
     prelude::*,
-    types::{IntoPyDict, PyDict},
+    types::{IntoPyDict, PyDict, PyList},
 };
 
 use qoqo_qryd::{emulator_devices::convert_into_device, EmulatorDeviceWrapper};
@@ -56,6 +56,23 @@ fn test_new() {
                 .unwrap(),
             None
         );
+    })
+}
+
+//Test EmulatorDevice available_layouts() method
+#[test]
+fn test_available_layouts() {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let device_type = py.get_type_bound::<EmulatorDeviceWrapper>();
+        let device = device_type.call0().unwrap();
+
+        assert!(device
+            .call_method0("available_layouts")
+            .unwrap()
+            .downcast::<PyList>()
+            .unwrap()
+            .is_empty());
     })
 }
 

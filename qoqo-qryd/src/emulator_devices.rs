@@ -123,6 +123,17 @@ impl EmulatorDeviceWrapper {
         Ok(EmulatorDeviceWrapper { internal })
     }
 
+    /// Returns a list of all available Layout names.
+    ///
+    /// Implemented for compatibility reasons, as the returning vector
+    /// will always be empty.
+    ///
+    /// Returns:
+    ///     List[str]: The list of all available Layout names.
+    pub fn available_layouts(&self) -> Vec<&str> {
+        self.internal.available_layouts()
+    }
+
     /// Modifies the qubit -> tweezer mapping of the device.
     ///
     /// If a qubit -> tweezer mapping is already present, it is overwritten.
@@ -490,6 +501,11 @@ impl EmulatorDeviceWrapper {
     fn from_json(input: &str) -> PyResult<EmulatorDeviceWrapper> {
         let tw: TweezerDevice = serde_json::from_str(input)
             .map_err(|_| PyValueError::new_err("Input cannot be deserialized to EmulatorDevice"))?;
+        if tw.available_gates.is_none() || tw.layout_register.is_some() {
+            return Err(PyValueError::new_err(
+                "Trying to deserialize an incorrectly setup device into EmulatorDevice",
+            ));
+        }
         let internal = EmulatorDevice { internal: tw };
         Ok(EmulatorDeviceWrapper { internal })
     }
