@@ -16,6 +16,7 @@ qoqo\_qryd.emulator\_devices.EmulatorDevice
       ~EmulatorDevice.__init__
       ~EmulatorDevice.add_available_gate
       ~EmulatorDevice.add_qubit_tweezer_mapping
+      ~EmulatorDevice.available_layouts
       ~EmulatorDevice.deactivate_qubit
       ~EmulatorDevice.from_api
       ~EmulatorDevice.from_bincode

@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>qoqo_qryd.emulator_devices.EmulatorDevice &mdash; qoqo_qryd 0.20.1 documentation</title>
+  <title>qoqo_qryd.emulator_devices.EmulatorDevice &mdash; qoqo_qryd 0.21.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=4fe281f3"></script>
+      <script src="../../../_static/documentation_options.js?v=ac6cbfe6"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -136,73 +136,76 @@ It can be hardcoded to a specific value if a float is passed in as String.</p></
 <tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.add_qubit_tweezer_mapping" title="qoqo_qryd.emulator_devices.EmulatorDevice.add_qubit_tweezer_mapping"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_qubit_tweezer_mapping</span></code></a>(tweezer, /)</p></td>
 <td><p>Modifies the qubit -&gt; tweezer mapping of the device.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.deactivate_qubit" title="qoqo_qryd.emulator_devices.EmulatorDevice.deactivate_qubit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">deactivate_qubit</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.available_layouts" title="qoqo_qryd.emulator_devices.EmulatorDevice.available_layouts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">available_layouts</span></code></a>()</p></td>
+<td><p>Returns a list of all available Layout names.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.deactivate_qubit" title="qoqo_qryd.emulator_devices.EmulatorDevice.deactivate_qubit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">deactivate_qubit</span></code></a>()</p></td>
 <td><p>Deactivate the given qubit in the device.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.from_api" title="qoqo_qryd.emulator_devices.EmulatorDevice.from_api"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_api</span></code></a>(device_name, access_token, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.from_api" title="qoqo_qryd.emulator_devices.EmulatorDevice.from_api"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_api</span></code></a>(device_name, access_token, ...)</p></td>
 <td><p>Creates a new Emulator instance containing populated tweezer data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.from_bincode" title="qoqo_qryd.emulator_devices.EmulatorDevice.from_bincode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_bincode</span></code></a>(input, /)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.from_bincode" title="qoqo_qryd.emulator_devices.EmulatorDevice.from_bincode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_bincode</span></code></a>(input, /)</p></td>
 <td><p>Convert the bincode representation of the EmulatorDevice to a EmulatorDevice using the bincode crate.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.from_json" title="qoqo_qryd.emulator_devices.EmulatorDevice.from_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_json</span></code></a>(input, /)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.from_json" title="qoqo_qryd.emulator_devices.EmulatorDevice.from_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_json</span></code></a>(input, /)</p></td>
 <td><p>Convert the json representation of a EmulatorDevice to a EmulatorDevice.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.gate_time_controlled_phase" title="qoqo_qryd.emulator_devices.EmulatorDevice.gate_time_controlled_phase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gate_time_controlled_phase</span></code></a>(target, phi, theta, /)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.gate_time_controlled_phase" title="qoqo_qryd.emulator_devices.EmulatorDevice.gate_time_controlled_phase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gate_time_controlled_phase</span></code></a>(target, phi, theta, /)</p></td>
 <td><p>Returns the gate time of a PhaseShiftedControlledPhase operation with the given qubits and phi and theta angles.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.gate_time_controlled_z" title="qoqo_qryd.emulator_devices.EmulatorDevice.gate_time_controlled_z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gate_time_controlled_z</span></code></a>(target, phi, /)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.gate_time_controlled_z" title="qoqo_qryd.emulator_devices.EmulatorDevice.gate_time_controlled_z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gate_time_controlled_z</span></code></a>(target, phi, /)</p></td>
 <td><p>Returns the gate time of a PhaseShiftedControlledZ operation with the given qubits and phi angle.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.generic_device" title="qoqo_qryd.emulator_devices.EmulatorDevice.generic_device"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generic_device</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.generic_device" title="qoqo_qryd.emulator_devices.EmulatorDevice.generic_device"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generic_device</span></code></a>()</p></td>
 <td><p>Turns Device into GenericDevice</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.get_allow_reset" title="qoqo_qryd.emulator_devices.EmulatorDevice.get_allow_reset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_allow_reset</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.get_allow_reset" title="qoqo_qryd.emulator_devices.EmulatorDevice.get_allow_reset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_allow_reset</span></code></a>()</p></td>
 <td><p>Get whether the device allows PragmaActiveReset operations or not.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.get_available_gates_names" title="qoqo_qryd.emulator_devices.EmulatorDevice.get_available_gates_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_available_gates_names</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.get_available_gates_names" title="qoqo_qryd.emulator_devices.EmulatorDevice.get_available_gates_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_available_gates_names</span></code></a>()</p></td>
 <td><p>Get the names of the available gates in the given layout.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.get_qubit_to_tweezer_mapping" title="qoqo_qryd.emulator_devices.EmulatorDevice.get_qubit_to_tweezer_mapping"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_qubit_to_tweezer_mapping</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.get_qubit_to_tweezer_mapping" title="qoqo_qryd.emulator_devices.EmulatorDevice.get_qubit_to_tweezer_mapping"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_qubit_to_tweezer_mapping</span></code></a>()</p></td>
 <td><p>Get the qubit -&gt; tweezer mapping of the device.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.multi_qubit_gate_time" title="qoqo_qryd.emulator_devices.EmulatorDevice.multi_qubit_gate_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multi_qubit_gate_time</span></code></a>(qubits, /)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.multi_qubit_gate_time" title="qoqo_qryd.emulator_devices.EmulatorDevice.multi_qubit_gate_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multi_qubit_gate_time</span></code></a>(qubits, /)</p></td>
 <td><p>Returns the gate time of a multi qubit operation on this device.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.number_qubits" title="qoqo_qryd.emulator_devices.EmulatorDevice.number_qubits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">number_qubits</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.number_qubits" title="qoqo_qryd.emulator_devices.EmulatorDevice.number_qubits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">number_qubits</span></code></a>()</p></td>
 <td><p>Return number of qubits in device.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.number_tweezer_positions" title="qoqo_qryd.emulator_devices.EmulatorDevice.number_tweezer_positions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">number_tweezer_positions</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.number_tweezer_positions" title="qoqo_qryd.emulator_devices.EmulatorDevice.number_tweezer_positions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">number_tweezer_positions</span></code></a>()</p></td>
 <td><p>Returns the number of total tweezer positions in the device.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.phase_shift_controlled_phase" title="qoqo_qryd.emulator_devices.EmulatorDevice.phase_shift_controlled_phase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">phase_shift_controlled_phase</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.phase_shift_controlled_phase" title="qoqo_qryd.emulator_devices.EmulatorDevice.phase_shift_controlled_phase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">phase_shift_controlled_phase</span></code></a>()</p></td>
 <td><p>Returns the PhaseShiftedControlledPhase phase shift according to the device's relation.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.phase_shift_controlled_z" title="qoqo_qryd.emulator_devices.EmulatorDevice.phase_shift_controlled_z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">phase_shift_controlled_z</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.phase_shift_controlled_z" title="qoqo_qryd.emulator_devices.EmulatorDevice.phase_shift_controlled_z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">phase_shift_controlled_z</span></code></a>()</p></td>
 <td><p>Returns the PhaseShiftedControlledZ phase shift according to the device's relation.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.qrydbackend" title="qoqo_qryd.emulator_devices.EmulatorDevice.qrydbackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">qrydbackend</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.qrydbackend" title="qoqo_qryd.emulator_devices.EmulatorDevice.qrydbackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">qrydbackend</span></code></a>()</p></td>
 <td><p>Returns the backend associated with the device.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.seed" title="qoqo_qryd.emulator_devices.EmulatorDevice.seed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seed</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.seed" title="qoqo_qryd.emulator_devices.EmulatorDevice.seed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seed</span></code></a>()</p></td>
 <td><p>Returns the seed usized for the API.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.set_allow_reset" title="qoqo_qryd.emulator_devices.EmulatorDevice.set_allow_reset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_allow_reset</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.set_allow_reset" title="qoqo_qryd.emulator_devices.EmulatorDevice.set_allow_reset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_allow_reset</span></code></a>()</p></td>
 <td><p>Set whether the device allows PragmaActiveReset operations or not.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.single_qubit_gate_time" title="qoqo_qryd.emulator_devices.EmulatorDevice.single_qubit_gate_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">single_qubit_gate_time</span></code></a>(qubit, /)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.single_qubit_gate_time" title="qoqo_qryd.emulator_devices.EmulatorDevice.single_qubit_gate_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">single_qubit_gate_time</span></code></a>(qubit, /)</p></td>
 <td><p>Returns the gate time of a single qubit operation on this device.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.three_qubit_gate_time" title="qoqo_qryd.emulator_devices.EmulatorDevice.three_qubit_gate_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">three_qubit_gate_time</span></code></a>(control_0, control_1, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.three_qubit_gate_time" title="qoqo_qryd.emulator_devices.EmulatorDevice.three_qubit_gate_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">three_qubit_gate_time</span></code></a>(control_0, control_1, ...)</p></td>
 <td><p>Returns the gate time of a three qubit operation on this device.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.to_bincode" title="qoqo_qryd.emulator_devices.EmulatorDevice.to_bincode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_bincode</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.to_bincode" title="qoqo_qryd.emulator_devices.EmulatorDevice.to_bincode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_bincode</span></code></a>()</p></td>
 <td><p>Return the bincode representation of the EmulatorDevice using the bincode crate.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.to_json" title="qoqo_qryd.emulator_devices.EmulatorDevice.to_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_json</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.to_json" title="qoqo_qryd.emulator_devices.EmulatorDevice.to_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_json</span></code></a>()</p></td>
 <td><p>Return the json representation of the EmulatorDevice.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.two_qubit_gate_time" title="qoqo_qryd.emulator_devices.EmulatorDevice.two_qubit_gate_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">two_qubit_gate_time</span></code></a>(control, target, /)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../qoqo_qryd.emulator_devices.html#qoqo_qryd.emulator_devices.EmulatorDevice.two_qubit_gate_time" title="qoqo_qryd.emulator_devices.EmulatorDevice.two_qubit_gate_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">two_qubit_gate_time</span></code></a>(control, target, /)</p></td>
 <td><p>Returns the gate time of a two qubit operation on this device.</p></td>
 </tr>
 </tbody>
@@ -241,6 +244,22 @@ It can be hardcoded to a specific value if a float is passed in as String.</p></
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>ValueError</strong> -- The tweezer is not present in the device.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qoqo_qryd.emulator_devices.EmulatorDevice.available_layouts">
+<span class="sig-name descname"><span class="pre">available_layouts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qoqo_qryd.emulator_devices.EmulatorDevice.available_layouts" title="Link to this definition"></a></dt>
+<dd><p>Returns a list of all available Layout names.</p>
+<p>Implemented for compatibility reasons, as the returning vector
+will always be empty.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The list of all available Layout names.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
 </dd>
 </dl>
 </dd></dl>
