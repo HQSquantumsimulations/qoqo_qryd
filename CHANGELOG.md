@@ -5,6 +5,7 @@ Tracks qoqo-qryd changes after 0.5
 # 0.21.0
 
 * Added `available_layouts()` method to EmulatorDevice
+* Added deserialization check in `EmulatorDevice.from_json()`
 
 # 0.20.1
 
